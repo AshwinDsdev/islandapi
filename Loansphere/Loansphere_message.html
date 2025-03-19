@@ -211,15 +211,7 @@
             <div class="header-main-1 header-main-new ms-auto">
                 <div class="header-parts-client py-2">
                     <div class="institution-name ng-star-inserted">Cenlar FSB</div>
-                    <div class="form-group d-flex align-items-center">
-                        <label class="me-3 text-light">User Type:</label>
-                        <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" id="userTypeSwitch" ng-model="isOffshore"
-                                ng-change="updateUserType()">
-                            <label class="form-check-label text-light" for="userTypeSwitch">{{isOffshore ? 'Offshore' :
-                                'Onshore'}}</label>
-                        </div>
-                    </div>
+
                     <div class="form-group">
                         <select class="form-select" ng-model="selectedLoan">
                             <option value="" disabled>Select Loan</option>
@@ -256,7 +248,7 @@
                             <label>Queue</label>
                             <select class="form-select" ng-model="selectedQueue" multiple
                                 aria-describedby="cdk-describedby-message-ng-1-10">
-                                <option ng-repeat="queue in queues" value="{{queue.id}}">{{queue.Value}}</option>
+                                <option ng-repeat="queue in queues" value="{{queue.id}}">{{queue.name}}</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -313,11 +305,24 @@
                             </button>
                         </div>
                         <div class="form-group">
-                            <button class="btn btn-danger" ng-repeat="loan in getAccessibleLoans()"
-                                ng-click="removeLoan(loan.id)" ng-if="canRemoveLoan(loan.id)"
-                                style="margin-right: 10px;">
-                                Remove {{loan.loanNumber}}
-                            </button>
+                            <div class="d-flex align-items-end">
+                                <div class="flex-grow-1 me-2">
+                                    <label>Select Loan to Remove</label>
+                                    <select class="form-select" ng-model="loanToRemove">
+                                        <option value="" disabled selected>Choose loan to remove...</option>
+                                        <option ng-repeat="loan in getAccessibleLoans()"
+                                                ng-if="canRemoveLoan(loan.id)"
+                                                value="{{loan.id}}">
+                                            {{loan.loanNumber}} - {{loan.propertyInfo}}
+                                        </option>
+                                    </select>
+                                </div>
+                                <button class="btn btn-danger"
+                                        ng-click="removeLoan(loanToRemove)"
+                                        ng-disabled="!loanToRemove">
+                                    <i class="fas fa-trash-alt"></i> Remove Loan
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </form>
@@ -393,6 +398,7 @@
     <script src="Brand_Ingestion.js" type="module"></script>
     <script src="Loan_Ingestion.js" type="module"></script>
     <script src="Message_Ingestion.js" type="module"></script>
+    <script src="Queue_Ingestion.js" type="module"></script>
 
     <script>
         var app = angular.module('loanApp', ['ngMaterial', 'ngAria', 'ngAnimate']);
@@ -496,6 +502,8 @@
 
                 // Use $timeout to ensure Angular digest cycle is triggered
                 $timeout(function () {
+                    // Initialize filteredQueues
+                    $scope.setFilter('all');
                     $scope.searchLoans();
                 });
             } catch (error) {
@@ -503,6 +511,8 @@
 
                 // Use $timeout to ensure Angular digest cycle is triggered
                 $timeout(function () {
+                    // Initialize filteredQueues
+                    $scope.setFilter('all');
                     $scope.searchLoans();
                 });
             }
@@ -591,12 +601,80 @@
             }
 
 
-            // Dummy data
+            // Queue data with structure matching Loansphere_Queues.html
             $scope.queues = [
-                { id: 1, Value: "Default Queue" },
-                { id: 2, Value: "High Priority" },
-                { id: 3, Value: "Customer Service" },
-                { id: 4, Value: "Technical Support" }
+                {
+                    id: 1,
+                    name: "Default Queue",
+                    type: "my",
+                    sortOrder: 1,
+                    brandIds: [1, 2, 3],
+                    restricted: false,
+                    items: []
+                },
+                {
+                    id: 2,
+                    name: "High Priority",
+                    type: "my",
+                    sortOrder: 2,
+                    brandIds: [2, 3],
+                    restricted: false,
+                    items: []
+                },
+                {
+                    id: 3,
+                    name: "Customer Service",
+                    type: "team",
+                    sortOrder: 3,
+                    brandIds: [1, 4],
+                    restricted: false,
+                    items: []
+                },
+                {
+                    id: 4,
+                    name: "Technical Support",
+                    type: "team",
+                    sortOrder: 4,
+                    brandIds: [3, 4, 5],
+                    restricted: false,
+                    items: []
+                },
+                {
+                    id: 5,
+                    name: "Loan Processing",
+                    type: "my",
+                    sortOrder: 5,
+                    brandIds: [1, 5],
+                    restricted: false,
+                    items: []
+                },
+                {
+                    id: 6,
+                    name: "Underwriting",
+                    type: "team",
+                    sortOrder: 6,
+                    brandIds: [2, 5, 6],
+                    restricted: false,
+                    items: []
+                },
+                {
+                    id: 7,
+                    name: "Restricted Queue",
+                    type: "my",
+                    sortOrder: 7,
+                    brandIds: [7, 8],
+                    restricted: true,
+                    items: []
+                },
+                {
+                    id: 8,
+                    name: "Unrestricted Specific",
+                    type: "my",
+                    sortOrder: 8,
+                    brandIds: [5, 6, 7, 8],
+                    restricted: false,
+                    items: []
+                }
             ];
 
             $scope.categories = [
@@ -620,7 +698,7 @@
             ];
             $scope.getQueueName = function (queueId) {
                 const queue = $scope.queues.find(q => q.id === parseInt(queueId));
-                return queue ? queue.Value : '';
+                return queue ? queue.name : '';
             };
 
             $scope.returnToMessages = function () {
@@ -641,20 +719,59 @@
                 $scope.searchResults.sort((a, b) => new Date(b.messageDate) - new Date(a.messageDate));
             };
 
+            // Check if a queue should be visible to the current user
+            $scope.isQueueVisibleToUser = function(queue) {
+                // Since we don't have onshore/offshore toggle, we'll just check if the queue is restricted
+                if (queue.hasOwnProperty('restricted')) {
+                    return !queue.restricted;
+                }
+
+                // If queue doesn't have a restricted property, it's visible
+                return true;
+            };
+
+            // Set active filter for queues
+            $scope.setFilter = function(filter) {
+                $scope.activeFilter = filter;
+
+                // First filter by queue type (all, my, team)
+                var typeFilteredQueues = $scope.queues;
+                if (filter !== 'all') {
+                    typeFilteredQueues = $scope.queues.filter(function(queue) {
+                        return queue.type === filter;
+                    });
+                }
+
+                // Then filter by visibility
+                var visibleQueues = typeFilteredQueues.filter(function(queue) {
+                    return $scope.isQueueVisibleToUser(queue);
+                });
+
+                // Then filter by selected brand if any
+                if ($scope.selectedBrand) {
+                    $scope.filteredQueues = visibleQueues.filter(function(queue) {
+                        return queue.brandIds && queue.brandIds.includes($scope.selectedBrand.id);
+                    });
+                } else {
+                    $scope.filteredQueues = visibleQueues;
+                }
+
+                // Sort by the original sort order to maintain default order
+                $scope.filteredQueues.sort(function(a, b) {
+                    return a.sortOrder - b.sortOrder;
+                });
+            };
+
             $scope.getCategoryName = function (categoryId) {
                 const category = $scope.categories.find(c => c.id === parseInt(categoryId));
                 return category ? category.CategoryName : '';
             };
 
             $scope.getAccessibleBrands = function () {
-                // For onshore users, return all brands
-                if ($scope.userType === 'onshore') {
-                    return $scope.brands;
-                }
-                // For offshore users, only return brands with type 'offshore' and not restricted
-                return $scope.brands.filter(brand =>
-                    brand.type === 'offshore' && !brand.restricted
-                );
+                // Since we don't have onshore/offshore toggle, we'll just filter out restricted brands
+                return $scope.brands.filter(function(brand) {
+                    return !brand.restricted;
+                });
             };
 
             $scope.getStatusName = function (statusId) {
@@ -667,45 +784,53 @@
             $scope.selectedChannel = $scope.channels[0];
             $scope.selectedBrand = null; // Initialize as null and set after brands are loaded
             $scope.selectedStatus = null;
-            $scope.isOffshore = false;
-            $scope.userType = 'onshore';
+            $scope.activeFilter = 'all';
+            $scope.filteredQueues = [];
 
             // Set default brand after brands are loaded
-            $timeout(function() {
+            $timeout(function () {
                 if ($scope.brands && $scope.brands.length > 0) {
                     $scope.selectedBrand = $scope.brands[0];
                 }
             }, 500);
 
-            $scope.updateUserType = function () {
-                $scope.userType = $scope.isOffshore ? 'offshore' : 'onshore';
-                $scope.selectedLoan = null;
-
-                if ($scope.isOffshore) {
-                    $scope.searchResults = $scope.messages.filter(message => message.allowedUserTypes.includes('offshore'));
-                } else {
-                    $scope.searchLoans();
-                }
-            };
+            // No longer need updateUserType function since we removed the toggle
 
 
             $scope.getAccessibleLoans = function () {
-                if ($scope.userType === 'onshore') {
-                    return $scope.loans; // Onshore users can access all loans
-                }
-                // Offshore users can only access unrestricted loans
-                return $scope.loans.filter(loan => loan.allowedUserTypes.includes('offshore'));
+                // Since we don't have onshore/offshore toggle, we'll just filter out restricted loans
+                return $scope.loans.filter(function(loan) {
+                    return !loan.restricted;
+                });
             };
 
             $scope.canRemoveLoan = function (loanId) {
                 const loan = $scope.loans.find(l => l.id === loanId);
                 if (!loan) return false;
 
-                // Only allow removal if the loan is non-restricted (accessible to both user types)
-                return loan.types.includes('onshore') && loan.types.includes('offshore');
+                // Only allow removal if the loan is non-restricted
+                return !loan.restricted;
             };
             $scope.selectedLoan = null;
+            $scope.loanToRemove = null;
 
+            // Function to remove a loan
+            $scope.removeLoan = function(loanId) {
+                if (!loanId) return;
+
+                // Find the loan in the loans array
+                const loanIndex = $scope.loans.findIndex(l => l.id.toString() === loanId.toString());
+                if (loanIndex === -1) return;
+
+                // Remove the loan from the array
+                $scope.loans.splice(loanIndex, 1);
+
+                // Reset the loanToRemove property
+                $scope.loanToRemove = null;
+
+                // Update the search results if needed
+                $scope.searchLoans();
+            };
 
             $scope.restrictionMessage = '';
 

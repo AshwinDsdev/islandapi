@@ -343,6 +343,61 @@
             font-size: 0.9em;
             margin-left: 10px;
         }
+
+        /* Table styling */
+        .table {
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .table thead th {
+            background-color: #343a40;
+            color: white;
+            border-bottom: 2px solid #007bff;
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: rgba(0, 123, 255, 0.1);
+            transform: translateY(-1px);
+            transition: all 0.2s;
+        }
+
+        /* Channel selector styling */
+        .channel-selector select {
+            background-color: #444;
+            color: white;
+            border: 1px solid #555;
+            border-radius: 4px;
+            padding: 8px 12px;
+            min-width: 200px;
+        }
+
+        .channel-selector select:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+
+        /* Modal styling */
+        .modal-content {
+            border-radius: 8px;
+            border: none;
+        }
+
+        .modal-header {
+            background-color: #343a40;
+            color: white;
+            border-bottom: 2px solid #007bff;
+        }
+
+        .modal-header .close {
+            color: white;
+        }
+
+        /* Badge styling */
+        .badge-pill {
+            padding: 0.4em 0.8em;
+        }
     </style>
 </head>
 <body ng-app="loanApp" ng-controller="LoanController">
@@ -370,86 +425,63 @@
                     <router-outlet _ngcontent-ng-c1992328644=""></router-outlet>
                     <lsdadmin-home _nghost-ng-c1816347493="" class="ng-star-inserted">
                         <!-- Header Section -->
-                        <div _ngcontent-ng-c1816347493="" class="header2 d-flex flex-column flex-md-row align-items-center px-3 py-2" style="justify-content: space-between;">
-                            <div _ngcontent-ng-c1816347493="" class="menu-hamburger">
-                                <i _ngcontent-ng-c1816347493="" class="fa-sharp fa-solid fa-bars hamburger-menu" style="cursor: pointer;" ng-click="toggleSidebar()"></i>
-                                <span _ngcontent-ng-c1816347493="" style="color: whitesmoke; font-family: 'Suisse-SemiBold'; font-size: 1.5em; padding: 1px 0px 0px 24px;">One Admin</span>
-                            </div>
-                            <div _ngcontent-ng-c1816347493="" style="left: 210px; position: fixed;">
-                                <lsdadmin-header-bar _ngcontent-ng-c1816347493="" _nghost-ng-c2667574091="">
-                                    <div _ngcontent-ng-c2667574091="" class="header-main-1 header-main-new">
-                                        <div _ngcontent-ng-c2667574091="" class="header-parts-client py-2">
-                                            <div _ngcontent-ng-c2667574091="">
-                                                <div _ngcontent-ng-c2667574091="" class="institution-name ng-star-inserted">Cenlar FSB</div>
-                                            </div>
-                                            <div _ngcontent-ng-c2667574091="" class="d-inline-block ml-md-2 header-main-2">
-                                                <div _ngcontent-ng-c2667574091="" class="header-parts-client py-2">
-                                                    <mat-form-field _ngcontent-ng-c2667574091="" appearance="outline" class="mat-mdc-form-field context-dropdown-adjust ng-tns-c508571215-56 mat-mdc-form-field-type-mat-select mat-mdc-form-field-has-icon-prefix mat-form-field-appearance-outline mat-primary ng-star-inserted">
-                                                        <div class="mat-mdc-text-field-wrapper mdc-text-field ng-tns-c508571215-56 mdc-text-field--outlined mdc-text-field--no-label">
-                                                            <div class="mat-mdc-form-field-flex ng-tns-c508571215-56">
-                                                                <div matformfieldnotchedoutline="" class="mdc-notched-outline ng-tns-c508571215-56 mdc-notched-outline--no-label ng-star-inserted">
-                                                                    <div class="mat-mdc-notch-piece mdc-notched-outline__leading"></div>
-                                                                    <div class="mat-mdc-notch-piece mdc-notched-outline__notch"></div>
-                                                                    <div class="mat-mdc-notch-piece mdc-notched-outline__trailing"></div>
-                                                                </div>
-                                                                <div class="mat-mdc-form-field-icon-prefix ng-tns-c508571215-56 ng-star-inserted">
-                                                                    <i _ngcontent-ng-c2667574091="" matprefix="" class="fa-sharp fa-light fa-circle-info pr-2 ng-tns-c508571215-56"></i>
-                                                                </div>
-                                                                <div class="mat-mdc-form-field-infix ng-tns-c508571215-56">
-                                                                    <mat-select _ngcontent-ng-c2667574091="" role="combobox" aria-haspopup="listbox" panelclass="header-panel-adjust" name="channelSelect" class="mat-mdc-select header-main-1-formfld ng-tns-c1711764913-57 ng-tns-c508571215-56 ng-star-inserted" aria-labelledby="mat-select-value-31" id="mat-select-30" tabindex="0" aria-expanded="false" aria-required="false" aria-disabled="false" aria-invalid="false" ng-model="selectedChannel" ng-options="channel.name for channel in channels">
-                                                                        <div cdk-overlay-origin="" class="mat-mdc-select-trigger ng-tns-c1711764913-57">
-                                                                            <div class="mat-mdc-select-value ng-tns-c1711764913-57" id="mat-select-value-31">
-                                                                                <span class="mat-mdc-select-value-text ng-tns-c1711764913-57 ng-star-inserted">
-                                                                                    <span class="mat-mdc-select-min-line ng-tns-c1711764913-57 ng-star-inserted">Borrower Self-Service</span>
-                                                                                </span>
-                                                                            </div>
-                                                                            <div class="mat-mdc-select-arrow-wrapper ng-tns-c1711764913-57">
-                                                                                <div class="mat-mdc-select-arrow ng-tns-c1711764913-57">
-                                                                                    <svg viewBox="0 0 24 24" width="24px" height="24px" focusable="false" aria-hidden="true" class="ng-tns-c1711764913-57">
-                                                                                        <path d="M7 10l5 5 5-5z" class="ng-tns-c1711764913-57"></path>
-                                                                                    </svg>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </mat-select>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </mat-form-field>
-                                                </div>
+                        <div class="header2 px-3 py-3">
+                            <div class="row align-items-center">
+                                <div class="col-12 col-md-3 d-flex align-items-center mb-2 mb-md-0">
+                                    <div class="menu-hamburger mr-3">
+                                        <i class="fa-sharp fa-solid fa-bars hamburger-menu" style="cursor: pointer; font-size: 1.2em;" ng-click="toggleSidebar()"></i>
+                                    </div>
+                                    <div style="color: whitesmoke; font-family: 'Suisse-SemiBold'; font-size: 1.5em;">One Admin</div>
+                                </div>
+                                <div class="col-12 col-md-5 d-flex flex-column flex-md-row align-items-md-center mb-2 mb-md-0">
+                                    <div class="institution-name mb-2 mb-md-0 mr-md-4" style="color: white; font-size: 1.2em; font-weight: bold;">Cenlar FSB</div>
+                                    <div class="channel-selector mb-2 mb-md-0 mr-md-4">
+                                        <select class="form-control" ng-model="selectedChannel" ng-options="channel.name for channel in channels">
+                                        </select>
+                                    </div>
+                                    <div class="channel-selector mb-2 mb-md-0">
+                                        <select class="form-control" ng-model="selectedBrand" ng-options="brand.name for brand in getAccessibleBrands()" ng-change="setFilter(activeFilter)">
+                                            <option value="">-- All Brands --</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-4 d-flex justify-content-start justify-content-md-end">
+                                    <!-- User Profile and Notifications -->
+                                    <div class="right-icons d-flex align-items-center mt-2 mt-md-0">
+
+                                        <div class="position-relative mr-4">
+                                            <button class="btn btn-dark position-relative" ng-click="toggleNotifications()">
+                                                <i class="fas fa-bell"></i>
+                                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                                                      ng-show="notifications.length > 0"
+                                                      style="top: -5px; right: -10px;">
+                                                    {{notifications.length}}
+                                                </span>
+                                            </button>
+                                        </div>
+                                        <div class="user-profile dropdown">
+                                            <button class="btn btn-dark dropdown-toggle" type="button" id="userDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                <i class="fas fa-user-circle mr-1"></i>
+                                                <span class="d-none d-md-inline">{{currentUser.name}}</span>
+                                            </button>
+                                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+                                                <a class="dropdown-item" href="#"><i class="fas fa-user mr-2"></i> Profile</a>
+                                                <a class="dropdown-item" href="#"><i class="fas fa-cog mr-2"></i> Settings</a>
+                                                <div class="dropdown-divider"></div>
+                                                <a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt mr-2"></i> Logout</a>
                                             </div>
                                         </div>
                                     </div>
-                                </lsdadmin-header-bar>
-                            </div>
-                            <!-- User Profile and Notifications -->
-                            <div class="right-icons">
-                                <div class="form-check form-switch mr-4">
-                                    <input class="form-check-input" type="checkbox" id="userTypeSwitch" ng-model="isOffshore" ng-change="updateUserType()">
-                                    <label class="form-check-label text-light" for="userTypeSwitch">{{isOffshore ? 'Offshore' : 'Onshore'}} User</label>
-                                </div>
-                                <div class="position-relative mr-4">
-                                    <i class="fas fa-bell" ng-click="toggleNotifications()"></i>
-                                    <span class="notification-badge" ng-show="notifications.length > 0">{{notifications.length}}</span>
-                                </div>
-                                <div class="user-profile" ng-click="toggleUserMenu()">
-                                    <i class="fas fa-user-circle"></i>
-                                    <div class="user-menu" ng-class="{'active': userMenuActive}">
-                                        <ul>
-                                            <li><a href="#"><i class="fas fa-user mr-2"></i> Profile</a></li>
-                                            <li><a href="#"><i class="fas fa-cog mr-2"></i> Settings</a></li>
-                                            <li><a href="#"><i class="fas fa-sign-out-alt mr-2"></i> Logout</a></li>
-                                        </ul>
-                                    </div>
                                 </div>
                             </div>
+                        </div>
                         </div>
 
                         <!-- Main Content Area -->
                         <div class="container-fluid">
                             <div class="row">
                                 <div class="col-12">
-                                    <h2 class="mb-4">Loan Queues <span class="queue-count-badge">{{filteredQueues.length}} Available</span></h2>
+                                    <h2 class="mb-4">Loan Queues <span class="queue-count-badge">{{(filteredQueues | filter:searchQuery).length}} Available</span></h2>
 
                                     <!-- Search Bar -->
                                     <div class="search-container">
@@ -466,40 +498,90 @@
                                         </div>
                                     </div>
 
-                                    <!-- Queue Cards -->
-                                    <div class="row">
-                                        <div class="col-md-4" ng-repeat="queue in filteredQueues = (queues | filter:searchQuery)">
-                                            <div class="queue-card">
-                                                <div class="queue-header">
-                                                    <div class="queue-title">{{queue.name}}</div>
-                                                    <div class="queue-count">{{queue.items.length}}</div>
+                                    <!-- Queue Table -->
+                                    <div class="table-responsive">
+                                        <table class="table table-hover table-striped" ng-if="(filteredQueues | filter:searchQuery).length > 0">
+                                            <thead class="thead-dark">
+                                                <tr>
+                                                    <th>Queue Name</th>
+                                                    <th>Type</th>
+                                                    <th>Items</th>
+                                                    <th>Restricted</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr ng-repeat="queue in filteredQueues | filter:searchQuery" ng-click="viewAllItems(queue)" style="cursor: pointer;">
+                                                    <td>
+                                                        <strong>{{queue.name}}</strong>
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge" ng-class="{'badge-primary': queue.type === 'my', 'badge-info': queue.type === 'team', 'badge-secondary': queue.type !== 'my' && queue.type !== 'team'}">
+                                                            {{queue.type}}
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge badge-pill badge-primary">{{queue.items.length}}</span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge" ng-class="{'badge-success': !queue.restricted, 'badge-danger': queue.restricted}">
+                                                            {{queue.restricted ? 'Yes' : 'No'}}
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-outline-primary" ng-click="viewAllItems(queue); $event.stopPropagation();">View Items</button>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <!-- Queue Items Modal -->
+                                    <div class="modal fade" id="queueItemsModal" tabindex="-1" role="dialog" aria-labelledby="queueItemsModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-lg" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="queueItemsModalLabel">{{selectedQueueName}} - Queue Items</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
                                                 </div>
-                                                <div class="queue-items">
-                                                    <div class="queue-item" ng-repeat="item in queue.items" ng-click="openLoanDetails(item)">
-                                                        <div class="queue-item-header">
-                                                            <div class="queue-item-title">{{item.loanNumber}}</div>
-                                                            <div class="queue-item-date">{{item.date | date:'MM/dd/yyyy'}}</div>
-                                                        </div>
-                                                        <div class="queue-item-details">
-                                                            <span>{{item.borrowerName}}</span> -
-                                                            <span class="badge" ng-class="{'badge-priority-high': item.priority === 'high', 'badge-priority-medium': item.priority === 'medium', 'badge-priority-low': item.priority === 'low'}">
-                                                                {{item.priority}}
-                                                            </span>
-                                                        </div>
-                                                    </div>
+                                                <div class="modal-body">
+                                                    <table class="table table-striped">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Loan Number</th>
+                                                                <th>Borrower</th>
+                                                                <th>Date</th>
+                                                                <th>Priority</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr ng-repeat="item in selectedQueueItems" ng-click="openLoanDetails(item)" style="cursor: pointer;">
+                                                                <td>{{item.loanNumber}}</td>
+                                                                <td>{{item.borrowerName}}</td>
+                                                                <td>{{item.date | date:'MM/dd/yyyy'}}</td>
+                                                                <td>
+                                                                    <span class="badge" ng-class="{'badge-danger': item.priority === 'high', 'badge-warning': item.priority === 'medium', 'badge-success': item.priority === 'low'}">
+                                                                        {{item.priority}}
+                                                                    </span>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
                                                 </div>
-                                                <div class="text-center mt-3" ng-if="queue.items.length > 5">
-                                                    <button class="btn btn-sm btn-outline-primary" ng-click="viewAllItems(queue)">View All</button>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                                                 </div>
                                             </div>
                                         </div>
+                                    </div>
 
-                                        <!-- Empty State -->
-                                        <div class="col-12 text-center py-5" ng-if="filteredQueues.length === 0">
-                                            <i class="fas fa-search fa-3x text-muted mb-3"></i>
-                                            <h4>No queues found</h4>
-                                            <p class="text-muted">Try adjusting your search or filters</p>
-                                        </div>
+                                    <!-- Empty State -->
+                                    <div class="col-12 text-center py-5" ng-if="(filteredQueues | filter:searchQuery).length === 0">
+                                        <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                                        <h4>No queues found</h4>
+                                        <p class="text-muted">Try adjusting your search or filters</p>
                                     </div>
                                 </div>
                             </div>
@@ -527,20 +609,104 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
     <!-- Chart.js for data visualization -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
+    <!-- Load Ingestion Scripts -->
+    <script src="Brand_Ingestion.js" type="module"></script>
+    <script src="Loan_Ingestion.js" type="module"></script>
+    
+    <script src="Queue_Ingestion.js" type="module"></script>
     <!-- Custom JS -->
     <script>
+        // Helper functions to wait for data to be loaded from ingestion scripts
+        async function waitForLoans() {
+            // Try to wait for up to 5 seconds for the loans data
+            let attempts = 0;
+            const maxAttempts = 5;
+
+            while (!window.storedLoansSet && attempts < maxAttempts) {
+                console.log(`Waiting for loans data... Attempt ${attempts + 1}/${maxAttempts}`);
+                await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second
+                attempts++;
+            }
+
+            if (!window.storedLoansSet) {
+                console.warn("Timed out waiting for loans data, using fallback data");
+                // Return fallback data if window.storedLoansSet is still not available
+                return [
+        
+                ];
+            }
+
+            console.log("Loans data loaded successfully");
+            return window.storedLoansSet;
+        }
+
+        async function waitForBrands() {
+            // Try to wait for up to 5 seconds for the brands data
+            let attempts = 0;
+            const maxAttempts = 5;
+
+            while (!window.storedNumbersSet && attempts < maxAttempts) {
+                console.log(`Waiting for brands data... Attempt ${attempts + 1}/${maxAttempts}`);
+                await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second
+                attempts++;
+            }
+
+            if (!window.storedNumbersSet) {
+                console.warn("Timed out waiting for brands data, using fallback data");
+                // Return fallback data if window.storedNumbersSet is still not available
+                return [
+
+                ];
+            }
+
+            console.log("Brands data loaded successfully");
+            return window.storedNumbersSet;
+        }
+
+        async function waitForQueues() {
+            // Try to wait for up to 5 seconds for the queues data
+            let attempts = 0;
+            const maxAttempts = 5;
+
+            while (!window.storedQueuesSet && attempts < maxAttempts) {
+                console.log(`Waiting for queues data... Attempt ${attempts + 1}/${maxAttempts}`);
+                await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second
+                attempts++;
+            }
+
+            if (!window.storedQueuesSet) {
+                console.warn("Timed out waiting for queues data, using fallback data");
+                // Return fallback data if window.storedQueuesSet is still not available
+                return [
+                    {
+                        "id": 1,
+                        "name": "Pending Applications",
+                        "type": "my",
+                        "sortOrder": 1,
+                        "restricted": false,
+                        "items": []
+                    }
+                ];
+            }
+
+            console.log("Queues data loaded successfully");
+            return window.storedQueuesSet;
+        }
+
+    // This section previously contained the generateQueueData function
+    // It has been removed as we now use the storedQueuesSet directly from Queue_Ingestion.js
+
         angular.module('loanApp', ['ngMaterial', 'ngRoute', 'ngMessages', 'ngAnimate'])
-            .controller('LoanController', function($scope, $timeout, $mdDialog) {
+            .controller('LoanController', async function($scope, $timeout, $mdDialog) {
                 // Initialize variables
                 $scope.isLoading = true;
                 $scope.sidebarActive = false;
                 $scope.userMenuActive = false;
                 $scope.activeFilter = 'all';
                 $scope.searchQuery = '';
-                $scope.isOffshore = false;
-                $scope.userType = 'onshore'; // Default to onshore user
+                $scope.selectedBrand = null; // Initialize brand selection as null (all brands)
 
-                // Mock user data
+                // User data
                 $scope.currentUser = {
                     id: 1,
                     name: 'John Doe',
@@ -550,14 +716,14 @@
                     isOffshore: false
                 };
 
-                // Mock notifications
+                // Notifications
                 $scope.notifications = [
                     { id: 1, message: 'New loan application submitted', date: new Date(), read: false },
                     { id: 2, message: 'Document verification required', date: new Date(Date.now() - 86400000), read: false },
                     { id: 3, message: 'Loan approval pending', date: new Date(Date.now() - 172800000), read: true }
                 ];
 
-                // Mock channels data
+                // Channels data
                 $scope.channels = [
                     { id: 1, name: 'Borrower Self-Service' },
                     { id: 2, name: 'Loan Officer Portal' },
@@ -566,103 +732,92 @@
                 ];
                 $scope.selectedChannel = $scope.channels[0];
 
-                // Mock queue data with brand associations
-                $scope.queues = [
-                    {
-                        id: 1,
-                        name: 'Pending Applications',
-                        type: 'my',
-                        brandIds: [1, 3, 5], // Associated with unrestricted brands
-                        sortOrder: 1,
-                        items: [
-                            { id: 101, loanNumber: 'L-12345', borrowerName: 'Alice Johnson', date: new Date(), priority: 'high', brandId: 1 },
-                            { id: 102, loanNumber: 'L-12346', borrowerName: 'Bob Smith', date: new Date(Date.now() - 86400000), priority: 'medium', brandId: 3 },
-                            { id: 103, loanNumber: 'L-12347', borrowerName: 'Carol Davis', date: new Date(Date.now() - 172800000), priority: 'low', brandId: 5 },
-                            { id: 104, loanNumber: 'L-12348', borrowerName: 'David Wilson', date: new Date(Date.now() - 259200000), priority: 'medium', brandId: 1 },
-                            { id: 105, loanNumber: 'L-12349', borrowerName: 'Eve Brown', date: new Date(Date.now() - 345600000), priority: 'high', brandId: 3 },
-                            { id: 106, loanNumber: 'L-12350', borrowerName: 'Frank Miller', date: new Date(Date.now() - 432000000), priority: 'low', brandId: 5 }
-                        ]
-                    },
-                    {
-                        id: 2,
-                        name: 'Document Verification',
-                        type: 'team',
-                        brandIds: [2, 4], // Associated only with restricted brands
-                        sortOrder: 2,
-                        items: [
-                            { id: 201, loanNumber: 'L-23456', borrowerName: 'Grace Taylor', date: new Date(), priority: 'medium', brandId: 2 },
-                            { id: 202, loanNumber: 'L-23457', borrowerName: 'Henry Clark', date: new Date(Date.now() - 86400000), priority: 'high', brandId: 4 },
-                            { id: 203, loanNumber: 'L-23458', borrowerName: 'Irene Lewis', date: new Date(Date.now() - 172800000), priority: 'medium', brandId: 2 }
-                        ]
-                    },
-                    {
-                        id: 3,
-                        name: 'Underwriting',
-                        type: 'team',
-                        brandIds: [1, 2, 3], // Mixed brands
-                        sortOrder: 3,
-                        items: [
-                            { id: 301, loanNumber: 'L-34567', borrowerName: 'Jack Robinson', date: new Date(), priority: 'high', brandId: 1 },
-                            { id: 302, loanNumber: 'L-34568', borrowerName: 'Karen Walker', date: new Date(Date.now() - 86400000), priority: 'high', brandId: 2 },
-                            { id: 303, loanNumber: 'L-34569', borrowerName: 'Larry Young', date: new Date(Date.now() - 172800000), priority: 'medium', brandId: 3 },
-                            { id: 304, loanNumber: 'L-34570', borrowerName: 'Mary Allen', date: new Date(Date.now() - 259200000), priority: 'low', brandId: 1 }
-                        ]
-                    },
-                    {
-                        id: 4,
-                        name: 'Closing',
-                        type: 'my',
-                        brandIds: [1, 3, 4], // Mixed brands
-                        sortOrder: 4,
-                        items: [
-                            { id: 401, loanNumber: 'L-45678', borrowerName: 'Nancy King', date: new Date(), priority: 'high', brandId: 1 },
-                            { id: 402, loanNumber: 'L-45679', borrowerName: 'Oscar Wright', date: new Date(Date.now() - 86400000), priority: 'medium', brandId: 4 }
-                        ]
-                    },
-                    {
-                        id: 5,
-                        name: 'Funding',
-                        type: 'team',
-                        brandIds: [2, 4, 5], // Mixed brands
-                        sortOrder: 5,
-                        items: [
-                            { id: 501, loanNumber: 'L-56789', borrowerName: 'Patricia Scott', date: new Date(), priority: 'medium', brandId: 5 },
-                            { id: 502, loanNumber: 'L-56790', borrowerName: 'Quincy Adams', date: new Date(Date.now() - 86400000), priority: 'low', brandId: 2 },
-                            { id: 503, loanNumber: 'L-56791', borrowerName: 'Rachel Green', date: new Date(Date.now() - 172800000), priority: 'high', brandId: 4 }
-                        ]
-                    },
-                    {
-                        id: 6,
-                        name: 'Post-Closing',
-                        type: 'my',
-                        brandIds: [3, 5], // Associated with unrestricted brands
-                        sortOrder: 6,
-                        items: [
-                            { id: 601, loanNumber: 'L-67890', borrowerName: 'Steve Turner', date: new Date(), priority: 'low', brandId: 3 },
-                            { id: 602, loanNumber: 'L-67891', borrowerName: 'Tina Campbell', date: new Date(Date.now() - 86400000), priority: 'medium', brandId: 5 },
-                            { id: 603, loanNumber: 'L-67892', borrowerName: 'Uma Patel', date: new Date(Date.now() - 172800000), priority: 'high', brandId: 3 },
-                            { id: 604, loanNumber: 'L-67893', borrowerName: 'Victor Martinez', date: new Date(Date.now() - 259200000), priority: 'medium', brandId: 5 }
-                        ]
-                    }
-                ];
+                // Load data from ingestion scripts
+                try {
+                    // Load brands data
+                    const brandsData = await waitForBrands();
+                    $scope.brands = brandsData;
 
-                // Mock loan data
+                    // Load loans data
+                    const loansData = await waitForLoans();
+                    $scope.loans = loansData;
+
+                    // Load queue data directly from Queue_Ingestion.js
+                    const queueData = await waitForQueues();
+
+                    // Process queue data to ensure it has the required structure
+                    $scope.queues = queueData.map(queue => {
+                        // If queue doesn't have items array, initialize it
+                        if (!queue.items) {
+                            queue.items = [];
+
+                            // Populate items with some loans if available
+                            if (loansData && loansData.length > 0) {
+                                // Get a subset of loans for this queue
+                                const queueLoans = loansData.filter(loan => loan.id % queueData.length === (queue.id - 1) % queueData.length);
+
+                                // Create queue items from loans
+                                queue.items = queueLoans.map(loan => {
+                                    // Assign a random priority
+                                    const priorities = ['high', 'medium', 'low'];
+                                    const priority = priorities[Math.floor(Math.random() * priorities.length)];
+
+                                    return {
+                                        id: loan.id * 100 + queue.id,
+                                        loanNumber: loan.loanNumber,
+                                        borrowerName: loan.borrowerName,
+                                        date: new Date(Date.now() - Math.floor(Math.random() * 7) * 86400000), // Random date within last week
+                                        priority: priority
+                                    };
+                                });
+                            }
+                        }
+
+                        // If queue doesn't have brandIds array, initialize it
+                        if (!queue.brandIds) {
+                            // Assign random brand IDs to each queue if not present
+                            const brandIds = brandsData
+                                .sort(() => 0.5 - Math.random()) // Shuffle brands
+                                .slice(0, Math.floor(Math.random() * brandsData.length) + 1) // Take random number of brands
+                                .map(brand => brand.id);
+
+                            queue.brandIds = brandIds;
+                        }
+
+                        return queue;
+                    });
+
+                    // Apply digest cycle to update UI
+                    $timeout(function() {
+                        console.log("Data loaded successfully:", {
+                            brands: $scope.brands.length,
+                            loans: $scope.loans.length,
+                            queues: $scope.queues.length
+                        });
+                    });
+                } catch (error) {
+                    console.error("Error loading data:", error);
+                    // Fallback to empty arrays if loading fails
+                    $scope.brands = [];
+                    $scope.loans = [];
+                    $scope.queues = [];
+                }
+
+                // Get accessible loans based on restrictions
                 $scope.getAccessibleLoans = function() {
-                    return [
-                        { id: 1, loanNumber: 'L-12345', propertyInfo: '123 Main St, Anytown, USA', borrowerName: 'Alice Johnson', loanAmount: 250000, loanType: 'Conventional', status: 'In Process' },
-                        { id: 2, loanNumber: 'L-23456', propertyInfo: '456 Oak Ave, Somewhere, USA', borrowerName: 'Grace Taylor', loanAmount: 320000, loanType: 'FHA', status: 'Approved' },
-                        { id: 3, loanNumber: 'L-34567', propertyInfo: '789 Pine Rd, Nowhere, USA', borrowerName: 'Jack Robinson', loanAmount: 180000, loanType: 'VA', status: 'Pending' }
-                    ];
+                    // Since we don't have onshore/offshore toggle, we'll just filter out restricted loans
+                    return $scope.loans.filter(function(loan) {
+                        return !loan.restricted;
+                    });
                 };
 
-                // Mock brand data with restrictions
-                $scope.brands = [
-                    { id: 1, name: 'Cenlar FSB', logo: 'cenlar-logo.png', restricted: false },
-                    { id: 2, name: 'First National Bank', logo: 'fnb-logo.png', restricted: true },
-                    { id: 3, name: 'Community Credit Union', logo: 'ccu-logo.png', restricted: false },
-                    { id: 4, name: 'Regional Mortgage Co.', logo: 'rmc-logo.png', restricted: true },
-                    { id: 5, name: 'Hometown Savings', logo: 'hs-logo.png', restricted: false }
-                ];
+                // Get brands accessible to the current user
+                $scope.getAccessibleBrands = function() {
+                    // Since we don't have onshore/offshore toggle, we'll just filter out restricted brands
+                    return $scope.brands.filter(function(brand) {
+                        return !brand.restricted;
+                    });
+                };
 
                 // Get brands accessible to the current user
                 $scope.getAccessibleBrands = function() {
@@ -693,38 +848,17 @@
                     toastr.info('Notifications panel toggled');
                 };
 
-                // Update user type
-                $scope.updateUserType = function() {
-                    $scope.userType = $scope.isOffshore ? 'offshore' : 'onshore';
-                    $scope.currentUser.isOffshore = $scope.isOffshore;
 
-                    // Re-apply the current filter with the new user type
-                    $scope.setFilter($scope.activeFilter);
-                };
 
                 // Check if a queue should be visible to the current user
                 $scope.isQueueVisibleToUser = function(queue) {
-                    // If user is onshore, show all queues
-                    if ($scope.userType === 'onshore') {
-                        return true;
+                    // Since we don't have onshore/offshore toggle, we'll just check if the queue is restricted
+                    if (queue.hasOwnProperty('restricted')) {
+                        return !queue.restricted;
                     }
 
-                    // For offshore users, check if the queue is associated with any unrestricted brands
-                    var hasUnrestrictedBrand = false;
-
-                    // Check each brand associated with the queue
-                    for (var i = 0; i < queue.brandIds.length; i++) {
-                        var brandId = queue.brandIds[i];
-                        var brand = $scope.brands.find(function(b) { return b.id === brandId; });
-
-                        if (brand && !brand.restricted) {
-                            hasUnrestrictedBrand = true;
-                            break;
-                        }
-                    }
-
-                    // If all brands associated with the queue are restricted, hide the queue from offshore users
-                    return hasUnrestrictedBrand;
+                    // If queue doesn't have a restricted property, it's visible
+                    return true;
                 };
 
                 // Set active filter
@@ -740,9 +874,18 @@
                     }
 
                     // Then filter by user type (onshore/offshore)
-                    $scope.filteredQueues = typeFilteredQueues.filter(function(queue) {
+                    var userFilteredQueues = typeFilteredQueues.filter(function(queue) {
                         return $scope.isQueueVisibleToUser(queue);
                     });
+
+                    // Then filter by selected brand if any
+                    if ($scope.selectedBrand) {
+                        $scope.filteredQueues = userFilteredQueues.filter(function(queue) {
+                            return queue.brandIds && queue.brandIds.includes($scope.selectedBrand.id);
+                        });
+                    } else {
+                        $scope.filteredQueues = userFilteredQueues;
+                    }
 
                     // Sort by the original sort order to maintain default order
                     $scope.filteredQueues.sort(function(a, b) {
@@ -752,14 +895,35 @@
 
                 // Open loan details
                 $scope.openLoanDetails = function(item) {
-                    toastr.success('Opening loan details for: ' + item.loanNumber);
-                    // Implementation for opening loan details
+                    // Find the full loan details from the loans array
+                    const loan = $scope.loans.find(l => l.loanNumber === item.loanNumber);
+
+                    if (loan) {
+                        toastr.success('Opening loan details for: ' + loan.loanNumber);
+                        // Here you would typically open a modal or navigate to a loan details page
+                        // For now, we'll just show a notification with some loan details
+                        toastr.info(`Loan: ${loan.loanNumber}, Borrower: ${loan.borrowerName}, Amount: $${loan.loanAmount || 'N/A'}`);
+                    } else {
+                        toastr.error('Loan details not found for: ' + item.loanNumber);
+                    }
                 };
 
                 // View all items in a queue
                 $scope.viewAllItems = function(queue) {
+                    // Filter queue items to show only unrestricted loans
+                    $scope.selectedQueueItems = queue.items.filter(function(item) {
+                        // Find the loan associated with this item
+                        var loan = $scope.loans.find(function(l) {
+                            return l.loanNumber === item.loanNumber;
+                        });
+
+                        // Check if the loan is not restricted
+                        return loan && !loan.restricted;
+                    });
+
+                    $scope.selectedQueueName = queue.name;
+                    $('#queueItemsModal').modal('show');
                     toastr.info('Viewing all items in queue: ' + queue.name);
-                    // Implementation for viewing all items
                 };
 
                 // Navigation functions
@@ -800,15 +964,19 @@
                         $scope.isLoading = false;
                         toastr.success('Loansphere Queues loaded successfully');
 
-                        // Show a message about user type
-                        var userTypeMsg = $scope.isOffshore ?
-                            'You are logged in as an Offshore user. Some queues may be restricted.' :
-                            'You are logged in as an Onshore user with full access.';
-                        toastr.info(userTypeMsg);
-                    }, 1500);
+                        // Show message about data source
+                        toastr.success('Data loaded from ingestion scripts: ' +
+                            $scope.brands.length + ' brands, ' +
+                            $scope.loans.length + ' loans, ' +
+                            $scope.queues.length + ' queues');
 
-                    // Set initial user type
-                    $scope.userType = $scope.isOffshore ? 'offshore' : 'onshore';
+                        // Show message about accessible queues
+                        var accessibleQueuesCount = $scope.filteredQueues.length;
+                        var totalQueuesCount = $scope.queues.length;
+                        if (accessibleQueuesCount < totalQueuesCount) {
+                            toastr.info('You have access to ' + accessibleQueuesCount + ' out of ' + totalQueuesCount + ' queues.');
+                        }
+                    }, 1500);
 
                     // Set initial filter
                     $scope.setFilter('all');

@@ -1,0 +1,66 @@
+[
+    {
+        "id": 1,
+        "name": "Pending Applications",
+        "type": "my",
+        "sortOrder": 1,
+        "brandIds": [5, 6, 8],
+        "restricted": false
+      },
+      {
+        "id": 2,
+        "name": "Document Verification",
+        "type": "team",
+        "sortOrder": 2,
+        "brandIds": [6, 7],
+        "restricted": false
+      },
+      {
+        "id": 3,
+        "name": "Underwriting",
+        "type": "team",
+        "sortOrder": 3,
+        "brandIds": [5, 8],
+        "restricted": false
+      },
+      {
+        "id": 4,
+        "name": "Closing",
+        "type": "my",
+        "sortOrder": 4,
+        "brandIds": [6, 8],
+        "restricted": false
+      },
+      {
+        "id": 5,
+        "name": "Funding",
+        "type": "team",
+        "sortOrder": 5,
+        "brandIds": [7, 8],
+        "restricted": false
+      },
+      {
+        "id": 6,
+        "name": "Post-Closing",
+        "type": "my",
+        "sortOrder": 6,
+        "brandIds": [5, 6, 7],
+        "restricted": false
+      },
+    {
+      "id": 7,
+      "name": "Restricted Specific",
+      "type": "team",
+      "sortOrder": 7,
+      "brandIds": [2, 3, 4, 9],
+      "restricted": true
+    },
+    {
+      "id": 8,
+      "name": "Unrestricted Specific",
+      "type": "my",
+      "sortOrder": 8,
+      "brandIds": [5, 6, 7, 8],
+      "restricted": false
+    }
+  ]
