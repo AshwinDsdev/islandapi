@@ -390,85 +390,122 @@
     <!-- Bootstrap and AngularJS Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>
+    <script src="Brand_Ingestion.js" type="module"></script>
+    <script src="Loan_Ingestion.js" type="module"></script>
+    <script src="Message_Ingestion.js" type="module"></script>
+
     <script>
         var app = angular.module('loanApp', ['ngMaterial', 'ngAria', 'ngAnimate']);
 
+        async function waitForLoans() {
+            // Try to wait for up to 5 seconds for the loans data
+            let attempts = 0;
+            const maxAttempts = 5;
+
+            while (!window.storedLoansSet && attempts < maxAttempts) {
+                console.log(`Waiting for loans data... Attempt ${attempts + 1}/${maxAttempts}`);
+                await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second
+                attempts++;
+            }
+
+            if (!window.storedLoansSet) {
+                console.warn("Timed out waiting for loans data, using fallback data");
+                // Return fallback data if window.storedLoansSet is still not available
+                return [
+
+                ];
+            }
+
+            console.log("Loans data loaded successfully");
+            return window.storedLoansSet;
+        }
 
 
-        app.controller('LoanController', function ($scope) {
+        async function waitForMessages() {
+            // Try to wait for up to 5 seconds for the loans data
+            let attempts = 0;
+            const maxAttempts = 5;
 
-            $scope.loans = [
-                {
-                    id: 1, loanNumber: "LOAN001", propertyInfo: "123 Main St", borrowerName: "John Doe",
-                    queueId: 1, categoryId: 1, statusId: 1, messageDate: "2024-01-15",
-                    allowedUserTypes: ['onshore', 'offshore'], brandId: 2
-                },
-                {
-                    id: 2, loanNumber: "LOAN002", propertyInfo: "456 Oak Ave", borrowerName: "Jane Smith",
-                    queueId: 2, categoryId: 2, statusId: 2, messageDate: "2024-01-16",
-                    allowedUserTypes: ['onshore'], brandId: 3
-                },
-                {
-                    id: 20, loanNumber: "LOAN020", propertyInfo: "789 Pine Rd", borrowerName: "Peter Parker",
-                    queueId: 3, categoryId: 3, statusId: 1, messageDate: "2024-01-20",
-                    allowedUserTypes: ['onshore', 'offshore'], brandId: 4
-                },
-                {
-                    id: 3, loanNumber: "LOAN003", propertyInfo: "101 Elm St", borrowerName: "Alice Johnson",
-                    queueId: 1, categoryId: 2, statusId: 3, messageDate: "2024-01-17",
-                    allowedUserTypes: ['offshore'], brandId: 2
-                },
-                {
-                    id: 4, loanNumber: "LOAN004", propertyInfo: "222 Maple Ave", borrowerName: "Bob Williams",
-                    queueId: 2, categoryId: 1, statusId: 1, messageDate: "2024-01-18",
-                    allowedUserTypes: ['onshore'], brandId: 3
-                },
-                {
-                    id: 5, loanNumber: "LOAN005", propertyInfo: "333 Cedar Rd", borrowerName: "Charlie Brown",
-                    queueId: 3, categoryId: 3, statusId: 2, messageDate: "2024-01-19",
-                    allowedUserTypes: ['onshore', 'offshore'], brandId: 3
-                },
-                {
-                    id: 6, loanNumber: "LOAN006", propertyInfo: "444 Birch Ln", borrowerName: "David Lee",
-                    queueId: 1, categoryId: 1, statusId: 1, messageDate: "2024-01-21",
-                    allowedUserTypes: ['offshore'], brandId: 4
-                },
-                {
-                    id: 7, loanNumber: "LOAN007", propertyInfo: "555 Willow Dr", borrowerName: "Eva Davis",
-                    queueId: 2, categoryId: 2, statusId: 3, messageDate: "2024-01-22",
-                    allowedUserTypes: ['onshore'], brandId: 2
-                },
-                {
-                    id: 8, loanNumber: "LOAN008", propertyInfo: "666 Spruce Ct", borrowerName: "Frank Wilson",
-                    queueId: 3, categoryId: 3, statusId: 2, messageDate: "2024-01-23",
-                    allowedUserTypes: ['onshore', 'offshore'], brandId: 5
-                },
-                {
-                    id: 9, loanNumber: "LOAN009", propertyInfo: "777 Redwood Pl", borrowerName: "Grace Moore",
-                    queueId: 1, categoryId: 1, statusId: 1, messageDate: "2024-01-24",
-                    allowedUserTypes: ['onshore'], brandId: 3
-                },
-                {
-                    id: 10, loanNumber: "LOAN010", propertyInfo: "888 Cherry Ave", borrowerName: "Henry Taylor",
-                    queueId: 2, categoryId: 2, statusId: 3, messageDate: "2024-01-25",
-                    allowedUserTypes: ['offshore'], brandId: 4
-                },
-                {
-                    id: 11, loanNumber: "LOAN011", propertyInfo: "999 Walnut St", borrowerName: "Ivy Anderson",
-                    queueId: 3, categoryId: 3, statusId: 2, messageDate: "2024-01-26",
-                    allowedUserTypes: ['onshore', 'offshore'], brandId: 2
-                },
-                {
-                    id: 12, loanNumber: "LOAN012", propertyInfo: "111 Pinecrest Ln", borrowerName: "Jack Thomas",
-                    queueId: 1, categoryId: 1, statusId: 1, messageDate: "2024-01-27",
-                    allowedUserTypes: ['onshore'], brandId: 2
-                },
-                {
-                    id: 13, loanNumber: "LOAN013", propertyInfo: "222 River Rd", borrowerName: "Kelly White",
-                    queueId: 2, categoryId: 2, statusId: 3, messageDate: "2024-01-28",
-                    allowedUserTypes: ['offshore'], brandId: 3
+            while (!window.storedMessagesSet && attempts < maxAttempts) {
+                console.log(`Waiting for loans data... Attempt ${attempts + 1}/${maxAttempts}`);
+                await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second
+                attempts++;
+            }
+
+            if (!window.storedMessagesSet) {
+                console.warn("Timed out waiting for loans data, using fallback data");
+                // Return fallback data if window.storedLoansSet is still not available
+                return [
+
+                ];
+            }
+
+            console.log("storedMessagesSet data loaded successfully");
+            return window.storedMessagesSet;
+        }
+
+        async function waitForBrands() {
+            // Try to wait for up to 5 seconds for the brands data
+            let attempts = 0;
+            const maxAttempts = 5;
+
+            while (!window.storedNumbersSet && attempts < maxAttempts) {
+                console.log(`Waiting for brands data... Attempt ${attempts + 1}/${maxAttempts}`);
+                await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second
+                attempts++;
+            }
+
+            if (!window.storedNumbersSet) {
+                console.warn("Timed out waiting for brands data, using fallback data");
+                // Return fallback data if window.storedNumbersSet is still not available
+                return [
+                    // Fallback offshore brands data with new structure
+                    {
+                        id: 5,
+                        name: "Bank of America",
+                        value: "bankofamerica",
+                        type: "offshore",
+                        restricted: false
+                    },
+                    {
+                        id: 6,
+                        name: "Citibank",
+                        value: "citibank",
+                        type: "offshore",
+                        restricted: false
+                    }
+                ];
+            }
+
+            console.log("Brands data loaded successfully");
+            return window.storedNumbersSet;
+        }
+
+        app.controller('LoanController', async function ($scope, $timeout) {
+            $scope.loans = [];
+
+            try {
+                const loansData = await waitForLoans();
+                console.log("Loans Set:", loansData);
+                $scope.loans = loansData || [];
+
+                // If no loans data was loaded, use fallback sample data
+                if (!$scope.loans || $scope.loans.length === 0) {
+                    console.log("Using fallback loan data");
                 }
-            ];
+
+                // Use $timeout to ensure Angular digest cycle is triggered
+                $timeout(function () {
+                    $scope.searchLoans();
+                });
+            } catch (error) {
+                console.error("Error loading loans data:", error);
+
+                // Use $timeout to ensure Angular digest cycle is triggered
+                $timeout(function () {
+                    $scope.searchLoans();
+                });
+            }
 
 
             $scope.getLoanNumber = function (loanId) {
@@ -477,83 +514,82 @@
             };
 
             $scope.messages = [
-                {
-                    id: 1, loanId: 1, categoryId: 1, brandId: 2, queueId: 1, statusId: 1, messageText: "Payment confirmation received", messageDate: "2024-01-15", sender: "John Doe", allowedUserTypes: ['onshore', 'offshore']
-                },
-                {
-                    id: 2, loanId: 1, categoryId: 2, brandId: 2, queueId: 2, statusId: 2, messageText: "Payment schedule update", messageDate: "2024-01-16", sender: "System", allowedUserTypes: ['onshore']
-                },
-                {
-                    id: 3, loanId: 2, categoryId: 3, brandId: 3, queueId: 3, statusId: 3, messageText: "Document verification pending", messageDate: "2024-01-17", sender: "Jane Smith", allowedUserTypes: ['offshore']
-                },
-                {
-                    id: 4, loanId: 2, categoryId: 1, brandId: 3, queueId: 1, statusId: 1, messageText: "Loan application approved", messageDate: "2024-01-18", sender: "System", allowedUserTypes: ['onshore']
-                },
-                {
-                    id: 5, loanId: 3, categoryId: 2, brandId: 4, queueId: 2, statusId: 2, messageText: "Interest rate change notification", messageDate: "2024-01-19", sender: "Peter Parker", allowedUserTypes: ['onshore', 'offshore']
-                },
-                {
-                    id: 6, loanId: 3, categoryId: 3, brandId: 4, queueId: 3, statusId: 3, messageText: "Additional documents requested", messageDate: "2024-01-20", sender: "System", allowedUserTypes: ['offshore']
-                },
-                {
-                    id: 7, loanId: 4, categoryId: 1, brandId: 2, queueId: 1, statusId: 1, messageText: "Loan disbursement successful", messageDate: "2024-01-21", sender: "Alice Johnson", allowedUserTypes: ['onshore']
-                },
-                {
-                    id: 8, loanId: 4, categoryId: 2, brandId: 2, queueId: 2, statusId: 2, messageText: "First payment reminder", messageDate: "2024-01-22", sender: "System", allowedUserTypes: ['onshore', 'offshore']
-                },
-                {
-                    id: 9, loanId: 5, categoryId: 3, brandId: 5, queueId: 3, statusId: 3, messageText: "Property appraisal completed", messageDate: "2024-01-23", sender: "Bob Williams", allowedUserTypes: ['offshore']
-                },
-                {
-                    id: 10, loanId: 5, categoryId: 1, brandId: 5, queueId: 1, statusId: 1, messageText: "Loan terms and conditions updated", messageDate: "2024-01-24", sender: "System", allowedUserTypes: ['onshore']
-                },
-                {
-                    id: 11, loanId: 6, categoryId: 2, brandId: 3, queueId: 2, statusId: 2, messageText: "Early repayment option available", messageDate: "2024-01-25", sender: "Charlie Brown", allowedUserTypes: ['onshore', 'offshore']
-                },
-                {
-                    id: 12, loanId: 6, categoryId: 3, brandId: 3, queueId: 3, statusId: 3, messageText: "Credit score review required", messageDate: "2024-01-26", sender: "System", allowedUserTypes: ['offshore']
-                },
-                {
-                    id: 13, loanId: 7, categoryId: 1, brandId: 4, queueId: 1, statusId: 1, messageText: "Loan closed successfully", messageDate: "2024-01-27", sender: "David Lee", allowedUserTypes: ['onshore']
-                },
-                {
-                    id: 14, loanId: 7, categoryId: 2, brandId: 4, queueId: 2, statusId: 2, messageText: "Final payment confirmation", messageDate: "2024-01-28", sender: "System", allowedUserTypes: ['onshore', 'offshore']
-                },
-                {
-                    id: 15, loanId: 8, categoryId: 3, brandId: 2, queueId: 3, statusId: 3, messageText: "Escrow account balance update", messageDate: "2024-01-29", sender: "Eva Davis", allowedUserTypes: ['offshore']
-                },
-                {
-                    id: 16, loanId: 8, categoryId: 1, brandId: 2, queueId: 1, statusId: 1, messageText: "Tax document upload reminder", messageDate: "2024-01-30", sender: "System", allowedUserTypes: ['onshore']
-                },
-                {
-                    id: 17, loanId: 9, categoryId: 2, brandId: 5, queueId: 2, statusId: 2, messageText: "Refinance options available", messageDate: "2024-01-31", sender: "Frank Wilson", allowedUserTypes: ['onshore', 'offshore']
-                },
-                {
-                    id: 18, loanId: 9, categoryId: 3, brandId: 5, queueId: 3, statusId: 3, messageText: "Insurance policy expiration notice", messageDate: "2024-02-01", sender: "System", allowedUserTypes: ['offshore']
-                },
-                {
-                    id: 19, loanId: 10, categoryId: 1, brandId: 3, queueId: 1, statusId: 1, messageText: "Loan modification approved", messageDate: "2024-02-02", sender: "Grace Moore", allowedUserTypes: ['onshore']
-                },
-                {
-                    id: 20, loanId: 10, categoryId: 2, brandId: 3, queueId: 2, statusId: 2, messageText: "Late payment fee applied", messageDate: "2024-02-03", sender: "System", allowedUserTypes: ['onshore', 'offshore']
-                },
-                {
-                    id: 21, loanId: 11, categoryId: 3, brandId: 4, queueId: 3, statusId: 3, messageText: "Prepayment penalty details", messageDate: "2024-02-04", sender: "Henry Taylor", allowedUserTypes: ['offshore']
-                },
-                {
-                    id: 22, loanId: 11, categoryId: 1, brandId: 4, queueId: 1, statusId: 1, messageText: "Automated payment setup confirmation", messageDate: "2024-02-05", sender: "System", allowedUserTypes: ['onshore']
-                },
-                {
-                    id: 23, loanId: 12, categoryId: 2, brandId: 5, queueId: 2, statusId: 2, messageText: "Property tax payment due", messageDate: "2024-02-06", sender: "Jack Thomas", allowedUserTypes: ['onshore', 'offshore']
-                },
-                {
-                    id: 24, loanId: 12, categoryId: 3, brandId: 5, queueId: 3, statusId: 3, messageText: "Homeowner's insurance renewal reminder", messageDate: "2024-02-07", sender: "System", allowedUserTypes: ['offshore']
-                },
-                {
-                    id: 25, loanId: 13, categoryId: 1, brandId: 3, queueId: 1, statusId: 1, messageText: "Loan application submitted", messageDate: "2024-02-08", sender: "Kelly White", allowedUserTypes: ['onshore']
-                }
+
             ];
-         
+
+            try {
+                const messagesData = await waitForMessages();
+                console.log("Loans Set:", messagesData);
+                $scope.messages = messagesData || [];
+
+                // If no loans data was loaded, use fallback sample data
+                if (!$scope.messages || $scope.messages.length === 0) {
+                    console.log("Using fallback loan data");
+                }
+
+
+            } catch (error) {
+                console.error("Error loading loans data:", error);
+
+
+            }
+
+            $scope.brands = [];
+
+            try {
+                const brandsData = await waitForBrands();
+                console.log("Brands data:", brandsData);
+
+                // Process the new brand structure
+                $scope.brands = brandsData.map(brand => ({
+                    id: brand.id,
+                    name: brand.name,
+                    value: brand.value,
+                    type: brand.type,
+                    restricted: brand.restricted
+                }));
+
+                // If no brands data was loaded, use fallback sample data
+                if (!$scope.brands || $scope.brands.length === 0) {
+                    console.log("Using fallback brands data");
+                    $scope.brands = [
+                        {
+                            id: 5,
+                            name: "Bank of America",
+                            value: "bankofamerica",
+                            type: "offshore",
+                            restricted: false
+                        },
+                        {
+                            id: 6,
+                            name: "Citibank",
+                            value: "citibank",
+                            type: "offshore",
+                            restricted: false
+                        }
+                    ];
+                }
+            } catch (error) {
+                console.error("Error loading brands data:", error);
+                // Set fallback data in case of error
+                $scope.brands = [
+                    {
+                        id: 5,
+                        name: "Bank of America",
+                        value: "bankofamerica",
+                        type: "offshore",
+                        restricted: false
+                    },
+                    {
+                        id: 6,
+                        name: "Citibank",
+                        value: "citibank",
+                        type: "offshore",
+                        restricted: false
+                    }
+                ];
+            }
+
 
             // Dummy data
             $scope.queues = [
@@ -562,14 +598,6 @@
                 { id: 3, Value: "Customer Service" },
                 { id: 4, Value: "Technical Support" }
             ];
-
-            $scope.brands = [
-    { id: 1, name: "All Brands", allowedUserTypes: ['onshore', 'offshore'] },
-    { id: 2, name: "Brand A", allowedUserTypes: ['onshore'] },
-    { id: 3, name: "Brand B", allowedUserTypes: ['onshore'] },
-    { id: 4, name: "Brand C", allowedUserTypes: ['offshore'] },
-    { id: 5, name: "Brand D", allowedUserTypes: ['offshore'] }
-];
 
             $scope.categories = [
                 { id: 1, CategoryName: "General Inquiry" },
@@ -595,41 +623,39 @@
                 return queue ? queue.Value : '';
             };
 
-            $scope.returnToMessages = function() {
-    // Reset filters
-    $scope.selectedQueue = [];
-    $scope.selectedCategory = null;
-    $scope.selectedStatus = null;
-    $scope.startDate = null;
-    $scope.endDate = null;
-    $scope.selectedLoan = null;
-    
-    // For offshore users, show only unrestricted messages
-    if ($scope.userType === 'offshore') {
-        $scope.searchResults = $scope.messages.filter(message => {
-            // Check if the loan is accessible to offshore users
-            const loan = $scope.loans.find(l => l.id === message.loanId);
-            return loan && loan.allowedUserTypes.includes('offshore');
-        });
-    } else {
-        // Onshore users can see all messages
-        $scope.searchResults = $scope.messages;
-    }
-    
-    // Sort by date
-    $scope.searchResults.sort((a, b) => new Date(b.messageDate) - new Date(a.messageDate));
-};
+            $scope.returnToMessages = function () {
+                // Reset filters
+                $scope.selectedQueue = [];
+                $scope.selectedCategory = null;
+                $scope.selectedStatus = null;
+                $scope.startDate = null;
+                $scope.endDate = null;
+                $scope.selectedLoan = null;
+                $scope.restrictionMessage = ''; // Clear any restriction messages
+
+                // Note: Since we're only getting offshore data from the API,
+                // we don't need to filter by user type anymore
+                $scope.searchResults = $scope.messages;
+
+                // Sort by date (maintaining default sort order)
+                $scope.searchResults.sort((a, b) => new Date(b.messageDate) - new Date(a.messageDate));
+            };
 
             $scope.getCategoryName = function (categoryId) {
                 const category = $scope.categories.find(c => c.id === parseInt(categoryId));
                 return category ? category.CategoryName : '';
             };
 
-            $scope.getAccessibleBrands = function() {
-    return $scope.brands.filter(brand => 
-        brand.id === 1 || brand.allowedUserTypes.includes($scope.userType)
-    );
-};
+            $scope.getAccessibleBrands = function () {
+                // For onshore users, return all brands
+                if ($scope.userType === 'onshore') {
+                    return $scope.brands;
+                }
+                // For offshore users, only return brands with type 'offshore' and not restricted
+                return $scope.brands.filter(brand =>
+                    brand.type === 'offshore' && !brand.restricted
+                );
+            };
 
             $scope.getStatusName = function (statusId) {
                 const status = $scope.statuses.find(s => s.id === parseInt(statusId));
@@ -639,10 +665,17 @@
             $scope.selectedQueue = [];
             $scope.selectedCategory = null;
             $scope.selectedChannel = $scope.channels[0];
-            $scope.selectedBrand = $scope.brands[0];
+            $scope.selectedBrand = null; // Initialize as null and set after brands are loaded
             $scope.selectedStatus = null;
             $scope.isOffshore = false;
             $scope.userType = 'onshore';
+
+            // Set default brand after brands are loaded
+            $timeout(function() {
+                if ($scope.brands && $scope.brands.length > 0) {
+                    $scope.selectedBrand = $scope.brands[0];
+                }
+            }, 500);
 
             $scope.updateUserType = function () {
                 $scope.userType = $scope.isOffshore ? 'offshore' : 'onshore';
@@ -655,7 +688,7 @@
                 }
             };
 
-            
+
             $scope.getAccessibleLoans = function () {
                 if ($scope.userType === 'onshore') {
                     return $scope.loans; // Onshore users can access all loans
@@ -669,7 +702,7 @@
                 if (!loan) return false;
 
                 // Only allow removal if the loan is non-restricted (accessible to both user types)
-                return loan.allowedUserTypes.includes('onshore') && loan.allowedUserTypes.includes('offshore');
+                return loan.types.includes('onshore') && loan.types.includes('offshore');
             };
             $scope.selectedLoan = null;
 
@@ -727,10 +760,10 @@
             };
 
             $scope.updateUserType = function () {
-        $scope.userType = $scope.isOffshore ? 'offshore' : 'onshore';
-        $scope.selectedLoan = null;
-        $scope.searchLoans(); // This will handle both onshore and offshore cases
-    };
+                $scope.userType = $scope.isOffshore ? 'offshore' : 'onshore';
+                $scope.selectedLoan = null;
+                $scope.searchLoans(); // This will handle both onshore and offshore cases
+            };
 
             // Add refresh function
             $scope.refreshResults = function () {
@@ -739,78 +772,88 @@
                 $scope.selectedStatus = null;
                 $scope.startDate = null;
                 $scope.endDate = null;
+                $scope.restrictionMessage = ''; // Clear any restriction messages
 
+                // Get all messages (no need to filter by user type as we only get offshore data)
                 let results = $scope.messages;
-                if ($scope.userType === 'offshore') {
-                    results = results.filter(message => message.allowedUserTypes.includes('offshore'));
+
+                // Apply brand filter if a brand is selected
+                if ($scope.selectedBrand) {
+                    results = results.filter(message => message.brandId === $scope.selectedBrand.id);
                 }
 
+                // Maintain default sort order
                 results.sort((a, b) => new Date(b.messageDate) - new Date(a.messageDate));
                 $scope.searchResults = results;
             };
-            // Update searchLoans function to use the same restriction logic
+            // Update searchLoans function to handle all user stories
             $scope.searchLoans = function () {
-    // Security check for offshore users
-    if ($scope.userType === 'offshore' && !$scope.isOffshore) {
-        $scope.restrictionMessage = "Access restricted. Please verify your user type.";
-        $scope.searchResults = [];
-        return;
-    }
+                // Clear previous restriction message
+                $scope.restrictionMessage = '';
 
-    let results = $scope.messages.filter(message => {
-        const loan = $scope.loans.find(l => l.id === message.loanId);
-        if (!loan) return false;
+                // Check if loans data is available
+                if (!$scope.loans || $scope.loans.length === 0) {
+                    console.log("Loans data not yet loaded, deferring search");
+                    $scope.searchResults = [];
+                    return;
+                }
 
-        // Check if searching by loan number for offshore users
-        if ($scope.userType === 'offshore' && $scope.loanNumber) {
-            if (!loan.allowedUserTypes.includes('offshore')) {
-                $scope.restrictionMessage = "Loan is not provisioned to the user";
-                return false;
-            }
-        }
+                // First, apply all filters to get the initial result set
+                let results = $scope.messages.filter(message => {
+                    const loan = $scope.loans.find(l => l.id === message.loanId);
+                    if (!loan) return false;
 
-        // Enhanced security check for offshore users
-        if ($scope.userType === 'offshore') {
-            if (!loan.allowedUserTypes.includes('offshore') || 
-                !message.allowedUserTypes.includes('offshore')) {
-                return false;
-            }
-        }
+                    // Apply all search filters
+                    const loanMatch = !$scope.loanNumber ||
+                        (loan.loanNumber && loan.loanNumber.toString().toLowerCase().includes(($scope.loanNumber || '').toLowerCase()));
 
-        // Rest of the filter logic
-        const brand = $scope.brands.find(b => b.id === message.brandId);
-        const brandAccessible = brand && (
-            brand.id === 1 || 
-            brand.allowedUserTypes.includes($scope.userType)
-        );
+                    const queueMatch = !$scope.selectedQueue || !$scope.selectedQueue.length ||
+                        (message.queueId && $scope.selectedQueue.includes(message.queueId.toString()));
 
-        const loanMatch = !$scope.loanNumber || loan.loanNumber.toLowerCase().includes($scope.loanNumber.toLowerCase());
-        const queueMatch = !$scope.selectedQueue.length || $scope.selectedQueue.includes(message.queueId.toString());
-        const categoryMatch = !$scope.selectedCategory || message.categoryId.toString() === $scope.selectedCategory;
-        const firstNameMatch = !$scope.firstName || loan.borrowerName.toLowerCase().includes($scope.firstName.toLowerCase());
-        const lastNameMatch = !$scope.lastName || loan.borrowerName.toLowerCase().includes($scope.lastName.toLowerCase());
-        const statusMatch = !$scope.selectedStatus || message.statusId.toString() === $scope.selectedStatus;
-        const deletedMatch = $scope.showDeleted === undefined || message.isDeleted === ($scope.showDeleted === 'true');
-        const brandMatch = !$scope.selectedBrand ||
-            $scope.selectedBrand.id === 1 ||
-            message.brandId === $scope.selectedBrand.id;
+                    const categoryMatch = !$scope.selectedCategory ||
+                        (message.categoryId && message.categoryId.toString() === $scope.selectedCategory);
 
-        const dateMatch = (!$scope.startDate || new Date(message.messageDate) >= new Date($scope.startDate)) &&
-                         (!$scope.endDate || new Date(message.messageDate) <= new Date($scope.endDate));
+                    const firstNameMatch = !$scope.firstName ||
+                        (loan.borrowerName && loan.borrowerName.toLowerCase().includes(($scope.firstName || '').toLowerCase()));
 
-        return loanMatch && queueMatch && categoryMatch && firstNameMatch && lastNameMatch && 
-               statusMatch && deletedMatch && brandMatch && brandAccessible && dateMatch;
-    });
+                    const lastNameMatch = !$scope.lastName ||
+                        (loan.borrowerName && loan.borrowerName.toLowerCase().includes(($scope.lastName || '').toLowerCase()));
 
-    // Clear restriction message if more than one result or not searching by loan number
-    if (!$scope.loanNumber || results.length !== 1) {
-        $scope.restrictionMessage = '';
-    }
+                    const statusMatch = !$scope.selectedStatus ||
+                        (message.statusId && message.statusId.toString() === $scope.selectedStatus);
 
-    results.sort((a, b) => new Date(b.messageDate) - new Date(a.messageDate));
-    $scope.searchResults = results;
-};
-            $scope.searchLoans()
+                    const deletedMatch = $scope.showDeleted === undefined ||
+                        message.isDeleted === ($scope.showDeleted === 'true');
+
+                    // Apply brand filter if a brand is selected
+                    const brandMatch = !$scope.selectedBrand ||
+                        (message.brandId && message.brandId === $scope.selectedBrand.id);
+
+                    const dateMatch = (!$scope.startDate || new Date(message.messageDate) >= new Date($scope.startDate)) &&
+                        (!$scope.endDate || new Date(message.messageDate) <= new Date($scope.endDate));
+
+                    return loanMatch && queueMatch && categoryMatch && firstNameMatch && lastNameMatch &&
+                        statusMatch && deletedMatch && brandMatch && dateMatch;
+                });
+
+                // User Story 1: If search by loan number results in exactly one restricted record
+                // Show "Loan is not provisioned to the user" message
+                if ($scope.loanNumber && results.length === 1) {
+                    const loan = $scope.loans.find(l => l.id === results[0].loanId);
+                    const brand = $scope.brands.find(b => b.id === results[0].brandId);
+
+                    // Check if the loan or brand is restricted
+                    if ((loan && loan.restricted) || (brand && brand.restricted)) {
+                        $scope.restrictionMessage = "Loan is not provisioned to the user";
+                        $scope.searchResults = [];
+                        return;
+                    }
+                }
+
+                // Sort results by date (maintaining default sort order)
+                results.sort((a, b) => new Date(b.messageDate) - new Date(a.messageDate));
+                $scope.searchResults = results;
+            };
         });
     </script>
 </body>

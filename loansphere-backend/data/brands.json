@@ -1,11 +1,11 @@
 [
-    { "name": "All Brands", "value": "all", "type": "onshore", "restricted": true },
-    { "name": "Cenlar FSB", "value": "cenlar", "type": "onshore", "restricted": true },
-    { "name": "Chase Bank", "value": "chase", "type": "onshore", "restricted": true },
-    { "name": "Wells Fargo", "value": "wellsfargo", "type": "onshore", "restricted": true },
-    { "name": "Bank of America", "value": "bankofamerica", "type": "offshore", "restricted": false },
-    { "name": "Citibank", "value": "citibank", "type": "offshore", "restricted": false },
-    { "name": "HSBC", "value": "hsbc", "type": "offshore", "restricted": false },
-    { "name": "Deutsche Bank", "value": "deutschebank", "type": "offshore", "restricted": false },
-    { "name": "Goldman Sachs", "value": "goldmansachs", "type": "onshore", "restricted": true }
+    { "id": 1, "name": "All Brands", "value": "all", "type": "onshore", "restricted": true },
+    { "id": 2, "name": "Cenlar FSB", "value": "cenlar", "type": "onshore", "restricted": true },
+    { "id": 3, "name": "Chase Bank", "value": "chase", "type": "onshore", "restricted": true },
+    { "id": 4, "name": "Wells Fargo", "value": "wellsfargo", "type": "onshore", "restricted": true },
+    { "id": 5, "name": "Bank of America", "value": "bankofamerica", "type": "offshore", "restricted": false },
+    { "id": 6, "name": "Citibank", "value": "citibank", "type": "offshore", "restricted": false },
+    { "id": 7, "name": "HSBC", "value": "hsbc", "type": "offshore", "restricted": false },
+    { "id": 8, "name": "Deutsche Bank", "value": "deutschebank", "type": "offshore", "restricted": false },
+    { "id": 9, "name": "Goldman Sachs", "value": "goldmansachs", "type": "onshore", "restricted": true }
 ]

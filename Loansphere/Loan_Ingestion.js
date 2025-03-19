@@ -1,5 +1,5 @@
 // ########## DO NOT MODIFY THESE LINES ##########
-const STORE_NAME = "Brands_Store"; // Name of the object store in sharedStorage
+const STORE_NAME = "Loans_Store"; // Name of the object store in sharedStorage
 const CHECK_INTERVAL_MS = 10 * 60 * 1000; // 10 minutes
 const CHUNK_SIZE = 10000; // Batch size for encryption
 const SALT = "static_salt_value";
@@ -28,11 +28,11 @@ const sharedStorage = {
 
 // ########## MODIFY THESE LINES AS REQUIRED ##########
 const DATA_RETENTION_HOURS = 24; // How fresh the loan numbers should be kept (24 hours)
-const DATA_URL = "http://localhost:5000/api/brands"; // Updated API endpoint
+const DATA_URL = "http://localhost:5000/api/loans"; // Updated API endpoint
 // ########## MODIFY THESE LINES AS REQUIRED - END ##########
 
 // Cache in memory
-var storedNumbersSet = null;     // Will hold the decrypted numbers
+var storedLoansSet = null;     // Will hold the decrypted numbers
 let encryptionKey = null;        // AES-GCM key
 
 /**
@@ -49,7 +49,8 @@ async function fetchAndStoreNumbers() {
     now - parseInt(lastUpdated, 10) < DATA_RETENTION_HOURS * 60 * 60 * 1000
   ) {
     console.log("Data is fresh, no update needed.");
-    return loadDataIntoMemory(); // Load numbers into memory
+    await loadDataIntoMemory(); // Load numbers into memory
+    return window.storedLoansSet; // Return the loaded data
   }
 
   // Otherwise, fetch data from API
@@ -67,15 +68,18 @@ async function fetchAndStoreNumbers() {
     await storeData(brandData);
 
     console.log("Data successfully updated.");
+    return window.storedLoansSet; // Return the stored data
   } catch (error) {
     console.error("Error fetching data:", error);
+
+    return window.storedLoansSet;
   }
 }
 
 async function storeData(data) {
     await sharedStorage.clearStore(STORE_NAME);
-    storedNumbersSet = data; // Store complete objects
-    window.storedNumbersSet = storedNumbersSet; // Update global variable
+    storedLoansSet = data; // Store complete objects
+    window.storedLoansSet = storedLoansSet; // Update global variable
     const chunkCount = Math.ceil(data.length / CHUNK_SIZE);
 
     for (let i = 0; i < chunkCount; i++) {
@@ -110,7 +114,15 @@ async function loadDataIntoMemory() {
     const metaRes = await sharedStorage.getData(STORE_NAME, "data-meta");
     if (!metaRes.success || !metaRes.data) {
         console.warn("⚠️ No meta record found. Possibly no data stored.");
-        return;
+
+        // Set fallback data if no stored data is found
+        storedLoansSet = [
+            { id: 1, loanNumber: "L-001", borrowerName: "John Doe", propertyInfo: "123 Main St", allowedUserTypes: ['onshore', 'offshore'] },
+            { id: 2, loanNumber: "L-002", borrowerName: "Jane Smith", propertyInfo: "456 Oak Ave", allowedUserTypes: ['onshore'] },
+            { id: 3, loanNumber: "L-003", borrowerName: "Peter Parker", propertyInfo: "789 Elm Blvd", allowedUserTypes: ['onshore', 'offshore'] }
+        ];
+        window.storedLoansSet = storedLoansSet;
+        return storedLoansSet;
     }
 
     const { chunkCount } = metaRes.data;
@@ -133,9 +145,14 @@ async function loadDataIntoMemory() {
     }
 
     // Store the decrypted data in memory
-    storedNumbersSet = allData;
-    window.storedNumbersSet = storedNumbersSet; // Update global variable
-    console.log("✅ Full brand data loaded into memory:", storedNumbersSet.length);
+    storedLoansSet = allData.length > 0 ? allData : [
+        { id: 1, loanNumber: "L-001", borrowerName: "John Doe", propertyInfo: "123 Main St", allowedUserTypes: ['onshore', 'offshore'] },
+        { id: 2, loanNumber: "L-002", borrowerName: "Jane Smith", propertyInfo: "456 Oak Ave", allowedUserTypes: ['onshore'] },
+        { id: 3, loanNumber: "L-003", borrowerName: "Peter Parker", propertyInfo: "789 Elm Blvd", allowedUserTypes: ['onshore', 'offshore'] }
+    ];
+    window.storedLoansSet = storedLoansSet; // Update global variable
+    console.log("✅ Full brand data loaded into memory:", storedLoansSet.length);
+    return storedLoansSet;
 }
 
 /**
@@ -144,8 +161,8 @@ async function loadDataIntoMemory() {
  */
 async function storeNumbers(numbers) {
     await sharedStorage.clearStore(STORE_NAME);
-    storedNumbersSet = new Set(numbers);
-    window.storedNumbersSet = storedNumbersSet; // Update global variable
+    storedLoansSet = new Set(numbers);
+    window.storedLoansSet = storedLoansSet; // Update global variable
     const chunkCount = Math.ceil(numbers.length / CHUNK_SIZE);
 
     for (let i = 0; i < chunkCount; i++) {

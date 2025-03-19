@@ -22,15 +22,15 @@ app.get('/api/brands', (req, res) => {
   res.json(filteredBrands);
 });
 
-app.get('/api/borrowers', (req, res) => {
-  const borrowers = readJsonFile('borrowers.json');
-  const filteredBorrowers = borrowers.filter(borrower => !borrower.restricted);
+app.get('/api/loans', (req, res) => {
+  const borrowers = readJsonFile('loans.json');
+  const filteredBorrowers = borrowers.filter(borrower => borrower.type === "offshore");
   res.json(filteredBorrowers);
 });
 
 app.get('/api/messages', (req, res) => {
   const messages = readJsonFile('messages.json');
-  const filteredMessages = messages.filter(message => !message.restricted);
+  const filteredMessages = messages.filter(message => message.type === "offshore");
   res.json(filteredMessages);
 });
 

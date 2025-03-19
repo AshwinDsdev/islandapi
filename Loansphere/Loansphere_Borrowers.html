@@ -561,67 +561,24 @@
             margin-left: -8%;
         }
 
-        .toggle-switch-container {
-        display: flex;
-        align-items: center;
-        margin-top: 10px;
-    }
-    
-    .switch {
-        position: relative;
-        display: inline-block;
-        width: 60px;
-        height: 34px;
-    }
-    
-    .switch input {
-        opacity: 0;
-        width: 0;
-        height: 0;
-    }
-    
-    .slider {
-        position: absolute;
-        cursor: pointer;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: #2196F3;
-        transition: .4s;
-    }
-    
-    .slider:before {
-        position: absolute;
-        content: "";
-        height: 26px;
-        width: 26px;
-        left: 4px;
-        bottom: 4px;
-        background-color: white;
-        transition: .4s;
-    }
-    
-    input:checked + .slider {
-        background-color: #4CAF50;
-    }
-    
-    input:checked + .slider:before {
-        transform: translateX(26px);
-    }
-    
-    .slider.round {
-        border-radius: 34px;
-    }
-    
-    .slider.round:before {
-        border-radius: 50%;
-    }
-    
-    .toggle-label {
-        margin-left: 10px;
-        color: white;
-    }
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid transparent;
+            border-radius: 4px;
+        }
+
+        .alert-warning {
+            color: #8a6d3b;
+            background-color: #fcf8e3;
+            border-color: #faebcc;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+
     </style>
 
     <!-- Add AG-Grid Script -->
@@ -729,13 +686,6 @@
                                                                         <option value="" disabled selected>Select Brand
                                                                         </option>
                                                                     </select>
-                                                                </div>
-                                                                <div class="toggle-switch-container" style="margin-left: 20px;">
-                                                                    <label class="switch">
-                                                                        <input type="checkbox" id="typeToggle">
-                                                                        <span class="slider round"></span>
-                                                                    </label>
-                                                                    <span class="toggle-label" id="toggleLabel">Onshore</span>
                                                                 </div>
                                                             </div><!----><!---->
                                                         </div><!---->
@@ -977,8 +927,10 @@
                                                             placeholder="Loan Number">
                                                     </div>
                                                     <div class="col-12 mt-3">
-                                                        <button type="button" id="searchButton" class="btn btn-primary">Search</button>
-                                                        <a class="text-link ml-3" style="cursor: pointer; margin-left: 15px;">Clear Search</a>
+                                                        <button type="button" id="searchButton"
+                                                            class="btn btn-primary">Search</button>
+                                                        <a class="text-link ml-3"
+                                                            style="cursor: pointer; margin-left: 15px;">Clear Search</a>
                                                     </div>
                                                 </div>
                                             </form>
@@ -1057,17 +1009,53 @@
         <div id="cdk-describedby-message-ng-1-7" role="tooltip">User Profile Menu</div>
     </div>
     <script src="Brand_Ingestion.js" type="module"></script>
+    <script src="Loan_Ingestion.js" type="module"></script>
 
-    <script>
+    <script type="module">
 
-var borrowerData = [];
+        async function waitForData() {
+            while (!window.storedNumbersSet) {
+                console.log(window?.storedNumbersSet, "Windoe")
+                await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 100ms
+            }
+            return window.storedNumbersSet;
+        }
 
-function updateTable(data) {
-    const tableBody = document.getElementById('borrowerTableBody');
-                tableBody.innerHTML = '';
-                data.forEach(row => {
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
+        async function waitForLoans() {
+            while (!window.storedLoansSet) {
+                await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 100ms
+            }
+            return window.storedLoansSet;
+        }
+
+        var borrowerData = [];
+
+        function updateTable(data) {
+            const tableBody = document.getElementById('borrowerTableBody');
+            tableBody.innerHTML = '';
+
+            // Check if we have exactly one result and it's a restricted loan
+            if (data.length ===  0) {
+                // Display "Loan not provisioned to you" message
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td colspan="10" class="text-center">
+                        <div class="alert alert-warning">
+                            Loan not provisioned to you
+                        </div>
+                    </td>
+                `;
+                tableBody.appendChild(tr);
+                return;
+            }
+
+            // Otherwise, display the data normally
+            data.forEach(row => {
+                // Skip restricted loans
+                if (row.isRestricted) return;
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
             <td>${row.loginAccountUserName}</td>
             <td>${row.firstName}</td>
             <td>${row.lastName}</td>
@@ -1079,9 +1067,9 @@ function updateTable(data) {
             <td>${row.loanNumber}</td>
             <td>${row.status}</td>
         `;
-                    tableBody.appendChild(tr);
-                });
-            }
+                tableBody.appendChild(tr);
+            });
+        }
         document.addEventListener('DOMContentLoaded', function () {
             // Show/hide menu functionality
             const hamburgerMenu = document.querySelector('.hamburger-menu');
@@ -1126,25 +1114,21 @@ function updateTable(data) {
             }
 
         });
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', async function () {
             const tableBody = document.getElementById('borrowerTableBody');
+            let data = []
+            await waitForLoans().then((res) => {
+                data = res
+            });
 
-            // Generate sample data with additional fields
-            const data = Array.from({ length: 50 }, (_, i) => ({
-                loginAccountUserName: `user${i + 1}`,
-                firstName: `John${i + 1}`,
-                lastName: `Doe${i + 1}`,
-                borrowerName: `John${i + 1} Doe${i + 1}`,
-                emailAddress: `borrower${i + 1}@example.com`,
-                phoneNumber: `(${Math.floor(Math.random() * 900) + 100}) ${Math.floor(Math.random() * 900) + 100}-${Math.floor(Math.random() * 9000) + 1000}`,
-                propertyAddress: `${Math.floor(Math.random() * 9999) + 1} ${['Oak', 'Maple', 'Pine', 'Cedar', 'Elm'][Math.floor(Math.random() * 5)]} ${['Street', 'Avenue', 'Road', 'Boulevard', 'Lane'][Math.floor(Math.random() * 5)]}, ${['New York', 'Los Angeles', 'Chicago', 'Houston', 'Phoenix'][Math.floor(Math.random() * 5)]}, ${['NY', 'CA', 'IL', 'TX', 'AZ'][Math.floor(Math.random() * 5)]} ${Math.floor(Math.random() * 89999) + 10000}`,
-                ssn: `${Math.floor(Math.random() * 900) + 100}-${Math.floor(Math.random() * 90) + 10}-${Math.floor(Math.random() * 9000) + 1000}`,
-                loanNumber: `LOAN${String(Math.floor(Math.random() * 900000) + 100000)}`,
-                status: ['Active', 'Pending', 'Inactive'][Math.floor(Math.random() * 3)]
-            }));
+            // Initialize window.selectedBrandValue
+            window.selectedBrandValue = null;
 
-            // Update table rows with new fields
-            data.forEach(row => {
+            // Filter out restricted loans by default
+            const nonRestrictedData = data.filter(row => !row.isRestricted);
+
+            // Update table with non-restricted loans
+            nonRestrictedData.forEach(row => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
             <td>${row.loginAccountUserName}</td>
@@ -1160,110 +1144,123 @@ function updateTable(data) {
                 tableBody.appendChild(tr);
             });
         });
-        const brandData = [
-            { name: 'All Brands', value: 'all', type: 'onshore' },
-            { name: 'Cenlar FSB', value: 'cenlar', type: 'onshore' },
-            { name: 'Chase Bank', value: 'chase', type: 'onshore' },
-            { name: 'Wells Fargo', value: 'wellsfargo', type: 'onshore' },
-            { name: 'Bank of America', value: 'bankofamerica', type: 'offshore' },
-            { name: 'Citibank', value: 'citibank', type: 'offshore' },
-            { name: 'HSBC', value: 'hsbc', type: 'offshore' },
-            { name: 'Deutsche Bank', value: 'deutschebank', type: 'offshore' },
-            { name: 'Goldman Sachs', value: 'goldmansachs', type: 'onshore' }
-        ];
 
-        document.addEventListener('DOMContentLoaded', function () {
+        let brandData = [];
+
+        document.addEventListener('DOMContentLoaded', async function () {
+            let brandData1 = []
+            await waitForData().then((res) => {
+                brandData = res
+                brandData1 = res
+            });
             const brandSelect = document.getElementById('brandSelect');
+            console.log(brandData1, "brandData 1")
 
-            // Populate brand options
-            brandData.forEach(brand => {
+            // Filter brands to only show those with non-restricted loans
+            const availableBrands = brandData1.filter(brand => {
+                // Check if there's at least one non-restricted loan for this brand
+                return borrowerData.some(loan =>
+                    loan.brand === brand.value && !loan.isRestricted
+                );
+            });
+
+            // Populate brand options with only available brands
+            availableBrands.forEach(brand => {
                 const option = document.createElement('option');
                 option.value = brand.value;
                 option.textContent = brand.name;
-                option.dataset.type = brand.type;
                 brandSelect.appendChild(option);
             });
 
             // Handle brand selection
             brandSelect.addEventListener('change', function (e) {
-    const selectedOption = this.options[this.selectedIndex];
-    const selectedBrand = brandData.find(b => b.value === this.value);
-    if (selectedBrand) {
-        console.log('Selected Brand:', selectedBrand.name, 'Type:', selectedBrand.type);
-        // Update display text
-        document.querySelector('.mat-mdc-select-min-line').textContent = selectedBrand.name;
-        
-        // Filter data based on selected brand
-        const filteredData = selectedBrand.value === 'all' 
-            ? borrowerData 
-            : borrowerData.filter(row => row.brand === selectedBrand.name);
-        
-        updateTable(filteredData);
-    }
-});
+                const selectedOption = this.options[this.selectedIndex];
+                const selectedBrand = brandData1.find(b => b.value === this.value);
+                if (selectedBrand) {
+                    console.log('Selected Brand:', selectedBrand.name);
+                    // Update display text
+                    document.querySelector('.mat-mdc-select-min-line').textContent = selectedBrand.name;
+
+                    // Store the selected brand for future searches
+                    window.selectedBrandValue = selectedBrand.value;
+
+                    // Filter data based on selected brand
+                    let filteredData = borrowerData;
+
+                    // Apply brand filter if not "all brands"
+                    if (selectedBrand.value !== 'all') {
+                        filteredData = filteredData.filter(row => row.brand === selectedBrand.value);
+                    }
+
+                    // Always filter out restricted loans
+                    filteredData = filteredData.filter(row => !row.isRestricted);
+
+                    updateTable(filteredData);
+                }
+            });
         });
 
-        document.addEventListener('DOMContentLoaded', function () {
-        
+        document.addEventListener('DOMContentLoaded', async function () {
+
             const searchButton = document.getElementById('searchButton');
             const tableBody = document.getElementById('borrowerTableBody');
-          
 
-            // Generate initial data
-            borrowerData = Array.from({ length: 50 }, (_, i) => {
-                const randomBrand = brandData[Math.floor(Math.random() * brandData.length)];
-               return {
-                loginAccountUserName: `user${i + 1}`,
-                firstName: `John${i + 1}`,
-                lastName: `Doe${i + 1}`,
-                brand: randomBrand.name,
-                type: randomBrand.type,
-                emailAddress: `borrower${i + 1}@example.com`,
-                phoneNumber: `(${Math.floor(Math.random() * 900) + 100}) ${Math.floor(Math.random() * 900) + 100}-${Math.floor(Math.random() * 9000) + 1000}`,
-                propertyAddress: `${Math.floor(Math.random() * 9999) + 1} ${['Oak', 'Maple', 'Pine', 'Cedar', 'Elm'][Math.floor(Math.random() * 5)]} St`,
-                ssn: `${Math.floor(Math.random() * 900) + 100}-${Math.floor(Math.random() * 90) + 10}-${Math.floor(Math.random() * 9000) + 1000}`,
-                loanNumber: `LOAN${String(Math.floor(Math.random() * 900000) + 100000)}`,
-                status: ['Active', 'Pending', 'Inactive'][Math.floor(Math.random() * 3)]
-            }});
+            await waitForLoans().then((res) => {
+                borrowerData = res
+            });
 
-            // Initial table population
-            updateTable(borrowerData);
+            // Filter out restricted loans for initial display
+            const nonRestrictedData = borrowerData.filter(row => !row.isRestricted);
+
+            // Initial table population with non-restricted loans only
+            updateTable(nonRestrictedData);
 
             // Search functionality
             searchButton.addEventListener('click', function () {
-    const searchCriteria = {
-        username: document.getElementById('mat-input-0').value.trim(),
-        firstName: document.getElementById('firstName').value.trim(),
-        lastName: document.getElementById('lastName').value.trim(),
-        email: document.getElementById('email').value.trim(),
-        phone: document.getElementById('phone').value.trim(),
-        address: document.getElementById('address').value.trim(),
-        ssn: document.getElementById('ssn').value.trim(),
-        loanNumber: document.getElementById('loanNumber').value.trim()
-    };
+                const searchCriteria = {
+                    username: document.getElementById('mat-input-0').value.trim(),
+                    firstName: document.getElementById('firstName').value.trim(),
+                    lastName: document.getElementById('lastName').value.trim(),
+                    email: document.getElementById('email').value.trim(),
+                    phone: document.getElementById('phone').value.trim(),
+                    address: document.getElementById('address').value.trim(),
+                    ssn: document.getElementById('ssn').value.trim(),
+                    loanNumber: document.getElementById('loanNumber').value.trim()
+                };
 
-    const isOffshore = document.getElementById('typeToggle').checked;
-    
-    const filteredData = borrowerData.filter(borrower => {
-        // First check if the type matches the toggle state
-        const typeMatches = isOffshore ? borrower.type === 'offshore' : true;
-        
-        // Then check other search criteria
-        return typeMatches && 
-            (!searchCriteria.username || borrower.loginAccountUserName === searchCriteria.username) &&
-            (!searchCriteria.firstName || borrower.firstName === searchCriteria.firstName) &&
-            (!searchCriteria.lastName || borrower.lastName === searchCriteria.lastName) &&
-            (!searchCriteria.email || borrower.emailAddress === searchCriteria.email) &&
-            (!searchCriteria.phone || borrower.phoneNumber === searchCriteria.phone) &&
-            (!searchCriteria.address || borrower.propertyAddress === searchCriteria.address) &&
-            (!searchCriteria.ssn || borrower.ssn === searchCriteria.ssn) &&
-            (!searchCriteria.loanNumber || borrower.loanNumber === searchCriteria.loanNumber);
-    });
+                // First filter by search criteria
+                let filteredData = borrowerData.filter(borrower => {
+                    return (!searchCriteria.username || borrower.loginAccountUserName === searchCriteria.username) &&
+                        (!searchCriteria.firstName || borrower.firstName === searchCriteria.firstName) &&
+                        (!searchCriteria.lastName || borrower.lastName === searchCriteria.lastName) &&
+                        (!searchCriteria.email || borrower.emailAddress === searchCriteria.email) &&
+                        (!searchCriteria.phone || borrower.phoneNumber === searchCriteria.phone) &&
+                        (!searchCriteria.address || borrower.propertyAddress === searchCriteria.address) &&
+                        (!searchCriteria.ssn || borrower.ssn === searchCriteria.ssn) &&
+                        (!searchCriteria.loanNumber || borrower.loanNumber === searchCriteria.loanNumber);
+                });
 
-    updateTable(filteredData);
-});
+                // Special case: If searching specifically by loan number and exactly one restricted loan is found
+                if (searchCriteria.loanNumber &&
+                    filteredData.length === 1 &&
+                    filteredData[0].isRestricted) {
+                    // This will trigger the "Loan not provisioned to you" message in updateTable
+                    updateTable(filteredData);
+                    return;
+                }
 
-    
+                // Apply brand filter if a brand is selected
+                if (window.selectedBrandValue && window.selectedBrandValue !== 'all') {
+                    filteredData = filteredData.filter(row => row.brand === window.selectedBrandValue);
+                }
+
+                // Filter out restricted loans (except for the special case handled above)
+                filteredData = filteredData.filter(row => !row.isRestricted);
+
+                updateTable(filteredData);
+            });
+
+
 
             // Clear search functionality
             document.querySelector('.text-link').addEventListener('click', function () {
@@ -1272,70 +1269,41 @@ function updateTable(data) {
             });
         });
 
-        document.addEventListener('DOMContentLoaded', function () {
-    const typeToggle = document.getElementById('typeToggle');
-    const toggleLabel = document.getElementById('toggleLabel');
-    const brandSelect = document.getElementById('brandSelect');
 
-    // Toggle switch handler
-    typeToggle.addEventListener('change', function() {
-        const type = this.checked ? 'offshore' : 'onshore';
-        toggleLabel.textContent = this.checked ? 'Offshore' : 'Onshore';
-        
-        // Filter brands based on type
-        const filteredBrands = type === 'onshore' 
-            ? brandData
-            : brandData.filter(brand => brand.type === 'offshore');
-        
-        // Update brand dropdown
-        brandSelect.innerHTML = '<option value="" disabled selected>Select Brand</option>';
-        filteredBrands.forEach(brand => {
-            const option = document.createElement('option');
-            option.value = brand.value;
-            option.textContent = brand.name;
-            option.dataset.type = brand.type;
-            brandSelect.appendChild(option);
+
+        document.querySelector('.text-link').addEventListener('click', function () {
+            // Clear all input fields
+            document.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"]').forEach(input => {
+                input.value = '';
+            });
+
+            // Reset brand dropdown to show only brands with non-restricted loans
+            const brandSelect = document.getElementById('brandSelect');
+            brandSelect.innerHTML = '<option value="" disabled selected>Select Brand</option>';
+
+            // Filter brands to only show those with non-restricted loans
+            const availableBrands = brandData.filter(brand => {
+                // Check if there's at least one non-restricted loan for this brand
+                return borrowerData.some(loan =>
+                    loan.brand === brand.value && !loan.isRestricted
+                );
+            });
+
+            availableBrands.forEach(brand => {
+                const option = document.createElement('option');
+                option.value = brand.value;
+                option.textContent = brand.name;
+                brandSelect.appendChild(option);
+            });
+
+            // Reset the selected brand
+            window.selectedBrandValue = null;
+            document.querySelector('.mat-mdc-select-min-line').textContent = 'All Brands';
+
+            // Show all non-restricted data
+            const nonRestrictedData = borrowerData.filter(row => !row.isRestricted);
+            updateTable(nonRestrictedData);
         });
-        
-        // Filter table data
-        console.log(borrowerData,"borrowerData")
-        const filteredData = borrowerData.filter(row => {
-            const brandInfo = brandData.find(b => b.name === row.brand);
-            return type === 'onshore' || (brandInfo && brandInfo.type === 'offshore');
-        });
-
-        console.log(filteredData,"filteredData")
-
-        updateTable(filteredData);
-    });
-});
-
-document.querySelector('.text-link').addEventListener('click', function () {
-    // Clear all input fields
-    document.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"]').forEach(input => {
-        input.value = '';
-    });
-    
-    // Reset toggle to onshore
-    const typeToggle = document.getElementById('typeToggle');
-    const toggleLabel = document.getElementById('toggleLabel');
-    typeToggle.checked = false;
-    toggleLabel.textContent = 'Onshore';
-    
-    // Reset brand dropdown to show all brands
-    const brandSelect = document.getElementById('brandSelect');
-    brandSelect.innerHTML = '<option value="" disabled selected>Select Brand</option>';
-    brandData.forEach(brand => {
-        const option = document.createElement('option');
-        option.value = brand.value;
-        option.textContent = brand.name;
-        option.dataset.type = brand.type;
-        brandSelect.appendChild(option);
-    });
-    
-    // Show all data
-    updateTable(borrowerData);
-});
 
     </script>
 </body>
