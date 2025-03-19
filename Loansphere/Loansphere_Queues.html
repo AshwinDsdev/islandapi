@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loansphere Queues</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <!-- Angular Material CSS -->
+    <link href="https://ajax.googleapis.com/ajax/libs/angular_material/1.2.5/angular-material.min.css" rel="stylesheet">
+    <!-- Animate.css for animations -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <!-- Toastr for notifications -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header2 {
+            background-color: #333;
+            color: whitesmoke;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .menu-hamburger {
+            display: flex;
+            align-items: center;
+        }
+        .menu-hamburger i {
+            margin-right: 10px;
+        }
+        .institution-name {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        .header-main-1 {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .header-main-1-formfld {
+            min-width: 200px;
+        }
+        .right-icons {
+            display: flex;
+            align-items: center;
+        }
+        .right-icons i {
+            margin-right: 10px;
+            cursor: pointer;
+        }
+        .loan-dropdown-menu {
+            background-color: #444;
+            color: whitesmoke;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .loan-dropdown-menu:hover {
+            background-color: #555;
+        }
+        mat-icon {
+            vertical-align: middle;
+        }
+        .btn-custom {
+            background-color: #007bff;
+            color: white;
+        }
+        .btn-custom:hover {
+            background-color: #0056b3;
+        }
+        .form-control {
+            border-radius: 5px;
+        }
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -250px;
+            width: 250px;
+            height: 100%;
+            background-color: #333;
+            color: white;
+            transition: all 0.3s;
+            z-index: 1000;
+            padding-top: 60px;
+            overflow-y: auto;
+        }
+        .sidebar.active {
+            left: 0;
+        }
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .sidebar ul li {
+            padding: 10px 15px;
+            border-bottom: 1px solid #444;
+        }
+        .sidebar ul li a {
+            color: white;
+            text-decoration: none;
+            display: block;
+        }
+        .sidebar ul li:hover {
+            background-color: #444;
+        }
+        .content-wrapper {
+            margin-left: 0;
+            transition: all 0.3s;
+        }
+        .content-wrapper.active {
+            margin-left: 250px;
+        }
+        .queue-card {
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            padding: 15px;
+            transition: transform 0.3s;
+        }
+        .queue-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .queue-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+        .queue-title {
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        .queue-count {
+            background-color: #007bff;
+            color: white;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .queue-items {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .queue-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+        }
+        .queue-item:hover {
+            background-color: #f9f9f9;
+        }
+        .queue-item-header {
+            display: flex;
+            justify-content: space-between;
+        }
+        .queue-item-title {
+            font-weight: bold;
+        }
+        .queue-item-date {
+            color: #777;
+            font-size: 0.9em;
+        }
+        .queue-item-details {
+            margin-top: 5px;
+            font-size: 0.9em;
+        }
+        .badge-priority-high {
+            background-color: #dc3545;
+        }
+        .badge-priority-medium {
+            background-color: #ffc107;
+            color: #212529;
+        }
+        .badge-priority-low {
+            background-color: #28a745;
+        }
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            animation: spin 2s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .user-profile {
+            position: relative;
+            cursor: pointer;
+        }
+        .user-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-radius: 5px;
+            width: 200px;
+            display: none;
+            z-index: 1000;
+        }
+        .user-menu.active {
+            display: block;
+        }
+        .user-menu ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .user-menu ul li {
+            padding: 10px 15px;
+            border-bottom: 1px solid #eee;
+        }
+        .user-menu ul li:last-child {
+            border-bottom: none;
+        }
+        .user-menu ul li a {
+            color: #333;
+            text-decoration: none;
+            display: block;
+        }
+        .user-menu ul li:hover {
+            background-color: #f5f5f5;
+        }
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: #dc3545;
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.7em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .search-container {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        .search-container input {
+            width: 100%;
+            padding: 10px 15px;
+            padding-left: 40px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        .search-container i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #777;
+        }
+
+        /* Form Switch Styles */
+        .form-check.form-switch {
+            padding-left: 2.5em;
+        }
+
+        .form-check-input {
+            width: 3em;
+            height: 1.5em;
+            margin-top: 0.25em;
+            vertical-align: top;
+            background-color: #fff;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: contain;
+            border: 1px solid rgba(0, 0, 0, 0.25);
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            -webkit-print-color-adjust: exact;
+            color-adjust: exact;
+            transition: background-color 0.15s ease-in-out, background-position 0.15s ease-in-out, border-color 0.15s ease-in-out;
+        }
+
+        .form-switch .form-check-input {
+            margin-left: -2.5em;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='rgba%280, 0, 0, 0.25%29'/%3e%3c/svg%3e");
+            background-position: left center;
+            border-radius: 2em;
+            transition: background-position 0.15s ease-in-out;
+        }
+
+        .form-switch .form-check-input:checked {
+            background-position: right center;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23fff'/%3e%3c/svg%3e");
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+        }
+
+        .form-check-label {
+            color: white;
+            margin-left: 0.5em;
+        }
+
+        /* Queue count badge */
+        .queue-count-badge {
+            background-color: #007bff;
+            color: white;
+            border-radius: 20px;
+            padding: 5px 10px;
+            font-size: 0.9em;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body ng-app="loanApp" ng-controller="LoanController">
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay" ng-show="isLoading">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Sidebar Navigation -->
+    <div id="sidebar" class="sidebar" ng-class="{'active': sidebarActive}">
+        <ul>
+            <li><a href="#" ng-click="loadDashboard()"><i class="fas fa-tachometer-alt mr-2"></i> Dashboard</a></li>
+            <li><a href="#" ng-click="loadQueues()"><i class="fas fa-tasks mr-2"></i> Queues</a></li>
+            <li><a href="#" ng-click="loadLoans()"><i class="fas fa-file-invoice-dollar mr-2"></i> Loans</a></li>
+            <li><a href="#" ng-click="loadReports()"><i class="fas fa-chart-bar mr-2"></i> Reports</a></li>
+            <li><a href="#" ng-click="loadSettings()"><i class="fas fa-cog mr-2"></i> Settings</a></li>
+            <li><a href="#" ng-click="loadHelp()"><i class="fas fa-question-circle mr-2"></i> Help</a></li>
+        </ul>
+    </div>
+
+    <div class="content-wrapper" ng-class="{'active': sidebarActive}">
+        <app-root _nghost-ng-c1992328644="" ng-version="18.2.13">
+            <div _ngcontent-ng-c1992328644="" class="wrapper">
+                <main _ngcontent-ng-c1992328644="">
+                    <router-outlet _ngcontent-ng-c1992328644=""></router-outlet>
+                    <lsdadmin-home _nghost-ng-c1816347493="" class="ng-star-inserted">
+                        <!-- Header Section -->
+                        <div _ngcontent-ng-c1816347493="" class="header2 d-flex flex-column flex-md-row align-items-center px-3 py-2" style="justify-content: space-between;">
+                            <div _ngcontent-ng-c1816347493="" class="menu-hamburger">
+                                <i _ngcontent-ng-c1816347493="" class="fa-sharp fa-solid fa-bars hamburger-menu" style="cursor: pointer;" ng-click="toggleSidebar()"></i>
+                                <span _ngcontent-ng-c1816347493="" style="color: whitesmoke; font-family: 'Suisse-SemiBold'; font-size: 1.5em; padding: 1px 0px 0px 24px;">One Admin</span>
+                            </div>
+                            <div _ngcontent-ng-c1816347493="" style="left: 210px; position: fixed;">
+                                <lsdadmin-header-bar _ngcontent-ng-c1816347493="" _nghost-ng-c2667574091="">
+                                    <div _ngcontent-ng-c2667574091="" class="header-main-1 header-main-new">
+                                        <div _ngcontent-ng-c2667574091="" class="header-parts-client py-2">
+                                            <div _ngcontent-ng-c2667574091="">
+                                                <div _ngcontent-ng-c2667574091="" class="institution-name ng-star-inserted">Cenlar FSB</div>
+                                            </div>
+                                            <div _ngcontent-ng-c2667574091="" class="d-inline-block ml-md-2 header-main-2">
+                                                <div _ngcontent-ng-c2667574091="" class="header-parts-client py-2">
+                                                    <mat-form-field _ngcontent-ng-c2667574091="" appearance="outline" class="mat-mdc-form-field context-dropdown-adjust ng-tns-c508571215-56 mat-mdc-form-field-type-mat-select mat-mdc-form-field-has-icon-prefix mat-form-field-appearance-outline mat-primary ng-star-inserted">
+                                                        <div class="mat-mdc-text-field-wrapper mdc-text-field ng-tns-c508571215-56 mdc-text-field--outlined mdc-text-field--no-label">
+                                                            <div class="mat-mdc-form-field-flex ng-tns-c508571215-56">
+                                                                <div matformfieldnotchedoutline="" class="mdc-notched-outline ng-tns-c508571215-56 mdc-notched-outline--no-label ng-star-inserted">
+                                                                    <div class="mat-mdc-notch-piece mdc-notched-outline__leading"></div>
+                                                                    <div class="mat-mdc-notch-piece mdc-notched-outline__notch"></div>
+                                                                    <div class="mat-mdc-notch-piece mdc-notched-outline__trailing"></div>
+                                                                </div>
+                                                                <div class="mat-mdc-form-field-icon-prefix ng-tns-c508571215-56 ng-star-inserted">
+                                                                    <i _ngcontent-ng-c2667574091="" matprefix="" class="fa-sharp fa-light fa-circle-info pr-2 ng-tns-c508571215-56"></i>
+                                                                </div>
+                                                                <div class="mat-mdc-form-field-infix ng-tns-c508571215-56">
+                                                                    <mat-select _ngcontent-ng-c2667574091="" role="combobox" aria-haspopup="listbox" panelclass="header-panel-adjust" name="channelSelect" class="mat-mdc-select header-main-1-formfld ng-tns-c1711764913-57 ng-tns-c508571215-56 ng-star-inserted" aria-labelledby="mat-select-value-31" id="mat-select-30" tabindex="0" aria-expanded="false" aria-required="false" aria-disabled="false" aria-invalid="false" ng-model="selectedChannel" ng-options="channel.name for channel in channels">
+                                                                        <div cdk-overlay-origin="" class="mat-mdc-select-trigger ng-tns-c1711764913-57">
+                                                                            <div class="mat-mdc-select-value ng-tns-c1711764913-57" id="mat-select-value-31">
+                                                                                <span class="mat-mdc-select-value-text ng-tns-c1711764913-57 ng-star-inserted">
+                                                                                    <span class="mat-mdc-select-min-line ng-tns-c1711764913-57 ng-star-inserted">Borrower Self-Service</span>
+                                                                                </span>
+                                                                            </div>
+                                                                            <div class="mat-mdc-select-arrow-wrapper ng-tns-c1711764913-57">
+                                                                                <div class="mat-mdc-select-arrow ng-tns-c1711764913-57">
+                                                                                    <svg viewBox="0 0 24 24" width="24px" height="24px" focusable="false" aria-hidden="true" class="ng-tns-c1711764913-57">
+                                                                                        <path d="M7 10l5 5 5-5z" class="ng-tns-c1711764913-57"></path>
+                                                                                    </svg>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </mat-select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </mat-form-field>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </lsdadmin-header-bar>
+                            </div>
+                            <!-- User Profile and Notifications -->
+                            <div class="right-icons">
+                                <div class="form-check form-switch mr-4">
+                                    <input class="form-check-input" type="checkbox" id="userTypeSwitch" ng-model="isOffshore" ng-change="updateUserType()">
+                                    <label class="form-check-label text-light" for="userTypeSwitch">{{isOffshore ? 'Offshore' : 'Onshore'}} User</label>
+                                </div>
+                                <div class="position-relative mr-4">
+                                    <i class="fas fa-bell" ng-click="toggleNotifications()"></i>
+                                    <span class="notification-badge" ng-show="notifications.length > 0">{{notifications.length}}</span>
+                                </div>
+                                <div class="user-profile" ng-click="toggleUserMenu()">
+                                    <i class="fas fa-user-circle"></i>
+                                    <div class="user-menu" ng-class="{'active': userMenuActive}">
+                                        <ul>
+                                            <li><a href="#"><i class="fas fa-user mr-2"></i> Profile</a></li>
+                                            <li><a href="#"><i class="fas fa-cog mr-2"></i> Settings</a></li>
+                                            <li><a href="#"><i class="fas fa-sign-out-alt mr-2"></i> Logout</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Main Content Area -->
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-12">
+                                    <h2 class="mb-4">Loan Queues <span class="queue-count-badge">{{filteredQueues.length}} Available</span></h2>
+
+                                    <!-- Search Bar -->
+                                    <div class="search-container">
+                                        <i class="fas fa-search"></i>
+                                        <input type="text" class="form-control" placeholder="Search queues or loans..." ng-model="searchQuery">
+                                    </div>
+
+                                    <!-- Queue Filters -->
+                                    <div class="mb-4">
+                                        <div class="btn-group">
+                                            <button type="button" class="btn" ng-class="{'btn-primary': activeFilter === 'all', 'btn-outline-primary': activeFilter !== 'all'}" ng-click="setFilter('all')">All Queues</button>
+                                            <button type="button" class="btn" ng-class="{'btn-primary': activeFilter === 'my', 'btn-outline-primary': activeFilter !== 'my'}" ng-click="setFilter('my')">My Queues</button>
+                                            <button type="button" class="btn" ng-class="{'btn-primary': activeFilter === 'team', 'btn-outline-primary': activeFilter !== 'team'}" ng-click="setFilter('team')">Team Queues</button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Queue Cards -->
+                                    <div class="row">
+                                        <div class="col-md-4" ng-repeat="queue in filteredQueues = (queues | filter:searchQuery)">
+                                            <div class="queue-card">
+                                                <div class="queue-header">
+                                                    <div class="queue-title">{{queue.name}}</div>
+                                                    <div class="queue-count">{{queue.items.length}}</div>
+                                                </div>
+                                                <div class="queue-items">
+                                                    <div class="queue-item" ng-repeat="item in queue.items" ng-click="openLoanDetails(item)">
+                                                        <div class="queue-item-header">
+                                                            <div class="queue-item-title">{{item.loanNumber}}</div>
+                                                            <div class="queue-item-date">{{item.date | date:'MM/dd/yyyy'}}</div>
+                                                        </div>
+                                                        <div class="queue-item-details">
+                                                            <span>{{item.borrowerName}}</span> -
+                                                            <span class="badge" ng-class="{'badge-priority-high': item.priority === 'high', 'badge-priority-medium': item.priority === 'medium', 'badge-priority-low': item.priority === 'low'}">
+                                                                {{item.priority}}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="text-center mt-3" ng-if="queue.items.length > 5">
+                                                    <button class="btn btn-sm btn-outline-primary" ng-click="viewAllItems(queue)">View All</button>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Empty State -->
+                                        <div class="col-12 text-center py-5" ng-if="filteredQueues.length === 0">
+                                            <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                                            <h4>No queues found</h4>
+                                            <p class="text-muted">Try adjusting your search or filters</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </lsdadmin-home>
+                </main>
+            </div>
+        </app-root>
+    </div>
+
+    <!-- AngularJS and Angular Material -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-aria.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-animate.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-route.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-messages.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.2.5/angular-material.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Toastr JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <!-- Moment.js for date handling -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <!-- Chart.js for data visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
+    <!-- Custom JS -->
+    <script>
+        angular.module('loanApp', ['ngMaterial', 'ngRoute', 'ngMessages', 'ngAnimate'])
+            .controller('LoanController', function($scope, $timeout, $mdDialog) {
+                // Initialize variables
+                $scope.isLoading = true;
+                $scope.sidebarActive = false;
+                $scope.userMenuActive = false;
+                $scope.activeFilter = 'all';
+                $scope.searchQuery = '';
+                $scope.isOffshore = false;
+                $scope.userType = 'onshore'; // Default to onshore user
+
+                // Mock user data
+                $scope.currentUser = {
+                    id: 1,
+                    name: 'John Doe',
+                    email: 'john.doe@example.com',
+                    role: 'Loan Officer',
+                    team: 'Loan Processing',
+                    isOffshore: false
+                };
+
+                // Mock notifications
+                $scope.notifications = [
+                    { id: 1, message: 'New loan application submitted', date: new Date(), read: false },
+                    { id: 2, message: 'Document verification required', date: new Date(Date.now() - 86400000), read: false },
+                    { id: 3, message: 'Loan approval pending', date: new Date(Date.now() - 172800000), read: true }
+                ];
+
+                // Mock channels data
+                $scope.channels = [
+                    { id: 1, name: 'Borrower Self-Service' },
+                    { id: 2, name: 'Loan Officer Portal' },
+                    { id: 3, name: 'Admin Dashboard' },
+                    { id: 4, name: 'Customer Service' }
+                ];
+                $scope.selectedChannel = $scope.channels[0];
+
+                // Mock queue data with brand associations
+                $scope.queues = [
+                    {
+                        id: 1,
+                        name: 'Pending Applications',
+                        type: 'my',
+                        brandIds: [1, 3, 5], // Associated with unrestricted brands
+                        sortOrder: 1,
+                        items: [
+                            { id: 101, loanNumber: 'L-12345', borrowerName: 'Alice Johnson', date: new Date(), priority: 'high', brandId: 1 },
+                            { id: 102, loanNumber: 'L-12346', borrowerName: 'Bob Smith', date: new Date(Date.now() - 86400000), priority: 'medium', brandId: 3 },
+                            { id: 103, loanNumber: 'L-12347', borrowerName: 'Carol Davis', date: new Date(Date.now() - 172800000), priority: 'low', brandId: 5 },
+                            { id: 104, loanNumber: 'L-12348', borrowerName: 'David Wilson', date: new Date(Date.now() - 259200000), priority: 'medium', brandId: 1 },
+                            { id: 105, loanNumber: 'L-12349', borrowerName: 'Eve Brown', date: new Date(Date.now() - 345600000), priority: 'high', brandId: 3 },
+                            { id: 106, loanNumber: 'L-12350', borrowerName: 'Frank Miller', date: new Date(Date.now() - 432000000), priority: 'low', brandId: 5 }
+                        ]
+                    },
+                    {
+                        id: 2,
+                        name: 'Document Verification',
+                        type: 'team',
+                        brandIds: [2, 4], // Associated only with restricted brands
+                        sortOrder: 2,
+                        items: [
+                            { id: 201, loanNumber: 'L-23456', borrowerName: 'Grace Taylor', date: new Date(), priority: 'medium', brandId: 2 },
+                            { id: 202, loanNumber: 'L-23457', borrowerName: 'Henry Clark', date: new Date(Date.now() - 86400000), priority: 'high', brandId: 4 },
+                            { id: 203, loanNumber: 'L-23458', borrowerName: 'Irene Lewis', date: new Date(Date.now() - 172800000), priority: 'medium', brandId: 2 }
+                        ]
+                    },
+                    {
+                        id: 3,
+                        name: 'Underwriting',
+                        type: 'team',
+                        brandIds: [1, 2, 3], // Mixed brands
+                        sortOrder: 3,
+                        items: [
+                            { id: 301, loanNumber: 'L-34567', borrowerName: 'Jack Robinson', date: new Date(), priority: 'high', brandId: 1 },
+                            { id: 302, loanNumber: 'L-34568', borrowerName: 'Karen Walker', date: new Date(Date.now() - 86400000), priority: 'high', brandId: 2 },
+                            { id: 303, loanNumber: 'L-34569', borrowerName: 'Larry Young', date: new Date(Date.now() - 172800000), priority: 'medium', brandId: 3 },
+                            { id: 304, loanNumber: 'L-34570', borrowerName: 'Mary Allen', date: new Date(Date.now() - 259200000), priority: 'low', brandId: 1 }
+                        ]
+                    },
+                    {
+                        id: 4,
+                        name: 'Closing',
+                        type: 'my',
+                        brandIds: [1, 3, 4], // Mixed brands
+                        sortOrder: 4,
+                        items: [
+                            { id: 401, loanNumber: 'L-45678', borrowerName: 'Nancy King', date: new Date(), priority: 'high', brandId: 1 },
+                            { id: 402, loanNumber: 'L-45679', borrowerName: 'Oscar Wright', date: new Date(Date.now() - 86400000), priority: 'medium', brandId: 4 }
+                        ]
+                    },
+                    {
+                        id: 5,
+                        name: 'Funding',
+                        type: 'team',
+                        brandIds: [2, 4, 5], // Mixed brands
+                        sortOrder: 5,
+                        items: [
+                            { id: 501, loanNumber: 'L-56789', borrowerName: 'Patricia Scott', date: new Date(), priority: 'medium', brandId: 5 },
+                            { id: 502, loanNumber: 'L-56790', borrowerName: 'Quincy Adams', date: new Date(Date.now() - 86400000), priority: 'low', brandId: 2 },
+                            { id: 503, loanNumber: 'L-56791', borrowerName: 'Rachel Green', date: new Date(Date.now() - 172800000), priority: 'high', brandId: 4 }
+                        ]
+                    },
+                    {
+                        id: 6,
+                        name: 'Post-Closing',
+                        type: 'my',
+                        brandIds: [3, 5], // Associated with unrestricted brands
+                        sortOrder: 6,
+                        items: [
+                            { id: 601, loanNumber: 'L-67890', borrowerName: 'Steve Turner', date: new Date(), priority: 'low', brandId: 3 },
+                            { id: 602, loanNumber: 'L-67891', borrowerName: 'Tina Campbell', date: new Date(Date.now() - 86400000), priority: 'medium', brandId: 5 },
+                            { id: 603, loanNumber: 'L-67892', borrowerName: 'Uma Patel', date: new Date(Date.now() - 172800000), priority: 'high', brandId: 3 },
+                            { id: 604, loanNumber: 'L-67893', borrowerName: 'Victor Martinez', date: new Date(Date.now() - 259200000), priority: 'medium', brandId: 5 }
+                        ]
+                    }
+                ];
+
+                // Mock loan data
+                $scope.getAccessibleLoans = function() {
+                    return [
+                        { id: 1, loanNumber: 'L-12345', propertyInfo: '123 Main St, Anytown, USA', borrowerName: 'Alice Johnson', loanAmount: 250000, loanType: 'Conventional', status: 'In Process' },
+                        { id: 2, loanNumber: 'L-23456', propertyInfo: '456 Oak Ave, Somewhere, USA', borrowerName: 'Grace Taylor', loanAmount: 320000, loanType: 'FHA', status: 'Approved' },
+                        { id: 3, loanNumber: 'L-34567', propertyInfo: '789 Pine Rd, Nowhere, USA', borrowerName: 'Jack Robinson', loanAmount: 180000, loanType: 'VA', status: 'Pending' }
+                    ];
+                };
+
+                // Mock brand data with restrictions
+                $scope.brands = [
+                    { id: 1, name: 'Cenlar FSB', logo: 'cenlar-logo.png', restricted: false },
+                    { id: 2, name: 'First National Bank', logo: 'fnb-logo.png', restricted: true },
+                    { id: 3, name: 'Community Credit Union', logo: 'ccu-logo.png', restricted: false },
+                    { id: 4, name: 'Regional Mortgage Co.', logo: 'rmc-logo.png', restricted: true },
+                    { id: 5, name: 'Hometown Savings', logo: 'hs-logo.png', restricted: false }
+                ];
+
+                // Get brands accessible to the current user
+                $scope.getAccessibleBrands = function() {
+                    if ($scope.userType === 'onshore') {
+                        // Onshore users can access all brands
+                        return $scope.brands;
+                    } else {
+                        // Offshore users can only access unrestricted brands
+                        return $scope.brands.filter(function(brand) {
+                            return !brand.restricted;
+                        });
+                    }
+                };
+
+                // Toggle sidebar
+                $scope.toggleSidebar = function() {
+                    $scope.sidebarActive = !$scope.sidebarActive;
+                };
+
+                // Toggle user menu
+                $scope.toggleUserMenu = function() {
+                    $scope.userMenuActive = !$scope.userMenuActive;
+                };
+
+                // Toggle notifications panel
+                $scope.toggleNotifications = function() {
+                    // Implementation for notifications panel
+                    toastr.info('Notifications panel toggled');
+                };
+
+                // Update user type
+                $scope.updateUserType = function() {
+                    $scope.userType = $scope.isOffshore ? 'offshore' : 'onshore';
+                    $scope.currentUser.isOffshore = $scope.isOffshore;
+
+                    // Re-apply the current filter with the new user type
+                    $scope.setFilter($scope.activeFilter);
+                };
+
+                // Check if a queue should be visible to the current user
+                $scope.isQueueVisibleToUser = function(queue) {
+                    // If user is onshore, show all queues
+                    if ($scope.userType === 'onshore') {
+                        return true;
+                    }
+
+                    // For offshore users, check if the queue is associated with any unrestricted brands
+                    var hasUnrestrictedBrand = false;
+
+                    // Check each brand associated with the queue
+                    for (var i = 0; i < queue.brandIds.length; i++) {
+                        var brandId = queue.brandIds[i];
+                        var brand = $scope.brands.find(function(b) { return b.id === brandId; });
+
+                        if (brand && !brand.restricted) {
+                            hasUnrestrictedBrand = true;
+                            break;
+                        }
+                    }
+
+                    // If all brands associated with the queue are restricted, hide the queue from offshore users
+                    return hasUnrestrictedBrand;
+                };
+
+                // Set active filter
+                $scope.setFilter = function(filter) {
+                    $scope.activeFilter = filter;
+
+                    // First filter by queue type (all, my, team)
+                    var typeFilteredQueues = $scope.queues;
+                    if (filter !== 'all') {
+                        typeFilteredQueues = $scope.queues.filter(function(queue) {
+                            return queue.type === filter;
+                        });
+                    }
+
+                    // Then filter by user type (onshore/offshore)
+                    $scope.filteredQueues = typeFilteredQueues.filter(function(queue) {
+                        return $scope.isQueueVisibleToUser(queue);
+                    });
+
+                    // Sort by the original sort order to maintain default order
+                    $scope.filteredQueues.sort(function(a, b) {
+                        return a.sortOrder - b.sortOrder;
+                    });
+                };
+
+                // Open loan details
+                $scope.openLoanDetails = function(item) {
+                    toastr.success('Opening loan details for: ' + item.loanNumber);
+                    // Implementation for opening loan details
+                };
+
+                // View all items in a queue
+                $scope.viewAllItems = function(queue) {
+                    toastr.info('Viewing all items in queue: ' + queue.name);
+                    // Implementation for viewing all items
+                };
+
+                // Navigation functions
+                $scope.loadDashboard = function() {
+                    toastr.info('Loading Dashboard');
+                    // Implementation for loading dashboard
+                };
+
+                $scope.loadQueues = function() {
+                    toastr.info('Loading Queues');
+                    // Implementation for loading queues
+                };
+
+                $scope.loadLoans = function() {
+                    toastr.info('Loading Loans');
+                    // Implementation for loading loans
+                };
+
+                $scope.loadReports = function() {
+                    toastr.info('Loading Reports');
+                    // Implementation for loading reports
+                };
+
+                $scope.loadSettings = function() {
+                    toastr.info('Loading Settings');
+                    // Implementation for loading settings
+                };
+
+                $scope.loadHelp = function() {
+                    toastr.info('Loading Help');
+                    // Implementation for loading help
+                };
+
+                // Initialize the controller
+                function init() {
+                    // Simulate loading delay
+                    $timeout(function() {
+                        $scope.isLoading = false;
+                        toastr.success('Loansphere Queues loaded successfully');
+
+                        // Show a message about user type
+                        var userTypeMsg = $scope.isOffshore ?
+                            'You are logged in as an Offshore user. Some queues may be restricted.' :
+                            'You are logged in as an Onshore user with full access.';
+                        toastr.info(userTypeMsg);
+                    }, 1500);
+
+                    // Set initial user type
+                    $scope.userType = $scope.isOffshore ? 'offshore' : 'onshore';
+
+                    // Set initial filter
+                    $scope.setFilter('all');
+
+                    // Configure toastr
+                    toastr.options = {
+                        closeButton: true,
+                        progressBar: true,
+                        positionClass: 'toast-bottom-right',
+                        timeOut: 3000
+                    };
+                }
+
+                // Call initialization
+                init();
+            });
+
+        // Initialize toastr
+        $(document).ready(function() {
+            // Close menus when clicking outside
+            $(document).on('click', function(event) {
+                if (!$(event.target).closest('.user-profile').length) {
+                    $('.user-menu').removeClass('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
