@@ -7,15 +7,10 @@
     <title>LoanSphere Messages</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- AngularJS and Angular Material -->
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.2.5/angular-material.min.js"></script>
-    <link href="https://ajax.googleapis.com/ajax/libs/angular_material/1.2.5/angular-material.min.css" rel="stylesheet">
     <!-- Font Awesome for Icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <!-- Custom CSS -->
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-aria.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-animate.min.js"></script>
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
     <style>
         :root {
@@ -195,7 +190,7 @@
     <link rel="stylesheet" href="https://unpkg.com/ag-grid-community/styles/ag-theme-material.css">
 </head>
 
-<body ng-app="loanApp" ng-controller="LoanController">
+<body>
     <div id="loading-indicator" style="padding: 40px; display: none;">
         Loading...
     </div>
@@ -210,24 +205,22 @@
             </div>
             <div class="header-main-1 header-main-new ms-auto">
                 <div class="header-parts-client py-2">
-                    <div class="institution-name ng-star-inserted">Cenlar FSB</div>
+                    <div class="institution-name">Cenlar FSB</div>
 
                     <div class="form-group">
-                        <select class="form-select" ng-model="selectedLoan">
+                        <select class="form-select" id="selectedLoan">
                             <option value="" disabled>Select Loan</option>
-                            <option ng-repeat="loan in getAccessibleLoans()" value="{{loan.id}}">
-                                {{loan.loanNumber}} - {{loan.propertyInfo}}
-                            </option>
+                            <!-- Loan options will be populated by JavaScript -->
                         </select>
                     </div>
                     <div class="form-group">
-                        <select class="form-select" ng-model="selectedChannel">
-                            <option ng-repeat="channel in channels" value="{{channel.id}}">{{channel.name}}</option>
+                        <select class="form-select" id="selectedChannel">
+                            <!-- Channel options will be populated by JavaScript -->
                         </select>
                     </div>
                     <div class="form-group">
-                        <select class="form-select" ng-model="selectedBrand">
-                            <option ng-repeat="brand in getAccessibleBrands()" ng-value="brand">{{brand.name}}</option>
+                        <select class="form-select" id="selectedBrand">
+                            <!-- Brand options will be populated by JavaScript -->
                         </select>
                     </div>
                 </div>
@@ -235,72 +228,64 @@
         </header>
         <main class="content-wrapper">
             <div class="container searchgrid">
-                <div class="alert alert-warning" ng-if="restrictionMessage">
-                    {{ restrictionMessage }}
+                <div class="alert alert-warning" id="restrictionMessage" style="display: none;">
+                    Loan is not provisioned to the user
                 </div>
                 <div class="info-section">
                     <i class="material-icons">info_outline</i>
                     <span class="info-text">How header filtering works</span>
                 </div>
-                <form novalidate="" name="form" autocomplete="off" class="ng-untouched ng-pristine ng-valid">
+                <form id="searchForm" name="form" autocomplete="off">
                     <div class="flex-row-container flex-wrap">
                         <div class="form-group">
                             <label>Queue</label>
-                            <select class="form-select" ng-model="selectedQueue" multiple
-                                aria-describedby="cdk-describedby-message-ng-1-10">
-                                <option ng-repeat="queue in queues" value="{{queue.id}}">{{queue.name}}</option>
+                            <select class="form-select" id="selectedQueue" multiple>
+                                <!-- Queue options will be populated by JavaScript -->
                             </select>
                         </div>
                         <div class="form-group">
                             <label>Category</label>
-                            <select class="form-select" ng-model="selectedCategory"
-                                aria-describedby="cdk-describedby-message-ng-1-11">
-                                <option value="" disabled>Select Category</option>
-                                <option ng-repeat="category in categories" value="{{category.id}}">
-                                    {{category.CategoryName}}</option>
+                            <select class="form-select" id="selectedCategory">
+                                <option value="" disabled selected>Select Category</option>
+                                <!-- Category options will be populated by JavaScript -->
                             </select>
                         </div>
                         <div class="form-group">
                             <label>First Name</label>
-                            <input type="text" class="form-control" ng-model="firstName" placeholder="Enter First Name"
-                                aria-describedby="cdk-describedby-message-ng-1-12">
+                            <input type="text" class="form-control" id="firstName" placeholder="Enter First Name">
                         </div>
                         <div class="form-group">
                             <label>Last Name</label>
-                            <input type="text" class="form-control" ng-model="lastName" placeholder="Enter Last Name"
-                                aria-describedby="cdk-describedby-message-ng-1-13">
+                            <input type="text" class="form-control" id="lastName" placeholder="Enter Last Name">
                         </div>
                         <div class="form-group">
                             <label>Loan Number</label>
-                            <input type="text" class="form-control" ng-model="loanNumber"
-                                placeholder="Enter Loan Number" aria-describedby="cdk-describedby-message-ng-1-14">
+                            <input type="text" class="form-control" id="loanNumber" placeholder="Enter Loan Number">
                         </div>
                         <div class="form-group">
                             <label>Show Deleted</label>
-                            <select class="form-select" ng-model="showDeleted"
-                                aria-describedby="cdk-describedby-message-ng-1-16">
+                            <select class="form-select" id="showDeleted">
+                                <option value="">Select Option</option>
                                 <option value="true">Yes</option>
                                 <option value="false">No</option>
                             </select>
                         </div>
                         <div class="form-group">
                             <label>Start Date</label>
-                            <input type="date" class="form-control" ng-model="startDate"
-                                aria-describedby="cdk-describedby-message-ng-1-17">
+                            <input type="date" class="form-control" id="startDate">
                         </div>
                         <div class="form-group">
                             <label>End Date</label>
-                            <input type="date" class="form-control" ng-model="endDate"
-                                aria-describedby="cdk-describedby-message-ng-1-18">
+                            <input type="date" class="form-control" id="endDate">
                         </div>
                         <div class="form-group">
-                            <button class="btn btn-primary" ng-click="searchLoans()">
+                            <button type="button" class="btn btn-primary" id="searchButton">
                                 <i class="fas fa-search"></i> Search
                             </button>
-                            <button class="btn btn-secondary ms-2" ng-click="refreshResults()">
+                            <button type="button" class="btn btn-secondary ms-2" id="refreshButton">
                                 <i class="fas fa-sync"></i> Refresh
                             </button>
-                            <button class="btn btn-info ms-2" ng-click="returnToMessages()">
+                            <button type="button" class="btn btn-info ms-2" id="returnButton">
                                 <i class="fas fa-arrow-left"></i> Return to Messages
                             </button>
                         </div>
@@ -308,18 +293,12 @@
                             <div class="d-flex align-items-end">
                                 <div class="flex-grow-1 me-2">
                                     <label>Select Loan to Remove</label>
-                                    <select class="form-select" ng-model="loanToRemove">
+                                    <select class="form-select" id="loanToRemove">
                                         <option value="" disabled selected>Choose loan to remove...</option>
-                                        <option ng-repeat="loan in getAccessibleLoans()"
-                                                ng-if="canRemoveLoan(loan.id)"
-                                                value="{{loan.id}}">
-                                            {{loan.loanNumber}} - {{loan.propertyInfo}}
-                                        </option>
+                                        <!-- Loan options will be populated by JavaScript -->
                                     </select>
                                 </div>
-                                <button class="btn btn-danger"
-                                        ng-click="removeLoan(loanToRemove)"
-                                        ng-disabled="!loanToRemove">
+                                <button type="button" class="btn btn-danger" id="removeLoanButton" disabled>
                                     <i class="fas fa-trash-alt"></i> Remove Loan
                                 </button>
                             </div>
@@ -332,9 +311,7 @@
                     <i class="material-icons">info_outline</i>
                     <span class="info-text">How column sorting and filtering works</span>
                 </div>
-                <mat-card appearance="outlined"
-                    class="mat-mdc-card mdc-card p-0 mat-mdc-card-outlined mdc-card--outlined">
-                    <!-- Replace the ag-grid div with this table -->
+                <div class="card">
                     <div class="table-responsive">
                         <table class="table table-striped table-hover">
                             <thead>
@@ -348,51 +325,18 @@
                                     <th>Loan Number</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr ng-repeat="message in searchResults">
-                                    <td>{{message.messageDate}}</td>
-                                    <td>{{message.sender}}</td>
-                                    <td>{{message.messageText}}</td>
-                                    <td>{{getQueueName(message.queueId)}}</td>
-                                    <td>{{getCategoryName(message.categoryId)}}</td>
-                                    <td>{{getStatusName(message.statusId)}}</td>
-                                    <td>{{getLoanNumber(message.loanId)}}</td>
-                                </tr>
+                            <tbody id="messageTableBody">
+                                <!-- Message rows will be populated by JavaScript -->
                             </tbody>
                         </table>
                     </div>
-                </mat-card>
+                </div>
             </div>
         </main>
     </div>
 
-    <div class="cdk-live-announcer-element cdk-visually-hidden" aria-atomic="true" aria-live="polite"
-        id="cdk-live-announcer-0"></div>
-    <div class="cdk-overlay-container"></div>
-    <div class="cdk-describedby-message-container cdk-visually-hidden" style="visibility: hidden;">
-        <div id="cdk-describedby-message-ng-1-8" role="tooltip">Help Center</div>
-        <div id="cdk-describedby-message-ng-1-9" role="tooltip">User Profile Menu</div>
-        <div id="cdk-describedby-message-ng-1-10" role="tooltip">Show Message Threads in selected Queue(s)</div>
-        <div id="cdk-describedby-message-ng-1-11" role="tooltip">Show Message Threads in selected Category</div>
-        <div id="cdk-describedby-message-ng-1-12" role="tooltip">Show Message Threads from Borrower(s) with specified
-            First Name</div>
-        <div id="cdk-describedby-message-ng-1-13" role="tooltip">Show Message Threads from Borrower(s) with specified
-            Last Name</div>
-        <div id="cdk-describedby-message-ng-1-14" role="tooltip">Show Message Threads from Borrower(s) with specified
-            Loan Number</div>
-        <div id="cdk-describedby-message-ng-1-15" role="tooltip">Show Message Threads with selected Status</div>
-        <div id="cdk-describedby-message-ng-1-16" role="tooltip">Show Message Threads that Borrowers have Deleted</div>
-        <div id="cdk-describedby-message-ng-1-17" role="tooltip">Show Message Threads with Borrower Message Date on or
-            after selected date</div>
-        <div id="cdk-describedby-message-ng-1-18" role="tooltip">Show Message Threads with Borrower Message Date on or
-            before selected date</div>
-        <div id="cdk-describedby-message-ng-1-19" role="tooltip">Filtering applies to all message threads and search
-            results are sorted by Borrower Message Date.</div>
-        <div id="cdk-describedby-message-ng-1-20" role="tooltip">Sorting/filtering applies only to the current search
-            results page.</div>
-    </div>
-
-    <!-- Bootstrap and AngularJS Scripts -->
+    <!-- Bootstrap Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>
     <script src="Brand_Ingestion.js" type="module"></script>
@@ -408,13 +352,105 @@
          * It provides features for searching, filtering, and displaying message data
          * with proper handling of restricted loans and brands.
          */
-        var app = angular.module('loanApp', ['ngMaterial', 'ngAria', 'ngAnimate']);
+        document.addEventListener('DOMContentLoaded', function() {
+            // Global state
+            let loans = [];
+            let messages = [];
+            let brands = [];
+            let searchResults = [];
+            let selectedBrand = null;
+            let selectedChannel = null;
+            let selectedLoan = null;
+            let loanToRemove = null;
 
-        /**
-         * Data Loading Service
-         * Handles loading data from external sources with proper error handling and timeouts
-         */
-        app.service('DataService', function() {
+            // Define static data
+            const queues = [
+                {
+                    id: 1,
+                    name: "Default Queue",
+                    type: "my",
+                    sortOrder: 1,
+                    brandIds: [1, 2, 3],
+                    restricted: false
+                },
+                {
+                    id: 2,
+                    name: "High Priority",
+                    type: "my",
+                    sortOrder: 2,
+                    brandIds: [2, 3],
+                    restricted: false
+                },
+                {
+                    id: 3,
+                    name: "Customer Service",
+                    type: "team",
+                    sortOrder: 3,
+                    brandIds: [1, 4],
+                    restricted: false
+                },
+                {
+                    id: 4,
+                    name: "Technical Support",
+                    type: "team",
+                    sortOrder: 4,
+                    brandIds: [3, 4, 5],
+                    restricted: false
+                },
+                {
+                    id: 5,
+                    name: "Loan Processing",
+                    type: "my",
+                    sortOrder: 5,
+                    brandIds: [1, 5],
+                    restricted: false
+                },
+                {
+                    id: 6,
+                    name: "Underwriting",
+                    type: "team",
+                    sortOrder: 6,
+                    brandIds: [2, 5, 6],
+                    restricted: false
+                },
+                {
+                    id: 7,
+                    name: "Restricted Queue",
+                    type: "my",
+                    sortOrder: 7,
+                    brandIds: [7, 8],
+                    restricted: true
+                },
+                {
+                    id: 8,
+                    name: "Unrestricted Specific",
+                    type: "my",
+                    sortOrder: 8,
+                    brandIds: [5, 6, 7, 8],
+                    restricted: false
+                }
+            ];
+
+            const categories = [
+                { id: 1, CategoryName: "General Inquiry" },
+                { id: 2, CategoryName: "Payment Issues" },
+                { id: 3, CategoryName: "Loan Application" },
+                { id: 4, CategoryName: "Technical Support" }
+            ];
+
+            const channels = [
+                { id: 1, name: "Borrower Self-Service" },
+                { id: 2, name: "Customer Portal" },
+                { id: 3, name: "Mobile App" }
+            ];
+
+            const statuses = [
+                { id: 1, StatusName: "Active" },
+                { id: 2, StatusName: "Pending" },
+                { id: 3, StatusName: "Completed" },
+                { id: 4, StatusName: "On Hold" }
+            ];
+
             /**
              * Wait for data to be available in the global scope with timeout
              * @param {string} dataKey - The key to check in the window object
@@ -423,7 +459,7 @@
              * @param {number} maxAttempts - Maximum number of attempts before using fallback
              * @returns {Promise<Array>} The loaded data or fallback
              */
-            this.waitForData = async function(dataKey, dataName, fallbackData = [], maxAttempts = 5) {
+            async function waitForData(dataKey, dataName, fallbackData = [], maxAttempts = 5) {
                 let attempts = 0;
 
                 while (!window[dataKey] && attempts < maxAttempts) {
@@ -439,29 +475,42 @@
 
                 console.log(`${dataName} data loaded successfully`);
                 return window[dataKey];
-            };
+            }
 
             /**
              * Load loans data
              * @returns {Promise<Array>} Loans data
              */
-            this.loadLoans = function() {
-                return this.waitForData('storedLoansSet', 'loans', []);
-            };
+            async function loadLoans() {
+                const loansData = await waitForData('storedLoansSet', 'loans', []);
+
+                // Process the loan data to add isRestricted property
+                // For offshore users, loans with type "onshore" are restricted
+                return loansData.map(loan => ({
+                    ...loan,
+                    restricted: loan.type === "onshore"
+                }));
+            }
 
             /**
              * Load messages data
              * @returns {Promise<Array>} Messages data
              */
-            this.loadMessages = function() {
-                return this.waitForData('storedMessagesSet', 'messages', []);
-            };
+            async function loadMessages() {
+                const messagesData = await waitForData('storedMessagesSet', 'messages', []);
+
+                // Process message data to add isRestricted property based on type
+                return messagesData.map(message => ({
+                    ...message,
+                    isRestricted: message.type === "onshore"
+                }));
+            }
 
             /**
              * Load brands data
              * @returns {Promise<Array>} Brands data
              */
-            this.loadBrands = function() {
+            async function loadBrands() {
                 const fallbackBrands = [
                     {
                         id: 5,
@@ -478,80 +527,126 @@
                         restricted: false
                     }
                 ];
-                return this.waitForData('storedNumbersSet', 'brands', fallbackBrands);
-            };
-        });
 
-        /**
-         * Message Filter Service
-         * Provides functions for filtering messages based on various criteria
-         */
-        app.service('MessageFilterService', function() {
+                const brandsData = await waitForData('storedNumbersSet', 'brands', fallbackBrands);
+
+                return brandsData.map(brand => ({
+                    id: brand.id,
+                    name: brand.name,
+                    value: brand.value,
+                    type: brand.type,
+                    restricted: brand.restricted
+                }));
+            }
+
             /**
              * Check if a loan is accessible to an offshore user
              * @param {Object} loan - The loan to check
              * @returns {boolean} True if the loan is accessible
              */
-            this.isLoanAccessible = function(loan) {
+            function isLoanAccessible(loan) {
                 return loan && !loan.restricted;
-            };
+            }
 
             /**
              * Check if a message is accessible to an offshore user
              * @param {Object} message - The message to check
-             * @param {Array} loans - All loans
-             * @param {Array} brands - All brands
              * @returns {boolean} True if the message is accessible
              */
-            this.isMessageAccessible = function(message, loans, brands) {
+            function isMessageAccessible(message) {
                 if (!message) return false;
 
                 // Get the associated loan and brand
                 const loan = loans.find(l => l.id === message.loanId);
                 const brand = brands.find(b => b.id === message.brandId);
 
-                // Message is accessible if both loan and brand are not restricted
-                return this.isLoanAccessible(loan) && (!brand || !brand.restricted);
-            };
+                // For offshore users:
+                // 1. Message is not accessible if the loan is restricted (type === "onshore")
+                // 2. Message is not accessible if the brand is restricted
+                // 3. Message is not accessible if the message itself is restricted (type === "onshore")
+
+                const isLoanAccessible = loan && !loan.restricted;
+                const isBrandAccessible = !brand || !brand.restricted;
+                const isMessageTypeAccessible = message.type !== "onshore";
+
+                return isLoanAccessible && isBrandAccessible && isMessageTypeAccessible;
+            }
 
             /**
              * Get accessible loans for offshore users
-             * @param {Array} loans - All loans
              * @returns {Array} Accessible loans
              */
-            this.getAccessibleLoans = function(loans) {
-                return loans.filter(loan => this.isLoanAccessible(loan));
-            };
+            function getAccessibleLoans() {
+                return loans.filter(loan => isLoanAccessible(loan));
+            }
 
             /**
              * Get accessible brands for offshore users
-             * @param {Array} brands - All brands
              * @returns {Array} Accessible brands
              */
-            this.getAccessibleBrands = function(brands) {
+            function getAccessibleBrands() {
                 return brands.filter(brand => !brand.restricted);
-            };
+            }
 
             /**
              * Check if a queue should be visible to the current user
              * @param {Object} queue - The queue to check
              * @returns {boolean} True if the queue is visible
              */
-            this.isQueueVisibleToUser = function(queue) {
+            function isQueueVisibleToUser(queue) {
                 if (queue.hasOwnProperty('restricted')) {
                     return !queue.restricted;
                 }
                 return true;
-            };
+            }
+
+            /**
+             * Get the name of a queue by ID
+             * @param {number} queueId - The queue ID
+             * @returns {string} The queue name
+             */
+            function getQueueName(queueId) {
+                const queue = queues.find(q => q.id === parseInt(queueId));
+                return queue ? queue.name : '';
+            }
+
+            /**
+             * Get the name of a category by ID
+             * @param {number} categoryId - The category ID
+             * @returns {string} The category name
+             */
+            function getCategoryName(categoryId) {
+                const category = categories.find(c => c.id === parseInt(categoryId));
+                return category ? category.CategoryName : '';
+            }
+
+            /**
+             * Get the name of a status by ID
+             * @param {number} statusId - The status ID
+             * @returns {string} The status name
+             */
+            function getStatusName(statusId) {
+                const status = statuses.find(s => s.id === parseInt(statusId));
+                return status ? status.StatusName : '';
+            }
+
+            /**
+             * Get the loan number by loan ID
+             * @param {number} loanId - The loan ID
+             * @returns {string} The loan number
+             */
+            function getLoanNumber(loanId) {
+                const loan = loans.find(l => l.id === loanId);
+                return loan ? loan.loanNumber : '';
+            }
 
             /**
              * Check if a message matches all search criteria
              * @param {Object} message - The message to check
-             * @param {Array} loans - All loans
              * @param {Object} criteria - Search criteria
              * @returns {boolean} True if the message matches all criteria
              */
-            this.messageMatchesSearchCriteria = function(message, loans, criteria) {
+            function messageMatchesSearchCriteria(message, criteria) {
                 const loan = loans.find(l => l.id === message.loanId);
                 if (!loan) return false;
 
@@ -559,7 +654,7 @@
                 const loanMatch = !criteria.loanNumber ||
                     (loan.loanNumber && loan.loanNumber.toString().toLowerCase().includes((criteria.loanNumber || '').toLowerCase()));
 
-                const queueMatch = !criteria.selectedQueue || !criteria.selectedQueue.length ||
+                const queueMatch = !criteria.selectedQueue || criteria.selectedQueue.length === 0 ||
                     (message.queueId && criteria.selectedQueue.includes(message.queueId.toString()));
 
                 const categoryMatch = !criteria.selectedCategory ||
@@ -574,7 +669,7 @@
                 const statusMatch = !criteria.selectedStatus ||
                     (message.statusId && message.statusId.toString() === criteria.selectedStatus);
 
-                const deletedMatch = criteria.showDeleted === undefined ||
+                const deletedMatch = criteria.showDeleted === undefined || criteria.showDeleted === "" ||
                     message.isDeleted === (criteria.showDeleted === 'true');
 
                 // Apply brand filter if a brand is selected
@@ -586,16 +681,14 @@
 
                 return loanMatch && queueMatch && categoryMatch && firstNameMatch && lastNameMatch &&
                     statusMatch && deletedMatch && brandMatch && dateMatch;
-            };
+            }
 
             /**
              * Filter queues based on type and visibility
-             * @param {Array} queues - All queues
              * @param {string} filter - Filter type ('all', 'my', 'team')
-             * @param {Object} selectedBrand - Selected brand
              * @returns {Array} Filtered queues
              */
-            this.filterQueues = function(queues, filter, selectedBrand) {
+            function filterQueues(filter) {
                 // First filter by queue type
                 let filteredQueues = queues;
                 if (filter !== 'all') {
@@ -603,7 +696,7 @@
                 }
 
                 // Then filter by visibility
-                filteredQueues = filteredQueues.filter(queue => this.isQueueVisibleToUser(queue));
+                filteredQueues = filteredQueues.filter(queue => isQueueVisibleToUser(queue));
 
                 // Then filter by selected brand if any
                 if (selectedBrand) {
@@ -614,492 +707,378 @@
 
                 // Sort by the original sort order
                 return filteredQueues.sort((a, b) => a.sortOrder - b.sortOrder);
-            };
-        });
-
-        /**
-         * Main Controller for the LoanSphere Messages application
-         */
-        app.controller('LoanController', function($scope, $timeout, DataService, MessageFilterService) {
-            // Initialize state
-            $scope.loans = [];
-            $scope.messages = [];
-            $scope.brands = [];
-            $scope.searchResults = [];
-            $scope.restrictionMessage = '';
-            $scope.userType = 'offshore'; // All users are treated as offshore users
-
-            // Initialize UI state
-            $scope.selectedQueue = [];
-            $scope.selectedCategory = null;
-            $scope.selectedStatus = null;
-            $scope.startDate = null;
-            $scope.endDate = null;
-            $scope.firstName = '';
-            $scope.lastName = '';
-            $scope.loanNumber = '';
-            $scope.showDeleted = undefined;
-            $scope.selectedLoan = null;
-            $scope.loanToRemove = null;
-            $scope.activeFilter = 'all';
-            $scope.filteredQueues = [];
-
-            // Define static data
-            $scope.queues = [
-                {
-                    id: 1,
-                    name: "Default Queue",
-                    type: "my",
-                    sortOrder: 1,
-                    brandIds: [1, 2, 3],
-                    restricted: false,
-                    items: []
-                },
-                {
-                    id: 2,
-                    name: "High Priority",
-                    type: "my",
-                    sortOrder: 2,
-                    brandIds: [2, 3],
-                    restricted: false,
-                    items: []
-                },
-                {
-                    id: 3,
-                    name: "Customer Service",
-                    type: "team",
-                    sortOrder: 3,
-                    brandIds: [1, 4],
-                    restricted: false,
-                    items: []
-                },
-                {
-                    id: 4,
-                    name: "Technical Support",
-                    type: "team",
-                    sortOrder: 4,
-                    brandIds: [3, 4, 5],
-                    restricted: false,
-                    items: []
-                },
-                {
-                    id: 5,
-                    name: "Loan Processing",
-                    type: "my",
-                    sortOrder: 5,
-                    brandIds: [1, 5],
-                    restricted: false,
-                    items: []
-                },
-                {
-                    id: 6,
-                    name: "Underwriting",
-                    type: "team",
-                    sortOrder: 6,
-                    brandIds: [2, 5, 6],
-                    restricted: false,
-                    items: []
-                },
-                {
-                    id: 7,
-                    name: "Restricted Queue",
-                    type: "my",
-                    sortOrder: 7,
-                    brandIds: [7, 8],
-                    restricted: true,
-                    items: []
-                },
-                {
-                    id: 8,
-                    name: "Unrestricted Specific",
-                    type: "my",
-                    sortOrder: 8,
-                    brandIds: [5, 6, 7, 8],
-                    restricted: false,
-                    items: []
-                }
-            ];
-
-            $scope.categories = [
-                { id: 1, CategoryName: "General Inquiry" },
-                { id: 2, CategoryName: "Payment Issues" },
-                { id: 3, CategoryName: "Loan Application" },
-                { id: 4, CategoryName: "Technical Support" }
-            ];
-
-            $scope.channels = [
-                { id: 1, name: "Borrower Self-Service" },
-                { id: 2, name: "Customer Portal" },
-                { id: 3, name: "Mobile App" }
-            ];
-
-            $scope.statuses = [
-                { id: 1, StatusName: "Active" },
-                { id: 2, StatusName: "Pending" },
-                { id: 3, StatusName: "Completed" },
-                { id: 4, StatusName: "On Hold" }
-            ];
-
-            // Grid options for ag-grid
-            $scope.gridOptions = {
-                columnDefs: [
-                    { field: 'loanNumber', headerName: 'Loan Number', sortable: true, filter: true },
-                    { field: 'borrowerName', headerName: 'Borrower Name', sortable: true, filter: true },
-                    { field: 'propertyInfo', headerName: 'Property Info', sortable: true, filter: true },
-                    {
-                        field: 'queueId',
-                        headerName: 'Queue',
-                        sortable: true,
-                        filter: true,
-                        valueGetter: function (params) {
-                            const queue = $scope.queues.find(q => q.id === parseInt(params.data.queueId));
-                            return queue ? queue.Value : '';
-                        }
-                    },
-                    {
-                        field: 'categoryId',
-                        headerName: 'Category',
-                        sortable: true,
-                        filter: true,
-                        valueGetter: function (params) {
-                            const category = $scope.categories.find(c => c.id === parseInt(params.data.categoryId));
-                            return category ? category.CategoryName : '';
-                        }
-                    },
-                    {
-                        field: 'statusId',
-                        headerName: 'Status',
-                        sortable: true,
-                        filter: true,
-                        valueGetter: function (params) {
-                            const status = $scope.statuses.find(s => s.id === parseInt(params.data.statusId));
-                            return status ? status.StatusName : '';
-                        }
-                    },
-                    { field: 'messageDate', headerName: 'Message Date', sortable: true, filter: true }
-                ],
-                defaultColDef: {
-                    flex: 1,
-                    minWidth: 150,
-                    resizable: true
-                },
-                domLayout: 'normal',
-                rowData: $scope.loans,
-                onGridReady: function (params) {
-                    $scope.gridApi = params.api;
-                    params.api.sizeColumnsToFit();
-                }
-            };
+            }
 
             /**
-             * Initialize the application by loading data
+             * Populate the UI with data
              */
-            function initialize() {
-                // Load all data in parallel
-                Promise.all([
-                    DataService.loadLoans(),
-                    DataService.loadMessages(),
-                    DataService.loadBrands()
-                ]).then(([loansData, messagesData, brandsData]) => {
-                    // Process and store the data
-                    $scope.loans = loansData || [];
-                    $scope.messages = messagesData || [];
+            function populateUI() {
+                // Populate loan dropdown
+                const loanSelect = document.getElementById('selectedLoan');
+                loanSelect.innerHTML = '<option value="" disabled selected>Select Loan</option>';
 
-                    // Process brand data
-                    $scope.brands = brandsData.map(brand => ({
-                        id: brand.id,
-                        name: brand.name,
-                        value: brand.value,
-                        type: brand.type,
-                        restricted: brand.restricted
-                    }));
+                const accessibleLoans = getAccessibleLoans();
+                accessibleLoans.forEach(loan => {
+                    const option = document.createElement('option');
+                    option.value = loan.id;
+                    option.textContent = `${loan.loanNumber} - ${loan.propertyInfo || ''}`;
+                    loanSelect.appendChild(option);
+                });
 
-                    // Set default brand and apply initial filtering
-                    $timeout(function() {
-                        if ($scope.brands && $scope.brands.length > 0) {
-                            $scope.selectedBrand = $scope.brands[0];
-                            $scope.selectedChannel = $scope.channels[0];
-                            $scope.setFilter('all');
-                            $scope.refreshResults();
-                        }
-                    });
-                }).catch(error => {
-                    console.error("Error initializing application:", error);
+                // Populate channel dropdown
+                const channelSelect = document.getElementById('selectedChannel');
+                channelSelect.innerHTML = '';
+
+                channels.forEach(channel => {
+                    const option = document.createElement('option');
+                    option.value = channel.id;
+                    option.textContent = channel.name;
+                    channelSelect.appendChild(option);
+                });
+
+                // Populate brand dropdown
+                const brandSelect = document.getElementById('selectedBrand');
+                brandSelect.innerHTML = '';
+
+                const accessibleBrands = getAccessibleBrands();
+                accessibleBrands.forEach(brand => {
+                    const option = document.createElement('option');
+                    option.value = brand.id;
+                    option.textContent = brand.name;
+                    brandSelect.appendChild(option);
+                });
+
+                // Populate queue dropdown
+                const queueSelect = document.getElementById('selectedQueue');
+                queueSelect.innerHTML = '';
+
+                const visibleQueues = queues.filter(queue => isQueueVisibleToUser(queue));
+                visibleQueues.forEach(queue => {
+                    const option = document.createElement('option');
+                    option.value = queue.id;
+                    option.textContent = queue.name;
+                    queueSelect.appendChild(option);
+                });
+
+                // Populate category dropdown
+                const categorySelect = document.getElementById('selectedCategory');
+                categorySelect.innerHTML = '<option value="" disabled selected>Select Category</option>';
+
+                categories.forEach(category => {
+                    const option = document.createElement('option');
+                    option.value = category.id;
+                    option.textContent = category.CategoryName;
+                    categorySelect.appendChild(option);
+                });
+
+                // Populate loan to remove dropdown
+                const loanToRemoveSelect = document.getElementById('loanToRemove');
+                loanToRemoveSelect.innerHTML = '<option value="" disabled selected>Choose loan to remove...</option>';
+
+                accessibleLoans.forEach(loan => {
+                    const option = document.createElement('option');
+                    option.value = loan.id;
+                    option.textContent = `${loan.loanNumber} - ${loan.propertyInfo || ''}`;
+                    loanToRemoveSelect.appendChild(option);
+                });
+
+                // Set default values
+                if (accessibleBrands.length > 0) {
+                    selectedBrand = accessibleBrands[0];
+                    brandSelect.value = selectedBrand.id;
+                }
+
+                if (channels.length > 0) {
+                    selectedChannel = channels[0];
+                    channelSelect.value = selectedChannel.id;
+                }
+            }
+
+            /**
+             * Update the message table with search results
+             */
+            function updateMessageTable() {
+                const tableBody = document.getElementById('messageTableBody');
+                tableBody.innerHTML = '';
+
+                if (searchResults.length === 0) {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td colspan="7" class="text-center">
+                            <div class="alert alert-info">
+                                No matching records found
+                            </div>
+                        </td>
+                    `;
+                    tableBody.appendChild(tr);
+                    return;
+                }
+
+                searchResults.forEach(message => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${message.messageDate}</td>
+                        <td>${message.sender}</td>
+                        <td>${message.messageText}</td>
+                        <td>${getQueueName(message.queueId)}</td>
+                        <td>${getCategoryName(message.categoryId)}</td>
+                        <td>${getStatusName(message.statusId)}</td>
+                        <td>${getLoanNumber(message.loanId)}</td>
+                    `;
+                    tableBody.appendChild(tr);
                 });
             }
 
-            // Initialize the application
-            initialize();
-
-            // ===== Helper Functions =====
-
             /**
-             * Get the name of a queue by ID
-             * @param {number} queueId - The queue ID
-             * @returns {string} The queue name
+             * Search messages based on form criteria
              */
-            $scope.getQueueName = function(queueId) {
-                const queue = $scope.queues.find(q => q.id === parseInt(queueId));
-                return queue ? queue.name : '';
-            };
+            function searchMessages() {
+                // Show loading indicator
+                document.getElementById('loading-indicator').style.display = 'block';
 
-            /**
-             * Get the name of a category by ID
-             * @param {number} categoryId - The category ID
-             * @returns {string} The category name
-             */
-            $scope.getCategoryName = function(categoryId) {
-                const category = $scope.categories.find(c => c.id === parseInt(categoryId));
-                return category ? category.CategoryName : '';
-            };
+                // Hide restriction message
+                document.getElementById('restrictionMessage').style.display = 'none';
 
-            /**
-             * Get the name of a status by ID
-             * @param {number} statusId - The status ID
-             * @returns {string} The status name
-             */
-            $scope.getStatusName = function(statusId) {
-                const status = $scope.statuses.find(s => s.id === parseInt(statusId));
-                return status ? status.StatusName : '';
-            };
-
-            /**
-             * Get the loan number by loan ID
-             * @param {number} loanId - The loan ID
-             * @returns {string} The loan number
-             */
-            $scope.getLoanNumber = function(loanId) {
-                const loan = $scope.loans.find(l => l.id === loanId);
-                return loan ? loan.loanNumber : '';
-            };
-
-            // ===== Delegate to MessageFilterService =====
-
-            /**
-             * Check if a loan is accessible to an offshore user
-             * @param {Object} loan - The loan to check
-             * @returns {boolean} True if the loan is accessible
-             */
-            $scope.isLoanAccessible = function(loan) {
-                return MessageFilterService.isLoanAccessible(loan);
-            };
-
-            /**
-             * Check if a message is accessible to an offshore user
-             * @param {Object} message - The message to check
-             * @returns {boolean} True if the message is accessible
-             */
-            $scope.isMessageAccessible = function(message) {
-                return MessageFilterService.isMessageAccessible(message, $scope.loans, $scope.brands);
-            };
-
-            /**
-             * Get accessible loans for offshore users
-             * @returns {Array} Accessible loans
-             */
-            $scope.getAccessibleLoans = function() {
-                return MessageFilterService.getAccessibleLoans($scope.loans);
-            };
-
-            /**
-             * Get accessible brands for offshore users
-             * @returns {Array} Accessible brands
-             */
-            $scope.getAccessibleBrands = function() {
-                return MessageFilterService.getAccessibleBrands($scope.brands);
-            };
-
-            /**
-             * Check if a queue should be visible to the current user
-             * @param {Object} queue - The queue to check
-             * @returns {boolean} True if the queue is visible
-             */
-            $scope.isQueueVisibleToUser = function(queue) {
-                return MessageFilterService.isQueueVisibleToUser(queue);
-            };
-
-            /**
-             * Check if a message matches all search criteria
-             * @param {Object} message - The message to check
-             * @returns {boolean} True if the message matches all criteria
-             */
-            $scope.messageMatchesSearchCriteria = function(message) {
+                // Get search criteria from form
                 const criteria = {
-                    loanNumber: $scope.loanNumber,
-                    selectedQueue: $scope.selectedQueue,
-                    selectedCategory: $scope.selectedCategory,
-                    firstName: $scope.firstName,
-                    lastName: $scope.lastName,
-                    selectedStatus: $scope.selectedStatus,
-                    showDeleted: $scope.showDeleted,
-                    selectedBrand: $scope.selectedBrand,
-                    startDate: $scope.startDate,
-                    endDate: $scope.endDate
+                    loanNumber: document.getElementById('loanNumber').value.trim(),
+                    selectedQueue: Array.from(document.getElementById('selectedQueue').selectedOptions).map(option => option.value),
+                    selectedCategory: document.getElementById('selectedCategory').value,
+                    firstName: document.getElementById('firstName').value.trim(),
+                    lastName: document.getElementById('lastName').value.trim(),
+                    showDeleted: document.getElementById('showDeleted').value,
+                    startDate: document.getElementById('startDate').value,
+                    endDate: document.getElementById('endDate').value,
+                    selectedBrand: selectedBrand
                 };
-                return MessageFilterService.messageMatchesSearchCriteria(message, $scope.loans, criteria);
-            };
 
-            /**
-             * Check if a loan can be removed
-             * @param {number} loanId - The loan ID
-             * @returns {boolean} True if the loan can be removed
-             */
-            $scope.canRemoveLoan = function(loanId) {
-                const loan = $scope.loans.find(l => l.id === loanId);
-                return $scope.isLoanAccessible(loan);
-            };
-
-            // ===== Action Functions =====
-
-            /**
-             * Set active filter for queues
-             * @param {string} filter - Filter type ('all', 'my', 'team')
-             */
-            $scope.setFilter = function(filter) {
-                $scope.activeFilter = filter;
-                $scope.filteredQueues = MessageFilterService.filterQueues(
-                    $scope.queues,
-                    filter,
-                    $scope.selectedBrand
+                // Step 1: Get all messages that match the search criteria
+                let filteredMessages = messages.filter(message =>
+                    messageMatchesSearchCriteria(message, criteria)
                 );
-            };
+
+                // Step 2: Requirement 1 - If search on specific fields results in exactly one record
+                // that is restricted, show "Loan is not provisioned to the user" message
+                const isSearchingBySpecificFields = criteria.loanNumber ||
+                                                  criteria.selectedQueue.length > 0 ||
+                                                  criteria.selectedCategory ||
+                                                  criteria.firstName ||
+                                                  criteria.lastName ||
+                                                  criteria.showDeleted ||
+                                                  criteria.startDate ||
+                                                  criteria.endDate;
+
+                if (isSearchingBySpecificFields && filteredMessages.length === 1) {
+                    const message = filteredMessages[0];
+                    const loan = loans.find(l => l.id === message.loanId);
+                    const brand = brands.find(b => b.id === message.brandId);
+                    const isMessageRestricted = message.type === "onshore";
+
+                    // Check if the loan, brand, or message is restricted
+                    if ((loan && loan.restricted) || (brand && brand.restricted) || isMessageRestricted) {
+                        document.getElementById('restrictionMessage').style.display = 'block';
+                        document.getElementById('loading-indicator').style.display = 'none';
+                        searchResults = [];
+                        updateMessageTable();
+                        return;
+                    }
+                }
+
+                // Step 3: Requirement 2 - If search on fields returns a list,
+                // display only records not restricted to offshore user
+                let accessibleMessages = filteredMessages.filter(message =>
+                    isMessageAccessible(message)
+                );
+
+                // Step 4: Requirement 4 - Maintain default sort order when excluding restricted records
+                accessibleMessages.sort((a, b) => new Date(b.messageDate) - new Date(a.messageDate));
+
+                // Step 5: Requirement 5 - If a Brand is selected, limit results by the selected Brand
+                if (selectedBrand) {
+                    accessibleMessages = accessibleMessages.filter(message =>
+                        message.brandId === selectedBrand.id
+                    );
+                }
+
+                // Hide loading indicator
+                document.getElementById('loading-indicator').style.display = 'none';
+
+                // Update search results and table
+                searchResults = accessibleMessages;
+                updateMessageTable();
+            }
 
             /**
-             * Remove a loan
-             * @param {number} loanId - The loan ID to remove
+             * Refresh results
+             * Resets filters and shows only accessible messages
+             * Requirement 6: Selecting refresh should continue to not show restricted records
              */
-            $scope.removeLoan = function(loanId) {
-                if (!loanId) return;
+            function refreshResults() {
+                // Reset search form
+                document.getElementById('searchForm').reset();
 
-                // Find the loan in the loans array
-                const loanIndex = $scope.loans.findIndex(l => l.id.toString() === loanId.toString());
-                if (loanIndex === -1) return;
+                // Hide restriction message
+                document.getElementById('restrictionMessage').style.display = 'none';
 
-                // Remove the loan from the array
-                $scope.loans.splice(loanIndex, 1);
+                // Filter out messages that are not accessible to offshore users
+                // This ensures requirement 6 is met - refresh should not show restricted records
+                let accessibleMessages = messages.filter(message => {
+                    // Get the associated loan and brand
+                    const loan = loans.find(l => l.id === message.loanId);
+                    const brand = brands.find(b => b.id === message.brandId);
 
-                // Reset the loanToRemove property
-                $scope.loanToRemove = null;
+                    // Check if message is accessible based on loan, brand, and message type
+                    const isLoanAccessible = loan && !loan.restricted;
+                    const isBrandAccessible = !brand || !brand.restricted;
+                    const isMessageTypeAccessible = message.type !== "onshore";
 
-                // Update the search results
-                $scope.searchLoans();
-            };
+                    return isLoanAccessible && isBrandAccessible && isMessageTypeAccessible;
+                });
+
+                // Apply brand filter if a brand is selected
+                // This ensures requirement 5 is met - limit results by selected Brand
+                if (selectedBrand) {
+                    accessibleMessages = accessibleMessages.filter(message =>
+                        message.brandId === selectedBrand.id
+                    );
+                }
+
+                // Maintain default sort order
+                // This ensures requirement 4 is met - maintain default sort order
+                accessibleMessages.sort((a, b) => new Date(b.messageDate) - new Date(a.messageDate));
+
+                // Update search results and table
+                searchResults = accessibleMessages;
+                updateMessageTable();
+            }
 
             /**
              * Return to messages list
              * Resets filters and shows only accessible messages
+             * User Story 2: When returning to Messages page, display only records available to the user
              */
-            $scope.returnToMessages = function() {
-                // Reset filters
-                $scope.selectedQueue = [];
-                $scope.selectedCategory = null;
-                $scope.selectedStatus = null;
-                $scope.startDate = null;
-                $scope.endDate = null;
-                $scope.firstName = '';
-                $scope.lastName = '';
-                $scope.loanNumber = '';
-                $scope.showDeleted = undefined;
-                $scope.selectedLoan = null;
-                $scope.restrictionMessage = '';
+            function returnToMessages() {
+                // Reset search form
+                document.getElementById('searchForm').reset();
+
+                // Hide restriction message
+                document.getElementById('restrictionMessage').style.display = 'none';
 
                 // Filter out messages that are not accessible to offshore users
-                let accessibleMessages = $scope.messages.filter(message =>
-                    $scope.isMessageAccessible(message)
-                );
+                // This ensures User Story 2 requirement 1 is met - display loan records not restricted to the user
+                let accessibleMessages = messages.filter(message => {
+                    // Get the associated loan and brand
+                    const loan = loans.find(l => l.id === message.loanId);
+                    const brand = brands.find(b => b.id === message.brandId);
+
+                    // Check if message is accessible based on loan, brand, and message type
+                    const isLoanAccessible = loan && !loan.restricted;
+                    const isBrandAccessible = !brand || !brand.restricted;
+                    const isMessageTypeAccessible = message.type !== "onshore";
+
+                    return isLoanAccessible && isBrandAccessible && isMessageTypeAccessible;
+                });
 
                 // Apply brand filter if a brand is selected
-                if ($scope.selectedBrand) {
+                if (selectedBrand) {
                     accessibleMessages = accessibleMessages.filter(message =>
-                        message.brandId === $scope.selectedBrand.id
+                        message.brandId === selectedBrand.id
                     );
                 }
 
                 // Sort by date (maintaining default sort order)
                 accessibleMessages.sort((a, b) => new Date(b.messageDate) - new Date(a.messageDate));
 
-                $scope.searchResults = accessibleMessages;
-            };
+                // Update search results and table
+                searchResults = accessibleMessages;
+                updateMessageTable();
+            }
 
             /**
-             * Refresh results
-             * Resets filters and shows only accessible messages
+             * Remove a loan
              */
-            $scope.refreshResults = function() {
-                // Reset search filters but keep brand selection
-                $scope.selectedQueue = [];
-                $scope.selectedCategory = null;
-                $scope.selectedStatus = null;
-                $scope.startDate = null;
-                $scope.endDate = null;
-                $scope.firstName = '';
-                $scope.lastName = '';
-                $scope.loanNumber = '';
-                $scope.showDeleted = undefined;
-                $scope.restrictionMessage = '';
+            function removeLoan() {
+                const loanId = document.getElementById('loanToRemove').value;
+                if (!loanId) return;
 
-                // Filter out messages that are not accessible to offshore users
-                let accessibleMessages = $scope.messages.filter(message =>
-                    $scope.isMessageAccessible(message)
-                );
+                // Find the loan in the loans array
+                const loanIndex = loans.findIndex(l => l.id.toString() === loanId.toString());
+                if (loanIndex === -1) return;
 
-                // Apply brand filter if a brand is selected
-                if ($scope.selectedBrand) {
-                    accessibleMessages = accessibleMessages.filter(message =>
-                        message.brandId === $scope.selectedBrand.id
-                    );
-                }
+                // Remove the loan from the array
+                loans.splice(loanIndex, 1);
 
-                // Maintain default sort order
-                accessibleMessages.sort((a, b) => new Date(b.messageDate) - new Date(a.messageDate));
-                $scope.searchResults = accessibleMessages;
-            };
+                // Reset the loanToRemove dropdown
+                document.getElementById('loanToRemove').value = '';
+
+                // Disable the remove button
+                document.getElementById('removeLoanButton').disabled = true;
+
+                // Update the UI
+                populateUI();
+                searchMessages();
+            }
 
             /**
-             * Search loans based on criteria
-             * Implements all user stories for search functionality
+             * Initialize the application
              */
-            $scope.searchLoans = function() {
-                // Clear previous restriction message
-                $scope.restrictionMessage = '';
+            async function initialize() {
+                try {
+                    // Show loading indicator
+                    document.getElementById('loading-indicator').style.display = 'block';
 
-                // Check if loans data is available
-                if (!$scope.loans || $scope.loans.length === 0) {
-                    console.log("Loans data not yet loaded, deferring search");
-                    $scope.searchResults = [];
-                    return;
+                    // Load all data in parallel
+                    [loans, messages, brands] = await Promise.all([
+                        loadLoans(),
+                        loadMessages(),
+                        loadBrands()
+                    ]);
+
+                    // Populate UI with data
+                    populateUI();
+
+                    // Set up event listeners
+                    document.getElementById('searchButton').addEventListener('click', searchMessages);
+                    document.getElementById('refreshButton').addEventListener('click', refreshResults);
+                    document.getElementById('returnButton').addEventListener('click', returnToMessages);
+                    document.getElementById('removeLoanButton').addEventListener('click', removeLoan);
+
+                    // Handle brand selection
+                    document.getElementById('selectedBrand').addEventListener('change', function() {
+                        const brandId = this.value;
+                        selectedBrand = brands.find(b => b.id.toString() === brandId);
+                    });
+
+                    // Handle channel selection
+                    document.getElementById('selectedChannel').addEventListener('change', function() {
+                        const channelId = this.value;
+                        selectedChannel = channels.find(c => c.id.toString() === channelId);
+                    });
+
+                    // Handle loan selection
+                    document.getElementById('selectedLoan').addEventListener('change', function() {
+                        const loanId = this.value;
+                        selectedLoan = loans.find(l => l.id.toString() === loanId);
+                    });
+
+                    // Handle loan to remove selection
+                    document.getElementById('loanToRemove').addEventListener('change', function() {
+                        document.getElementById('removeLoanButton').disabled = !this.value;
+                    });
+
+                    // Initial refresh to show data
+                    refreshResults();
+
+                    // Hide loading indicator
+                    document.getElementById('loading-indicator').style.display = 'none';
+                } catch (error) {
+                    console.error("Error initializing application:", error);
+                    document.getElementById('loading-indicator').style.display = 'none';
                 }
+            }
 
-                // Step 1: Get all messages that match the search criteria
-                let filteredMessages = $scope.messages.filter(message =>
-                    $scope.messageMatchesSearchCriteria(message)
-                );
-
-                // Step 2: Handle User Story 1 - If search by loan number results in exactly one record
-                // that is restricted, show "Loan is not provisioned to the user" message
-                if ($scope.loanNumber && filteredMessages.length === 1) {
-                    const message = filteredMessages[0];
-                    const loan = $scope.loans.find(l => l.id === message.loanId);
-                    const brand = $scope.brands.find(b => b.id === message.brandId);
-
-                    // Check if the loan or brand is restricted
-                    if ((loan && loan.restricted) || (brand && brand.restricted)) {
-                        $scope.restrictionMessage = "Loan is not provisioned to the user";
-                        $scope.searchResults = [];
-                        return;
-                    }
-                }
-
-                // Step 3: Filter out messages that are not accessible to offshore users
-                let accessibleMessages = filteredMessages.filter(message =>
-                    $scope.isMessageAccessible(message)
-                );
-
-                // Step 4: Sort results by date (maintaining default sort order)
-                accessibleMessages.sort((a, b) => new Date(b.messageDate) - new Date(a.messageDate));
-
-                $scope.searchResults = accessibleMessages;
-            };
+            // Initialize the application
+            initialize();
         });
     </script>
 </body>

@@ -1221,7 +1221,19 @@
             while (!window.storedLoansSet) {
                 await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 100ms
             }
-            return window.storedLoansSet;
+            // Process the loan data to add isRestricted property
+            const loans = window.storedLoansSet;
+
+            // Determine if the current user is offshore
+            const isOffshoreUser = true; // This would be determined by user authentication
+
+            // Add isRestricted property to each loan
+            loans.forEach(loan => {
+                // A loan is restricted to offshore users if its type is "onshore"
+                loan.isRestricted = isOffshoreUser && loan.type === "onshore";
+            });
+
+            return loans;
         }
 
         var borrowerData = [];
@@ -1230,7 +1242,8 @@
             const tableBody = document.getElementById('borrowerTableBody');
             tableBody.innerHTML = '';
 
-            // Special case: If we have exactly one result and it's a restricted loan
+            // Special case 1: If we have exactly one result and it's a restricted loan
+            // This handles the case where search by loan number, username, etc. returns exactly one restricted loan
             if (data.length === 1 && data[0].isRestricted) {
                 // Display "Loan not provisioned to you" message
                 const tr = document.createElement('tr');
@@ -1259,9 +1272,12 @@
                 return;
             }
 
-            // Otherwise, display the data normally (filtering out restricted loans)
+            // Filter out restricted loans for display
+            // This handles case 2: When searching by fields that return multiple results,
+            // only show records for loans that are not restricted
             const nonRestrictedData = data.filter(row => !row.isRestricted);
 
+            // If all results were restricted
             if (nonRestrictedData.length === 0) {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
@@ -1275,6 +1291,8 @@
                 return;
             }
 
+            // Display the non-restricted data
+            // Maintain the original sort order as per requirement 3
             nonRestrictedData.forEach(row => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
@@ -1344,27 +1362,15 @@
             });
 
             // Initialize window.selectedBrandValue
-            window.selectedBrandValue = null;
+            window.selectedBrandValue = 'all';
 
-            // Filter out restricted loans by default
+            // For offshore users, only show non-restricted loans by default
+            // This ensures requirement 2 is met: only show records associated with loans not restricted
             const nonRestrictedData = data.filter(row => !row.isRestricted);
 
-            // Update table with non-restricted loans
-            nonRestrictedData.forEach(row => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-            <td>${row.loginAccountUserName}</td>
-            <td>${row.firstName}</td>
-            <td>${row.lastName}</td>
-            <td>${row.emailAddress}</td>
-            <td>${row.phoneNumber}</td>
-            <td>${row.propertyAddress}</td>
-            <td>${row.ssn}</td>
-            <td>${row.loanNumber}</td>
-            <td>${row.status}</td>
-        `;
-                tableBody.appendChild(tr);
-            });
+            // Update table with non-restricted loans using the updateTable function
+            // This ensures consistent display and handling of the data
+            updateTable(nonRestrictedData);
         });
 
         let brandData = [];
@@ -1389,8 +1395,10 @@
                 brandSelect.remove(1);
             }
 
-            // Filter brands to only show those with non-restricted loans
+            // User Story 4: If a Brand name is selected, limit search results by the selected Brand
+            // Filter brands to only show those with non-restricted loans for offshore users
             const availableBrands = brands.filter(brand => {
+                // For offshore users, only show brands that have at least one non-restricted loan
                 return borrowerData.some(loan =>
                     loan.brand === brand.value && !loan.isRestricted
                 );
@@ -1440,10 +1448,12 @@
                         filteredData = filteredData.filter(row => row.brand === selectedBrand.value);
                     }
 
-                    // Always filter out restricted loans
+                    // Always filter out restricted loans for offshore users
+                    // This ensures requirement 2 is met: only show records associated with loans not restricted
                     filteredData = filteredData.filter(row => !row.isRestricted);
 
                     // Update the table with filtered data
+                    // The updateTable function will maintain the sort order as per requirement 3
                     updateTable(filteredData);
                 }
             });
@@ -1482,14 +1492,14 @@
 
                 // First filter by search criteria
                 let filteredData = borrowerData.filter(borrower => {
-                    return (!searchCriteria.username || borrower.loginAccountUserName.toLowerCase().includes(searchCriteria.username.toLowerCase())) &&
-                        (!searchCriteria.firstName || borrower.firstName.toLowerCase().includes(searchCriteria.firstName.toLowerCase())) &&
-                        (!searchCriteria.lastName || borrower.lastName.toLowerCase().includes(searchCriteria.lastName.toLowerCase())) &&
-                        (!searchCriteria.email || borrower.emailAddress.toLowerCase().includes(searchCriteria.email.toLowerCase())) &&
-                        (!searchCriteria.phone || borrower.phoneNumber.includes(searchCriteria.phone)) &&
-                        (!searchCriteria.address || borrower.propertyAddress.toLowerCase().includes(searchCriteria.address.toLowerCase())) &&
-                        (!searchCriteria.ssn || borrower.ssn.includes(searchCriteria.ssn)) &&
-                        (!searchCriteria.loanNumber || borrower.loanNumber.toLowerCase().includes(searchCriteria.loanNumber.toLowerCase()));
+                    return (!searchCriteria.username || borrower.loginAccountUserName.toLowerCase() === searchCriteria.username.toLowerCase()) &&
+                        (!searchCriteria.firstName || borrower.firstName.toLowerCase() === searchCriteria.firstName.toLowerCase()) &&
+                        (!searchCriteria.lastName || borrower.lastName.toLowerCase() === searchCriteria.lastName.toLowerCase()) &&
+                        (!searchCriteria.email || borrower.emailAddress.toLowerCase() === searchCriteria.email.toLowerCase()) &&
+                        (!searchCriteria.phone || borrower.phoneNumber === searchCriteria.phone) &&
+                        (!searchCriteria.address || borrower.propertyAddress.toLowerCase() === searchCriteria.address.toLowerCase()) &&
+                        (!searchCriteria.ssn || borrower.ssn === searchCriteria.ssn) &&
+                        (!searchCriteria.loanNumber || borrower.loanNumber.toLowerCase() === searchCriteria.loanNumber.toLowerCase());
                 });
 
                 // Apply brand filter if a brand is selected
@@ -1497,8 +1507,18 @@
                     filteredData = filteredData.filter(row => row.brand === window.selectedBrandValue);
                 }
 
-                // Special case 1: If searching specifically by loan number and exactly one restricted loan is found
-                if (searchCriteria.loanNumber &&
+                // User Story 1: If searching by loan number (or other specific fields) and exactly one restricted loan is found
+                // Show "Loan not provisioned to you" message
+                const isSearchingBySpecificFields = searchCriteria.loanNumber ||
+                                                  searchCriteria.username ||
+                                                  searchCriteria.firstName ||
+                                                  searchCriteria.lastName ||
+                                                  searchCriteria.email ||
+                                                  searchCriteria.phone ||
+                                                  searchCriteria.address ||
+                                                  searchCriteria.ssn;
+
+                if (isSearchingBySpecificFields &&
                     filteredData.length === 1 &&
                     filteredData[0].isRestricted) {
                     // This will trigger the "Loan not provisioned to you" message in updateTable
@@ -1507,20 +1527,16 @@
                     return;
                 }
 
-                // Special case 2: If searching by other fields and all results are restricted
-                const hasOnlyRestrictedResults = filteredData.length > 0 &&
-                                               filteredData.every(row => row.isRestricted);
-
-                if (hasOnlyRestrictedResults) {
-                    document.getElementById('loading-indicator').style.display = 'none';
-                    updateTable([]);  // Empty array will show "No matching records found"
-                    return;
-                }
+                // User Story 2: If searching by fields that return multiple results
+                // Only show records for loans that are not restricted
+                // This is handled by the updateTable function which filters out restricted loans
 
                 // Hide loading indicator
                 document.getElementById('loading-indicator').style.display = 'none';
 
                 // Update the table with filtered data
+                // The updateTable function will handle filtering out restricted loans
+                // and maintaining the sort order as per requirement 3
                 updateTable(filteredData);
             });
 
@@ -1528,36 +1544,37 @@
 
             // Clear search functionality
             document.querySelector('.text-link').addEventListener('click', function () {
-                document.querySelectorAll('input[matInput]').forEach(input => input.value = '');
-                updateTable(borrowerData);
+                // Clear all input fields
+                document.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"]').forEach(input => {
+                    input.value = '';
+                });
+
+                // Reset brand dropdown selection to "All Brands"
+                const brandSelect = document.getElementById('brandSelect');
+                if (brandSelect) {
+                    brandSelect.value = 'all';
+                }
+
+                // Reset the selected brand value
+                window.selectedBrandValue = 'all';
+
+                // Update the Angular Material dropdown text if it exists
+                const matSelectText = document.querySelector('.mat-mdc-select-min-line');
+                if (matSelectText) {
+                    matSelectText.textContent = 'All Brands';
+                }
+
+                // For offshore users, only show non-restricted loans
+                const nonRestrictedData = borrowerData.filter(row => !row.isRestricted);
+
+                // Update the table with non-restricted data
+                updateTable(nonRestrictedData);
             });
         });
 
 
 
-        document.querySelector('.text-link').addEventListener('click', function () {
-            // Clear all input fields
-            document.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"]').forEach(input => {
-                input.value = '';
-            });
-
-            // Reset brand dropdown selection to "All Brands"
-            const brandSelect = document.getElementById('brandSelect');
-            brandSelect.value = 'all';
-
-            // Reset the selected brand value
-            window.selectedBrandValue = 'all';
-
-            // Update the Angular Material dropdown text if it exists
-            const matSelectText = document.querySelector('.mat-mdc-select-min-line');
-            if (matSelectText) {
-                matSelectText.textContent = 'All Brands';
-            }
-
-            // Show all non-restricted data
-            const nonRestrictedData = borrowerData.filter(row => !row.isRestricted);
-            updateTable(nonRestrictedData);
-        });
+        // Clear search functionality is now handled in the event listener above
 
     </script>
 </body>

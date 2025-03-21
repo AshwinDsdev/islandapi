@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loansphere Queues View</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <style>
+        .wrapper {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .chip-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 16px;
+        }
+        
+        .chip {
+            background-color: #f0f0f0;
+            border: none;
+            border-radius: 16px;
+            padding: 8px 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        
+        .chip:hover {
+            background-color: #e0e0e0;
+        }
+        
+        .chip.selected {
+            background-color: #3f51b5;
+            color: white;
+        }
+        
+        .chip-checkmark {
+            margin-right: 8px;
+            display: none;
+        }
+        
+        .chip.selected .chip-checkmark {
+            display: inline;
+        }
+        
+        .loading-indicator {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+        
+        .card {
+            margin: 16px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+
+<body>
+    <div id="loading-indicator" class="loading-indicator" style="display: none;">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+
+    <div class="wrapper">
+        <main>
+            <div class="card">
+                <div class="card-body">
+                    <div class="chip-container" id="brandChips">
+                        <!-- Example of converted chip -->
+                        <button class="chip" onclick="selectChip(this)" data-brand-id="1">
+                            <span class="chip-checkmark">✓</span>
+                            <span class="chip-label">Credit Union 1</span>
+                        </button>
+                        <!-- More chips will be dynamically added here -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="./Brand_Ingestion.js" type="module"></script>
+    <script src="./Loan_Ingestion.js" type="module"></script>
+    <script src="./Queue_Ingestion.js" type="module"></script>
+    
+    <script>
+        // Application state
+        const state = {
+            currentUser: null,
+            accessibleBrands: [],
+            loans: [],
+            queues: []
+        };
+
+        // Initialize when document is ready
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Show loading indicator
+            document.getElementById('loading-indicator').style.display = 'block';
+
+            try {
+                // Load data
+                await loadData();
+
+                // Initialize UI
+                initializeChips();
+            } catch (error) {
+                console.error('Error initializing application:', error);
+                showErrorMessage('Failed to initialize the application. Please refresh the page.');
+            } finally {
+                // Hide loading indicator
+                document.getElementById('loading-indicator').style.display = 'none';
+            }
+        });
+
+        /**
+         * Load all required data
+         */
+        async function loadData() {
+            try {
+                // For this example, we'll use a simulated user
+                // In a real application, this would come from authentication
+                state.currentUser = {
+                    id: 1,
+                    name: 'John Doe',
+                    userType: 'offshore', // 'offshore' or 'onshore'
+                    accessibleBrands: ['all'] // 'all' or specific brand IDs
+                };
+
+                // Load brands data from external source
+                await loadBrandsData();
+
+                // Load loans data from external source
+                await loadLoansData();
+
+                // Load queues data from external source
+                await loadQueuesData();
+
+                console.log('All data loaded successfully');
+            } catch (error) {
+                console.error('Error loading data:', error);
+                throw error;
+            }
+        }
+
+        /**
+         * Load brands data from external source
+         */
+        async function loadBrandsData() {
+            try {
+                // Wait for brands data to be available from Brand_Ingestion.js
+                let attempts = 0;
+                const maxAttempts = 10;
+                const waitTime = 300; // milliseconds
+
+                while (!window.storedNumbersSet && attempts < maxAttempts) {
+                    await new Promise(resolve => setTimeout(resolve, waitTime));
+                    attempts++;
+                }
+
+                if (window.storedNumbersSet) {
+                    state.accessibleBrands = window.storedNumbersSet;
+                    console.log('Brands loaded from storedNumbersSet:', state.accessibleBrands.length);
+                } else {
+                    console.error('Failed to load brands data: storedNumbersSet not available');
+                    state.accessibleBrands = [];
+                }
+            } catch (error) {
+                console.error('Error loading brands data:', error);
+                state.accessibleBrands = [];
+            }
+        }
+
+        /**
+         * Load loans data from external source
+         */
+        async function loadLoansData() {
+            try {
+                // Wait for loans data to be available from Loan_Ingestion.js
+                let attempts = 0;
+                const maxAttempts = 10;
+                const waitTime = 300; // milliseconds
+
+                while (!window.storedLoansSet && attempts < maxAttempts) {
+                    await new Promise(resolve => setTimeout(resolve, waitTime));
+                    attempts++;
+                }
+
+                if (window.storedLoansSet) {
+                    state.loans = window.storedLoansSet;
+                    console.log('Loans loaded from storedLoansSet:', state.loans.length);
+                } else {
+                    console.error('Failed to load loans data: storedLoansSet not available');
+                    state.loans = [];
+                }
+            } catch (error) {
+                console.error('Error loading loans data:', error);
+                state.loans = [];
+            }
+        }
+
+        /**
+         * Load queues data from external source
+         */
+        async function loadQueuesData() {
+            try {
+                // Wait for queues data to be available from Queue_Ingestion.js
+                let attempts = 0;
+                const maxAttempts = 10;
+                const waitTime = 300; // milliseconds
+
+                while (!window.storedQueuesSet && attempts < maxAttempts) {
+                    await new Promise(resolve => setTimeout(resolve, waitTime));
+                    attempts++;
+                }
+
+                if (window.storedQueuesSet) {
+                    state.queues = window.storedQueuesSet;
+                    console.log('Queues loaded from storedQueuesSet:', state.queues.length);
+                } else {
+                    console.error('Failed to load queues data: storedQueuesSet not available');
+                    state.queues = [];
+                }
+            } catch (error) {
+                console.error('Error loading queues data:', error);
+                state.queues = [];
+            }
+        }
+
+        /**
+         * Get brands accessible to the current user
+         * @returns {Array} - Array of accessible brand objects
+         */
+        function getAccessibleBrands() {
+            // If no user data, return all brands
+            if (!state.currentUser) {
+                return state.accessibleBrands;
+            }
+
+            // For offshore users, filter out brands associated only with restricted loans
+            if (state.currentUser.userType === 'offshore') {
+                return state.accessibleBrands.filter(brand => {
+                    // Skip the "All Brands" option for offshore users if it's restricted
+                    if (brand.value === 'all' && brand.restricted) {
+                        return false;
+                    }
+
+                    // Filter out brands that are explicitly marked as restricted
+                    if (brand.restricted) {
+                        return false;
+                    }
+
+                    // Filter out brands that are of type "onshore"
+                    if (brand.type === "onshore") {
+                        return false;
+                    }
+
+                    // Check if there are any loans associated with this brand that are accessible to offshore users
+                    const brandLoans = state.loans.filter(loan => loan.brand === brand.value);
+                    if (brandLoans.length > 0) {
+                        // Check if at least one loan is of type "offshore"
+                        return brandLoans.some(loan => loan.type === "offshore");
+                    }
+
+                    // If no loans found for this brand, default to allowing access based on brand type
+                    return brand.type === "offshore";
+                });
+            }
+
+            // For onshore users, return all brands
+            return state.accessibleBrands;
+        }
+
+        /**
+         * Initialize chips for brand selection
+         */
+        function initializeChips() {
+            const container = document.getElementById('brandChips');
+            container.innerHTML = ''; // Clear existing chips
+
+            // Get brands accessible to the current user
+            const accessibleBrands = getAccessibleBrands();
+
+            if (accessibleBrands.length === 0) {
+                // Display a message if no brands are available
+                const noDataMessage = document.createElement('div');
+                noDataMessage.className = 'alert alert-info m-2';
+                noDataMessage.textContent = 'No brands available. Please check your access permissions.';
+                container.appendChild(noDataMessage);
+                return;
+            }
+
+            accessibleBrands.forEach(brand => {
+                const chip = document.createElement('button');
+                chip.className = 'chip';
+                chip.setAttribute('data-brand-id', brand.id);
+                chip.onclick = function() { selectChip(this); };
+
+                chip.innerHTML = `
+                    <span class="chip-checkmark">✓</span>
+                    <span class="chip-label">${brand.name}</span>
+                `;
+
+                container.appendChild(chip);
+            });
+        }
+
+        /**
+         * Chip selection handler
+         * @param {HTMLElement} element - The selected chip element
+         */
+        function selectChip(element) {
+            // Remove selection from other chips
+            document.querySelectorAll('.chip').forEach(chip => {
+                chip.classList.remove('selected');
+            });
+
+            // Select clicked chip
+            element.classList.add('selected');
+
+            // Handle brand selection
+            const brandId = parseInt(element.getAttribute('data-brand-id'));
+            handleBrandSelection(brandId);
+        }
+
+        /**
+         * Handle brand selection
+         * @param {number} brandId - The selected brand ID
+         */
+        function handleBrandSelection(brandId) {
+            // Show loading indicator
+            document.getElementById('loading-indicator').style.display = 'block';
+
+            // Simulate API call
+            setTimeout(() => {
+                // Hide loading indicator
+                document.getElementById('loading-indicator').style.display = 'none';
+
+                // Get the selected brand
+                const selectedBrand = state.accessibleBrands.find(brand => brand.id === brandId);
+
+                // Handle the brand selection logic here
+                console.log('Selected brand:', selectedBrand);
+
+                // Show queues for the selected brand
+                showQueuesForBrand(brandId);
+            }, 500);
+        }
+
+        /**
+         * Show queues for the selected brand
+         * @param {number} brandId - The selected brand ID
+         */
+        function showQueuesForBrand(brandId) {
+            // Filter queues that include the selected brand
+            const queuesForBrand = state.queues.filter(queue =>
+                queue.brandIds.includes(brandId)
+            );
+
+            // For offshore users, filter out queues that are restricted or associated only with restricted brands
+            let filteredQueues = queuesForBrand;
+            if (state.currentUser && state.currentUser.userType === 'offshore') {
+                filteredQueues = queuesForBrand.filter(queue => {
+                    // Skip queues that are explicitly marked as restricted
+                    if (queue.restricted) {
+                        return false;
+                    }
+
+                    // Check if queue has at least one offshore brand
+                    return queue.brandIds.some(qBrandId => {
+                        const brand = state.accessibleBrands.find(b => b.id === qBrandId);
+                        if (!brand) return false;
+
+                        // Skip restricted brands
+                        if (brand.restricted) return false;
+
+                        // Skip onshore brands
+                        if (brand.type === "onshore") return false;
+
+                        // Check if there are any loans associated with this brand that are accessible to offshore users
+                        const brandLoans = state.loans.filter(loan => loan.brand === brand.value);
+                        if (brandLoans.length > 0) {
+                            // Check if at least one loan is of type "offshore"
+                            return brandLoans.some(loan => loan.type === "offshore");
+                        }
+
+                        // If no loans found for this brand, default to allowing access based on brand type
+                        return brand.type === "offshore";
+                    });
+                });
+            }
+
+            console.log('Queues for brand:', filteredQueues);
+
+            // Here you would update the UI to show the filtered queues
+            // This is just a placeholder for the actual implementation
+            displayQueues(filteredQueues);
+        }
+
+        /**
+         * Display queues in the UI
+         * @param {Array} queues - Array of queue objects to display
+         */
+        function displayQueues(queues) {
+            // Create a container for queues if it doesn't exist
+            let queuesContainer = document.getElementById('queuesContainer');
+            if (!queuesContainer) {
+                queuesContainer = document.createElement('div');
+                queuesContainer.id = 'queuesContainer';
+                queuesContainer.className = 'card mt-4';
+
+                const cardBody = document.createElement('div');
+                cardBody.className = 'card-body';
+
+                const cardTitle = document.createElement('h5');
+                cardTitle.className = 'card-title mb-4';
+                cardTitle.textContent = 'Available Queues';
+
+                cardBody.appendChild(cardTitle);
+
+                const queuesList = document.createElement('div');
+                queuesList.id = 'queuesList';
+                queuesList.className = 'list-group';
+
+                cardBody.appendChild(queuesList);
+                queuesContainer.appendChild(cardBody);
+
+                document.querySelector('main').appendChild(queuesContainer);
+            }
+
+            // Get the queues list element
+            const queuesList = document.getElementById('queuesList');
+            queuesList.innerHTML = ''; // Clear existing queues
+
+            // Add queues to the list
+            if (queues.length === 0) {
+                const noQueuesMessage = document.createElement('div');
+                noQueuesMessage.className = 'alert alert-info';
+                noQueuesMessage.textContent = 'No queues available for this brand.';
+                queuesList.appendChild(noQueuesMessage);
+            } else {
+                queues.forEach(queue => {
+                    const queueItem = document.createElement('a');
+                    queueItem.href = '#';
+                    queueItem.className = 'list-group-item list-group-item-action d-flex justify-content-between align-items-center';
+                    queueItem.onclick = function(e) {
+                        e.preventDefault();
+                        selectQueue(queue.id);
+                    };
+
+                    const queueName = document.createElement('span');
+                    queueName.textContent = queue.name;
+
+                    const queueType = document.createElement('span');
+                    queueType.className = 'badge bg-primary rounded-pill';
+                    queueType.textContent = queue.type === 'my' ? 'My Queue' : 'Shared Queue';
+
+                    queueItem.appendChild(queueName);
+                    queueItem.appendChild(queueType);
+
+                    queuesList.appendChild(queueItem);
+                });
+            }
+        }
+
+        /**
+         * Handle queue selection
+         * @param {number} queueId - The selected queue ID
+         */
+        function selectQueue(queueId) {
+            console.log('Selected queue ID:', queueId);
+            // Here you would implement the queue selection logic
+            // This is just a placeholder for the actual implementation
+        }
+
+        /**
+         * Show an error message to the user
+         * @param {string} message - The error message to display
+         */
+        function showErrorMessage(message) {
+            // Create error message element
+            const errorElement = document.createElement('div');
+            errorElement.className = 'alert alert-danger m-3';
+            errorElement.textContent = message;
+
+            // Add to the page
+            document.querySelector('main').prepend(errorElement);
+
+            // Remove after 5 seconds
+            setTimeout(() => {
+                errorElement.remove();
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

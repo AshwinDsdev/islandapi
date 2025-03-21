@@ -8,8 +8,6 @@
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome for Icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <!-- Angular Material CSS -->
-    <link href="https://ajax.googleapis.com/ajax/libs/angular_material/1.2.5/angular-material.min.css" rel="stylesheet">
     <!-- Animate.css for animations -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
     <!-- Toastr for notifications -->
@@ -400,227 +398,171 @@
         }
     </style>
 </head>
-<body ng-app="loanApp" ng-controller="LoanController">
+<body>
     <!-- Loading Overlay -->
-    <div id="loading-overlay" class="loading-overlay" ng-show="isLoading">
+    <div id="loading-overlay" class="loading-overlay">
         <div class="spinner"></div>
     </div>
 
     <!-- Sidebar Navigation -->
-    <div id="sidebar" class="sidebar" ng-class="{'active': sidebarActive}">
+    <div id="sidebar" class="sidebar">
         <ul>
-            <li><a href="#" ng-click="loadDashboard()"><i class="fas fa-tachometer-alt mr-2"></i> Dashboard</a></li>
-            <li><a href="#" ng-click="loadQueues()"><i class="fas fa-tasks mr-2"></i> Queues</a></li>
-            <li><a href="#" ng-click="loadLoans()"><i class="fas fa-file-invoice-dollar mr-2"></i> Loans</a></li>
-            <li><a href="#" ng-click="loadReports()"><i class="fas fa-chart-bar mr-2"></i> Reports</a></li>
-            <li><a href="#" ng-click="loadSettings()"><i class="fas fa-cog mr-2"></i> Settings</a></li>
-            <li><a href="#" ng-click="loadHelp()"><i class="fas fa-question-circle mr-2"></i> Help</a></li>
+            <li><a href="#" id="loadDashboard"><i class="fas fa-tachometer-alt mr-2"></i> Dashboard</a></li>
+            <li><a href="#" id="loadQueues"><i class="fas fa-tasks mr-2"></i> Queues</a></li>
+            <li><a href="#" id="loadLoans"><i class="fas fa-file-invoice-dollar mr-2"></i> Loans</a></li>
+            <li><a href="#" id="loadReports"><i class="fas fa-chart-bar mr-2"></i> Reports</a></li>
+            <li><a href="#" id="loadSettings"><i class="fas fa-cog mr-2"></i> Settings</a></li>
+            <li><a href="#" id="loadHelp"><i class="fas fa-question-circle mr-2"></i> Help</a></li>
         </ul>
     </div>
 
-    <div class="content-wrapper" ng-class="{'active': sidebarActive}">
-        <app-root _nghost-ng-c1992328644="" ng-version="18.2.13">
-            <div _ngcontent-ng-c1992328644="" class="wrapper">
-                <main _ngcontent-ng-c1992328644="">
-                    <router-outlet _ngcontent-ng-c1992328644=""></router-outlet>
-                    <lsdadmin-home _nghost-ng-c1816347493="" class="ng-star-inserted">
-                        <!-- Header Section -->
-                        <div class="header2 px-3 py-3">
-                            <div class="row align-items-center">
-                                <div class="col-12 col-md-3 d-flex align-items-center mb-2 mb-md-0">
-                                    <div class="menu-hamburger mr-3">
-                                        <i class="fa-sharp fa-solid fa-bars hamburger-menu" style="cursor: pointer; font-size: 1.2em;" ng-click="toggleSidebar()"></i>
-                                    </div>
-                                    <div style="color: whitesmoke; font-family: 'Suisse-SemiBold'; font-size: 1.5em;">One Admin</div>
+    <div class="content-wrapper">
+        <div class="wrapper">
+            <main>
+                <!-- Header Section -->
+                <div class="header2 px-3 py-3">
+                    <div class="row align-items-center">
+                        <div class="col-12 col-md-3 d-flex align-items-center mb-2 mb-md-0">
+                            <div class="menu-hamburger mr-3">
+                                <i class="fa-sharp fa-solid fa-bars hamburger-menu" style="cursor: pointer; font-size: 1.2em;" id="toggleSidebar"></i>
+                            </div>
+                            <div style="color: whitesmoke; font-family: 'Suisse-SemiBold'; font-size: 1.5em;">One Admin</div>
+                        </div>
+                        <div class="col-12 col-md-5 d-flex flex-column flex-md-row align-items-md-center mb-2 mb-md-0">
+                            <div class="institution-name mb-2 mb-md-0 mr-md-4" style="color: white; font-size: 1.2em; font-weight: bold;">Cenlar FSB</div>
+                            <div class="channel-selector mb-2 mb-md-0 mr-md-4">
+                                <select class="form-control" id="selectedChannel">
+                                    <!-- Options will be populated by JavaScript -->
+                                </select>
+                            </div>
+                            <div class="channel-selector mb-2 mb-md-0">
+                                <select class="form-control" id="selectedBrand">
+                                    <option value="">-- All Brands --</option>
+                                    <!-- Options will be populated by JavaScript -->
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-4 d-flex justify-content-start justify-content-md-end">
+                            <!-- User Profile and Notifications -->
+                            <div class="right-icons d-flex align-items-center mt-2 mt-md-0">
+                                <div class="position-relative mr-4">
+                                    <button class="btn btn-dark position-relative" id="toggleNotifications">
+                                        <i class="fas fa-bell"></i>
+                                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger notification-count"
+                                              style="top: -5px; right: -10px; display: none;">
+                                            0
+                                        </span>
+                                    </button>
                                 </div>
-                                <div class="col-12 col-md-5 d-flex flex-column flex-md-row align-items-md-center mb-2 mb-md-0">
-                                    <div class="institution-name mb-2 mb-md-0 mr-md-4" style="color: white; font-size: 1.2em; font-weight: bold;">Cenlar FSB</div>
-                                    <div class="channel-selector mb-2 mb-md-0 mr-md-4">
-                                        <select class="form-control" ng-model="selectedChannel" ng-options="channel.name for channel in channels">
-                                        </select>
-                                    </div>
-                                    <div class="channel-selector mb-2 mb-md-0">
-                                        <select class="form-control" ng-model="selectedBrand" ng-options="brand.name for brand in getAccessibleBrands()" ng-change="setFilter(activeFilter)">
-                                            <option value="">-- All Brands --</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-12 col-md-4 d-flex justify-content-start justify-content-md-end">
-                                    <!-- User Profile and Notifications -->
-                                    <div class="right-icons d-flex align-items-center mt-2 mt-md-0">
-
-                                        <div class="position-relative mr-4">
-                                            <button class="btn btn-dark position-relative" ng-click="toggleNotifications()">
-                                                <i class="fas fa-bell"></i>
-                                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                                                      ng-show="notifications.length > 0"
-                                                      style="top: -5px; right: -10px;">
-                                                    {{notifications.length}}
-                                                </span>
-                                            </button>
-                                        </div>
-                                        <div class="user-profile dropdown">
-                                            <button class="btn btn-dark dropdown-toggle" type="button" id="userDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                <i class="fas fa-user-circle mr-1"></i>
-                                                <span class="d-none d-md-inline">{{currentUser.name}}</span>
-                                            </button>
-                                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-                                                <a class="dropdown-item" href="#"><i class="fas fa-user mr-2"></i> Profile</a>
-                                                <a class="dropdown-item" href="#"><i class="fas fa-cog mr-2"></i> Settings</a>
-                                                <div class="dropdown-divider"></div>
-                                                <a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt mr-2"></i> Logout</a>
-                                            </div>
-                                        </div>
+                                <div class="user-profile dropdown">
+                                    <button class="btn btn-dark dropdown-toggle" type="button" id="userDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fas fa-user-circle mr-1"></i>
+                                        <span class="d-none d-md-inline user-name">John Doe</span>
+                                    </button>
+                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+                                        <a class="dropdown-item" href="#"><i class="fas fa-user mr-2"></i> Profile</a>
+                                        <a class="dropdown-item" href="#"><i class="fas fa-cog mr-2"></i> Settings</a>
+                                        <div class="dropdown-divider"></div>
+                                        <a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt mr-2"></i> Logout</a>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        </div>
+                    </div>
+                </div>
 
-                        <!-- Main Content Area -->
-                        <div class="container-fluid">
-                            <div class="row">
-                                <div class="col-12">
-                                    <h2 class="mb-4">Loan Queues <span class="queue-count-badge">{{filteredQueues.length}} Available</span></h2>
+                <!-- Main Content Area -->
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-12">
+                            <h2 class="mb-4">Loan Queues <span class="queue-count-badge" id="queueCount">0 Available</span></h2>
 
-                                    <!-- Search Bar -->
-                                    <div class="search-container">
-                                        <i class="fas fa-search"></i>
-                                        <input type="text" class="form-control" placeholder="Search queues or loans..."
-                                               ng-model="searchQuery"
-                                               ng-change="applyQueueFilters()">
-                                    </div>
+                            <!-- Search Bar -->
+                            <div class="search-container">
+                                <i class="fas fa-search"></i>
+                                <input type="text" class="form-control" id="searchQuery" placeholder="Search queues or loans...">
+                            </div>
 
-                                    <!-- Queue Filters -->
-                                    <div class="mb-4">
-                                        <div class="btn-group">
-                                            <button type="button" class="btn" ng-class="{'btn-primary': activeFilter === 'all', 'btn-outline-primary': activeFilter !== 'all'}" ng-click="setFilter('all')">All Queues</button>
-                                            <button type="button" class="btn" ng-class="{'btn-primary': activeFilter === 'my', 'btn-outline-primary': activeFilter !== 'my'}" ng-click="setFilter('my')">My Queues</button>
-                                            <button type="button" class="btn" ng-class="{'btn-primary': activeFilter === 'team', 'btn-outline-primary': activeFilter !== 'team'}" ng-click="setFilter('team')">Team Queues</button>
+                            <!-- Queue Filters -->
+                            <div class="mb-4">
+                                <div class="btn-group" id="filterButtons">
+                                    <button type="button" class="btn btn-primary" data-filter="all">All Queues</button>
+                                    <button type="button" class="btn btn-outline-primary" data-filter="my">My Queues</button>
+                                    <button type="button" class="btn btn-outline-primary" data-filter="team">Team Queues</button>
+                                </div>
+                            </div>
+
+                            <!-- Queue Table -->
+                            <div class="table-responsive">
+                                <table class="table table-hover table-striped" id="queueTable">
+                                    <thead class="thead-dark">
+                                        <tr>
+                                            <th>Queue Name</th>
+                                            <th>Type</th>
+                                            <th>Items</th>
+                                            <th>Restricted</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="queueTableBody">
+                                        <!-- Queue rows will be populated by JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Queue Items Modal -->
+                            <div class="modal fade" id="queueItemsModal" tabindex="-1" role="dialog" aria-labelledby="queueItemsModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="queueItemsModalLabel">Queue Items</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
                                         </div>
-                                    </div>
-
-                                    <!-- Queue Table -->
-                                    <div class="table-responsive">
-                                        <table class="table table-hover table-striped" ng-if="filteredQueues.length > 0">
-                                            <thead class="thead-dark">
-                                                <tr>
-                                                    <th>Queue Name</th>
-                                                    <th>Type</th>
-                                                    <th>Items</th>
-                                                    <th>Restricted</th>
-                                                    <th>Actions</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr ng-repeat="queue in filteredQueues" ng-click="viewAllItems(queue)" style="cursor: pointer;">
-                                                    <td>
-                                                        <strong>{{queue.name}}</strong>
-                                                    </td>
-                                                    <td>
-                                                        <span class="badge" ng-class="{'badge-primary': queue.type === 'my', 'badge-info': queue.type === 'team', 'badge-secondary': queue.type !== 'my' && queue.type !== 'team'}">
-                                                            {{queue.type}}
-                                                        </span>
-                                                    </td>
-                                                    <td>
-                                                        <span class="badge badge-pill badge-primary">{{getAccessibleQueueItemsCount(queue)}}</span>
-                                                    </td>
-                                                    <td>
-                                                        <span class="badge" ng-class="{'badge-success': !queue.restricted, 'badge-danger': queue.restricted}">
-                                                            {{queue.restricted ? 'Yes' : 'No'}}
-                                                        </span>
-                                                    </td>
-                                                    <td>
-                                                        <button class="btn btn-sm btn-outline-primary" ng-click="viewAllItems(queue); $event.stopPropagation();">View Items</button>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-
-                                    <!-- Queue Items Modal -->
-                                    <div class="modal fade" id="queueItemsModal" tabindex="-1" role="dialog" aria-labelledby="queueItemsModalLabel" aria-hidden="true">
-                                        <div class="modal-dialog modal-lg" role="document">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" id="queueItemsModalLabel">{{selectedQueueName}} - Queue Items</h5>
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <!-- Associated Brands Section -->
-                                                    <div class="mb-4" ng-if="visibleBrands && visibleBrands.length > 0">
-                                                        <h6>Associated Brands:</h6>
-                                                        <div class="d-flex flex-wrap">
-                                                            <span class="badge badge-info mr-2 mb-2" ng-repeat="brand in visibleBrands">
-                                                                {{brand.name}}
-                                                            </span>
-                                                        </div>
-                                                    </div>
-
-                                                    <table class="table table-striped">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>Loan Number</th>
-                                                                <th>Borrower</th>
-                                                                <th>Date</th>
-                                                                <th>Priority</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            <tr ng-repeat="item in selectedQueueItems" ng-click="openLoanDetails(item)" style="cursor: pointer;">
-                                                                <td>{{item.loanNumber}}</td>
-                                                                <td>{{item.borrowerName}}</td>
-                                                                <td>{{item.date | date:'MM/dd/yyyy'}}</td>
-                                                                <td>
-                                                                    <span class="badge" ng-class="{'badge-danger': item.priority === 'high', 'badge-warning': item.priority === 'medium', 'badge-success': item.priority === 'low'}">
-                                                                        {{item.priority}}
-                                                                    </span>
-                                                                </td>
-                                                            </tr>
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                        <div class="modal-body">
+                                            <!-- Associated Brands Section -->
+                                            <div class="mb-4" id="visibleBrandsContainer" style="display: none;">
+                                                <h6>Associated Brands:</h6>
+                                                <div class="d-flex flex-wrap" id="visibleBrandsList">
+                                                    <!-- Brand badges will be populated by JavaScript -->
                                                 </div>
                                             </div>
+
+                                            <table class="table table-striped">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Loan Number</th>
+                                                        <th>Borrower</th>
+                                                        <th>Date</th>
+                                                        <th>Priority</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="queueItemsTableBody">
+                                                    <!-- Queue item rows will be populated by JavaScript -->
+                                                </tbody>
+                                            </table>
                                         </div>
-                                    </div>
-
-                                    <!-- Empty State -->
-                                    <div class="col-12 text-center py-5" ng-if="filteredQueues.length === 0">
-                                        <i class="fas fa-search fa-3x text-muted mb-3"></i>
-                                        <h4>No queues found</h4>
-                                        <p class="text-muted">Try adjusting your search or filters</p>
-                                    </div>
-
-                                    <!-- Debug Info (can be removed in production) -->
-                                    <div class="mt-4 p-3 bg-light rounded" ng-if="false">
-                                        <h5>Debug Information</h5>
-                                        <p>Total Queues: {{queues.length}}</p>
-                                        <p>Filtered Queues: {{filteredQueues.length}}</p>
-                                        <p>Active Filter: {{activeFilter}}</p>
-                                        <p>Selected Brand: {{selectedBrand ? selectedBrand.name : 'None'}}</p>
-                                        <p>Search Query: {{searchQuery || 'None'}}</p>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+
+                            <!-- Empty State -->
+                            <div class="col-12 text-center py-5" id="emptyState" style="display: none;">
+                                <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                                <h4>No queues found</h4>
+                                <p class="text-muted">Try adjusting your search or filters</p>
+                            </div>
                         </div>
-                    </lsdadmin-home>
-                </main>
-            </div>
-        </app-root>
+                    </div>
+                </div>
+            </main>
+        </div>
     </div>
 
-    <!-- AngularJS and Angular Material -->
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-aria.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-animate.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-route.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-messages.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.2.5/angular-material.min.js"></script>
     <!-- Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
@@ -634,403 +576,649 @@
     <!-- Load Ingestion Scripts -->
     <script src="Brand_Ingestion.js" type="module"></script>
     <script src="Loan_Ingestion.js" type="module"></script>
-    
     <script src="Queue_Ingestion.js" type="module"></script>
     <!-- Custom JS -->
     <script>
-        // Helper functions to wait for data to be loaded from ingestion scripts
-        async function waitForLoans() {
-            // Try to wait for up to 5 seconds for the loans data
-            let attempts = 0;
-            const maxAttempts = 5;
+        document.addEventListener('DOMContentLoaded', function() {
+            // Global state
+            let loans = [];
+            let brands = [];
+            let queues = [];
+            let filteredQueues = [];
+            let selectedBrand = null;
+            let selectedChannel = null;
+            let activeFilter = 'all';
+            let searchQuery = '';
+            let sidebarActive = false;
+            let selectedQueueItems = [];
+            let selectedQueueName = '';
+            let visibleBrands = [];
 
-            while (!window.storedLoansSet && attempts < maxAttempts) {
-                console.log(`Waiting for loans data... Attempt ${attempts + 1}/${maxAttempts}`);
-                await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second
-                attempts++;
-            }
+            // User data
+            const currentUser = {
+                id: 1,
+                name: 'John Doe',
+                email: 'john.doe@example.com',
+                role: 'Loan Officer',
+                team: 'Loan Processing'
+            };
 
-            if (!window.storedLoansSet) {
-                console.warn("Timed out waiting for loans data, using fallback data");
-                // Return fallback data if window.storedLoansSet is still not available
-                return [
-        
-                ];
-            }
+            // Notifications
+            const notifications = [
+                { id: 1, message: 'New loan application submitted', date: new Date(), read: false },
+                { id: 2, message: 'Document verification required', date: new Date(Date.now() - 86400000), read: false },
+                { id: 3, message: 'Loan approval pending', date: new Date(Date.now() - 172800000), read: true }
+            ];
 
-            console.log("Loans data loaded successfully");
-            return window.storedLoansSet;
-        }
+            // Channels data
+            const channels = [
+                { id: 1, name: 'Borrower Self-Service' },
+                { id: 2, name: 'Loan Officer Portal' },
+                { id: 3, name: 'Admin Dashboard' },
+                { id: 4, name: 'Customer Service' }
+            ];
 
-        async function waitForBrands() {
-            // Try to wait for up to 5 seconds for the brands data
-            let attempts = 0;
-            const maxAttempts = 5;
+            // Helper functions to wait for data to be loaded from ingestion scripts
+            async function waitForLoans() {
+                // Try to wait for up to 5 seconds for the loans data
+                let attempts = 0;
+                const maxAttempts = 5;
 
-            while (!window.storedNumbersSet && attempts < maxAttempts) {
-                console.log(`Waiting for brands data... Attempt ${attempts + 1}/${maxAttempts}`);
-                await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second
-                attempts++;
-            }
-
-            if (!window.storedNumbersSet) {
-                console.warn("Timed out waiting for brands data, using fallback data");
-                // Return fallback data if window.storedNumbersSet is still not available
-                return [
-
-                ];
-            }
-
-            console.log("Brands data loaded successfully");
-            return window.storedNumbersSet;
-        }
-
-        async function waitForQueues() {
-            // Try to wait for up to 5 seconds for the queues data
-            let attempts = 0;
-            const maxAttempts = 5;
-
-            while (!window.storedQueuesSet && attempts < maxAttempts) {
-                console.log(`Waiting for queues data... Attempt ${attempts + 1}/${maxAttempts}`);
-                await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second
-                attempts++;
-            }
-
-            if (!window.storedQueuesSet) {
-                console.warn("Timed out waiting for queues data, using fallback data");
-                // Return fallback data if window.storedQueuesSet is still not available
-                return [
-                    {
-                        "id": 1,
-                        "name": "Pending Applications",
-                        "type": "my",
-                        "sortOrder": 1,
-                        "restricted": false,
-                        "items": []
-                    }
-                ];
-            }
-
-            console.log("Queues data loaded successfully");
-            return window.storedQueuesSet;
-        }
-
-    // This section previously contained the generateQueueData function
-    // It has been removed as we now use the storedQueuesSet directly from Queue_Ingestion.js
-
-        angular.module('loanApp', ['ngMaterial', 'ngRoute', 'ngMessages', 'ngAnimate'])
-            .controller('LoanController', async function($scope, $timeout, $mdDialog) {
-                // Initialize variables
-                $scope.isLoading = true;
-                $scope.sidebarActive = false;
-                $scope.userMenuActive = false;
-                $scope.activeFilter = 'all';
-                $scope.searchQuery = '';
-                $scope.selectedBrand = null; // Initialize brand selection as null (all brands)
-
-                // User data
-                $scope.currentUser = {
-                    id: 1,
-                    name: 'John Doe',
-                    email: 'john.doe@example.com',
-                    role: 'Loan Officer',
-                    team: 'Loan Processing'
-                };
-
-                // Notifications
-                $scope.notifications = [
-                    { id: 1, message: 'New loan application submitted', date: new Date(), read: false },
-                    { id: 2, message: 'Document verification required', date: new Date(Date.now() - 86400000), read: false },
-                    { id: 3, message: 'Loan approval pending', date: new Date(Date.now() - 172800000), read: true }
-                ];
-
-                // Channels data
-                $scope.channels = [
-                    { id: 1, name: 'Borrower Self-Service' },
-                    { id: 2, name: 'Loan Officer Portal' },
-                    { id: 3, name: 'Admin Dashboard' },
-                    { id: 4, name: 'Customer Service' }
-                ];
-                $scope.selectedChannel = $scope.channels[0];
-
-                // Load data from ingestion scripts
-                try {
-                    // Load brands data
-                    const brandsData = await waitForBrands();
-                    $scope.brands = brandsData;
-
-                    // Load loans data
-                    const loansData = await waitForLoans();
-                    $scope.loans = loansData;
-
-                    // Load queue data directly from Queue_Ingestion.js
-                    const queueData = await waitForQueues();
-
-                    // Process queue data to ensure it has the required structure
-                    $scope.queues = queueData.map(queue => {
-                        // If queue doesn't have items array, initialize it
-                        if (!queue.items) {
-                            queue.items = [];
-
-                            // Populate items with some loans if available
-                            if (loansData && loansData.length > 0) {
-                                // Get a subset of loans for this queue
-                                const queueLoans = loansData.filter(loan => loan.id % queueData.length === (queue.id - 1) % queueData.length);
-
-                                // Create queue items from loans
-                                queue.items = queueLoans.map(loan => {
-                                    // Assign a random priority
-                                    const priorities = ['high', 'medium', 'low'];
-                                    const priority = priorities[Math.floor(Math.random() * priorities.length)];
-
-                                    return {
-                                        id: loan.id * 100 + queue.id,
-                                        loanNumber: loan.loanNumber,
-                                        borrowerName: loan.borrowerName,
-                                        date: new Date(Date.now() - Math.floor(Math.random() * 7) * 86400000), // Random date within last week
-                                        priority: priority
-                                    };
-                                });
-                            }
-                        }
-
-                        // If queue doesn't have brandIds array, initialize it
-                        if (!queue.brandIds) {
-                            // Assign random brand IDs to each queue if not present
-                            const brandIds = brandsData
-                                .sort(() => 0.5 - Math.random()) // Shuffle brands
-                                .slice(0, Math.floor(Math.random() * brandsData.length) + 1) // Take random number of brands
-                                .map(brand => brand.id);
-
-                            queue.brandIds = brandIds;
-                        }
-
-                        return queue;
-                    });
-
-                    // Apply digest cycle to update UI
-                    $timeout(function() {
-                        console.log("Data loaded successfully:", {
-                            brands: $scope.brands.length,
-                            loans: $scope.loans.length,
-                            queues: $scope.queues.length
-                        });
-                    });
-                } catch (error) {
-                    console.error("Error loading data:", error);
-                    // Fallback to empty arrays if loading fails
-                    $scope.brands = [];
-                    $scope.loans = [];
-                    $scope.queues = [];
+                while (!window.storedLoansSet && attempts < maxAttempts) {
+                    console.log(`Waiting for loans data... Attempt ${attempts + 1}/${maxAttempts}`);
+                    await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second
+                    attempts++;
                 }
 
-                // Get accessible loans based on restrictions
-                $scope.getAccessibleLoans = function() {
-                    // API already filters restricted loans, so we just return all loans
-                    return $scope.loans;
-                };
+                if (!window.storedLoansSet) {
+                    console.warn("Timed out waiting for loans data, using fallback data");
+                    // Return fallback data if window.storedLoansSet is still not available
+                    return [];
+                }
 
-                // Get brands accessible to the current user
-                $scope.getAccessibleBrands = function() {
-                    // API already filters restricted brands, so we just return all brands
-                    return $scope.brands;
-                };
+                console.log("Loans data loaded successfully");
+                return window.storedLoansSet;
+            }
 
-                // Toggle sidebar
-                $scope.toggleSidebar = function() {
-                    $scope.sidebarActive = !$scope.sidebarActive;
-                };
+            async function waitForBrands() {
+                // Try to wait for up to 5 seconds for the brands data
+                let attempts = 0;
+                const maxAttempts = 5;
 
-                // Toggle user menu
-                $scope.toggleUserMenu = function() {
-                    $scope.userMenuActive = !$scope.userMenuActive;
-                };
+                while (!window.storedNumbersSet && attempts < maxAttempts) {
+                    console.log(`Waiting for brands data... Attempt ${attempts + 1}/${maxAttempts}`);
+                    await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second
+                    attempts++;
+                }
 
-                // Toggle notifications panel
-                $scope.toggleNotifications = function() {
-                    // Implementation for notifications panel
-                    toastr.info('Notifications panel toggled');
-                };
+                if (!window.storedNumbersSet) {
+                    console.warn("Timed out waiting for brands data, using fallback data");
+                    // Return fallback data if window.storedNumbersSet is still not available
+                    return [];
+                }
 
+                console.log("Brands data loaded successfully");
+                return window.storedNumbersSet;
+            }
 
+            async function waitForQueues() {
+                // Try to wait for up to 5 seconds for the queues data
+                let attempts = 0;
+                const maxAttempts = 5;
 
-                // Check if a queue should be visible to the current user
-                $scope.isQueueVisibleToUser = function(queue) {
-                    // Since the API already filters restricted queues, we just need to check the queue's restricted property
-                    return !queue.restricted;
-                };
+                while (!window.storedQueuesSet && attempts < maxAttempts) {
+                    console.log(`Waiting for queues data... Attempt ${attempts + 1}/${maxAttempts}`);
+                    await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second
+                    attempts++;
+                }
 
-                // Set active filter
-                $scope.setFilter = function(filter) {
-                    $scope.activeFilter = filter;
+                if (!window.storedQueuesSet) {
+                    console.warn("Timed out waiting for queues data, using fallback data");
+                    // Return fallback data if window.storedQueuesSet is still not available
+                    return [
+                        {
+                            "id": 1,
+                            "name": "Pending Applications",
+                            "type": "my",
+                            "sortOrder": 1,
+                            "restricted": false,
+                            "items": []
+                        }
+                    ];
+                }
 
-                    // Apply filters in sequence for better readability and maintainability
-                    $scope.applyQueueFilters();
-                };
+                console.log("Queues data loaded successfully");
+                return window.storedQueuesSet;
+            }
 
-                // Apply all queue filters in a single function for better reusability
-                $scope.applyQueueFilters = function() {
-                    let filteredQueues = $scope.queues;
+            // Get accessible loans based on restrictions
+            function getAccessibleLoans() {
+                // Now we need to filter loans based on their type
+                // For offshore users, loans with type "onshore" are restricted
+                return loans.filter(loan => !loan.restricted);
+            }
 
-                    // 1. Filter by queue type (all, my, team)
-                    if ($scope.activeFilter !== 'all') {
-                        filteredQueues = filteredQueues.filter(queue =>
-                            queue.type === $scope.activeFilter
-                        );
-                    }
+            // Get brands accessible to the current user
+            function getAccessibleBrands() {
+                // Now we need to filter brands based on their type
+                // For offshore users, brands with type "onshore" are restricted
+                return brands.filter(brand => !brand.restricted);
+            }
 
-                    // 2. Filter by visibility (API already handles offshore/onshore restrictions)
-                    filteredQueues = filteredQueues.filter(queue =>
-                        $scope.isQueueVisibleToUser(queue)
+            // Check if a queue should be visible to the current user
+            function isQueueVisibleToUser(queue) {
+                // Now we need to check the queue's restricted property
+                return !queue.restricted;
+            }
+
+            // Get the count of accessible items in a queue
+            function getAccessibleQueueItemsCount(queue) {
+                // Now we need to filter queue items based on their associated loan's type
+                if (!queue.items) return 0;
+
+                // For offshore users, items associated with "onshore" loans are restricted
+                const accessibleItems = queue.items.filter(item => {
+                    const loan = loans.find(l => l.loanNumber === item.loanNumber);
+                    return loan && !loan.restricted;
+                });
+
+                return accessibleItems.length;
+            }
+
+            // Apply all queue filters
+            function applyQueueFilters() {
+                let filtered = queues;
+
+                // 1. Filter by queue type (all, my, team)
+                if (activeFilter !== 'all') {
+                    filtered = filtered.filter(queue => queue.type === activeFilter);
+                }
+
+                // 2. Filter by visibility (now we handle offshore/onshore restrictions)
+                filtered = filtered.filter(queue => isQueueVisibleToUser(queue));
+
+                // 3. Filter by selected brand if any
+                if (selectedBrand) {
+                    filtered = filtered.filter(queue =>
+                        queue.brandIds && queue.brandIds.includes(selectedBrand.id)
                     );
+                }
 
-                    // 3. Filter by selected brand if any
-                    if ($scope.selectedBrand) {
-                        filteredQueues = filteredQueues.filter(queue =>
-                            queue.brandIds &&
-                            queue.brandIds.includes($scope.selectedBrand.id)
-                        );
-                    }
+                // 4. Filter by search query if any
+                if (searchQuery && searchQuery.trim() !== '') {
+                    const query = searchQuery.toLowerCase().trim();
+                    filtered = filtered.filter(queue =>
+                        queue.name.toLowerCase().includes(query) ||
+                        // Search in queue items if needed
+                        (queue.items && queue.items.some(item =>
+                            (item.loanNumber && item.loanNumber.toString().includes(query)) ||
+                            (item.borrowerName && item.borrowerName.toLowerCase().includes(query))
+                        ))
+                    );
+                }
 
-                    // 4. Filter by search query if any
-                    if ($scope.searchQuery && $scope.searchQuery.trim() !== '') {
-                        const query = $scope.searchQuery.toLowerCase().trim();
-                        filteredQueues = filteredQueues.filter(queue =>
-                            queue.name.toLowerCase().includes(query) ||
-                            // Search in queue items if needed
-                            queue.items.some(item =>
-                                (item.loanNumber && item.loanNumber.toString().includes(query)) ||
-                                (item.borrowerName && item.borrowerName.toLowerCase().includes(query))
-                            )
-                        );
-                    }
+                // 5. Sort by the original sort order to maintain default order
+                filtered.sort((a, b) => a.sortOrder - b.sortOrder);
 
-                    // 5. Sort by the original sort order to maintain default order
-                    filteredQueues.sort((a, b) => a.sortOrder - b.sortOrder);
+                // Update the filtered queues
+                filteredQueues = filtered;
 
-                    $scope.filteredQueues = filteredQueues;
-                };
+                // Update the UI
+                updateQueueTable();
+                updateQueueCount();
+            }
 
-                // Open loan details
-                $scope.openLoanDetails = function(item) {
-                    // Find the full loan details from the loans array
-                    const loan = $scope.loans.find(l => l.loanNumber === item.loanNumber);
+            // Update the queue table with filtered queues
+            function updateQueueTable() {
+                const tableBody = document.getElementById('queueTableBody');
+                tableBody.innerHTML = '';
 
-                    if (loan) {
-                        toastr.success('Opening loan details for: ' + loan.loanNumber);
-                        // Here you would typically open a modal or navigate to a loan details page
-                        // For now, we'll just show a notification with some loan details
-                        toastr.info(`Loan: ${loan.loanNumber}, Borrower: ${loan.borrowerName}, Amount: $${loan.loanAmount || 'N/A'}`);
+                if (filteredQueues.length === 0) {
+                    document.getElementById('queueTable').style.display = 'none';
+                    document.getElementById('emptyState').style.display = 'block';
+                    return;
+                }
+
+                document.getElementById('queueTable').style.display = 'table';
+                document.getElementById('emptyState').style.display = 'none';
+
+                filteredQueues.forEach(queue => {
+                    const row = document.createElement('tr');
+                    row.style.cursor = 'pointer';
+                    row.addEventListener('click', () => viewAllItems(queue));
+
+                    // Queue Name
+                    const nameCell = document.createElement('td');
+                    const nameStrong = document.createElement('strong');
+                    nameStrong.textContent = queue.name;
+                    nameCell.appendChild(nameStrong);
+
+                    // Queue Type
+                    const typeCell = document.createElement('td');
+                    const typeSpan = document.createElement('span');
+                    typeSpan.className = 'badge';
+                    if (queue.type === 'my') {
+                        typeSpan.classList.add('badge-primary');
+                    } else if (queue.type === 'team') {
+                        typeSpan.classList.add('badge-info');
                     } else {
-                        toastr.error('Loan details not found for: ' + item.loanNumber);
+                        typeSpan.classList.add('badge-secondary');
                     }
-                };
+                    typeSpan.textContent = queue.type;
+                    typeCell.appendChild(typeSpan);
 
-                // View all items in a queue
-                $scope.viewAllItems = function(queue) {
-                    // API already filters restricted items, so we just show all items
-                    $scope.selectedQueueItems = queue.items;
+                    // Queue Items Count
+                    const itemsCell = document.createElement('td');
+                    const itemsSpan = document.createElement('span');
+                    itemsSpan.className = 'badge badge-pill badge-primary';
+                    itemsSpan.textContent = getAccessibleQueueItemsCount(queue);
+                    itemsCell.appendChild(itemsSpan);
 
-                    // Get the brands associated with this queue
-                    $scope.visibleBrands = $scope.brands.filter(brand =>
-                        queue.brandIds && queue.brandIds.includes(brand.id)
-                    );
+                    // Queue Restricted
+                    const restrictedCell = document.createElement('td');
+                    const restrictedSpan = document.createElement('span');
+                    restrictedSpan.className = 'badge';
+                    if (queue.restricted) {
+                        restrictedSpan.classList.add('badge-danger');
+                        restrictedSpan.textContent = 'Yes';
+                    } else {
+                        restrictedSpan.classList.add('badge-success');
+                        restrictedSpan.textContent = 'No';
+                    }
+                    restrictedCell.appendChild(restrictedSpan);
 
-                    $scope.selectedQueueName = queue.name;
-                    $('#queueItemsModal').modal('show');
-                    toastr.info('Viewing all items in queue: ' + queue.name);
-                };
+                    // Queue Actions
+                    const actionsCell = document.createElement('td');
+                    const viewButton = document.createElement('button');
+                    viewButton.className = 'btn btn-sm btn-outline-primary';
+                    viewButton.textContent = 'View Items';
+                    viewButton.addEventListener('click', (event) => {
+                        event.stopPropagation();
+                        viewAllItems(queue);
+                    });
+                    actionsCell.appendChild(viewButton);
 
-                // Navigation functions
-                $scope.loadDashboard = function() {
-                    toastr.info('Loading Dashboard');
-                    // Implementation for loading dashboard
-                };
+                    // Append cells to row
+                    row.appendChild(nameCell);
+                    row.appendChild(typeCell);
+                    row.appendChild(itemsCell);
+                    row.appendChild(restrictedCell);
+                    row.appendChild(actionsCell);
 
-                $scope.loadQueues = function() {
-                    toastr.info('Loading Queues');
-                    // Implementation for loading queues
-                };
+                    // Append row to table body
+                    tableBody.appendChild(row);
+                });
+            }
 
-                $scope.loadLoans = function() {
-                    toastr.info('Loading Loans');
-                    // Implementation for loading loans
-                };
+            // Update the queue count badge
+            function updateQueueCount() {
+                document.getElementById('queueCount').textContent = `${filteredQueues.length} Available`;
+            }
 
-                $scope.loadReports = function() {
-                    toastr.info('Loading Reports');
-                    // Implementation for loading reports
-                };
+            // View all items in a queue
+            function viewAllItems(queue) {
+                // Filter queue items based on their associated loan's type
+                const accessibleItems = queue.items ? queue.items.filter(item => {
+                    const loan = loans.find(l => l.loanNumber === item.loanNumber);
+                    return loan && !loan.restricted;
+                }) : [];
 
-                $scope.loadSettings = function() {
-                    toastr.info('Loading Settings');
-                    // Implementation for loading settings
-                };
+                selectedQueueItems = accessibleItems;
+                selectedQueueName = queue.name;
 
-                $scope.loadHelp = function() {
-                    toastr.info('Loading Help');
-                    // Implementation for loading help
-                };
+                // Get the brands associated with this queue
+                visibleBrands = brands.filter(brand =>
+                    queue.brandIds && queue.brandIds.includes(brand.id) && !brand.restricted
+                );
 
-                // Get the count of accessible items in a queue
-                $scope.getAccessibleQueueItemsCount = function(queue) {
-                    // API already filters restricted items, so we just return the length
-                    return queue.items ? queue.items.length : 0;
-                };
+                // Update the modal title
+                document.getElementById('queueItemsModalLabel').textContent = `${selectedQueueName} - Queue Items`;
 
-                // Watch for changes in the search query
-                $scope.$watch('searchQuery', function(newValue, oldValue) {
-                    if (newValue !== oldValue) {
-                        $scope.applyQueueFilters();
+                // Update the visible brands section
+                const visibleBrandsContainer = document.getElementById('visibleBrandsContainer');
+                const visibleBrandsList = document.getElementById('visibleBrandsList');
+
+                if (visibleBrands.length > 0) {
+                    visibleBrandsContainer.style.display = 'block';
+                    visibleBrandsList.innerHTML = '';
+
+                    visibleBrands.forEach(brand => {
+                        const brandBadge = document.createElement('span');
+                        brandBadge.className = 'badge badge-info mr-2 mb-2';
+                        brandBadge.textContent = brand.name;
+                        visibleBrandsList.appendChild(brandBadge);
+                    });
+                } else {
+                    visibleBrandsContainer.style.display = 'none';
+                }
+
+                // Update the queue items table
+                const queueItemsTableBody = document.getElementById('queueItemsTableBody');
+                queueItemsTableBody.innerHTML = '';
+
+                if (selectedQueueItems.length === 0) {
+                    const emptyRow = document.createElement('tr');
+                    const emptyCell = document.createElement('td');
+                    emptyCell.colSpan = 4;
+                    emptyCell.className = 'text-center';
+                    emptyCell.textContent = 'No items found in this queue.';
+                    emptyRow.appendChild(emptyCell);
+                    queueItemsTableBody.appendChild(emptyRow);
+                } else {
+                    selectedQueueItems.forEach(item => {
+                        const row = document.createElement('tr');
+                        row.style.cursor = 'pointer';
+                        row.addEventListener('click', () => openLoanDetails(item));
+
+                        // Loan Number
+                        const loanNumberCell = document.createElement('td');
+                        loanNumberCell.textContent = item.loanNumber;
+
+                        // Borrower Name
+                        const borrowerCell = document.createElement('td');
+                        borrowerCell.textContent = item.borrowerName;
+
+                        // Date
+                        const dateCell = document.createElement('td');
+                        dateCell.textContent = moment(item.date).format('MM/DD/YYYY');
+
+                        // Priority
+                        const priorityCell = document.createElement('td');
+                        const prioritySpan = document.createElement('span');
+                        prioritySpan.className = 'badge';
+                        if (item.priority === 'high') {
+                            prioritySpan.classList.add('badge-danger');
+                        } else if (item.priority === 'medium') {
+                            prioritySpan.classList.add('badge-warning');
+                        } else {
+                            prioritySpan.classList.add('badge-success');
+                        }
+                        prioritySpan.textContent = item.priority;
+                        priorityCell.appendChild(prioritySpan);
+
+                        // Append cells to row
+                        row.appendChild(loanNumberCell);
+                        row.appendChild(borrowerCell);
+                        row.appendChild(dateCell);
+                        row.appendChild(priorityCell);
+
+                        // Append row to table body
+                        queueItemsTableBody.appendChild(row);
+                    });
+                }
+
+                // Show the modal
+                $('#queueItemsModal').modal('show');
+                toastr.info('Viewing all items in queue: ' + selectedQueueName);
+            }
+
+            // Open loan details
+            function openLoanDetails(item) {
+                // Find the full loan details from the loans array
+                const loan = loans.find(l => l.loanNumber === item.loanNumber);
+
+                if (loan) {
+                    toastr.success('Opening loan details for: ' + loan.loanNumber);
+                    // Here you would typically open a modal or navigate to a loan details page
+                    // For now, we'll just show a notification with some loan details
+                    toastr.info(`Loan: ${loan.loanNumber}, Borrower: ${loan.borrowerName}, Amount: $${loan.loanAmount || 'N/A'}`);
+                } else {
+                    toastr.error('Loan details not found for: ' + item.loanNumber);
+                }
+            }
+
+            // Toggle sidebar
+            function toggleSidebar() {
+                sidebarActive = !sidebarActive;
+                document.getElementById('sidebar').classList.toggle('active', sidebarActive);
+                document.querySelector('.content-wrapper').classList.toggle('active', sidebarActive);
+            }
+
+            // Toggle notifications panel
+            function toggleNotifications() {
+                toastr.info('Notifications panel toggled');
+            }
+
+            // Navigation functions
+            function loadDashboard() {
+                toastr.info('Loading Dashboard');
+            }
+
+            function loadQueues() {
+                toastr.info('Loading Queues');
+            }
+
+            function loadLoans() {
+                toastr.info('Loading Loans');
+            }
+
+            function loadReports() {
+                toastr.info('Loading Reports');
+            }
+
+            function loadSettings() {
+                toastr.info('Loading Settings');
+            }
+
+            function loadHelp() {
+                toastr.info('Loading Help');
+            }
+
+            // Set active filter
+            function setFilter(filter) {
+                // Update active filter
+                activeFilter = filter;
+
+                // Update filter buttons
+                const filterButtons = document.querySelectorAll('#filterButtons button');
+                filterButtons.forEach(button => {
+                    if (button.dataset.filter === filter) {
+                        button.classList.remove('btn-outline-primary');
+                        button.classList.add('btn-primary');
+                    } else {
+                        button.classList.remove('btn-primary');
+                        button.classList.add('btn-outline-primary');
                     }
                 });
 
-                // Initialize the controller
-                function init() {
-                    // Configure toastr first for better user experience
-                    toastr.options = {
-                        closeButton: true,
-                        progressBar: true,
-                        positionClass: 'toast-bottom-right',
-                        timeOut: 3000
-                    };
+                // Apply filters
+                applyQueueFilters();
+            }
+
+            // Populate UI with data
+            function populateUI() {
+                // Set user name
+                document.querySelector('.user-name').textContent = currentUser.name;
+
+                // Set notification count
+                const unreadNotifications = notifications.filter(n => !n.read);
+                if (unreadNotifications.length > 0) {
+                    document.querySelector('.notification-count').style.display = 'flex';
+                    document.querySelector('.notification-count').textContent = unreadNotifications.length;
+                }
+
+                // Populate channel dropdown
+                const channelSelect = document.getElementById('selectedChannel');
+                channelSelect.innerHTML = '';
+                channels.forEach(channel => {
+                    const option = document.createElement('option');
+                    option.value = channel.id;
+                    option.textContent = channel.name;
+                    channelSelect.appendChild(option);
+                });
+
+                // Populate brand dropdown
+                const brandSelect = document.getElementById('selectedBrand');
+                brandSelect.innerHTML = '<option value="">-- All Brands --</option>';
+                getAccessibleBrands().forEach(brand => {
+                    const option = document.createElement('option');
+                    option.value = brand.id;
+                    option.textContent = brand.name;
+                    brandSelect.appendChild(option);
+                });
+
+                // Set default channel
+                selectedChannel = channels[0];
+                channelSelect.value = selectedChannel.id;
+            }
+
+            // Process queue data
+            function processQueueData(queueData) {
+                return queueData.map(queue => {
+                    // If queue doesn't have items array, initialize it
+                    if (!queue.items) {
+                        queue.items = [];
+
+                        // Populate items with some loans if available
+                        if (loans && loans.length > 0) {
+                            // Get a subset of loans for this queue
+                            const queueLoans = loans.filter(loan => loan.id % queueData.length === (queue.id - 1) % queueData.length);
+
+                            // Create queue items from loans
+                            queue.items = queueLoans.map(loan => {
+                                // Assign a random priority
+                                const priorities = ['high', 'medium', 'low'];
+                                const priority = priorities[Math.floor(Math.random() * priorities.length)];
+
+                                return {
+                                    id: loan.id * 100 + queue.id,
+                                    loanNumber: loan.loanNumber,
+                                    borrowerName: loan.borrowerName,
+                                    date: new Date(Date.now() - Math.floor(Math.random() * 7) * 86400000), // Random date within last week
+                                    priority: priority
+                                };
+                            });
+                        }
+                    }
+
+                    // If queue doesn't have brandIds array, initialize it
+                    if (!queue.brandIds) {
+                        // Assign random brand IDs to each queue if not present
+                        const brandIds = brands
+                            .sort(() => 0.5 - Math.random()) // Shuffle brands
+                            .slice(0, Math.floor(Math.random() * brands.length) + 1) // Take random number of brands
+                            .map(brand => brand.id);
+
+                        queue.brandIds = brandIds;
+                    }
+
+                    return queue;
+                });
+            }
+
+            // Initialize the application
+            async function initialize() {
+                // Show loading overlay
+                document.getElementById('loading-overlay').style.display = 'flex';
+
+                // Configure toastr
+                toastr.options = {
+                    closeButton: true,
+                    progressBar: true,
+                    positionClass: 'toast-bottom-right',
+                    timeOut: 3000
+                };
+
+                try {
+                    // Load data from ingestion scripts
+                    const brandsData = await waitForBrands();
+                    const loansData = await waitForLoans();
+                    const queueData = await waitForQueues();
+
+                    // Process data to handle offshore/onshore restrictions
+                    brands = brandsData.map(brand => ({
+                        ...brand,
+                        restricted: brand.type === "onshore" // For offshore users, brands with type "onshore" are restricted
+                    }));
+
+                    loans = loansData.map(loan => ({
+                        ...loan,
+                        restricted: loan.type === "onshore" // For offshore users, loans with type "onshore" are restricted
+                    }));
+
+                    // Process queue data
+                    queues = processQueueData(queueData);
+
+                    // Populate UI with data
+                    populateUI();
 
                     // Set initial filter
-                    $scope.setFilter('all');
+                    setFilter('all');
 
-                    // Simulate loading delay
-                    $timeout(function() {
-                        $scope.isLoading = false;
+                    // Hide loading overlay
+                    setTimeout(() => {
+                        document.getElementById('loading-overlay').style.display = 'none';
                         toastr.success('Loansphere Queues loaded successfully');
 
                         // Show message about data source
                         toastr.success('Data loaded from ingestion scripts: ' +
-                            $scope.brands.length + ' brands, ' +
-                            $scope.loans.length + ' loans, ' +
-                            $scope.queues.length + ' queues');
+                            brands.length + ' brands, ' +
+                            loans.length + ' loans, ' +
+                            queues.length + ' queues');
 
                         // Show message about accessible queues
-                        const accessibleQueuesCount = $scope.filteredQueues.length;
-                        const totalQueuesCount = $scope.queues.length;
+                        const accessibleQueuesCount = filteredQueues.length;
+                        const totalQueuesCount = queues.length;
 
                         if (accessibleQueuesCount < totalQueuesCount) {
                             toastr.info(`You have access to ${accessibleQueuesCount} out of ${totalQueuesCount} queues.`);
                         }
                     }, 1500);
+                } catch (error) {
+                    console.error("Error loading data:", error);
+                    document.getElementById('loading-overlay').style.display = 'none';
+                    toastr.error('Error loading data. Please try again later.');
                 }
+            }
 
-                // Call initialization
-                init();
-            });
+            // Set up event listeners
+            function setupEventListeners() {
+                // Toggle sidebar
+                document.getElementById('toggleSidebar').addEventListener('click', toggleSidebar);
 
-        // Initialize toastr
-        $(document).ready(function() {
-            // Close menus when clicking outside
-            $(document).on('click', function(event) {
-                if (!$(event.target).closest('.user-profile').length) {
-                    $('.user-menu').removeClass('active');
-                }
-            });
+                // Toggle notifications
+                document.getElementById('toggleNotifications').addEventListener('click', toggleNotifications);
+
+                // Navigation
+                document.getElementById('loadDashboard').addEventListener('click', loadDashboard);
+                document.getElementById('loadQueues').addEventListener('click', loadQueues);
+                document.getElementById('loadLoans').addEventListener('click', loadLoans);
+                document.getElementById('loadReports').addEventListener('click', loadReports);
+                document.getElementById('loadSettings').addEventListener('click', loadSettings);
+                document.getElementById('loadHelp').addEventListener('click', loadHelp);
+
+                // Filter buttons
+                document.querySelectorAll('#filterButtons button').forEach(button => {
+                    button.addEventListener('click', () => setFilter(button.dataset.filter));
+                });
+
+                // Search input
+                document.getElementById('searchQuery').addEventListener('input', (event) => {
+                    searchQuery = event.target.value;
+                    applyQueueFilters();
+                });
+
+                // Brand selection
+                document.getElementById('selectedBrand').addEventListener('change', (event) => {
+                    if (event.target.value === '') {
+                        selectedBrand = null;
+                    } else {
+                        const brandId = parseInt(event.target.value);
+                        selectedBrand = brands.find(brand => brand.id === brandId);
+                    }
+                    applyQueueFilters();
+                });
+
+                // Channel selection
+                document.getElementById('selectedChannel').addEventListener('change', (event) => {
+                    const channelId = parseInt(event.target.value);
+                    selectedChannel = channels.find(channel => channel.id === channelId);
+                });
+            }
+
+            // Initialize the application
+            setupEventListeners();
+            initialize();
         });
     </script>
 </body>

@@ -18,56 +18,56 @@ const readJsonFile = (filename) => {
 
 app.get('/api/brands', (req, res) => {
   const brands = readJsonFile('brands.json');
-  const filteredBrands = brands.filter(brand => !brand.restricted);
+  const filteredBrands = brands.filter(brand => brand);
   res.json(filteredBrands);
 });
 
 app.get('/api/loans', (req, res) => {
   const borrowers = readJsonFile('loans.json');
-  const filteredBorrowers = borrowers.filter(borrower => borrower.type === "offshore");
+  const filteredBorrowers = borrowers.filter(borrower => borrower);
   res.json(filteredBorrowers);
 });
 
 app.get('/api/messages', (req, res) => {
   const messages = readJsonFile('messages.json');
-  const filteredMessages = messages.filter(message => message.type === "offshore");
+  const filteredMessages = messages.filter(message => message);
   res.json(filteredMessages);
 });
 
 app.get('/api/queues', (req, res) => {
   const queues = readJsonFile('queues.json');
-  const filteredQueues = queues.filter(queue => !queue.restricted);
+  const filteredQueues = queues.filter(queue => queue);
   res.json(filteredQueues);
 });
 
-app.get('/api/statistics', (req, res) => {
-  const statistics = readJsonFile('statistics.json');
-  const filteredStatistics = statistics.filter(stat => !stat.restricted);
+app.get("/api/statistics", (req, res) => {
+  const statistics = readJsonFile("statistics.json");
+  const filteredStatistics = statistics.filter((stat) => !stat.restricted);
   res.json(filteredStatistics);
 });
 
-app.get('/api/users', (req, res) => {
-  const users = readJsonFile('users.json');
+app.get("/api/users", (req, res) => {
+  const users = readJsonFile("users.json");
   res.json(users);
 });
 
-app.get('/api/users/:id', (req, res) => {
-  const users = readJsonFile('users.json');
-  const user = users.find(user => user.id === parseInt(req.params.id));
+app.get("/api/users/:id", (req, res) => {
+  const users = readJsonFile("users.json");
+  const user = users.find((user) => user.id === parseInt(req.params.id));
 
   if (!user) {
-    return res.status(404).json({ message: 'User not found' });
+    return res.status(404).json({ message: "User not found" });
   }
 
   res.json(user);
 });
 
-app.get('/api/users/:id/statistics', (req, res) => {
-  const users = readJsonFile('users.json');
-  const user = users.find(user => user.id === parseInt(req.params.id));
+app.get("/api/users/:id/statistics", (req, res) => {
+  const users = readJsonFile("users.json");
+  const user = users.find((user) => user.id === parseInt(req.params.id));
 
   if (!user) {
-    return res.status(404).json({ message: 'User not found' });
+    return res.status(404).json({ message: "User not found" });
   }
 
   const brandName = req.query.brand;
