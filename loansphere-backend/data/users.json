@@ -1,0 +1,734 @@
+[
+  {
+    "id": 1,
+    "username": "user1",
+    "email": "user1@example.com",
+    "userType": "onshore",
+    "accessibleBrands": [
+      "all",
+      "cenlar",
+      "chase",
+      "wellsfargo",
+      "bankofamerica",
+      "citibank",
+      "hsbc",
+      "deutschebank",
+      "goldmansachs"
+    ],
+    "statistics": {
+      "all": {
+        "registeredLoanCount": 50,
+        "registeredUserCount": 50,
+        "lockerUserCount": 35,
+        "pendingCount": 10,
+        "activeCount": 15,
+        "inactiveCount": 25
+      },
+      "cenlar": {
+        "registeredLoanCount": 4,
+        "registeredUserCount": 4,
+        "lockerUserCount": 3,
+        "pendingCount": 2,
+        "activeCount": 0,
+        "inactiveCount": 2
+      },
+      "chase": {
+        "registeredLoanCount": 5,
+        "registeredUserCount": 5,
+        "lockerUserCount": 3,
+        "pendingCount": 2,
+        "activeCount": 1,
+        "inactiveCount": 2
+      },
+      "wellsfargo": {
+        "registeredLoanCount": 4,
+        "registeredUserCount": 4,
+        "lockerUserCount": 3,
+        "pendingCount": 0,
+        "activeCount": 2,
+        "inactiveCount": 2
+      },
+      "bankofamerica": {
+        "registeredLoanCount": 4,
+        "registeredUserCount": 4,
+        "lockerUserCount": 3,
+        "pendingCount": 1,
+        "activeCount": 1,
+        "inactiveCount": 2
+      },
+      "citibank": {
+        "registeredLoanCount": 4,
+        "registeredUserCount": 4,
+        "lockerUserCount": 3,
+        "pendingCount": 0,
+        "activeCount": 1,
+        "inactiveCount": 3
+      },
+      "hsbc": {
+        "registeredLoanCount": 4,
+        "registeredUserCount": 4,
+        "lockerUserCount": 3,
+        "pendingCount": 1,
+        "activeCount": 1,
+        "inactiveCount": 2
+      },
+      "deutschebank": {
+        "registeredLoanCount": 4,
+        "registeredUserCount": 4,
+        "lockerUserCount": 3,
+        "pendingCount": 1,
+        "activeCount": 1,
+        "inactiveCount": 2
+      },
+      "goldmansachs": {
+        "registeredLoanCount": 4,
+        "registeredUserCount": 4,
+        "lockerUserCount": 3,
+        "pendingCount": 2,
+        "activeCount": 1,
+        "inactiveCount": 1
+      }
+    },
+    "monthlyStatistics": {
+      "all": {
+        "Jan": {
+          "newRegistrations": 250,
+          "activeUsers": 4200,
+          "accountLockouts": 12
+        },
+        "Feb": {
+          "newRegistrations": 320,
+          "activeUsers": 4300,
+          "accountLockouts": 15
+        },
+        "Mar": {
+          "newRegistrations": 280,
+          "activeUsers": 4500,
+          "accountLockouts": 10
+        },
+        "Apr": {
+          "newRegistrations": 340,
+          "activeUsers": 4800,
+          "accountLockouts": 8
+        },
+        "May": {
+          "newRegistrations": 410,
+          "activeUsers": 5100,
+          "accountLockouts": 14
+        },
+        "Jun": {
+          "newRegistrations": 380,
+          "activeUsers": 5300,
+          "accountLockouts": 20
+        },
+        "Jul": {
+          "newRegistrations": 320,
+          "activeUsers": 5200,
+          "accountLockouts": 18
+        },
+        "Aug": {
+          "newRegistrations": 290,
+          "activeUsers": 5000,
+          "accountLockouts": 16
+        },
+        "Sep": {
+          "newRegistrations": 342,
+          "activeUsers": 5128,
+          "accountLockouts": 18
+        },
+        "Oct": {
+          "newRegistrations": 390,
+          "activeUsers": 5300,
+          "accountLockouts": 22
+        },
+        "Nov": {
+          "newRegistrations": 420,
+          "activeUsers": 5400,
+          "accountLockouts": 19
+        },
+        "Dec": {
+          "newRegistrations": 450,
+          "activeUsers": 5600,
+          "accountLockouts": 15
+        }
+      },
+      "cenlar": {
+        "Sep": {
+          "newRegistrations": 28,
+          "activeUsers": 420,
+          "accountLockouts": 2
+        },
+        "Oct": {
+          "newRegistrations": 32,
+          "activeUsers": 435,
+          "accountLockouts": 3
+        },
+        "Nov": {
+          "newRegistrations": 35,
+          "activeUsers": 450,
+          "accountLockouts": 1
+        },
+        "Dec": {
+          "newRegistrations": 38,
+          "activeUsers": 465,
+          "accountLockouts": 2
+        }
+      }
+    },
+    "demographics": {
+      "ageGroups": {
+        "18-24": 5,
+        "25-34": 25,
+        "35-44": 30,
+        "45-54": 22,
+        "55-64": 12,
+        "65+": 6
+      }
+    },
+    "registrationSources": {
+      "mobileApp": 45,
+      "website": 30,
+      "branchReferral": 10,
+      "emailCampaign": 8,
+      "partnerReferral": 7
+    },
+    "channelStatistics": {
+      "borrowerSelfService": {
+        "activeUsers": 3500,
+        "transactions": 12500,
+        "averageSessionDuration": 8.5
+      },
+      "customerService": {
+        "activeUsers": 1628,
+        "transactions": 5800,
+        "averageSessionDuration": 12.3
+      }
+    },
+    "customerSummary": {
+      "all": {
+        "totalRegisteredLoans": 12458,
+        "totalRegisteredUsers": 8742,
+        "totalLockedUsers": 124
+      },
+      "cenlar": {
+        "totalRegisteredLoans": 1042,
+        "totalRegisteredUsers": 728,
+        "totalLockedUsers": 12
+      }
+    }
+  },
+  {
+    "id": 2,
+    "username": "user2",
+    "email": "user2@example.com",
+    "userType": "offshore",
+    "accessibleBrands": [
+      "bankofamerica",
+      "citibank",
+      "hsbc",
+      "deutschebank"
+    ],
+    "statistics": {
+      "bankofamerica": {
+        "registeredLoanCount": 4,
+        "registeredUserCount": 4,
+        "lockerUserCount": 3,
+        "pendingCount": 1,
+        "activeCount": 1,
+        "inactiveCount": 2
+      },
+      "citibank": {
+        "registeredLoanCount": 4,
+        "registeredUserCount": 4,
+        "lockerUserCount": 3,
+        "pendingCount": 0,
+        "activeCount": 1,
+        "inactiveCount": 3
+      },
+      "hsbc": {
+        "registeredLoanCount": 4,
+        "registeredUserCount": 4,
+        "lockerUserCount": 3,
+        "pendingCount": 1,
+        "activeCount": 1,
+        "inactiveCount": 2
+      },
+      "deutschebank": {
+        "registeredLoanCount": 4,
+        "registeredUserCount": 4,
+        "lockerUserCount": 3,
+        "pendingCount": 1,
+        "activeCount": 1,
+        "inactiveCount": 2
+      }
+    },
+    "monthlyStatistics": {
+      "bankofamerica": {
+        "Sep": {
+          "newRegistrations": 28,
+          "activeUsers": 420,
+          "accountLockouts": 2
+        },
+        "Oct": {
+          "newRegistrations": 32,
+          "activeUsers": 435,
+          "accountLockouts": 3
+        },
+        "Nov": {
+          "newRegistrations": 35,
+          "activeUsers": 450,
+          "accountLockouts": 1
+        },
+        "Dec": {
+          "newRegistrations": 38,
+          "activeUsers": 465,
+          "accountLockouts": 2
+        }
+      },
+      "citibank": {
+        "Sep": {
+          "newRegistrations": 25,
+          "activeUsers": 380,
+          "accountLockouts": 1
+        },
+        "Oct": {
+          "newRegistrations": 30,
+          "activeUsers": 395,
+          "accountLockouts": 2
+        },
+        "Nov": {
+          "newRegistrations": 32,
+          "activeUsers": 410,
+          "accountLockouts": 1
+        },
+        "Dec": {
+          "newRegistrations": 35,
+          "activeUsers": 425,
+          "accountLockouts": 1
+        }
+      }
+    },
+    "demographics": {
+      "ageGroups": {
+        "18-24": 8,
+        "25-34": 28,
+        "35-44": 25,
+        "45-54": 20,
+        "55-64": 14,
+        "65+": 5
+      }
+    },
+    "registrationSources": {
+      "mobileApp": 40,
+      "website": 35,
+      "branchReferral": 8,
+      "emailCampaign": 10,
+      "partnerReferral": 7
+    },
+    "channelStatistics": {
+      "borrowerSelfService": {
+        "activeUsers": 1200,
+        "transactions": 4500,
+        "averageSessionDuration": 7.8
+      },
+      "customerService": {
+        "activeUsers": 600,
+        "transactions": 2200,
+        "averageSessionDuration": 10.5
+      }
+    },
+    "customerSummary": {
+      "bankofamerica": {
+        "totalRegisteredLoans": 3250,
+        "totalRegisteredUsers": 2180,
+        "totalLockedUsers": 35
+      },
+      "citibank": {
+        "totalRegisteredLoans": 2850,
+        "totalRegisteredUsers": 1920,
+        "totalLockedUsers": 28
+      }
+    }
+  },
+  {
+    "id": 3,
+    "username": "user3",
+    "email": "user3@example.com",
+    "userType": "offshore",
+    "accessibleBrands": [
+      "bankofamerica",
+      "citibank"
+    ],
+    "statistics": {
+      "bankofamerica": {
+        "registeredLoanCount": 4,
+        "registeredUserCount": 4,
+        "lockerUserCount": 3,
+        "pendingCount": 1,
+        "activeCount": 1,
+        "inactiveCount": 2
+      },
+      "citibank": {
+        "registeredLoanCount": 4,
+        "registeredUserCount": 4,
+        "lockerUserCount": 3,
+        "pendingCount": 0,
+        "activeCount": 1,
+        "inactiveCount": 3
+      }
+    },
+    "monthlyStatistics": {
+      "bankofamerica": {
+        "Sep": {
+          "newRegistrations": 22,
+          "activeUsers": 320,
+          "accountLockouts": 1
+        },
+        "Oct": {
+          "newRegistrations": 25,
+          "activeUsers": 335,
+          "accountLockouts": 2
+        },
+        "Nov": {
+          "newRegistrations": 28,
+          "activeUsers": 350,
+          "accountLockouts": 1
+        },
+        "Dec": {
+          "newRegistrations": 30,
+          "activeUsers": 365,
+          "accountLockouts": 1
+        }
+      },
+      "citibank": {
+        "Sep": {
+          "newRegistrations": 20,
+          "activeUsers": 280,
+          "accountLockouts": 1
+        },
+        "Oct": {
+          "newRegistrations": 23,
+          "activeUsers": 295,
+          "accountLockouts": 1
+        },
+        "Nov": {
+          "newRegistrations": 25,
+          "activeUsers": 310,
+          "accountLockouts": 0
+        },
+        "Dec": {
+          "newRegistrations": 28,
+          "activeUsers": 325,
+          "accountLockouts": 1
+        }
+      }
+    },
+    "demographics": {
+      "ageGroups": {
+        "18-24": 6,
+        "25-34": 22,
+        "35-44": 28,
+        "45-54": 24,
+        "55-64": 15,
+        "65+": 5
+      }
+    },
+    "registrationSources": {
+      "mobileApp": 38,
+      "website": 32,
+      "branchReferral": 12,
+      "emailCampaign": 10,
+      "partnerReferral": 8
+    },
+    "channelStatistics": {
+      "borrowerSelfService": {
+        "activeUsers": 850,
+        "transactions": 3200,
+        "averageSessionDuration": 7.2
+      },
+      "customerService": {
+        "activeUsers": 420,
+        "transactions": 1600,
+        "averageSessionDuration": 9.8
+      }
+    },
+    "customerSummary": {
+      "bankofamerica": {
+        "totalRegisteredLoans": 1850,
+        "totalRegisteredUsers": 1250,
+        "totalLockedUsers": 22
+      },
+      "citibank": {
+        "totalRegisteredLoans": 1650,
+        "totalRegisteredUsers": 1120,
+        "totalLockedUsers": 18
+      }
+    }
+  },
+  {
+    "id": 4,
+    "username": "user4",
+    "email": "user4@example.com",
+    "userType": "onshore",
+    "accessibleBrands": [
+      "chase",
+      "wellsfargo",
+      "goldmansachs"
+    ],
+    "statistics": {
+      "chase": {
+        "registeredLoanCount": 5,
+        "registeredUserCount": 5,
+        "lockerUserCount": 3,
+        "pendingCount": 2,
+        "activeCount": 1,
+        "inactiveCount": 2
+      },
+      "wellsfargo": {
+        "registeredLoanCount": 4,
+        "registeredUserCount": 4,
+        "lockerUserCount": 3,
+        "pendingCount": 0,
+        "activeCount": 2,
+        "inactiveCount": 2
+      },
+      "goldmansachs": {
+        "registeredLoanCount": 4,
+        "registeredUserCount": 4,
+        "lockerUserCount": 3,
+        "pendingCount": 2,
+        "activeCount": 1,
+        "inactiveCount": 1
+      }
+    },
+    "monthlyStatistics": {
+      "chase": {
+        "Sep": {
+          "newRegistrations": 30,
+          "activeUsers": 450,
+          "accountLockouts": 2
+        },
+        "Oct": {
+          "newRegistrations": 35,
+          "activeUsers": 465,
+          "accountLockouts": 3
+        },
+        "Nov": {
+          "newRegistrations": 38,
+          "activeUsers": 480,
+          "accountLockouts": 2
+        },
+        "Dec": {
+          "newRegistrations": 42,
+          "activeUsers": 495,
+          "accountLockouts": 2
+        }
+      },
+      "wellsfargo": {
+        "Sep": {
+          "newRegistrations": 28,
+          "activeUsers": 420,
+          "accountLockouts": 1
+        },
+        "Oct": {
+          "newRegistrations": 32,
+          "activeUsers": 435,
+          "accountLockouts": 2
+        },
+        "Nov": {
+          "newRegistrations": 35,
+          "activeUsers": 450,
+          "accountLockouts": 1
+        },
+        "Dec": {
+          "newRegistrations": 38,
+          "activeUsers": 465,
+          "accountLockouts": 1
+        }
+      },
+      "goldmansachs": {
+        "Sep": {
+          "newRegistrations": 25,
+          "activeUsers": 380,
+          "accountLockouts": 1
+        },
+        "Oct": {
+          "newRegistrations": 28,
+          "activeUsers": 395,
+          "accountLockouts": 2
+        },
+        "Nov": {
+          "newRegistrations": 30,
+          "activeUsers": 410,
+          "accountLockouts": 1
+        },
+        "Dec": {
+          "newRegistrations": 33,
+          "activeUsers": 425,
+          "accountLockouts": 1
+        }
+      }
+    },
+    "demographics": {
+      "ageGroups": {
+        "18-24": 7,
+        "25-34": 26,
+        "35-44": 32,
+        "45-54": 20,
+        "55-64": 10,
+        "65+": 5
+      }
+    },
+    "registrationSources": {
+      "mobileApp": 42,
+      "website": 33,
+      "branchReferral": 10,
+      "emailCampaign": 9,
+      "partnerReferral": 6
+    },
+    "channelStatistics": {
+      "borrowerSelfService": {
+        "activeUsers": 1100,
+        "transactions": 4200,
+        "averageSessionDuration": 8.1
+      },
+      "customerService": {
+        "activeUsers": 550,
+        "transactions": 2100,
+        "averageSessionDuration": 11.2
+      }
+    },
+    "customerSummary": {
+      "chase": {
+        "totalRegisteredLoans": 2850,
+        "totalRegisteredUsers": 1920,
+        "totalLockedUsers": 32
+      },
+      "wellsfargo": {
+        "totalRegisteredLoans": 2650,
+        "totalRegisteredUsers": 1780,
+        "totalLockedUsers": 28
+      },
+      "goldmansachs": {
+        "totalRegisteredLoans": 2450,
+        "totalRegisteredUsers": 1650,
+        "totalLockedUsers": 25
+      }
+    }
+  },
+  {
+    "id": 5,
+    "username": "user5",
+    "email": "user5@example.com",
+    "userType": "offshore",
+    "accessibleBrands": [
+      "hsbc",
+      "deutschebank"
+    ],
+    "statistics": {
+      "hsbc": {
+        "registeredLoanCount": 4,
+        "registeredUserCount": 4,
+        "lockerUserCount": 3,
+        "pendingCount": 1,
+        "activeCount": 1,
+        "inactiveCount": 2
+      },
+      "deutschebank": {
+        "registeredLoanCount": 4,
+        "registeredUserCount": 4,
+        "lockerUserCount": 3,
+        "pendingCount": 1,
+        "activeCount": 1,
+        "inactiveCount": 2
+      }
+    },
+    "monthlyStatistics": {
+      "hsbc": {
+        "Sep": {
+          "newRegistrations": 24,
+          "activeUsers": 360,
+          "accountLockouts": 1
+        },
+        "Oct": {
+          "newRegistrations": 27,
+          "activeUsers": 375,
+          "accountLockouts": 2
+        },
+        "Nov": {
+          "newRegistrations": 30,
+          "activeUsers": 390,
+          "accountLockouts": 1
+        },
+        "Dec": {
+          "newRegistrations": 33,
+          "activeUsers": 405,
+          "accountLockouts": 1
+        }
+      },
+      "deutschebank": {
+        "Sep": {
+          "newRegistrations": 22,
+          "activeUsers": 330,
+          "accountLockouts": 1
+        },
+        "Oct": {
+          "newRegistrations": 25,
+          "activeUsers": 345,
+          "accountLockouts": 1
+        },
+        "Nov": {
+          "newRegistrations": 28,
+          "activeUsers": 360,
+          "accountLockouts": 1
+        },
+        "Dec": {
+          "newRegistrations": 30,
+          "activeUsers": 375,
+          "accountLockouts": 1
+        }
+      }
+    },
+    "demographics": {
+      "ageGroups": {
+        "18-24": 5,
+        "25-34": 20,
+        "35-44": 35,
+        "45-54": 25,
+        "55-64": 10,
+        "65+": 5
+      }
+    },
+    "registrationSources": {
+      "mobileApp": 40,
+      "website": 35,
+      "branchReferral": 8,
+      "emailCampaign": 12,
+      "partnerReferral": 5
+    },
+    "channelStatistics": {
+      "borrowerSelfService": {
+        "activeUsers": 950,
+        "transactions": 3600,
+        "averageSessionDuration": 7.5
+      },
+      "customerService": {
+        "activeUsers": 480,
+        "transactions": 1800,
+        "averageSessionDuration": 10.2
+      }
+    },
+    "customerSummary": {
+      "hsbc": {
+        "totalRegisteredLoans": 2250,
+        "totalRegisteredUsers": 1520,
+        "totalLockedUsers": 26
+      },
+      "deutschebank": {
+        "totalRegisteredLoans": 2050,
+        "totalRegisteredUsers": 1380,
+        "totalLockedUsers": 22
+      }
+    }
+  }
+]

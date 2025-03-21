@@ -46,6 +46,137 @@ app.get('/api/statistics', (req, res) => {
   res.json(filteredStatistics);
 });
 
+app.get('/api/users', (req, res) => {
+  const users = readJsonFile('users.json');
+  res.json(users);
+});
+
+app.get('/api/users/:id', (req, res) => {
+  const users = readJsonFile('users.json');
+  const user = users.find(user => user.id === parseInt(req.params.id));
+
+  if (!user) {
+    return res.status(404).json({ message: 'User not found' });
+  }
+
+  res.json(user);
+});
+
+app.get('/api/users/:id/statistics', (req, res) => {
+  const users = readJsonFile('users.json');
+  const user = users.find(user => user.id === parseInt(req.params.id));
+
+  if (!user) {
+    return res.status(404).json({ message: 'User not found' });
+  }
+
+  const brandName = req.query.brand;
+
+  if (!brandName || !user.statistics[brandName]) {
+    return res.json(user.statistics);
+  }
+
+  res.json(user.statistics[brandName]);
+});
+
+app.get('/api/users/:id/monthlyStatistics', (req, res) => {
+  const users = readJsonFile('users.json');
+  const user = users.find(user => user.id === parseInt(req.params.id));
+
+  if (!user) {
+    return res.status(404).json({ message: 'User not found' });
+  }
+
+  const brandName = req.query.brand;
+  const month = req.query.month;
+
+  if (!user.monthlyStatistics) {
+    return res.status(404).json({ message: 'Monthly statistics not found' });
+  }
+
+  if (!brandName || !user.monthlyStatistics[brandName]) {
+    return res.json(user.monthlyStatistics);
+  }
+
+  if (month && user.monthlyStatistics[brandName][month]) {
+    return res.json(user.monthlyStatistics[brandName][month]);
+  }
+
+  res.json(user.monthlyStatistics[brandName]);
+});
+
+app.get('/api/users/:id/demographics', (req, res) => {
+  const users = readJsonFile('users.json');
+  const user = users.find(user => user.id === parseInt(req.params.id));
+
+  if (!user) {
+    return res.status(404).json({ message: 'User not found' });
+  }
+
+  if (!user.demographics) {
+    return res.status(404).json({ message: 'Demographics not found' });
+  }
+
+  res.json(user.demographics);
+});
+
+app.get('/api/users/:id/registrationSources', (req, res) => {
+  const users = readJsonFile('users.json');
+  const user = users.find(user => user.id === parseInt(req.params.id));
+
+  if (!user) {
+    return res.status(404).json({ message: 'User not found' });
+  }
+
+  if (!user.registrationSources) {
+    return res.status(404).json({ message: 'Registration sources not found' });
+  }
+
+  res.json(user.registrationSources);
+});
+
+app.get('/api/users/:id/channelStatistics', (req, res) => {
+  const users = readJsonFile('users.json');
+  const user = users.find(user => user.id === parseInt(req.params.id));
+
+  if (!user) {
+    return res.status(404).json({ message: 'User not found' });
+  }
+
+  if (!user.channelStatistics) {
+    return res.status(404).json({ message: 'Channel statistics not found' });
+  }
+
+  const channelName = req.query.channel;
+
+  if (channelName && user.channelStatistics[channelName]) {
+    return res.json(user.channelStatistics[channelName]);
+  }
+
+  res.json(user.channelStatistics);
+});
+
+app.get('/api/users/:id/customerSummary', (req, res) => {
+  const users = readJsonFile('users.json');
+  const user = users.find(user => user.id === parseInt(req.params.id));
+
+  if (!user) {
+    return res.status(404).json({ message: 'User not found' });
+  }
+
+  if (!user.customerSummary) {
+    return res.status(404).json({ message: 'Customer summary not found' });
+  }
+
+  const brandName = req.query.brand;
+
+  if (brandName && user.customerSummary[brandName]) {
+    return res.json(user.customerSummary[brandName]);
+  }
+
+  res.json(user.customerSummary);
+});
+
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);

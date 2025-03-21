@@ -1,0 +1,1475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loansphere Customer Statistics</title>
+
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Angular Material CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/@angular/material@18.2.0/prebuilt-themes/indigo-pink.css" rel="stylesheet">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* Custom Fonts */
+        @font-face {
+            font-family: 'Suisse-SemiBold';
+            src: url('https://fonts.cdnfonts.com/css/suisse-intl') format('woff2');
+            font-weight: 600;
+            font-style: normal;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        /* Loading Indicator */
+        #loading-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            font-size: 1.5rem;
+        }
+
+        .loading-spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border-left-color: #09f;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Header Styles */
+        .header2 {
+            background-color: #1976d2;
+            color: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .menu-hamburger {
+            display: flex;
+            align-items: center;
+        }
+
+        .hamburger-menu {
+            font-size: 1.5rem;
+            transition: color 0.3s;
+        }
+
+        .hamburger-menu:hover {
+            color: #e0e0e0;
+        }
+
+        /* Drawer Styles */
+        .drawer-container {
+            height: calc(100vh - 64px);
+        }
+
+        .app-drawer {
+            width: 216px;
+            background-color: #fff;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .drawer-list-item {
+            list-style-type: none;
+            padding: 8px 0;
+        }
+
+        .drawer-item {
+            color: #333;
+            text-decoration: none;
+            padding: 8px 16px;
+            display: block;
+            transition: background-color 0.3s;
+            font-weight: 500;
+        }
+
+        .drawer-item:hover {
+            background-color: #f0f0f0;
+        }
+
+        .drawer-feature-item {
+            color: #333;
+            text-decoration: none;
+            padding: 8px 16px 8px 32px;
+            display: flex;
+            align-items: center;
+            transition: background-color 0.3s;
+        }
+
+        .drawer-feature-item:hover {
+            background-color: #f0f0f0;
+        }
+
+        .active-child-menu-item {
+            background-color: #e3f2fd;
+            color: #1976d2;
+            font-weight: 500;
+        }
+
+        .indicator {
+            width: 4px;
+            height: 4px;
+            background-color: #1976d2;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        /* Card Styles */
+        .mat-mdc-card {
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1) !important;
+            border-radius: 8px !important;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+
+        /* Header Bar Styles */
+        .header-main-1 {
+            padding: 16px;
+            background-color: #fff;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .header-main-1 h4 {
+            margin: 0;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .institution-name {
+            font-weight: 600;
+            color: #1976d2;
+        }
+
+        /* Form Field Styles */
+        .mat-mdc-form-field {
+            width: 100%;
+        }
+
+        .context-dropdown-adjust {
+            min-width: 180px;
+        }
+
+        /* Customer Statistics Styles */
+        .mt4 {
+            margin-top: 2rem;
+        }
+
+        /* Right Icons */
+        .right-icons {
+            display: flex;
+            align-items: center;
+        }
+
+        .right-icons i {
+            margin-left: 16px;
+            font-size: 1.2rem;
+            transition: color 0.3s;
+        }
+
+        .right-icons i:hover {
+            color: #e0e0e0;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .app-drawer {
+                width: 100%;
+                max-width: 280px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="loading-indicator" style="display: none;">
+        <div class="loading-spinner"></div>
+        Loading...
+    </div>
+    <app-root _nghost-ng-c1992328644="" ng-version="18.2.13">
+        <div _ngcontent-ng-c1992328644="" class="wrapper">
+            <main _ngcontent-ng-c1992328644=""><router-outlet
+                    _ngcontent-ng-c1992328644=""></router-outlet><lsdadmin-home _nghost-ng-c1816347493=""
+                    class="ng-star-inserted">
+                    <div _ngcontent-ng-c1816347493=""
+                        class="header2 d-flex flex-column flex-md-row align-items-center px-3 py-2"
+                        style="justify-content: space-between;">
+                        <div _ngcontent-ng-c1816347493="" class="menu-hamburger"><i _ngcontent-ng-c1816347493=""
+                                class="fa-sharp fa-solid fa-bars hamburger-menu" style="cursor: pointer;"></i><span
+                                _ngcontent-ng-c1816347493=""
+                                style="color: whitesmoke; font-family: 'Suisse-SemiBold'; font-size: 1.5em; padding: 1px 0px 0px 24px;">
+                                One Admin </span></div>
+                        <div _ngcontent-ng-c1816347493="" style="left: 210px; position: fixed;"><lsdadmin-header-bar
+                                _ngcontent-ng-c1816347493="" _nghost-ng-c2667574091="">
+                                <div _ngcontent-ng-c2667574091="" class="header-main-1 header-main-new">
+                                    <div _ngcontent-ng-c2667574091="" class="header-parts-client py-2"><!---->
+                                        <div _ngcontent-ng-c2667574091="">
+                                            <div _ngcontent-ng-c2667574091="" class="institution-name ng-star-inserted">
+                                                Cenlar FSB </div><!---->
+                                        </div>
+                                        <div _ngcontent-ng-c2667574091="" class="d-inline-block ml-md-2 header-main-2">
+                                            <div _ngcontent-ng-c2667574091="" class="header-parts-client py-2">
+                                                <div class="select-container" style="position: relative; margin: 8px 0;">
+                                                    <div class="select-icon" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); z-index: 1;">
+                                                        <i class="fa-sharp fa-light fa-circle-info"></i>
+                                                    </div>
+                                                    <select id="channelSelect" name="channelSelect" class="form-select" style="padding-left: 35px; width: 100%; height: 40px; border-radius: 4px; border: 1px solid #ccc; background-color: white; color: #333; font-size: 14px;">
+                                                        <option value="borrower-self-service" selected>Borrower Self-Service</option>
+                                                        <option value="customer-service">Customer Service</option>
+                                                        <option value="loan-servicing">Loan Servicing</option>
+                                                    </select>
+                                                </div></div>
+                                        </div><!----><!---->
+                                        <div _ngcontent-ng-c2667574091=""
+                                            class="d-inline-block ml-md-2 header-main-2 ng-star-inserted">
+                                            <div _ngcontent-ng-c2667574091="" style="display: inline-block;">
+                                                <div class="select-container" style="position: relative; margin: 8px 0;">
+                                                    <select id="brandSelect" name="brandSelect" class="form-select" style="width: 100%; height: 40px; border-radius: 4px; border: 1px solid #ccc; background-color: white; color: #333; font-size: 14px;">
+                                                        <option value="all" selected>All Brands</option>
+                                                        <!-- Brand options will be populated by JavaScript -->
+                                                    </select>
+                                                </div></div>
+                                        </div><!----><!----><!---->
+                                    </div>
+                                </div>
+                            </lsdadmin-header-bar></div>
+                        <div _ngcontent-ng-c1816347493="" class="right-icons" style="color: whitesmoke;"><i
+                                _ngcontent-ng-c1816347493="" mattooltip="Help Center"
+                                class="mat-mdc-tooltip-trigger fa-sharp fa-regular fa-question-circle"
+                                style="color: whitesmoke; padding: 0px 8px; cursor: pointer;"
+                                aria-describedby="cdk-describedby-message-ng-1-23"
+                                cdk-describedby-host="ng-1"></i><!----><button _ngcontent-ng-c1816347493=""
+                                mat-button="" aria-label="User profile"
+                                class="mat-mdc-menu-trigger d-inline-block loan-dropdown-menu px-0 mdc-button mat-mdc-button mat-unthemed mat-mdc-button-base"
+                                mat-ripple-loader-uninitialized="" mat-ripple-loader-class-name="mat-mdc-button-ripple"
+                                aria-haspopup="menu" aria-expanded="false"><span
+                                    class="mat-mdc-button-persistent-ripple mdc-button__ripple"></span><span
+                                    class="mdc-button__label">
+                                    <div _ngcontent-ng-c1816347493="" class="mat-mdc-menu-trigger" aria-haspopup="menu"
+                                        aria-expanded="false"><span _ngcontent-ng-c1816347493=""><i
+                                                _ngcontent-ng-c1816347493="" mattooltip="User Profile Menu"
+                                                class="mat-mdc-tooltip-trigger fa-sharp fa-regular fa-circle-user"
+                                                style="color: whitesmoke;"
+                                                aria-describedby="cdk-describedby-message-ng-1-24"
+                                                cdk-describedby-host="ng-1"></i><!----></span><mat-icon
+                                            _ngcontent-ng-c1816347493="" role="img" tabindex="0" aria-hidden="false"
+                                            aria-label="lower caret icon"
+                                            class="mat-icon notranslate align-middle material-icons mat-ligature-font mat-icon-no-color"
+                                            style="color: whitesmoke;" data-mat-icon-type="font"> arrow_drop_down
+                                        </mat-icon></div><!---->
+                                </span><span class="mat-mdc-focus-indicator"></span><span
+                                    class="mat-mdc-button-touch-target"></span></button><!----><mat-menu
+                                _ngcontent-ng-c1816347493="" tabindex="0" id="adminUserMenuId" aria-expanded="false"
+                                class="ng-tns-c1923052698-76 ng-star-inserted"><!----></mat-menu></div>
+                    </div><mat-drawer-container _ngcontent-ng-c1816347493=""
+                        class="mat-drawer-container drawer-container"><!---->
+                        <div class="cdk-visually-hidden cdk-focus-trap-anchor" aria-hidden="true"></div><mat-drawer
+                            _ngcontent-ng-c1816347493="" tabindex="-1"
+                            class="mat-drawer app-drawer ng-tns-c197257872-77 ng-trigger ng-trigger-transform mat-drawer-side mat-drawer-opened ng-star-inserted"
+                            style="transform: none; visibility: visible;">
+                            <div cdkscrollable="" class="mat-drawer-inner-container ng-tns-c197257872-77">
+                                <ul _ngcontent-ng-c1816347493="" class="ng-tns-c197257872-77">
+                                    <li _ngcontent-ng-c1816347493="" class="drawer-list-item"><a
+                                            _ngcontent-ng-c1816347493="" class="drawer-item" href="/admin/dashboard">
+                                            Dashboard </a></li><!----><!----><!----><!----><!---->
+                                    <ul _ngcontent-ng-c1816347493=""><a _ngcontent-ng-c1816347493=""
+                                            href="javascript:void(0)" class="drawer-item"> Servicing Digital <!----><i
+                                                _ngcontent-ng-c1816347493=""
+                                                class="fa-sharp fa-solid fa-caret-up caret-style ng-star-inserted"
+                                                style=""></i><!----></a>
+                                        <div _ngcontent-ng-c1816347493="" class="ng-star-inserted" style="">
+                                            <li _ngcontent-ng-c1816347493="" class="drawer-list-item ng-star-inserted">
+                                                <a _ngcontent-ng-c1816347493="" class="drawer-feature-item"
+                                                    href="/admin/borrower-admin">
+                                                    <div _ngcontent-ng-c1816347493="" class="indicator"></div><span
+                                                        _ngcontent-ng-c1816347493=""
+                                                        class="drawer-feature-item-span">Borrowers</span>
+                                                </a></li><!----><!---->
+                                            <li _ngcontent-ng-c1816347493="" class="drawer-list-item ng-star-inserted">
+                                                <a _ngcontent-ng-c1816347493="" class="drawer-feature-item"
+                                                    href="/admin/messaging2">
+                                                    <div _ngcontent-ng-c1816347493="" class="indicator"></div><span
+                                                        _ngcontent-ng-c1816347493=""
+                                                        class="drawer-feature-item-span">Messages</span>
+                                                </a></li><!---->
+                                            <li _ngcontent-ng-c1816347493="" class="drawer-list-item ng-star-inserted">
+                                                <a _ngcontent-ng-c1816347493="" class="drawer-feature-item"
+                                                    href="/admin/queues">
+                                                    <div _ngcontent-ng-c1816347493="" class="indicator"></div><span
+                                                        _ngcontent-ng-c1816347493=""
+                                                        class="drawer-feature-item-span">Queues</span>
+                                                </a></li><!----><!----><!----><!----><!---->
+                                            <li _ngcontent-ng-c1816347493="" class="drawer-list-item ng-star-inserted">
+                                                <a _ngcontent-ng-c1816347493=""
+                                                    class="drawer-feature-item active-child-menu-item"
+                                                    href="/admin/statistics">
+                                                    <div _ngcontent-ng-c1816347493="" class="indicator"></div><span
+                                                        _ngcontent-ng-c1816347493=""
+                                                        class="drawer-feature-item-span">Customer Statistics</span>
+                                                </a></li><!---->
+                                        </div><!---->
+                                    </ul>
+                                    <ul _ngcontent-ng-c1816347493="" style="display: none;"><a
+                                            _ngcontent-ng-c1816347493="" href="javascript:void(0)" class="drawer-item">
+                                            Customer Service <i _ngcontent-ng-c1816347493=""
+                                                class="fa-sharp fa-solid fa-caret-down caret-style ng-star-inserted"
+                                                style=""></i><!----><!----></a><!----></ul>
+                                    <!----><!----><!----><!----><!----><!----><!---->
+                                </ul>
+                            </div>
+                        </mat-drawer>
+                        <div class="cdk-visually-hidden cdk-focus-trap-anchor" aria-hidden="true"></div>
+                        <mat-drawer-content _ngcontent-ng-c1816347493="" class="mat-drawer-content"
+                            style="margin-left: 216px;"><router-outlet
+                                _ngcontent-ng-c1816347493=""></router-outlet><lsdadmin-customer-stats
+                                _nghost-ng-c1792275222="" class="ng-star-inserted">
+                                <div _ngcontent-ng-c1792275222="" class="header-main-1">
+                                    <h4 _ngcontent-ng-c1792275222="">Customer Statistics</h4>
+                                </div>
+                                <div _ngcontent-ng-c1792275222="" class="container mt4">
+                                    <div _ngcontent-ng-c1792275222="" class="row mx-0">
+                                        <!-- Customer Statistics Summary Card -->
+                                        <mat-card _ngcontent-ng-c1792275222="" class="mat-mdc-card mdc-card col-12 col-lg-6 mb-4">
+                                            <mat-card-header _ngcontent-ng-c1792275222="" class="mat-mdc-card-header">
+                                                <div class="mat-mdc-card-header-text">
+                                                    <h5 class="mb-0 fw-bold">Customer Summary</h5>
+                                                </div>
+                                            </mat-card-header>
+                                            <mat-card-content>
+                                                <div _ngcontent-ng-c1792275222="" class="row mt-3">
+                                                    <div _ngcontent-ng-c1792275222="" class="col-8">
+                                                        <p _ngcontent-ng-c1792275222="" class="fw-semibold mb-3">
+                                                            Registered Loan Count:<br _ngcontent-ng-c1792275222="" class="mb-2">
+                                                            Registered User Count:<br _ngcontent-ng-c1792275222="" class="mb-2">
+                                                            Locked User Count:
+                                                        </p>
+                                                    </div>
+                                                    <div _ngcontent-ng-c1792275222="" class="col-4">
+                                                        <p _ngcontent-ng-c1792275222="" class="text-primary fw-bold mb-3">
+                                                            12,458<br _ngcontent-ng-c1792275222="" class="mb-2">
+                                                            8,742<br _ngcontent-ng-c1792275222="" class="mb-2">
+                                                            124
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </mat-card-content>
+                                        </mat-card>
+
+                                        <!-- Monthly Activity Card -->
+                                        <mat-card _ngcontent-ng-c1792275222="" class="mat-mdc-card mdc-card col-12 col-lg-6 mb-4">
+                                            <mat-card-header _ngcontent-ng-c1792275222="" class="mat-mdc-card-header">
+                                                <div class="mat-mdc-card-header-text">
+                                                    <h5 class="mb-0 fw-bold">Monthly Activity</h5>
+                                                </div>
+                                            </mat-card-header>
+                                            <mat-card-content>
+                                                <div _ngcontent-ng-c1792275222="" class="row mt-3">
+                                                    <div _ngcontent-ng-c1792275222="" class="col-8">
+                                                        <p _ngcontent-ng-c1792275222="" class="fw-semibold mb-3">
+                                                            New Registrations:<br _ngcontent-ng-c1792275222="" class="mb-2">
+                                                            Active Users:<br _ngcontent-ng-c1792275222="" class="mb-2">
+                                                            Account Lockouts:
+                                                        </p>
+                                                    </div>
+                                                    <div _ngcontent-ng-c1792275222="" class="col-4">
+                                                        <p _ngcontent-ng-c1792275222="" class="text-primary fw-bold mb-3">
+                                                            342<br _ngcontent-ng-c1792275222="" class="mb-2">
+                                                            5,128<br _ngcontent-ng-c1792275222="" class="mb-2">
+                                                            18
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </mat-card-content>
+                                        </mat-card>
+                                    </div>
+
+                                    <!-- Detailed Statistics Section -->
+                                    <div _ngcontent-ng-c1792275222="" class="row mx-0">
+                                        <!-- User Activity Chart Card -->
+                                        <mat-card _ngcontent-ng-c1792275222="" class="mat-mdc-card mdc-card col-12 mb-4">
+                                            <mat-card-header _ngcontent-ng-c1792275222="" class="mat-mdc-card-header">
+                                                <div class="mat-mdc-card-header-text">
+                                                    <h5 class="mb-0 fw-bold">User Activity Trends</h5>
+                                                </div>
+                                            </mat-card-header>
+                                            <mat-card-content>
+                                                <div class="chart-container" style="position: relative; height:300px; width:100%">
+                                                    <canvas id="activityChart"></canvas>
+                                                </div>
+                                            </mat-card-content>
+                                        </mat-card>
+
+                                        <!-- User Demographics Card -->
+                                        <div class="col-12 col-lg-6 mb-4">
+                                            <mat-card _ngcontent-ng-c1792275222="" class="mat-mdc-card mdc-card h-100">
+                                                <mat-card-header _ngcontent-ng-c1792275222="" class="mat-mdc-card-header">
+                                                    <div class="mat-mdc-card-header-text">
+                                                        <h5 class="mb-0 fw-bold">User Demographics</h5>
+                                                    </div>
+                                                </mat-card-header>
+                                                <mat-card-content>
+                                                    <div class="chart-container" style="position: relative; height:250px; width:100%">
+                                                        <canvas id="demographicsChart"></canvas>
+                                                    </div>
+                                                </mat-card-content>
+                                            </mat-card>
+                                        </div>
+
+                                        <!-- Registration Sources Card -->
+                                        <div class="col-12 col-lg-6 mb-4">
+                                            <mat-card _ngcontent-ng-c1792275222="" class="mat-mdc-card mdc-card h-100">
+                                                <mat-card-header _ngcontent-ng-c1792275222="" class="mat-mdc-card-header">
+                                                    <div class="mat-mdc-card-header-text">
+                                                        <h5 class="mb-0 fw-bold">Registration Sources</h5>
+                                                    </div>
+                                                </mat-card-header>
+                                                <mat-card-content>
+                                                    <div class="chart-container" style="position: relative; height:250px; width:100%">
+                                                        <canvas id="sourcesChart"></canvas>
+                                                    </div>
+                                                </mat-card-content>
+                                            </mat-card>
+                                        </div>
+                                    </div>
+                                </div>
+                            </lsdadmin-customer-stats><!----></mat-drawer-content><!---->
+                    </mat-drawer-container>
+                </lsdadmin-home><!----></main>
+        </div>
+    </app-root>
+    <link rel="modulepreload" href="chunk-S735BLLZ.js">
+    <link rel="modulepreload" href="chunk-X6OGZ2XM.js">
+    <link rel="modulepreload" href="chunk-UFDSLR2R.js">
+    <link rel="modulepreload" href="chunk-SB5BZARG.js">
+    <link rel="modulepreload" href="chunk-6E4CRX44.js">
+    <link rel="modulepreload" href="chunk-MPYADVNX.js">
+    <link rel="modulepreload" href="chunk-GRV5ZUSL.js">
+    <link rel="modulepreload" href="chunk-AQPD4LOG.js">
+    <link rel="modulepreload" href="chunk-2T5GH5PT.js">
+    <link rel="modulepreload" href="chunk-PBQTADCT.js">
+    <script src="polyfills-CRUMOBOH.js" type="module"></script>
+    <script src="scripts-K3V24XRE.js" defer=""></script>
+    <script src="main-IFZO33RI.js" type="module"></script>
+
+    <div class="cdk-live-announcer-element cdk-visually-hidden" aria-atomic="true" aria-live="polite"
+        id="cdk-live-announcer-0"></div>
+    <div class="cdk-overlay-container"></div>
+    <div class="cdk-describedby-message-container cdk-visually-hidden" style="visibility: hidden;">
+        <div id="cdk-describedby-message-ng-1-10" role="tooltip">Show Message Threads in selected Queue(s)</div>
+        <div id="cdk-describedby-message-ng-1-11" role="tooltip">Show Message Threads in selected Category</div>
+        <div id="cdk-describedby-message-ng-1-12" role="tooltip">Show Message Threads from Borrower(s) with specified
+            First Name</div>
+        <div id="cdk-describedby-message-ng-1-13" role="tooltip">Show Message Threads from Borrower(s) with specified
+            Last Name</div>
+        <div id="cdk-describedby-message-ng-1-14" role="tooltip">Show Message Threads from Borrower(s) with specified
+            Loan Number</div>
+        <div id="cdk-describedby-message-ng-1-15" role="tooltip">Show Message Threads with selected Status</div>
+        <div id="cdk-describedby-message-ng-1-16" role="tooltip">Show Message Threads that Borrowers have Deleted</div>
+        <div id="cdk-describedby-message-ng-1-17" role="tooltip">Show Message Threads with Borrower Message Date on or
+            after selected date</div>
+        <div id="cdk-describedby-message-ng-1-18" role="tooltip">Show Message Threads with Borrower Message Date on or
+            before selected date</div>
+        <div id="cdk-describedby-message-ng-1-19" role="tooltip">Filtering applies to all message threads and search
+            results are sorted by Borrower Message Date.</div>
+        <div id="cdk-describedby-message-ng-1-20" role="tooltip">Sorting/filtering applies only to the current search
+            results page.</div>
+        <div id="cdk-describedby-message-ng-1-23" role="tooltip">Help Center</div>
+        <div id="cdk-describedby-message-ng-1-24" role="tooltip">User Profile Menu</div>
+    </div>
+    <script src="./Brand_Ingestion.js" type="module"></script>
+    <script src="./User_Ingestion.js" type="module"></script>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Angular JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        /**
+         * Customer Statistics Dashboard
+         *
+         * This script handles the display and management of customer statistics
+         * for different brands, with special handling for offshore users.
+         *
+         * Key features:
+         * 1. Brand-specific statistics display
+         * 2. Offshore user access restrictions
+         * 3. Dynamic chart generation and updates
+         * 4. Responsive UI elements
+         */
+
+        // Configuration and constants
+        const CONFIG = {
+            MONTHS: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            DEMOGRAPHICS_LABELS: ['18-24', '25-34', '35-44', '45-54', '55-64', '65+'],
+            SOURCES_LABELS: ['Mobile App', 'Website', 'Branch Referral', 'Email Campaign', 'Partner Referral'],
+            DATA_WAIT_TIMEOUT: 5000, // 5 seconds
+            DATA_POLL_INTERVAL: 1000, // 1 second
+            LOADING_DELAY: 1000 // 1 second
+        };
+
+        // Chart colors
+        const CHART_COLORS = {
+            primary: '#1976d2',
+            success: '#4caf50',
+            warning: '#ffc107',
+            danger: '#f44336',
+            blues: ['#1976d2', '#2196f3', '#64b5f6', '#90caf9', '#bbdefb', '#e3f2fd'],
+            greens: ['#4caf50', '#8bc34a', '#cddc39', '#ffeb3b', '#ffc107']
+        };
+
+        // Global state
+        const state = {
+            charts: {
+                activity: null,
+                demographics: null,
+                sources: null
+            },
+            selectedBrand: null,
+            currentUser: null,
+            brandStatistics: {},
+            defaultStatistics: {
+                summary: {
+                    loanCount: 12458,
+                    userCount: 8742,
+                    lockedCount: 124
+                },
+                monthly: {
+                    newRegistrations: 342,
+                    activeUsers: 5128,
+                    accountLockouts: 18
+                },
+                activityData: [250, 320, 280, 340, 410, 380, 320, 290, 342, 390, 420, 450],
+                activeUsersData: [4200, 4300, 4500, 4800, 5100, 5300, 5200, 5000, 5128, 5300, 5400, 5600],
+                lockoutsData: [12, 15, 10, 8, 14, 20, 18, 16, 18, 22, 19, 15],
+                demographics: [5, 25, 30, 22, 12, 6],
+                sources: [45, 30, 10, 8, 7]
+            }
+        };
+
+        /**
+         * Initialize the application when DOM is loaded
+         */
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                showLoading(true);
+
+                // Load required data
+                await Promise.all([
+                    loadBrandsData(),
+                    loadUserData()
+                ]);
+
+                // Initialize UI components
+                initializeUI();
+
+                // Initialize charts with default or user data
+                initializeCharts();
+
+                // Update statistics for initial view (All Brands)
+                updateStatistics();
+            } catch (error) {
+                console.error('Initialization error:', error);
+                showErrorMessage('Failed to initialize the dashboard. Please refresh the page.');
+            } finally {
+                // Hide loading indicator after a short delay
+                setTimeout(() => showLoading(false), CONFIG.LOADING_DELAY);
+            }
+        });
+
+        /**
+         * Initialize all UI components
+         */
+        function initializeUI() {
+            initializeBrandDropdown();
+            initializeChannelSelect();
+            initializeSidebarToggle();
+        }
+
+        /**
+         * Show or hide the loading indicator
+         * @param {boolean} show - Whether to show or hide the loading indicator
+         */
+        function showLoading(show) {
+            const loadingIndicator = document.getElementById('loading-indicator');
+            if (loadingIndicator) {
+                loadingIndicator.style.display = show ? 'flex' : 'none';
+            }
+        }
+
+        /**
+         * Show an error message to the user
+         * @param {string} message - The error message to display
+         */
+        function showErrorMessage(message) {
+            // Check if error message container exists, create if not
+            let errorContainer = document.getElementById('error-message-container');
+            if (!errorContainer) {
+                errorContainer = document.createElement('div');
+                errorContainer.id = 'error-message-container';
+                errorContainer.className = 'alert alert-danger mt-3';
+
+                const container = document.querySelector('.container.mt4');
+                if (container) {
+                    container.insertBefore(errorContainer, container.firstChild);
+                }
+            }
+
+            errorContainer.textContent = message;
+        }
+
+        /**
+         * Load user data from external source
+         * @returns {Promise<Object|null>} - The user data or null if not available
+         */
+        async function loadUserData() {
+            try {
+                const userData = await waitForExternalData('storedUsersSet', CONFIG.DATA_WAIT_TIMEOUT, CONFIG.DATA_POLL_INTERVAL);
+                if (userData) {
+                    state.currentUser = userData[0]; // Use first user for demo
+                    console.log("User data loaded successfully");
+                    return state.currentUser;
+                }
+                console.warn("User data not available, using default values");
+                return null;
+            } catch (error) {
+                console.error("Error loading user data:", error);
+                return null;
+            }
+        }
+
+        /**
+         * Load brands data from external source
+         * @returns {Promise<Array|null>} - The brands data or null if not available
+         */
+        async function loadBrandsData() {
+            try {
+                const brandsData = await waitForExternalData('storedNumbersSet', CONFIG.DATA_WAIT_TIMEOUT, CONFIG.DATA_POLL_INTERVAL);
+                if (brandsData) {
+                    console.log("Brands data loaded successfully");
+                    return brandsData;
+                }
+
+                console.warn("Brands data not available, using fallback data");
+                // Return fallback data
+                return [
+                    {
+                        id: 5,
+                        name: "Bank of America",
+                        value: "bankofamerica",
+                        type: "offshore",
+                        restricted: false
+                    },
+                    {
+                        id: 6,
+                        name: "Citibank",
+                        value: "citibank",
+                        type: "offshore",
+                        restricted: false
+                    }
+                ];
+            } catch (error) {
+                console.error("Error loading brands data:", error);
+                return null;
+            }
+        }
+
+        /**
+         * Wait for external data to be available in the window object
+         * @param {string} dataKey - The key to check in the window object
+         * @param {number} timeout - Maximum time to wait in milliseconds
+         * @param {number} pollInterval - Interval between checks in milliseconds
+         * @returns {Promise<any>} - The data when available
+         */
+        async function waitForExternalData(dataKey, timeout, pollInterval) {
+            return new Promise((resolve, reject) => {
+                const startTime = Date.now();
+
+                const checkData = () => {
+                    if (window[dataKey]) {
+                        resolve(window[dataKey]);
+                        return;
+                    }
+
+                    if (Date.now() - startTime >= timeout) {
+                        resolve(null); // Resolve with null instead of rejecting
+                        return;
+                    }
+
+                    setTimeout(checkData, pollInterval);
+                };
+
+                checkData();
+            });
+        }
+
+        /**
+         * Initialize the channel select dropdown
+         */
+        function initializeChannelSelect() {
+            const channelSelect = document.getElementById('channelSelect');
+            if (!channelSelect) return;
+
+            channelSelect.addEventListener('change', function() {
+                console.log('Channel changed to:', this.value);
+                // Additional channel-specific functionality can be added here
+            });
+        }
+
+        /**
+         * Initialize the brand dropdown with options
+         */
+        function initializeBrandDropdown() {
+            const brandSelect = document.getElementById('brandSelect');
+            if (!brandSelect) return;
+
+            // Create brand-specific statistics data
+            createBrandStatistics();
+
+            // Get accessible brands and populate the dropdown
+            const brands = getAccessibleBrands();
+            populateBrandDropdown(brands, brandSelect);
+
+            // Add change event listener to the brand dropdown
+            brandSelect.addEventListener('change', function() {
+                const selectedValue = this.value;
+                const selectedBrand = selectedValue === 'all' ? null :
+                    window.storedNumbersSet.find(brand => brand.value === selectedValue);
+                selectBrand(selectedBrand);
+            });
+        }
+
+        /**
+         * Initialize sidebar toggle functionality
+         */
+        function initializeSidebarToggle() {
+            const hamburgerMenu = document.querySelector('.hamburger-menu');
+            if (!hamburgerMenu) return;
+
+            hamburgerMenu.addEventListener('click', function() {
+                const drawer = document.querySelector('.app-drawer');
+                const drawerContent = document.querySelector('mat-drawer-content');
+
+                if (!drawer || !drawerContent) return;
+
+                if (drawer.classList.contains('mat-drawer-opened')) {
+                    drawer.classList.remove('mat-drawer-opened');
+                    drawerContent.style.marginLeft = '0';
+                } else {
+                    drawer.classList.add('mat-drawer-opened');
+                    drawerContent.style.marginLeft = '216px';
+                }
+            });
+        }
+
+        /**
+         * Populate brand dropdown with options
+         * @param {Array} brands - Array of brand objects
+         * @param {HTMLElement} selectElement - The select element to populate
+         */
+        function populateBrandDropdown(brands, selectElement) {
+            // Clear existing options except the first one (All Brands)
+            while (selectElement.options.length > 1) {
+                selectElement.remove(1);
+            }
+
+            // Add brand options
+            brands.forEach(function(brand) {
+                const option = document.createElement('option');
+                option.value = brand.value;
+                option.textContent = brand.name;
+                selectElement.appendChild(option);
+            });
+        }
+
+        /**
+         * Get brands accessible to the current user
+         * @returns {Array} - Array of accessible brand objects
+         */
+        function getAccessibleBrands() {
+            if (!window.storedNumbersSet) return [];
+
+            // If no user data, return all non-restricted brands
+            if (!state.currentUser) {
+                return window.storedNumbersSet.filter(brand => !brand.restricted);
+            }
+
+            // For offshore users, filter based on accessible brands
+            if (state.currentUser.userType === 'offshore') {
+                return window.storedNumbersSet.filter(brand => {
+                    return !brand.restricted && (
+                        state.currentUser.accessibleBrands.includes('all') ||
+                        state.currentUser.accessibleBrands.includes(brand.value)
+                    );
+                });
+            }
+
+            // For onshore users, return all non-restricted brands
+            return window.storedNumbersSet.filter(brand => !brand.restricted);
+        }
+
+        /**
+         * Create brand-specific statistics data
+         */
+        function createBrandStatistics() {
+            const brands = window.storedNumbersSet || [];
+
+            // Process each brand
+            brands.forEach(brand => {
+                // Generate statistics for this brand
+                state.brandStatistics[brand.id] = generateBrandStatistics(brand);
+            });
+        }
+
+        /**
+         * Generate statistics for a specific brand
+         * @param {Object} brand - The brand object
+         * @returns {Object|null} - Statistics object or null if restricted
+         */
+        function generateBrandStatistics(brand) {
+            // If no user data, use default statistics with variations
+            if (!state.currentUser) {
+                return generateDefaultBrandStatistics(brand);
+            }
+
+            const brandValue = brand.value;
+            const isOffshoreUser = state.currentUser.userType === 'offshore';
+            const hasAccessToBrand = state.currentUser.accessibleBrands.includes(brandValue) ||
+                                    state.currentUser.accessibleBrands.includes('all');
+
+            // For offshore users without access to this brand, return zeros
+            if (isOffshoreUser && !hasAccessToBrand) {
+                return generateEmptyStatistics();
+            }
+
+            // If brand is restricted and user is not offshore, return null
+            if (brand.restricted && !isOffshoreUser) {
+                return null;
+            }
+
+            // Check if user has statistics for this brand
+            if (state.currentUser.statistics[brandValue] || brandValue === 'all') {
+                return generateUserBrandStatistics(brand);
+            }
+
+            // Fallback to default statistics with variations
+            return generateDefaultBrandStatistics(brand);
+        }
+
+        /**
+         * Generate empty statistics (all zeros)
+         * @returns {Object} - Empty statistics object
+         */
+        function generateEmptyStatistics() {
+            return {
+                summary: {
+                    loanCount: 0,
+                    userCount: 0,
+                    lockedCount: 0
+                },
+                monthly: {
+                    newRegistrations: 0,
+                    activeUsers: 0,
+                    accountLockouts: 0
+                },
+                activityData: Array(12).fill(0),
+                activeUsersData: Array(12).fill(0),
+                lockoutsData: Array(12).fill(0),
+                demographics: Array(6).fill(0),
+                sources: Array(5).fill(0)
+            };
+        }
+
+        /**
+         * Generate default brand statistics with variations
+         * @param {Object} brand - The brand object
+         * @returns {Object} - Statistics object with variations
+         */
+        function generateDefaultBrandStatistics(brand) {
+            // Generate random variations for each brand
+            const variation = 0.7 + (brand.id % 5) * 0.1; // Creates variations between 0.7 and 1.1
+
+            return {
+                summary: {
+                    loanCount: Math.round(state.defaultStatistics.summary.loanCount * variation),
+                    userCount: Math.round(state.defaultStatistics.summary.userCount * variation),
+                    lockedCount: Math.round(state.defaultStatistics.summary.lockedCount * variation)
+                },
+                monthly: {
+                    newRegistrations: Math.round(state.defaultStatistics.monthly.newRegistrations * variation),
+                    activeUsers: Math.round(state.defaultStatistics.monthly.activeUsers * variation),
+                    accountLockouts: Math.round(state.defaultStatistics.monthly.accountLockouts * variation)
+                },
+                activityData: state.defaultStatistics.activityData.map(val => Math.round(val * variation)),
+                activeUsersData: state.defaultStatistics.activeUsersData.map(val => Math.round(val * variation)),
+                lockoutsData: state.defaultStatistics.lockoutsData.map(val => Math.round(val * variation)),
+                demographics: state.defaultStatistics.demographics.map(val => Math.round(val * variation)),
+                sources: state.defaultStatistics.sources.map(val => Math.round(val * variation))
+            };
+        }
+
+        /**
+         * Generate brand statistics from user data
+         * @param {Object} brand - The brand object
+         * @returns {Object} - Statistics object from user data
+         */
+        function generateUserBrandStatistics(brand) {
+            const brandValue = brand.value;
+            const brandKey = brandValue === 'all' ? 'all' : brandValue;
+
+            // Get user statistics for this brand or use "all" as fallback
+            const userStats = state.currentUser.statistics[brandKey] || state.currentUser.statistics.all;
+            const userSummary = state.currentUser.customerSummary[brandKey] || state.currentUser.customerSummary.all;
+            const userMonthly = state.currentUser.monthlyStatistics[brandKey] || state.currentUser.monthlyStatistics.all;
+
+            // Create activity data arrays from monthly statistics
+            const activityData = [];
+            const activeUsersData = [];
+            const lockoutsData = [];
+
+            CONFIG.MONTHS.forEach((month, index) => {
+                if (userMonthly[month]) {
+                    activityData.push(userMonthly[month].newRegistrations);
+                    activeUsersData.push(userMonthly[month].activeUsers);
+                    lockoutsData.push(userMonthly[month].accountLockouts);
+                } else {
+                    // Use default data if month not available
+                    activityData.push(state.defaultStatistics.activityData[index]);
+                    activeUsersData.push(state.defaultStatistics.activeUsersData[index]);
+                    lockoutsData.push(state.defaultStatistics.lockoutsData[index]);
+                }
+            });
+
+            // Create demographics and sources data
+            const demographics = Object.values(state.currentUser.demographics.ageGroups);
+            const sources = Object.values(state.currentUser.registrationSources);
+
+            // For offshore users viewing "all" brands, calculate totals based on accessible brands only
+            let summaryData = {
+                loanCount: userSummary.totalRegisteredLoans,
+                userCount: userSummary.totalRegisteredUsers,
+                lockedCount: userSummary.totalLockedUsers
+            };
+
+            if (state.currentUser.userType === 'offshore' && brandValue === 'all') {
+                summaryData = calculateOffshoreAllBrandsTotals();
+            }
+
+            return {
+                summary: summaryData,
+                monthly: {
+                    newRegistrations: userMonthly.Sep ? userMonthly.Sep.newRegistrations : state.defaultStatistics.monthly.newRegistrations,
+                    activeUsers: userMonthly.Sep ? userMonthly.Sep.activeUsers : state.defaultStatistics.monthly.activeUsers,
+                    accountLockouts: userMonthly.Sep ? userMonthly.Sep.accountLockouts : state.defaultStatistics.monthly.accountLockouts
+                },
+                activityData: activityData,
+                activeUsersData: activeUsersData,
+                lockoutsData: lockoutsData,
+                demographics: demographics,
+                sources: sources
+            };
+        }
+
+        /**
+         * Calculate totals for offshore users viewing "All Brands"
+         * @returns {Object} - Summary data with totals for accessible brands only
+         */
+        function calculateOffshoreAllBrandsTotals() {
+            let totalLoans = 0;
+            let totalUsers = 0;
+            let totalLocked = 0;
+
+            // Sum up statistics for each accessible brand
+            state.currentUser.accessibleBrands.forEach(accessibleBrand => {
+                if (accessibleBrand !== 'all' && state.currentUser.customerSummary[accessibleBrand]) {
+                    totalLoans += state.currentUser.customerSummary[accessibleBrand].totalRegisteredLoans || 0;
+                    totalUsers += state.currentUser.customerSummary[accessibleBrand].totalRegisteredUsers || 0;
+                    totalLocked += state.currentUser.customerSummary[accessibleBrand].totalLockedUsers || 0;
+                }
+            });
+
+            return {
+                loanCount: totalLoans,
+                userCount: totalUsers,
+                lockedCount: totalLocked
+            };
+        }
+
+        /**
+         * Select a brand and update statistics
+         * @param {Object|null} brand - The selected brand or null for "All Brands"
+         */
+        function selectBrand(brand) {
+            state.selectedBrand = brand;
+            updateStatistics();
+
+            // Show restriction warning if applicable
+            const isRestricted = brand && brand.restricted &&
+                               state.currentUser && state.currentUser.userType !== 'offshore';
+
+            showRestrictionMessage(isRestricted);
+        }
+
+        /**
+         * Update statistics based on selected brand
+         */
+        function updateStatistics() {
+            // Get statistics data based on selected brand
+            const stats = getSelectedBrandStatistics();
+
+            // Update UI with statistics
+            updateStatisticsUI(stats);
+
+            // Update charts
+            updateCharts(stats);
+        }
+
+        /**
+         * Get statistics for the currently selected brand
+         * @returns {Object} - Statistics object for the selected brand
+         */
+        function getSelectedBrandStatistics() {
+            // If no brand selected ("All Brands")
+            if (!state.selectedBrand) {
+                return getAllBrandsStatistics();
+            }
+
+            // If brand-specific statistics available
+            if (state.brandStatistics[state.selectedBrand.id]) {
+                const stats = state.brandStatistics[state.selectedBrand.id];
+
+                // For offshore users, check if this brand is accessible
+                if (state.currentUser && state.currentUser.userType === 'offshore') {
+                    const brandValue = state.selectedBrand.value;
+                    const hasAccess = state.currentUser.accessibleBrands.includes(brandValue) ||
+                                     state.currentUser.accessibleBrands.includes('all');
+
+                    // If brand is not accessible, show zeros for summary
+                    if (!hasAccess) {
+                        return {
+                            ...stats,
+                            summary: {
+                                loanCount: 0,
+                                userCount: 0,
+                                lockedCount: 0
+                            }
+                        };
+                    }
+                }
+
+                return stats;
+            }
+
+            // Fallback to default statistics
+            return state.defaultStatistics;
+        }
+
+        /**
+         * Get statistics for "All Brands" view
+         * @returns {Object} - Statistics object for all brands
+         */
+        function getAllBrandsStatistics() {
+            // If user data available
+            if (state.currentUser && state.currentUser.customerSummary && state.currentUser.customerSummary.all) {
+                const userSummary = state.currentUser.customerSummary.all;
+                const userMonthly = state.currentUser.monthlyStatistics.all.Sep || {};
+
+                // For offshore users, calculate totals based on accessible brands only
+                if (state.currentUser.userType === 'offshore') {
+                    const summaryData = calculateOffshoreAllBrandsTotals();
+
+                    return {
+                        summary: summaryData,
+                        monthly: {
+                            newRegistrations: userMonthly.newRegistrations || state.defaultStatistics.monthly.newRegistrations,
+                            activeUsers: userMonthly.activeUsers || state.defaultStatistics.monthly.activeUsers,
+                            accountLockouts: userMonthly.accountLockouts || state.defaultStatistics.monthly.accountLockouts
+                        }
+                    };
+                }
+
+                // For onshore users, use the full statistics
+                return {
+                    summary: {
+                        loanCount: userSummary.totalRegisteredLoans,
+                        userCount: userSummary.totalRegisteredUsers,
+                        lockedCount: userSummary.totalLockedUsers
+                    },
+                    monthly: {
+                        newRegistrations: userMonthly.newRegistrations || state.defaultStatistics.monthly.newRegistrations,
+                        activeUsers: userMonthly.activeUsers || state.defaultStatistics.monthly.activeUsers,
+                        accountLockouts: userMonthly.accountLockouts || state.defaultStatistics.monthly.accountLockouts
+                    }
+                };
+            }
+
+            // Use default statistics if no user data
+            return state.defaultStatistics;
+        }
+
+        /**
+         * Update UI elements with statistics data
+         * @param {Object} stats - Statistics object
+         */
+        function updateStatisticsUI(stats) {
+            // Update summary card
+            const summaryElement = document.querySelector('.col-4 .text-primary.fw-bold');
+            if (summaryElement) {
+                summaryElement.innerHTML = `
+                    ${stats.summary.loanCount.toLocaleString()}<br class="mb-2">
+                    ${stats.summary.userCount.toLocaleString()}<br class="mb-2">
+                    ${stats.summary.lockedCount.toLocaleString()}
+                `;
+            }
+
+            // Update monthly activity card
+            const monthlyElement = document.querySelectorAll('.col-4 .text-primary.fw-bold')[1];
+            if (monthlyElement) {
+                monthlyElement.innerHTML = `
+                    ${stats.monthly.newRegistrations.toLocaleString()}<br class="mb-2">
+                    ${stats.monthly.activeUsers.toLocaleString()}<br class="mb-2">
+                    ${stats.monthly.accountLockouts.toLocaleString()}
+                `;
+            }
+        }
+
+        /**
+         * Update charts with new data
+         * @param {Object} stats - Statistics object
+         */
+        function updateCharts(stats) {
+            // Ensure chart data is available
+            const chartData = ensureChartData(stats);
+
+            // Update Activity Chart
+            if (state.charts.activity) {
+                state.charts.activity.data.datasets[0].data = chartData.activityData;
+                state.charts.activity.data.datasets[1].data = chartData.activeUsersData;
+                state.charts.activity.data.datasets[2].data = chartData.lockoutsData;
+                state.charts.activity.update();
+            }
+
+            // Update Demographics Chart
+            if (state.charts.demographics) {
+                state.charts.demographics.data.datasets[0].data = chartData.demographics;
+                state.charts.demographics.update();
+            }
+
+            // Update Sources Chart
+            if (state.charts.sources) {
+                state.charts.sources.data.datasets[0].data = chartData.sources;
+                state.charts.sources.update();
+            }
+        }
+
+        /**
+         * Ensure chart data is available in stats object
+         * @param {Object} stats - Statistics object
+         * @returns {Object} - Statistics object with chart data
+         */
+        function ensureChartData(stats) {
+            // If stats already has chart data, return as is
+            if (stats.activityData) {
+                return stats;
+            }
+
+            // Try to get chart data from user data
+            if (state.currentUser && state.selectedBrand) {
+                const brandValue = state.selectedBrand ? state.selectedBrand.value : 'all';
+                const brandKey = state.currentUser.monthlyStatistics[brandValue] ? brandValue : 'all';
+
+                // Create activity data arrays from monthly statistics
+                const activityData = [];
+                const activeUsersData = [];
+                const lockoutsData = [];
+
+                CONFIG.MONTHS.forEach((month, index) => {
+                    if (state.currentUser.monthlyStatistics[brandKey][month]) {
+                        activityData.push(state.currentUser.monthlyStatistics[brandKey][month].newRegistrations);
+                        activeUsersData.push(state.currentUser.monthlyStatistics[brandKey][month].activeUsers);
+                        lockoutsData.push(state.currentUser.monthlyStatistics[brandKey][month].accountLockouts);
+                    } else {
+                        // Use default data if month not available
+                        activityData.push(state.defaultStatistics.activityData[index]);
+                        activeUsersData.push(state.defaultStatistics.activeUsersData[index]);
+                        lockoutsData.push(state.defaultStatistics.lockoutsData[index]);
+                    }
+                });
+
+                // Get demographics and sources data
+                const demographics = Object.values(state.currentUser.demographics.ageGroups);
+                const sources = Object.values(state.currentUser.registrationSources);
+
+                // Add chart data to stats
+                return {
+                    ...stats,
+                    activityData,
+                    activeUsersData,
+                    lockoutsData,
+                    demographics,
+                    sources
+                };
+            }
+
+            // Use default data if no user data available
+            return {
+                ...stats,
+                activityData: state.defaultStatistics.activityData,
+                activeUsersData: state.defaultStatistics.activeUsersData,
+                lockoutsData: state.defaultStatistics.lockoutsData,
+                demographics: state.defaultStatistics.demographics,
+                sources: state.defaultStatistics.sources
+            };
+        }
+
+        /**
+         * Initialize charts with default or user data
+         */
+        function initializeCharts() {
+            // Get initial data based on user if available
+            const initialData = getInitialChartData();
+
+            // Initialize Activity Chart
+            initializeActivityChart(initialData);
+
+            // Initialize Demographics Chart
+            initializeDemographicsChart(initialData);
+
+            // Initialize Sources Chart
+            initializeSourcesChart(initialData);
+        }
+
+        /**
+         * Get initial data for charts
+         * @returns {Object} - Initial chart data
+         */
+        function getInitialChartData() {
+            if (!state.currentUser) {
+                return state.defaultStatistics;
+            }
+
+            // Create activity data arrays from monthly statistics
+            const activityData = [];
+            const activeUsersData = [];
+            const lockoutsData = [];
+
+            CONFIG.MONTHS.forEach((month, index) => {
+                if (state.currentUser.monthlyStatistics.all[month]) {
+                    activityData.push(state.currentUser.monthlyStatistics.all[month].newRegistrations);
+                    activeUsersData.push(state.currentUser.monthlyStatistics.all[month].activeUsers);
+                    lockoutsData.push(state.currentUser.monthlyStatistics.all[month].accountLockouts);
+                } else {
+                    // Use default data if month not available
+                    activityData.push(state.defaultStatistics.activityData[index]);
+                    activeUsersData.push(state.defaultStatistics.activeUsersData[index]);
+                    lockoutsData.push(state.defaultStatistics.lockoutsData[index]);
+                }
+            });
+
+            // Get demographics and sources data
+            const demographics = Object.values(state.currentUser.demographics.ageGroups);
+            const sources = Object.values(state.currentUser.registrationSources);
+
+            return {
+                activityData,
+                activeUsersData,
+                lockoutsData,
+                demographics,
+                sources
+            };
+        }
+
+        /**
+         * Initialize Activity Chart
+         * @param {Object} initialData - Initial chart data
+         */
+        function initializeActivityChart(initialData) {
+            const activityCtx = document.getElementById('activityChart');
+            if (!activityCtx) return;
+
+            state.charts.activity = new Chart(activityCtx.getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: CONFIG.MONTHS,
+                    datasets: [
+                        {
+                            label: 'New Registrations',
+                            data: initialData.activityData || state.defaultStatistics.activityData,
+                            borderColor: CHART_COLORS.primary,
+                            backgroundColor: `rgba(${hexToRgb(CHART_COLORS.primary)}, 0.1)`,
+                            tension: 0.4,
+                            fill: true
+                        },
+                        {
+                            label: 'Active Users',
+                            data: initialData.activeUsersData || state.defaultStatistics.activeUsersData,
+                            borderColor: CHART_COLORS.success,
+                            backgroundColor: `rgba(${hexToRgb(CHART_COLORS.success)}, 0.1)`,
+                            tension: 0.4,
+                            fill: true
+                        },
+                        {
+                            label: 'Account Lockouts',
+                            data: initialData.lockoutsData || state.defaultStatistics.lockoutsData,
+                            borderColor: CHART_COLORS.danger,
+                            backgroundColor: `rgba(${hexToRgb(CHART_COLORS.danger)}, 0.1)`,
+                            tension: 0.4,
+                            fill: true
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        /**
+         * Initialize Demographics Chart
+         * @param {Object} initialData - Initial chart data
+         */
+        function initializeDemographicsChart(initialData) {
+            const demographicsCtx = document.getElementById('demographicsChart');
+            if (!demographicsCtx) return;
+
+            state.charts.demographics = new Chart(demographicsCtx.getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    labels: CONFIG.DEMOGRAPHICS_LABELS,
+                    datasets: [{
+                        data: initialData.demographics || state.defaultStatistics.demographics,
+                        backgroundColor: CHART_COLORS.blues,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right'
+                        }
+                    }
+                }
+            });
+        }
+
+        /**
+         * Initialize Sources Chart
+         * @param {Object} initialData - Initial chart data
+         */
+        function initializeSourcesChart(initialData) {
+            const sourcesCtx = document.getElementById('sourcesChart');
+            if (!sourcesCtx) return;
+
+            state.charts.sources = new Chart(sourcesCtx.getContext('2d'), {
+                type: 'pie',
+                data: {
+                    labels: CONFIG.SOURCES_LABELS,
+                    datasets: [{
+                        data: initialData.sources || state.defaultStatistics.sources,
+                        backgroundColor: CHART_COLORS.greens,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right'
+                        }
+                    }
+                }
+            });
+        }
+
+        /**
+         * Show or hide restriction message for restricted brands
+         * @param {boolean} show - Whether to show or hide the message
+         */
+        function showRestrictionMessage(show) {
+            let warningElement = document.getElementById('restriction-warning');
+
+            if (!warningElement && show) {
+                warningElement = document.createElement('div');
+                warningElement.id = 'restriction-warning';
+                warningElement.className = 'alert alert-warning mt-3';
+                warningElement.textContent = 'This brand is restricted to offshore users.';
+
+                const container = document.querySelector('.container.mt4');
+                if (container) {
+                    container.insertBefore(warningElement, container.firstChild);
+                }
+            } else if (warningElement && !show) {
+                warningElement.remove();
+            }
+        }
+
+        /**
+         * Convert hex color to RGB format
+         * @param {string} hex - Hex color code
+         * @returns {string} - RGB color values as "r, g, b"
+         */
+        function hexToRgb(hex) {
+            // Remove # if present
+            hex = hex.replace('#', '');
+
+            // Parse hex values
+            const r = parseInt(hex.substring(0, 2), 16);
+            const g = parseInt(hex.substring(2, 4), 16);
+            const b = parseInt(hex.substring(4, 6), 16);
+
+            return `${r}, ${g}, ${b}`;
+        }
+    </script>
+    </script>
+</body>
+</html>
+

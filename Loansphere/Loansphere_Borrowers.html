@@ -9,8 +9,11 @@
     <!-- Add AG-Grid Styles -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community/styles/ag-grid.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community/styles/ag-theme-material.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community/styles/ag-grid.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community/styles/ag-theme-material.css">
+
+    <!-- Add Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+        integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
         /* Base styles */
         body {
@@ -240,25 +243,38 @@
 
         .brand-select {
             width: 100%;
-            padding: 8px 12px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            background: rgba(255, 255, 255, 0.1);
+            padding: 10px 14px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.15);
             color: white;
             border-radius: 4px;
             cursor: pointer;
             appearance: none;
             -webkit-appearance: none;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 16px;
+            padding-right: 30px;
         }
 
         .brand-select option {
             background: white;
             color: #333;
-            padding: 8px;
+            padding: 10px;
+            font-size: 14px;
         }
 
         .brand-select:focus {
             outline: none;
-            border-color: rgba(255, 255, 255, 0.5);
+            border-color: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2);
+        }
+
+        .brand-select:hover {
+            background-color: rgba(255, 255, 255, 0.25);
         }
 
         .mat-mdc-form-field {
@@ -322,38 +338,114 @@
         }
 
         .form-control {
-            padding: 8px 12px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            width: 220px;
-            /* Updated width */
+            padding: 10px 14px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            width: 100%;
             font-size: 14px;
-            margin: 0 auto;
-            /* Center the input */
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
         }
 
         /* Adjust column width */
         .col-6.col-lg-4.col-xl-2 {
             min-width: 250px;
-            /* Minimum width for the column */
-            margin-bottom: 1rem;
+            margin-bottom: 1.25rem;
+            padding: 0 12px;
         }
 
         .form-control:focus {
-            border-color: #2196F3;
+            border-color: #1976d2;
             outline: none;
-            box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
+            box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.15);
+        }
+
+        .form-control:hover {
+            border-color: #bbb;
+        }
+
+        .btn-primary {
+            background-color: #1976d2;
+            border: none;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: 4px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-primary:hover {
+            background-color: #1565c0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-primary:active {
+            background-color: #0d47a1;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transform: translateY(1px);
+        }
+
+        .text-link {
+            color: #1976d2;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .text-link:hover {
+            color: #0d47a1;
+            text-decoration: underline;
         }
 
         .hero {
             margin-top: 6em;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
         }
 
         label {
             display: block;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
             font-size: 14px;
+            font-weight: 500;
             color: #333;
+        }
+
+        .header-main-1 h4 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+            margin: 0;
+            padding: 20px 0 10px 20px;
+        }
+
+        .search-container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .search-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #333;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 10px;
+        }
+
+        .search-actions {
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
         }
 
         .mat-mdc-select-panel {
@@ -532,50 +624,141 @@
 
         .table {
             width: 100%;
-            border-collapse: collapse;
+            border-collapse: separate;
+            border-spacing: 0;
             background: white;
+            font-size: 14px;
         }
 
         .table th {
             background: #f5f5f5;
-            padding: 12px;
+            padding: 14px 16px;
             text-align: left;
-            font-weight: 500;
-            border-bottom: 2px solid #ddd;
+            font-weight: 600;
+            color: #333;
+            border-bottom: 2px solid #1976d2;
             position: sticky;
             top: 0;
+            z-index: 10;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
         }
 
         .table td {
-            padding: 12px;
+            padding: 14px 16px;
             border-bottom: 1px solid #eee;
+            vertical-align: middle;
+            transition: background-color 0.15s ease;
         }
 
         .table tr:hover {
-            background-color: rgba(25, 118, 210, 0.04);
+            background-color: rgba(25, 118, 210, 0.05);
+        }
+
+        .table tr:last-child td {
+            border-bottom: none;
         }
 
         .table-responsive {
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            border-radius: 4px;
-            margin-left: -8%;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            border-radius: 8px;
+            margin: 20px 0;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        /* Zebra striping for better readability */
+        .table tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        /* First column styling */
+        .table td:first-child,
+        .table th:first-child {
+            padding-left: 20px;
+        }
+
+        /* Last column styling */
+        .table td:last-child,
+        .table th:last-child {
+            padding-right: 20px;
         }
 
         .alert {
-            padding: 15px;
-            margin-bottom: 20px;
+            padding: 16px 20px;
+            margin: 20px 0;
             border: 1px solid transparent;
-            border-radius: 4px;
+            border-radius: 6px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
         }
 
         .alert-warning {
-            color: #8a6d3b;
-            background-color: #fcf8e3;
-            border-color: #faebcc;
+            color: #856404;
+            background-color: #fff3cd;
+            border-color: #ffeeba;
+        }
+
+        .alert-info {
+            color: #0c5460;
+            background-color: #d1ecf1;
+            border-color: #bee5eb;
+        }
+
+        .alert::before {
+            margin-right: 10px;
+            font-family: "Font Awesome 5 Free";
+            font-weight: 900;
+        }
+
+        .alert-warning::before {
+            content: "\\f071";  /* Font Awesome exclamation triangle */
+            color: #f0ad4e;
+        }
+
+        .alert-info::before {
+            content: "\\f05a";  /* Font Awesome info circle */
+            color: #17a2b8;
         }
 
         .text-center {
             text-align: center;
+        }
+
+        /* Loading indicator */
+        #loading-indicator {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            z-index: 2000;
+            display: none;
+            font-size: 16px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        #loading-indicator::after {
+            content: "";
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin-left: 10px;
+            border: 3px solid #1976d2;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
 
 
@@ -683,8 +866,8 @@
                                                             <div class="mat-mdc-form-field-infix ng-tns-c508571215-22">
                                                                 <div class="brand-dropdown-container">
                                                                     <select id="brandSelect" class="brand-select">
-                                                                        <option value="" disabled selected>Select Brand
-                                                                        </option>
+                                                                        <option value="all" selected>All Brands</option>
+                                                                        <!-- Brand options will be populated dynamically -->
                                                                     </select>
                                                                 </div>
                                                             </div><!----><!---->
@@ -881,60 +1064,68 @@
                                     </div>
                                 </div>
                                 <div _ngcontent-ng-c2291702866="" class="hero">
-                                    <div _ngcontent-ng-c2291702866="" class="container xl"><bk-form
-                                            _ngcontent-ng-c2291702866="">
-                                            <form novalidate="" name="form" autocomplete="off"
-                                                class="ng-untouched ng-pristine ng-valid" onsubmit="return false;">
-                                                <div _ngcontent-ng-c2291702866="" class="row">
-                                                    <div class="col-6 col-lg-4 col-xl-2 px-lg-2 mb-3">
-                                                        <label for="username">Username</label>
-                                                        <input type="text" id="mat-input-0" class="form-control"
-                                                            placeholder="Username">
+                                    <div _ngcontent-ng-c2291702866="" class="container xl">
+                                        <div class="search-container">
+                                            <div class="search-title">
+                                                <i class="fa fa-search" style="margin-right: 10px;"></i> Search Borrowers
+                                            </div>
+                                            <bk-form _ngcontent-ng-c2291702866="">
+                                                <form novalidate="" name="form" autocomplete="off"
+                                                    class="ng-untouched ng-pristine ng-valid" onsubmit="return false;">
+                                                    <div _ngcontent-ng-c2291702866="" class="row">
+                                                        <div class="col-6 col-lg-4 col-xl-3 px-lg-2 mb-3">
+                                                            <label for="username">Username</label>
+                                                            <input type="text" id="mat-input-0" class="form-control"
+                                                                placeholder="Enter username">
+                                                        </div>
+                                                        <div class="col-6 col-lg-4 col-xl-3 px-lg-2 mb-3">
+                                                            <label for="firstName">First Name</label>
+                                                            <input type="text" id="firstName" class="form-control"
+                                                                placeholder="Enter first name">
+                                                        </div>
+                                                        <div class="col-6 col-lg-4 col-xl-3 px-lg-2 mb-3">
+                                                            <label for="lastName">Last Name</label>
+                                                            <input type="text" id="lastName" class="form-control"
+                                                                placeholder="Enter last name">
+                                                        </div>
+                                                        <div class="col-6 col-lg-4 col-xl-3 px-lg-2 mb-3">
+                                                            <label for="email">Email</label>
+                                                            <input type="email" id="email" class="form-control"
+                                                                placeholder="Enter email address">
+                                                        </div>
+                                                        <div class="col-6 col-lg-4 col-xl-3 px-lg-2 mb-3">
+                                                            <label for="phone">Phone</label>
+                                                            <input type="tel" id="phone" class="form-control"
+                                                                placeholder="Enter phone number">
+                                                        </div>
+                                                        <div class="col-6 col-lg-4 col-xl-3 px-lg-2 mb-3">
+                                                            <label for="address">Property Address</label>
+                                                            <input type="text" id="address" class="form-control"
+                                                                placeholder="Enter property address">
+                                                        </div>
+                                                        <div class="col-6 col-lg-4 col-xl-3 px-lg-2 mb-3">
+                                                            <label for="ssn">SSN</label>
+                                                            <input type="text" id="ssn" class="form-control"
+                                                                placeholder="Enter SSN">
+                                                        </div>
+                                                        <div class="col-6 col-lg-4 col-xl-3 px-lg-2 mb-3">
+                                                            <label for="loanNumber">Loan Number</label>
+                                                            <input type="text" id="loanNumber" class="form-control"
+                                                                placeholder="Enter loan number">
+                                                        </div>
                                                     </div>
-                                                    <div class="col-6 col-lg-4 col-xl-2 px-lg-2 mb-3">
-                                                        <label for="firstName">First Name</label>
-                                                        <input type="text" id="firstName" class="form-control"
-                                                            placeholder="First Name">
+                                                    <div class="search-actions">
+                                                        <button type="button" id="searchButton" class="btn btn-primary">
+                                                            <i class="fa fa-search" style="margin-right: 5px;"></i> Search
+                                                        </button>
+                                                        <a class="text-link" style="cursor: pointer; margin-left: 15px;">
+                                                            <i class="fa fa-times" style="margin-right: 5px;"></i> Clear Search
+                                                        </a>
                                                     </div>
-                                                    <div class="col-6 col-lg-4 col-xl-2 px-lg-2 mb-3">
-                                                        <label for="lastName">Last Name</label>
-                                                        <input type="text" id="lastName" class="form-control"
-                                                            placeholder="Last Name">
-                                                    </div>
-                                                    <div class="col-6 col-lg-4 col-xl-2 px-lg-2 mb-3">
-                                                        <label for="email">Email</label>
-                                                        <input type="email" id="email" class="form-control"
-                                                            placeholder="Email Address">
-                                                    </div>
-                                                    <div class="col-6 col-lg-4 col-xl-2 px-lg-2 mb-3">
-                                                        <label for="phone">Phone</label>
-                                                        <input type="tel" id="phone" class="form-control"
-                                                            placeholder="Phone Number">
-                                                    </div>
-                                                    <div class="col-6 col-lg-4 col-xl-2 px-lg-2 mb-3">
-                                                        <label for="address">Property Address</label>
-                                                        <input type="text" id="address" class="form-control"
-                                                            placeholder="Property Address">
-                                                    </div>
-                                                    <div class="col-6 col-lg-4 col-xl-2 px-lg-2 mb-3">
-                                                        <label for="ssn">SSN</label>
-                                                        <input type="text" id="ssn" class="form-control"
-                                                            placeholder="SSN">
-                                                    </div>
-                                                    <div class="col-6 col-lg-4 col-xl-2 px-lg-2 mb-3">
-                                                        <label for="loanNumber">Loan Number</label>
-                                                        <input type="text" id="loanNumber" class="form-control"
-                                                            placeholder="Loan Number">
-                                                    </div>
-                                                    <div class="col-12 mt-3">
-                                                        <button type="button" id="searchButton"
-                                                            class="btn btn-primary">Search</button>
-                                                        <a class="text-link ml-3"
-                                                            style="cursor: pointer; margin-left: 15px;">Clear Search</a>
-                                                    </div>
-                                                </div>
-                                            </form>
-                                        </bk-form></div>
+                                                </form>
+                                            </bk-form>
+                                        </div>
+                                    </div>
                                 </div><bk-form-error-outlet _ngcontent-ng-c2291702866=""><!----></bk-form-error-outlet>
                                 <div _ngcontent-ng-c2291702866="" class="content-wrapper">
                                     <div _ngcontent-ng-c2291702866="" class="container xl"><mat-card
@@ -955,26 +1146,31 @@
                                                 </ag-grid-angular>
                                             </div>
                                             </div> -->
-                                                <div class="table-responsive"
-                                                    style="width: 100%; height: 600px; overflow: auto;">
-                                                    <table class="table table-striped table-hover">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>Username</th>
-                                                                <th>First Name</th>
-                                                                <th>Last Name</th>
-                                                                <th>Email Address</th>
-                                                                <th>Phone Number</th>
-                                                                <th>Property Address</th>
-                                                                <th>SSN</th>
-                                                                <th>Brand</th>
-                                                                <th>Loan Number</th>
-                                                                <th>Status</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody id="borrowerTableBody">
-                                                        </tbody>
-                                                    </table>
+                                                <div class="search-container" style="margin-top: 20px;">
+                                                    <div class="search-title">
+                                                        <i class="fa fa-users" style="margin-right: 10px;"></i> Borrower Results
+                                                    </div>
+                                                    <div class="table-responsive" style="width: 100%; height: 600px; overflow: auto;">
+                                                        <table class="table table-hover">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Username</th>
+                                                                    <th>First Name</th>
+                                                                    <th>Last Name</th>
+                                                                    <th>Email Address</th>
+                                                                    <th>Phone Number</th>
+                                                                    <th>Property Address</th>
+                                                                    <th>SSN</th>
+                                                                    <th>Brand</th>
+                                                                    <th>Loan Number</th>
+                                                                    <th>Status</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody id="borrowerTableBody">
+                                                                <!-- Table data will be populated dynamically -->
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
                                                 </div>
 
 
@@ -1034,8 +1230,8 @@
             const tableBody = document.getElementById('borrowerTableBody');
             tableBody.innerHTML = '';
 
-            // Check if we have exactly one result and it's a restricted loan
-            if (data.length ===  0) {
+            // Special case: If we have exactly one result and it's a restricted loan
+            if (data.length === 1 && data[0].isRestricted) {
                 // Display "Loan not provisioned to you" message
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
@@ -1049,24 +1245,50 @@
                 return;
             }
 
-            // Otherwise, display the data normally
-            data.forEach(row => {
-                // Skip restricted loans
-                if (row.isRestricted) return;
-
+            // If no results at all
+            if (data.length === 0) {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-            <td>${row.loginAccountUserName}</td>
-            <td>${row.firstName}</td>
-            <td>${row.lastName}</td>
-            <td>${row.emailAddress}</td>
-            <td>${row.phoneNumber}</td>
-            <td>${row.propertyAddress}</td>
-            <td>${row.ssn}</td>
-            <td>${row.brand}</td>
-            <td>${row.loanNumber}</td>
-            <td>${row.status}</td>
-        `;
+                    <td colspan="10" class="text-center">
+                        <div class="alert alert-info">
+                            No matching records found
+                        </div>
+                    </td>
+                `;
+                tableBody.appendChild(tr);
+                return;
+            }
+
+            // Otherwise, display the data normally (filtering out restricted loans)
+            const nonRestrictedData = data.filter(row => !row.isRestricted);
+
+            if (nonRestrictedData.length === 0) {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td colspan="10" class="text-center">
+                        <div class="alert alert-warning">
+                            Loan not provisioned to you
+                        </div>
+                    </td>
+                `;
+                tableBody.appendChild(tr);
+                return;
+            }
+
+            nonRestrictedData.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${row.loginAccountUserName}</td>
+                    <td>${row.firstName}</td>
+                    <td>${row.lastName}</td>
+                    <td>${row.emailAddress}</td>
+                    <td>${row.phoneNumber}</td>
+                    <td>${row.propertyAddress}</td>
+                    <td>${row.ssn}</td>
+                    <td>${row.brand}</td>
+                    <td>${row.loanNumber}</td>
+                    <td>${row.status}</td>
+                `;
                 tableBody.appendChild(tr);
             });
         }
@@ -1148,21 +1370,39 @@
         let brandData = [];
 
         document.addEventListener('DOMContentLoaded', async function () {
-            let brandData1 = []
+            // Wait for brand data to load
+            let brands = [];
             await waitForData().then((res) => {
-                brandData = res
-                brandData1 = res
+                brandData = res;
+                brands = res;
             });
+
+            // Wait for loan data to load
+            await waitForLoans().then((res) => {
+                borrowerData = res;
+            });
+
             const brandSelect = document.getElementById('brandSelect');
-            console.log(brandData1, "brandData 1")
+
+            // Clear existing options except "All Brands"
+            while (brandSelect.options.length > 1) {
+                brandSelect.remove(1);
+            }
 
             // Filter brands to only show those with non-restricted loans
-            const availableBrands = brandData1.filter(brand => {
-                // Check if there's at least one non-restricted loan for this brand
+            const availableBrands = brands.filter(brand => {
                 return borrowerData.some(loan =>
                     loan.brand === brand.value && !loan.isRestricted
                 );
             });
+
+            // Add "All Brands" option if it doesn't exist
+            if (brandSelect.options.length === 0) {
+                const allOption = document.createElement('option');
+                allOption.value = 'all';
+                allOption.textContent = 'All Brands';
+                brandSelect.appendChild(allOption);
+            }
 
             // Populate brand options with only available brands
             availableBrands.forEach(brand => {
@@ -1172,14 +1412,22 @@
                 brandSelect.appendChild(option);
             });
 
+            // Initialize the selected brand value
+            window.selectedBrandValue = 'all';
+
             // Handle brand selection
-            brandSelect.addEventListener('change', function (e) {
-                const selectedOption = this.options[this.selectedIndex];
-                const selectedBrand = brandData1.find(b => b.value === this.value);
+            brandSelect.addEventListener('change', function() {
+                const selectedValue = this.value;
+                const selectedBrand = selectedValue === 'all'
+                    ? { name: 'All Brands', value: 'all' }
+                    : brands.find(b => b.value === selectedValue);
+
                 if (selectedBrand) {
-                    console.log('Selected Brand:', selectedBrand.name);
-                    // Update display text
-                    document.querySelector('.mat-mdc-select-min-line').textContent = selectedBrand.name;
+                    // Update display text in the Angular Material dropdown (if present)
+                    const matSelectText = document.querySelector('.mat-mdc-select-min-line');
+                    if (matSelectText) {
+                        matSelectText.textContent = selectedBrand.name;
+                    }
 
                     // Store the selected brand for future searches
                     window.selectedBrandValue = selectedBrand.value;
@@ -1195,6 +1443,7 @@
                     // Always filter out restricted loans
                     filteredData = filteredData.filter(row => !row.isRestricted);
 
+                    // Update the table with filtered data
                     updateTable(filteredData);
                 }
             });
@@ -1228,35 +1477,50 @@
                     loanNumber: document.getElementById('loanNumber').value.trim()
                 };
 
+                // Show loading indicator
+                document.getElementById('loading-indicator').style.display = 'block';
+
                 // First filter by search criteria
                 let filteredData = borrowerData.filter(borrower => {
-                    return (!searchCriteria.username || borrower.loginAccountUserName === searchCriteria.username) &&
-                        (!searchCriteria.firstName || borrower.firstName === searchCriteria.firstName) &&
-                        (!searchCriteria.lastName || borrower.lastName === searchCriteria.lastName) &&
-                        (!searchCriteria.email || borrower.emailAddress === searchCriteria.email) &&
-                        (!searchCriteria.phone || borrower.phoneNumber === searchCriteria.phone) &&
-                        (!searchCriteria.address || borrower.propertyAddress === searchCriteria.address) &&
-                        (!searchCriteria.ssn || borrower.ssn === searchCriteria.ssn) &&
-                        (!searchCriteria.loanNumber || borrower.loanNumber === searchCriteria.loanNumber);
+                    return (!searchCriteria.username || borrower.loginAccountUserName.toLowerCase().includes(searchCriteria.username.toLowerCase())) &&
+                        (!searchCriteria.firstName || borrower.firstName.toLowerCase().includes(searchCriteria.firstName.toLowerCase())) &&
+                        (!searchCriteria.lastName || borrower.lastName.toLowerCase().includes(searchCriteria.lastName.toLowerCase())) &&
+                        (!searchCriteria.email || borrower.emailAddress.toLowerCase().includes(searchCriteria.email.toLowerCase())) &&
+                        (!searchCriteria.phone || borrower.phoneNumber.includes(searchCriteria.phone)) &&
+                        (!searchCriteria.address || borrower.propertyAddress.toLowerCase().includes(searchCriteria.address.toLowerCase())) &&
+                        (!searchCriteria.ssn || borrower.ssn.includes(searchCriteria.ssn)) &&
+                        (!searchCriteria.loanNumber || borrower.loanNumber.toLowerCase().includes(searchCriteria.loanNumber.toLowerCase()));
                 });
-
-                // Special case: If searching specifically by loan number and exactly one restricted loan is found
-                if (searchCriteria.loanNumber &&
-                    filteredData.length === 1 &&
-                    filteredData[0].isRestricted) {
-                    // This will trigger the "Loan not provisioned to you" message in updateTable
-                    updateTable(filteredData);
-                    return;
-                }
 
                 // Apply brand filter if a brand is selected
                 if (window.selectedBrandValue && window.selectedBrandValue !== 'all') {
                     filteredData = filteredData.filter(row => row.brand === window.selectedBrandValue);
                 }
 
-                // Filter out restricted loans (except for the special case handled above)
-                filteredData = filteredData.filter(row => !row.isRestricted);
+                // Special case 1: If searching specifically by loan number and exactly one restricted loan is found
+                if (searchCriteria.loanNumber &&
+                    filteredData.length === 1 &&
+                    filteredData[0].isRestricted) {
+                    // This will trigger the "Loan not provisioned to you" message in updateTable
+                    document.getElementById('loading-indicator').style.display = 'none';
+                    updateTable(filteredData);
+                    return;
+                }
 
+                // Special case 2: If searching by other fields and all results are restricted
+                const hasOnlyRestrictedResults = filteredData.length > 0 &&
+                                               filteredData.every(row => row.isRestricted);
+
+                if (hasOnlyRestrictedResults) {
+                    document.getElementById('loading-indicator').style.display = 'none';
+                    updateTable([]);  // Empty array will show "No matching records found"
+                    return;
+                }
+
+                // Hide loading indicator
+                document.getElementById('loading-indicator').style.display = 'none';
+
+                // Update the table with filtered data
                 updateTable(filteredData);
             });
 
@@ -1277,28 +1541,18 @@
                 input.value = '';
             });
 
-            // Reset brand dropdown to show only brands with non-restricted loans
+            // Reset brand dropdown selection to "All Brands"
             const brandSelect = document.getElementById('brandSelect');
-            brandSelect.innerHTML = '<option value="" disabled selected>Select Brand</option>';
+            brandSelect.value = 'all';
 
-            // Filter brands to only show those with non-restricted loans
-            const availableBrands = brandData.filter(brand => {
-                // Check if there's at least one non-restricted loan for this brand
-                return borrowerData.some(loan =>
-                    loan.brand === brand.value && !loan.isRestricted
-                );
-            });
+            // Reset the selected brand value
+            window.selectedBrandValue = 'all';
 
-            availableBrands.forEach(brand => {
-                const option = document.createElement('option');
-                option.value = brand.value;
-                option.textContent = brand.name;
-                brandSelect.appendChild(option);
-            });
-
-            // Reset the selected brand
-            window.selectedBrandValue = null;
-            document.querySelector('.mat-mdc-select-min-line').textContent = 'All Brands';
+            // Update the Angular Material dropdown text if it exists
+            const matSelectText = document.querySelector('.mat-mdc-select-min-line');
+            if (matSelectText) {
+                matSelectText.textContent = 'All Brands';
+            }
 
             // Show all non-restricted data
             const nonRestrictedData = borrowerData.filter(row => !row.isRestricted);

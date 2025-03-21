@@ -1,0 +1,339 @@
+[
+  {
+    "id": 1,
+    "username": "user1",
+    "email": "user1@example.com",
+    "userType": "onshore",
+    "accessibleBrands": [
+      "all",
+      "cenlar",
+      "chase",
+      "wellsfargo",
+      "bankofamerica",
+      "citibank",
+      "hsbc",
+      "deutschebank",
+      "goldmansachs"
+    ],
+    "statistics": {
+      "all": {
+        "registeredLoanCount": 50,
+        "registeredUserCount": 50,
+        "lockerUserCount": 35,
+        "pendingCount": 10,
+        "activeCount": 15,
+        "inactiveCount": 25
+      },
+      "cenlar": {
+        "registeredLoanCount": 4,
+        "registeredUserCount": 4,
+        "lockerUserCount": 3,
+        "pendingCount": 2,
+        "activeCount": 0,
+        "inactiveCount": 2
+      },
+      "chase": {
+        "registeredLoanCount": 5,
+        "registeredUserCount": 5,
+        "lockerUserCount": 3,
+        "pendingCount": 2,
+        "activeCount": 1,
+        "inactiveCount": 2
+      },
+      "wellsfargo": {
+        "registeredLoanCount": 4,
+        "registeredUserCount": 4,
+        "lockerUserCount": 3,
+        "pendingCount": 0,
+        "activeCount": 2,
+        "inactiveCount": 2
+      },
+      "bankofamerica": {
+        "registeredLoanCount": 4,
+        "registeredUserCount": 4,
+        "lockerUserCount": 3,
+        "pendingCount": 1,
+        "activeCount": 1,
+        "inactiveCount": 2
+      },
+      "citibank": {
+        "registeredLoanCount": 4,
+        "registeredUserCount": 4,
+        "lockerUserCount": 3,
+        "pendingCount": 0,
+        "activeCount": 1,
+        "inactiveCount": 3
+      },
+      "hsbc": {
+        "registeredLoanCount": 4,
+        "registeredUserCount": 4,
+        "lockerUserCount": 3,
+        "pendingCount": 1,
+        "activeCount": 1,
+        "inactiveCount": 2
+      },
+      "deutschebank": {
+        "registeredLoanCount": 4,
+        "registeredUserCount": 4,
+        "lockerUserCount": 3,
+        "pendingCount": 1,
+        "activeCount": 1,
+        "inactiveCount": 2
+      },
+      "goldmansachs": {
+        "registeredLoanCount": 4,
+        "registeredUserCount": 4,
+        "lockerUserCount": 3,
+        "pendingCount": 2,
+        "activeCount": 1,
+        "inactiveCount": 1
+      }
+    },
+    "customerSummary": {
+      "all": {
+        "totalRegisteredLoans": 12458,
+        "totalRegisteredUsers": 8742,
+        "totalLockedUsers": 124
+      },
+      "cenlar": {
+        "totalRegisteredLoans": 1042,
+        "totalRegisteredUsers": 728,
+        "totalLockedUsers": 12
+      }
+    }
+  },
+  {
+    "id": 2,
+    "username": "user2",
+    "email": "user2@example.com",
+    "userType": "offshore",
+    "accessibleBrands": [
+      "bankofamerica",
+      "citibank",
+      "hsbc",
+      "deutschebank"
+    ],
+    "statistics": {
+      "bankofamerica": {
+        "registeredLoanCount": 4,
+        "registeredUserCount": 4,
+        "lockerUserCount": 3,
+        "pendingCount": 1,
+        "activeCount": 1,
+        "inactiveCount": 2,
+        "unrestrictedLoanCount": 4,
+        "unrestrictedUserCount": 4,
+        "unrestrictedLockerUserCount": 3
+      },
+      "citibank": {
+        "registeredLoanCount": 4,
+        "registeredUserCount": 4,
+        "lockerUserCount": 3,
+        "pendingCount": 0,
+        "activeCount": 1,
+        "inactiveCount": 3,
+        "unrestrictedLoanCount": 4,
+        "unrestrictedUserCount": 4,
+        "unrestrictedLockerUserCount": 3
+      },
+      "hsbc": {
+        "registeredLoanCount": 4,
+        "registeredUserCount": 4,
+        "lockerUserCount": 3,
+        "pendingCount": 1,
+        "activeCount": 1,
+        "inactiveCount": 2,
+        "unrestrictedLoanCount": 4,
+        "unrestrictedUserCount": 4,
+        "unrestrictedLockerUserCount": 3
+      },
+      "deutschebank": {
+        "registeredLoanCount": 4,
+        "registeredUserCount": 4,
+        "lockerUserCount": 3,
+        "pendingCount": 1,
+        "activeCount": 1,
+        "inactiveCount": 2,
+        "unrestrictedLoanCount": 4,
+        "unrestrictedUserCount": 4,
+        "unrestrictedLockerUserCount": 3
+      }
+    },
+    "customerSummary": {
+      "bankofamerica": {
+        "totalRegisteredLoans": 3250,
+        "totalRegisteredUsers": 2180,
+        "totalLockedUsers": 35,
+        "totalUnrestrictedLoans": 3250,
+        "totalUnrestrictedUsers": 2180,
+        "totalUnrestrictedLockedUsers": 35
+      },
+      "citibank": {
+        "totalRegisteredLoans": 2850,
+        "totalRegisteredUsers": 1920,
+        "totalLockedUsers": 28,
+        "totalUnrestrictedLoans": 2850,
+        "totalUnrestrictedUsers": 1920,
+        "totalUnrestrictedLockedUsers": 28
+      }
+    }
+  },
+  {
+    "id": 3,
+    "username": "user3",
+    "email": "user3@example.com",
+    "userType": "offshore",
+    "accessibleBrands": [
+      "bankofamerica",
+      "citibank"
+    ],
+    "statistics": {
+      "bankofamerica": {
+        "registeredLoanCount": 4,
+        "registeredUserCount": 4,
+        "lockerUserCount": 3,
+        "pendingCount": 1,
+        "activeCount": 1,
+        "inactiveCount": 2,
+        "unrestrictedLoanCount": 4,
+        "unrestrictedUserCount": 4,
+        "unrestrictedLockerUserCount": 3
+      },
+      "citibank": {
+        "registeredLoanCount": 4,
+        "registeredUserCount": 4,
+        "lockerUserCount": 3,
+        "pendingCount": 0,
+        "activeCount": 1,
+        "inactiveCount": 3,
+        "unrestrictedLoanCount": 4,
+        "unrestrictedUserCount": 4,
+        "unrestrictedLockerUserCount": 3
+      }
+    },
+    "customerSummary": {
+      "bankofamerica": {
+        "totalRegisteredLoans": 1850,
+        "totalRegisteredUsers": 1250,
+        "totalLockedUsers": 22,
+        "totalUnrestrictedLoans": 1850,
+        "totalUnrestrictedUsers": 1250,
+        "totalUnrestrictedLockedUsers": 22
+      },
+      "citibank": {
+        "totalRegisteredLoans": 1650,
+        "totalRegisteredUsers": 1120,
+        "totalLockedUsers": 18,
+        "totalUnrestrictedLoans": 1650,
+        "totalUnrestrictedUsers": 1120,
+        "totalUnrestrictedLockedUsers": 18
+      }
+    }
+  },
+  {
+    "id": 4,
+    "username": "user4",
+    "email": "user4@example.com",
+    "userType": "onshore",
+    "accessibleBrands": [
+      "chase",
+      "wellsfargo",
+      "goldmansachs"
+    ],
+    "statistics": {
+      "chase": {
+        "registeredLoanCount": 5,
+        "registeredUserCount": 5,
+        "lockerUserCount": 3,
+        "pendingCount": 2,
+        "activeCount": 1,
+        "inactiveCount": 2
+      },
+      "wellsfargo": {
+        "registeredLoanCount": 4,
+        "registeredUserCount": 4,
+        "lockerUserCount": 3,
+        "pendingCount": 0,
+        "activeCount": 2,
+        "inactiveCount": 2
+      },
+      "goldmansachs": {
+        "registeredLoanCount": 4,
+        "registeredUserCount": 4,
+        "lockerUserCount": 3,
+        "pendingCount": 2,
+        "activeCount": 1,
+        "inactiveCount": 1
+      }
+    },
+    "customerSummary": {
+      "chase": {
+        "totalRegisteredLoans": 2850,
+        "totalRegisteredUsers": 1920,
+        "totalLockedUsers": 32
+      },
+      "wellsfargo": {
+        "totalRegisteredLoans": 2650,
+        "totalRegisteredUsers": 1780,
+        "totalLockedUsers": 28
+      },
+      "goldmansachs": {
+        "totalRegisteredLoans": 2450,
+        "totalRegisteredUsers": 1650,
+        "totalLockedUsers": 25
+      }
+    }
+  },
+  {
+    "id": 5,
+    "username": "user5",
+    "email": "user5@example.com",
+    "userType": "offshore",
+    "accessibleBrands": [
+      "hsbc",
+      "deutschebank"
+    ],
+    "statistics": {
+      "hsbc": {
+        "registeredLoanCount": 4,
+        "registeredUserCount": 4,
+        "lockerUserCount": 3,
+        "pendingCount": 1,
+        "activeCount": 1,
+        "inactiveCount": 2,
+        "unrestrictedLoanCount": 4,
+        "unrestrictedUserCount": 4,
+        "unrestrictedLockerUserCount": 3
+      },
+      "deutschebank": {
+        "registeredLoanCount": 4,
+        "registeredUserCount": 4,
+        "lockerUserCount": 3,
+        "pendingCount": 1,
+        "activeCount": 1,
+        "inactiveCount": 2,
+        "unrestrictedLoanCount": 4,
+        "unrestrictedUserCount": 4,
+        "unrestrictedLockerUserCount": 3
+      }
+    },
+    "customerSummary": {
+      "hsbc": {
+        "totalRegisteredLoans": 2250,
+        "totalRegisteredUsers": 1520,
+        "totalLockedUsers": 26,
+        "totalUnrestrictedLoans": 2250,
+        "totalUnrestrictedUsers": 1520,
+        "totalUnrestrictedLockedUsers": 26
+      },
+      "deutschebank": {
+        "totalRegisteredLoans": 2050,
+        "totalRegisteredUsers": 1380,
+        "totalLockedUsers": 22,
+        "totalUnrestrictedLoans": 2050,
+        "totalUnrestrictedUsers": 1380,
+        "totalUnrestrictedLockedUsers": 22
+      }
+    }
+  }
+]

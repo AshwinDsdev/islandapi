@@ -481,12 +481,14 @@
                         <div class="container-fluid">
                             <div class="row">
                                 <div class="col-12">
-                                    <h2 class="mb-4">Loan Queues <span class="queue-count-badge">{{(filteredQueues | filter:searchQuery).length}} Available</span></h2>
+                                    <h2 class="mb-4">Loan Queues <span class="queue-count-badge">{{filteredQueues.length}} Available</span></h2>
 
                                     <!-- Search Bar -->
                                     <div class="search-container">
                                         <i class="fas fa-search"></i>
-                                        <input type="text" class="form-control" placeholder="Search queues or loans..." ng-model="searchQuery">
+                                        <input type="text" class="form-control" placeholder="Search queues or loans..."
+                                               ng-model="searchQuery"
+                                               ng-change="applyQueueFilters()">
                                     </div>
 
                                     <!-- Queue Filters -->
@@ -500,7 +502,7 @@
 
                                     <!-- Queue Table -->
                                     <div class="table-responsive">
-                                        <table class="table table-hover table-striped" ng-if="(filteredQueues | filter:searchQuery).length > 0">
+                                        <table class="table table-hover table-striped" ng-if="filteredQueues.length > 0">
                                             <thead class="thead-dark">
                                                 <tr>
                                                     <th>Queue Name</th>
@@ -511,7 +513,7 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <tr ng-repeat="queue in filteredQueues | filter:searchQuery" ng-click="viewAllItems(queue)" style="cursor: pointer;">
+                                                <tr ng-repeat="queue in filteredQueues" ng-click="viewAllItems(queue)" style="cursor: pointer;">
                                                     <td>
                                                         <strong>{{queue.name}}</strong>
                                                     </td>
@@ -521,7 +523,7 @@
                                                         </span>
                                                     </td>
                                                     <td>
-                                                        <span class="badge badge-pill badge-primary">{{queue.items.length}}</span>
+                                                        <span class="badge badge-pill badge-primary">{{getAccessibleQueueItemsCount(queue)}}</span>
                                                     </td>
                                                     <td>
                                                         <span class="badge" ng-class="{'badge-success': !queue.restricted, 'badge-danger': queue.restricted}">
@@ -547,6 +549,16 @@
                                                     </button>
                                                 </div>
                                                 <div class="modal-body">
+                                                    <!-- Associated Brands Section -->
+                                                    <div class="mb-4" ng-if="visibleBrands && visibleBrands.length > 0">
+                                                        <h6>Associated Brands:</h6>
+                                                        <div class="d-flex flex-wrap">
+                                                            <span class="badge badge-info mr-2 mb-2" ng-repeat="brand in visibleBrands">
+                                                                {{brand.name}}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+
                                                     <table class="table table-striped">
                                                         <thead>
                                                             <tr>
@@ -578,10 +590,20 @@
                                     </div>
 
                                     <!-- Empty State -->
-                                    <div class="col-12 text-center py-5" ng-if="(filteredQueues | filter:searchQuery).length === 0">
+                                    <div class="col-12 text-center py-5" ng-if="filteredQueues.length === 0">
                                         <i class="fas fa-search fa-3x text-muted mb-3"></i>
                                         <h4>No queues found</h4>
                                         <p class="text-muted">Try adjusting your search or filters</p>
+                                    </div>
+
+                                    <!-- Debug Info (can be removed in production) -->
+                                    <div class="mt-4 p-3 bg-light rounded" ng-if="false">
+                                        <h5>Debug Information</h5>
+                                        <p>Total Queues: {{queues.length}}</p>
+                                        <p>Filtered Queues: {{filteredQueues.length}}</p>
+                                        <p>Active Filter: {{activeFilter}}</p>
+                                        <p>Selected Brand: {{selectedBrand ? selectedBrand.name : 'None'}}</p>
+                                        <p>Search Query: {{searchQuery || 'None'}}</p>
                                     </div>
                                 </div>
                             </div>
@@ -712,8 +734,7 @@
                     name: 'John Doe',
                     email: 'john.doe@example.com',
                     role: 'Loan Officer',
-                    team: 'Loan Processing',
-                    isOffshore: false
+                    team: 'Loan Processing'
                 };
 
                 // Notifications
@@ -805,31 +826,14 @@
 
                 // Get accessible loans based on restrictions
                 $scope.getAccessibleLoans = function() {
-                    // Since we don't have onshore/offshore toggle, we'll just filter out restricted loans
-                    return $scope.loans.filter(function(loan) {
-                        return !loan.restricted;
-                    });
+                    // API already filters restricted loans, so we just return all loans
+                    return $scope.loans;
                 };
 
                 // Get brands accessible to the current user
                 $scope.getAccessibleBrands = function() {
-                    // Since we don't have onshore/offshore toggle, we'll just filter out restricted brands
-                    return $scope.brands.filter(function(brand) {
-                        return !brand.restricted;
-                    });
-                };
-
-                // Get brands accessible to the current user
-                $scope.getAccessibleBrands = function() {
-                    if ($scope.userType === 'onshore') {
-                        // Onshore users can access all brands
-                        return $scope.brands;
-                    } else {
-                        // Offshore users can only access unrestricted brands
-                        return $scope.brands.filter(function(brand) {
-                            return !brand.restricted;
-                        });
-                    }
+                    // API already filters restricted brands, so we just return all brands
+                    return $scope.brands;
                 };
 
                 // Toggle sidebar
@@ -852,45 +856,59 @@
 
                 // Check if a queue should be visible to the current user
                 $scope.isQueueVisibleToUser = function(queue) {
-                    // Since we don't have onshore/offshore toggle, we'll just check if the queue is restricted
-                    if (queue.hasOwnProperty('restricted')) {
-                        return !queue.restricted;
-                    }
-
-                    // If queue doesn't have a restricted property, it's visible
-                    return true;
+                    // Since the API already filters restricted queues, we just need to check the queue's restricted property
+                    return !queue.restricted;
                 };
 
                 // Set active filter
                 $scope.setFilter = function(filter) {
                     $scope.activeFilter = filter;
 
-                    // First filter by queue type (all, my, team)
-                    var typeFilteredQueues = $scope.queues;
-                    if (filter !== 'all') {
-                        typeFilteredQueues = $scope.queues.filter(function(queue) {
-                            return queue.type === filter;
-                        });
+                    // Apply filters in sequence for better readability and maintainability
+                    $scope.applyQueueFilters();
+                };
+
+                // Apply all queue filters in a single function for better reusability
+                $scope.applyQueueFilters = function() {
+                    let filteredQueues = $scope.queues;
+
+                    // 1. Filter by queue type (all, my, team)
+                    if ($scope.activeFilter !== 'all') {
+                        filteredQueues = filteredQueues.filter(queue =>
+                            queue.type === $scope.activeFilter
+                        );
                     }
 
-                    // Then filter by user type (onshore/offshore)
-                    var userFilteredQueues = typeFilteredQueues.filter(function(queue) {
-                        return $scope.isQueueVisibleToUser(queue);
-                    });
+                    // 2. Filter by visibility (API already handles offshore/onshore restrictions)
+                    filteredQueues = filteredQueues.filter(queue =>
+                        $scope.isQueueVisibleToUser(queue)
+                    );
 
-                    // Then filter by selected brand if any
+                    // 3. Filter by selected brand if any
                     if ($scope.selectedBrand) {
-                        $scope.filteredQueues = userFilteredQueues.filter(function(queue) {
-                            return queue.brandIds && queue.brandIds.includes($scope.selectedBrand.id);
-                        });
-                    } else {
-                        $scope.filteredQueues = userFilteredQueues;
+                        filteredQueues = filteredQueues.filter(queue =>
+                            queue.brandIds &&
+                            queue.brandIds.includes($scope.selectedBrand.id)
+                        );
                     }
 
-                    // Sort by the original sort order to maintain default order
-                    $scope.filteredQueues.sort(function(a, b) {
-                        return a.sortOrder - b.sortOrder;
-                    });
+                    // 4. Filter by search query if any
+                    if ($scope.searchQuery && $scope.searchQuery.trim() !== '') {
+                        const query = $scope.searchQuery.toLowerCase().trim();
+                        filteredQueues = filteredQueues.filter(queue =>
+                            queue.name.toLowerCase().includes(query) ||
+                            // Search in queue items if needed
+                            queue.items.some(item =>
+                                (item.loanNumber && item.loanNumber.toString().includes(query)) ||
+                                (item.borrowerName && item.borrowerName.toLowerCase().includes(query))
+                            )
+                        );
+                    }
+
+                    // 5. Sort by the original sort order to maintain default order
+                    filteredQueues.sort((a, b) => a.sortOrder - b.sortOrder);
+
+                    $scope.filteredQueues = filteredQueues;
                 };
 
                 // Open loan details
@@ -910,16 +928,13 @@
 
                 // View all items in a queue
                 $scope.viewAllItems = function(queue) {
-                    // Filter queue items to show only unrestricted loans
-                    $scope.selectedQueueItems = queue.items.filter(function(item) {
-                        // Find the loan associated with this item
-                        var loan = $scope.loans.find(function(l) {
-                            return l.loanNumber === item.loanNumber;
-                        });
+                    // API already filters restricted items, so we just show all items
+                    $scope.selectedQueueItems = queue.items;
 
-                        // Check if the loan is not restricted
-                        return loan && !loan.restricted;
-                    });
+                    // Get the brands associated with this queue
+                    $scope.visibleBrands = $scope.brands.filter(brand =>
+                        queue.brandIds && queue.brandIds.includes(brand.id)
+                    );
 
                     $scope.selectedQueueName = queue.name;
                     $('#queueItemsModal').modal('show');
@@ -957,8 +972,32 @@
                     // Implementation for loading help
                 };
 
+                // Get the count of accessible items in a queue
+                $scope.getAccessibleQueueItemsCount = function(queue) {
+                    // API already filters restricted items, so we just return the length
+                    return queue.items ? queue.items.length : 0;
+                };
+
+                // Watch for changes in the search query
+                $scope.$watch('searchQuery', function(newValue, oldValue) {
+                    if (newValue !== oldValue) {
+                        $scope.applyQueueFilters();
+                    }
+                });
+
                 // Initialize the controller
                 function init() {
+                    // Configure toastr first for better user experience
+                    toastr.options = {
+                        closeButton: true,
+                        progressBar: true,
+                        positionClass: 'toast-bottom-right',
+                        timeOut: 3000
+                    };
+
+                    // Set initial filter
+                    $scope.setFilter('all');
+
                     // Simulate loading delay
                     $timeout(function() {
                         $scope.isLoading = false;
@@ -971,23 +1010,13 @@
                             $scope.queues.length + ' queues');
 
                         // Show message about accessible queues
-                        var accessibleQueuesCount = $scope.filteredQueues.length;
-                        var totalQueuesCount = $scope.queues.length;
+                        const accessibleQueuesCount = $scope.filteredQueues.length;
+                        const totalQueuesCount = $scope.queues.length;
+
                         if (accessibleQueuesCount < totalQueuesCount) {
-                            toastr.info('You have access to ' + accessibleQueuesCount + ' out of ' + totalQueuesCount + ' queues.');
+                            toastr.info(`You have access to ${accessibleQueuesCount} out of ${totalQueuesCount} queues.`);
                         }
                     }, 1500);
-
-                    // Set initial filter
-                    $scope.setFilter('all');
-
-                    // Configure toastr
-                    toastr.options = {
-                        closeButton: true,
-                        progressBar: true,
-                        positionClass: 'toast-bottom-right',
-                        timeOut: 3000
-                    };
                 }
 
                 // Call initialization
