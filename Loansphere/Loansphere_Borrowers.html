@@ -6,6 +6,9 @@
 <head>
     <!-- ... existing meta tags and links ... -->
 
+    <!-- Add Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
+
     <!-- Add AG-Grid Styles -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community/styles/ag-grid.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community/styles/ag-theme-material.css">
@@ -771,6 +774,11 @@
     <script src="https://cdn.jsdelivr.net/npm/@angular/material@18.2.13/bundles/material.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@angular/cdk@18.2.13/bundles/cdk.umd.min.js"></script>
 
+    <!-- Add Bootstrap and jQuery Scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js"></script>
+
     <!-- Initialize dropdowns -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -1147,8 +1155,13 @@
                                             </div>
                                             </div> -->
                                                 <div class="search-container" style="margin-top: 20px;">
-                                                    <div class="search-title">
-                                                        <i class="fa fa-users" style="margin-right: 10px;"></i> Borrower Results
+                                                    <div class="search-title d-flex justify-content-between align-items-center">
+                                                        <div>
+                                                            <i class="fa fa-users" style="margin-right: 10px;"></i> Borrower Results
+                                                        </div>
+                                                        <button type="button" class="btn btn-success" id="createMessageButton">
+                                                            <i class="fa fa-envelope" style="margin-right: 5px;"></i> Create Message
+                                                        </button>
                                                     </div>
                                                     <div class="table-responsive" style="width: 100%; height: 600px; overflow: auto;">
                                                         <table class="table table-hover">
@@ -1204,8 +1217,90 @@
         <div id="cdk-describedby-message-ng-1-6" role="tooltip">Help Center</div>
         <div id="cdk-describedby-message-ng-1-7" role="tooltip">User Profile Menu</div>
     </div>
+
+    <!-- Create Message Modal -->
+    <div class="modal fade" id="createMessageModal" tabindex="-1" aria-labelledby="createMessageModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: #1976d2; color: white;">
+                    <h5 class="modal-title" id="createMessageModalLabel">Create New Message</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="createMessageForm">
+                        <div class="alert alert-warning" id="modalRestrictionMessage" style="display: none;">
+                            Loan is not provisioned to you
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="messageLoan" class="form-label">Select Loan</label>
+                                <select class="form-select" id="messageLoan" required>
+                                    <option value="" disabled selected>Choose a loan...</option>
+                                    <!-- Loan options will be populated by JavaScript -->
+                                </select>
+                                <div class="form-text">Only loans provisioned to you are shown</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="messageQueue" class="form-label">Queue</label>
+                                <select class="form-select" id="messageQueue" required>
+                                    <option value="" disabled selected>Select queue...</option>
+                                    <!-- Queue options will be populated by JavaScript -->
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="messageCategory" class="form-label">Category</label>
+                                <select class="form-select" id="messageCategory" required>
+                                    <option value="" disabled selected>Select category...</option>
+                                    <!-- Category options will be populated by JavaScript -->
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="messagePriority" class="form-label">Priority</label>
+                                <select class="form-select" id="messagePriority">
+                                    <option value="normal">Normal</option>
+                                    <option value="high">High</option>
+                                    <option value="urgent">Urgent</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="messageSubject" class="form-label">Subject</label>
+                            <input type="text" class="form-control" id="messageSubject" placeholder="Enter message subject" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="messageText" class="form-label">Message</label>
+                            <textarea class="form-control" id="messageText" rows="5" placeholder="Type your message here..." required></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="messageUrgent">
+                                <label class="form-check-label" for="messageUrgent">
+                                    Mark as urgent
+                                </label>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="sendMessageButton">
+                        <i class="fa fa-paper-plane"></i> Send Message
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="Brand_Ingestion.js" type="module"></script>
     <script src="Loan_Ingestion.js" type="module"></script>
+    <script src="Queue_Ingestion.js" type="module"></script>
 
     <script type="module">
 
@@ -1234,6 +1329,13 @@
             });
 
             return loans;
+        }
+
+        async function waitForQueues() {
+            while (!window.storedQueuesSet) {
+                await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 100ms
+            }
+            return window.storedQueuesSet;
         }
 
         var borrowerData = [];
@@ -1576,6 +1678,158 @@
 
         // Clear search functionality is now handled in the event listener above
 
+        // Create Message functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Categories will be loaded from API in a real implementation
+            // For now, we'll use a static list
+
+            const categories = [
+                { id: 1, name: "General Inquiry" },
+                { id: 2, name: "Payment Issues" },
+                { id: 3, name: "Loan Application" },
+                { id: 4, name: "Technical Support" }
+            ];
+
+            // Initialize the create message button
+            const createMessageButton = document.getElementById('createMessageButton');
+            if (createMessageButton) {
+                createMessageButton.addEventListener('click', openCreateMessageModal);
+            }
+
+            // Initialize the send message button
+            const sendMessageButton = document.getElementById('sendMessageButton');
+            if (sendMessageButton) {
+                sendMessageButton.addEventListener('click', sendMessage);
+            }
+
+            /**
+             * Open the create message modal
+             * Populates the loan dropdown with only accessible loans
+             */
+            function openCreateMessageModal() {
+                // Show loading indicator
+                document.getElementById('loading-indicator').style.display = 'block';
+
+                // Hide any previous restriction messages
+                const modalRestrictionMessage = document.getElementById('modalRestrictionMessage');
+                if (modalRestrictionMessage) {
+                    modalRestrictionMessage.style.display = 'none';
+                }
+
+                // Reset the form
+                const createMessageForm = document.getElementById('createMessageForm');
+                if (createMessageForm) {
+                    createMessageForm.reset();
+                }
+
+                // Populate the loan dropdown with only accessible loans
+                const loanSelect = document.getElementById('messageLoan');
+                if (loanSelect) {
+                    loanSelect.innerHTML = '<option value="" disabled selected>Choose a loan...</option>';
+
+                    // Get accessible loans (not restricted to offshore users)
+                    const accessibleLoans = borrowerData.filter(loan => !loan.isRestricted);
+
+                    accessibleLoans.forEach((loan, index) => {
+                        const option = document.createElement('option');
+                        option.value = index; // Use index as ID since borrowerData might not have id property
+                        option.textContent = `${loan.loanNumber} - ${loan.propertyAddress || ''}`;
+                        loanSelect.appendChild(option);
+                    });
+                }
+
+                // Populate the queue dropdown with data from storedQueuesSet
+                const queueSelect = document.getElementById('messageQueue');
+                if (queueSelect) {
+                    queueSelect.innerHTML = '<option value="" disabled selected>Select queue...</option>';
+
+                    // Wait for queue data to load
+                    waitForQueues().then(queues => {
+                        // Filter out restricted queues for offshore users
+                        const accessibleQueues = queues.filter(queue => !queue.restricted);
+
+                        // Sort queues by sortOrder
+                        accessibleQueues.sort((a, b) => a.sortOrder - b.sortOrder);
+
+                        // Add queue options to dropdown
+                        accessibleQueues.forEach(queue => {
+                            const option = document.createElement('option');
+                            option.value = queue.id;
+                            option.textContent = queue.name;
+                            queueSelect.appendChild(option);
+                        });
+                    }).catch(error => {
+                        console.error('Error loading queues:', error);
+                    });
+                }
+
+                // Populate the category dropdown
+                const categorySelect = document.getElementById('messageCategory');
+                if (categorySelect) {
+                    categorySelect.innerHTML = '<option value="" disabled selected>Select category...</option>';
+
+                    categories.forEach(category => {
+                        const option = document.createElement('option');
+                        option.value = category.id;
+                        option.textContent = category.name;
+                        categorySelect.appendChild(option);
+                    });
+                }
+
+                // Hide loading indicator
+                document.getElementById('loading-indicator').style.display = 'none';
+
+                // Show the modal
+                const modal = new bootstrap.Modal(document.getElementById('createMessageModal'));
+                modal.show();
+            }
+
+            /**
+             * Send a new message
+             * Creates a new message object and adds it to the messages array
+             */
+            function sendMessage() {
+                // Validate the form
+                const form = document.getElementById('createMessageForm');
+                if (!form.checkValidity()) {
+                    // Trigger browser's native form validation
+                    form.reportValidity();
+                    return;
+                }
+
+                // Get form values
+                const loanIndex = parseInt(document.getElementById('messageLoan').value);
+                const queueId = document.getElementById('messageQueue').value;
+                const categoryId = document.getElementById('messageCategory').value;
+                const priority = document.getElementById('messagePriority').value;
+                const subject = document.getElementById('messageSubject').value;
+                const messageText = document.getElementById('messageText').value;
+                const isUrgent = document.getElementById('messageUrgent').checked;
+
+                // Get accessible loans
+                const accessibleLoans = borrowerData.filter(loan => !loan.isRestricted);
+
+                // Get the selected loan using the index
+                const loan = accessibleLoans[loanIndex];
+
+                // Double-check that the loan is accessible (not restricted)
+                if (!loan || loan.isRestricted) {
+                    const modalRestrictionMessage = document.getElementById('modalRestrictionMessage');
+                    if (modalRestrictionMessage) {
+                        modalRestrictionMessage.style.display = 'block';
+                    }
+                    return;
+                }
+
+                // In a real application, you would send this data to the server
+                // For now, we'll just show a success message
+                alert("Message sent successfully!");
+
+                // Close the modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById('createMessageModal'));
+                modal.hide();
+            }
+        });
     </script>
 </body>
 

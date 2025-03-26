@@ -3,23 +3,51 @@ const STORE_NAME = "Loans_Store"; // Name of the object store in sharedStorage
 const CHECK_INTERVAL_MS = 10 * 60 * 1000; // 10 minutes
 const CHUNK_SIZE = 10000; // Batch size for encryption
 const SALT = "static_salt_value";
-const channel = new BroadcastChannel("island_channel");
+
+// Initialize BroadcastChannel for cross-tab communication
+let channel;
+try {
+    channel = new BroadcastChannel("island_channel");
+    console.log("BroadcastChannel initialized successfully");
+} catch (error) {
+    console.error("Failed to initialize BroadcastChannel:", error);
+    // Fallback to a dummy channel that does nothing
+    channel = {
+        postMessage: (msg) => console.log("Would send message if BroadcastChannel was supported:", msg),
+        addEventListener: () => console.log("BroadcastChannel not supported in this browser"),
+        close: () => {}
+    };
+}
 const sharedStorage = {
     async storeData(storeName, key, value) {
+        // Store in both localStorage and sessionStorage
         localStorage.setItem(`${storeName}-${key}`, JSON.stringify(value));
+        sessionStorage.setItem(`${storeName}-${key}`, JSON.stringify(value));
         return { success: true };
     },
     async getData(storeName, key) {
-        const data = localStorage.getItem(`${storeName}-${key}`);
+        // Try to get from sessionStorage first, then fallback to localStorage
+        let data = sessionStorage.getItem(`${storeName}-${key}`);
+        if (!data) {
+            data = localStorage.getItem(`${storeName}-${key}`);
+        }
         return data ? { success: true, data: JSON.parse(data) } : { success: false };
     },
     async clearStore(storeName) {
+        // Clear both localStorage and sessionStorage
         Object.keys(localStorage)
             .filter((key) => key.startsWith(`${storeName}-`))
             .forEach((key) => localStorage.removeItem(key));
+        Object.keys(sessionStorage)
+            .filter((key) => key.startsWith(`${storeName}-`))
+            .forEach((key) => sessionStorage.removeItem(key));
     },
     async getLastUpdated(storeName) {
-        const lastUpdated = localStorage.getItem(`${storeName}-lastUpdated`);
+        // Try sessionStorage first, then fallback to localStorage
+        let lastUpdated = sessionStorage.getItem(`${storeName}-lastUpdated`);
+        if (!lastUpdated) {
+            lastUpdated = localStorage.getItem(`${storeName}-lastUpdated`);
+        }
         return lastUpdated ? { lastUpdated } : { lastUpdated: null };
     }
 };
@@ -50,7 +78,7 @@ async function fetchAndStoreNumbers() {
   ) {
     console.log("Data is fresh, no update needed.");
     await loadDataIntoMemory(); // Load numbers into memory
-    return window.storedUsersSet; // Return the loaded data
+    return false; // Return false to indicate no update was performed
   }
 
   // Otherwise, fetch data from API
@@ -68,11 +96,11 @@ async function fetchAndStoreNumbers() {
     await storeData(brandData);
 
     console.log("Data successfully updated.");
-    return window.storedUsersSet; // Return the stored data
+    return true; // Return true to indicate data was updated
   } catch (error) {
     console.error("Error fetching data:", error);
-
-    return window.storedUsersSet;
+    await loadDataIntoMemory(); // Load existing data into memory
+    return false; // Return false to indicate no update was performed
   }
 }
 
@@ -102,6 +130,10 @@ async function storeData(data) {
     if (!metaRes.success) {
         throw new Error(`Failed to store meta info: ${metaRes.error}`);
     }
+
+    // Update the lastUpdated timestamp
+    const now = Date.now();
+    await sharedStorage.storeData(STORE_NAME, "lastUpdated", now);
 
     console.log(`Successfully stored ${data.length} brand records in ${chunkCount} chunks.`);
 }
@@ -284,13 +316,58 @@ async function printStorageContents() {
     console.log("📜 Stored Brand Data:", allData);
 }
 
+// Function to handle messages from other tabs
+function handleChannelMessage(event) {
+    if (event.data && event.data.type === 'DATA_UPDATED') {
+        console.log("Received data update notification from another tab");
+
+        // If data is included in the message, use it directly
+        if (event.data.data) {
+            console.log("Using data received from channel");
+            storedUsersSet = event.data.data;
+            window.storedUsersSet = storedUsersSet;
+            console.log("✅ Data loaded from channel message:", storedUsersSet.length);
+        } else {
+            // Otherwise load from storage
+            loadDataIntoMemory();
+        }
+    }
+}
+
 // Main entrypoint (this is where everything starts)
 (async () => {
-    await fetchAndStoreNumbers();
+    // Set up channel listener for cross-tab communication
+    channel.addEventListener('message', handleChannelMessage);
+
+    // Check if we already have data in sessionStorage
+    const metaRes = await sharedStorage.getData(STORE_NAME, "data-meta");
+    if (metaRes.success && metaRes.data) {
+        console.log("Found existing data in storage, loading into memory...");
+        await loadDataIntoMemory();
+    } else {
+        // If no data in storage, fetch from API
+        await fetchAndStoreNumbers();
+        // Notify other tabs that data has been updated (include the data)
+        if (storedUsersSet) {
+            channel.postMessage({
+                type: 'DATA_UPDATED',
+                data: storedUsersSet
+            });
+        }
+    }
 
     // Print storage content
     await printStorageContents();
 
     // Schedule periodic updates
-    setInterval(fetchAndStoreNumbers, CHECK_INTERVAL_MS);
+    setInterval(async () => {
+        const wasUpdated = await fetchAndStoreNumbers();
+        if (wasUpdated && storedUsersSet) {
+            // Only notify other tabs if data was actually updated (include the data)
+            channel.postMessage({
+                type: 'DATA_UPDATED',
+                data: storedUsersSet
+            });
+        }
+    }, CHECK_INTERVAL_MS);
 })();

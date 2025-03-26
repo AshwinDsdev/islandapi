@@ -651,8 +651,15 @@
                 if (!loan) return false;
 
                 // Apply all search filters
-                const loanMatch = !criteria.loanNumber ||
-                    (loan.loanNumber && loan.loanNumber.toString().toLowerCase().includes((criteria.loanNumber || '').toLowerCase()));
+                // For loan number, we want to match exactly or as a substring
+                const loanMatch = !criteria.loanNumber || (
+                    loan.loanNumber && (
+                        // Exact match (case insensitive)
+                        loan.loanNumber.toString().toLowerCase() === criteria.loanNumber.toLowerCase() ||
+                        // Contains match (for partial searches)
+                        loan.loanNumber.toString().toLowerCase().includes(criteria.loanNumber.toLowerCase())
+                    )
+                );
 
                 const queueMatch = !criteria.selectedQueue || criteria.selectedQueue.length === 0 ||
                     (message.queueId && criteria.selectedQueue.includes(message.queueId.toString()));
@@ -852,10 +859,56 @@
                     selectedBrand: selectedBrand
                 };
 
+                // Special case: Check if searching for a restricted loan number
+                if (criteria.loanNumber) {
+                    // First, check for exact match with a restricted loan
+                    const exactRestrictedLoan = loans.find(loan =>
+                        loan.loanNumber &&
+                        loan.loanNumber.toString().toLowerCase() === criteria.loanNumber.toLowerCase() &&
+                        loan.restricted
+                    );
+
+                    // If an exact match with a restricted loan is found, show restriction message
+                    if (exactRestrictedLoan) {
+                        document.getElementById('restrictionMessage').style.display = 'block';
+                        document.getElementById('loading-indicator').style.display = 'none';
+                        searchResults = [];
+                        updateMessageTable();
+                        return;
+                    }
+
+                    // Also check for partial matches with restricted loans
+                    const partialRestrictedLoans = loans.filter(loan =>
+                        loan.loanNumber &&
+                        loan.loanNumber.toString().toLowerCase().includes(criteria.loanNumber.toLowerCase()) &&
+                        loan.restricted
+                    );
+
+                    // If there's only one partial match and it's restricted, show restriction message
+                    if (partialRestrictedLoans.length === 1) {
+                        document.getElementById('restrictionMessage').style.display = 'block';
+                        document.getElementById('loading-indicator').style.display = 'none';
+                        searchResults = [];
+                        updateMessageTable();
+                        return;
+                    }
+                }
+
                 // Step 1: Get all messages that match the search criteria
-                let filteredMessages = messages.filter(message =>
-                    messageMatchesSearchCriteria(message, criteria)
-                );
+                let filteredMessages = messages.filter(message => {
+                    // First check if the message is associated with a restricted loan
+                    const loan = loans.find(l => l.id === message.loanId);
+
+                    // If searching by loan number and this message's loan matches but is restricted,
+                    // we'll collect it to show the restriction message later
+                    if (criteria.loanNumber && loan && loan.restricted &&
+                        loan.loanNumber && loan.loanNumber.toString().toLowerCase().includes(criteria.loanNumber.toLowerCase())) {
+                        return true; // Include restricted loans in initial filtering
+                    }
+
+                    // Otherwise, apply normal search criteria
+                    return messageMatchesSearchCriteria(message, criteria);
+                });
 
                 // Step 2: Requirement 1 - If search on specific fields results in exactly one record
                 // that is restricted, show "Loan is not provisioned to the user" message
@@ -868,20 +921,24 @@
                                                   criteria.startDate ||
                                                   criteria.endDate;
 
-                if (isSearchingBySpecificFields && filteredMessages.length === 1) {
-                    const message = filteredMessages[0];
+                // Check if any of the filtered messages are associated with restricted loans
+                const restrictedMessages = filteredMessages.filter(message => {
                     const loan = loans.find(l => l.id === message.loanId);
                     const brand = brands.find(b => b.id === message.brandId);
                     const isMessageRestricted = message.type === "onshore";
 
-                    // Check if the loan, brand, or message is restricted
-                    if ((loan && loan.restricted) || (brand && brand.restricted) || isMessageRestricted) {
-                        document.getElementById('restrictionMessage').style.display = 'block';
-                        document.getElementById('loading-indicator').style.display = 'none';
-                        searchResults = [];
-                        updateMessageTable();
-                        return;
-                    }
+                    return (loan && loan.restricted) || (brand && brand.restricted) || isMessageRestricted;
+                });
+
+                // If searching by specific fields and we found exactly one message that's restricted,
+                // or if all found messages are restricted, show the restriction message
+                if ((isSearchingBySpecificFields && filteredMessages.length === 1 && restrictedMessages.length === 1) ||
+                    (filteredMessages.length > 0 && restrictedMessages.length === filteredMessages.length)) {
+                    document.getElementById('restrictionMessage').style.display = 'block';
+                    document.getElementById('loading-indicator').style.display = 'none';
+                    searchResults = [];
+                    updateMessageTable();
+                    return;
                 }
 
                 // Step 3: Requirement 2 - If search on fields returns a list,
