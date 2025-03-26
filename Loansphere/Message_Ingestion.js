@@ -3,53 +3,25 @@ const STORE_NAME = "Messages_Store"; // Name of the object store in sharedStorag
 const CHECK_INTERVAL_MS = 10 * 60 * 1000; // 10 minutes
 const CHUNK_SIZE = 10000; // Batch size for encryption
 const SALT = "static_salt_value";
-
-// Initialize BroadcastChannel for cross-tab communication
-let channel;
-try {
-    channel = new BroadcastChannel("island_channel");
-    console.log("BroadcastChannel initialized successfully");
-} catch (error) {
-    console.error("Failed to initialize BroadcastChannel:", error);
-    // Fallback to a dummy channel that does nothing
-    channel = {
-        postMessage: (msg) => console.log("Would send message if BroadcastChannel was supported:", msg),
-        addEventListener: () => console.log("BroadcastChannel not supported in this browser"),
-        close: () => {}
-    };
-}
+const channel = new BroadcastChannel("island_channel");
 const sharedStorage = {
   async storeData(storeName, key, value) {
-    // Store in both localStorage and sessionStorage
     localStorage.setItem(`${storeName}-${key}`, JSON.stringify(value));
-    sessionStorage.setItem(`${storeName}-${key}`, JSON.stringify(value));
     return { success: true };
   },
   async getData(storeName, key) {
-    // Try to get from sessionStorage first, then fallback to localStorage
-    let data = sessionStorage.getItem(`${storeName}-${key}`);
-    if (!data) {
-      data = localStorage.getItem(`${storeName}-${key}`);
-    }
+    const data = localStorage.getItem(`${storeName}-${key}`);
     return data
       ? { success: true, data: JSON.parse(data) }
       : { success: false };
   },
   async clearStore(storeName) {
-    // Clear both localStorage and sessionStorage
     Object.keys(localStorage)
       .filter((key) => key.startsWith(`${storeName}-`))
       .forEach((key) => localStorage.removeItem(key));
-    Object.keys(sessionStorage)
-      .filter((key) => key.startsWith(`${storeName}-`))
-      .forEach((key) => sessionStorage.removeItem(key));
   },
   async getLastUpdated(storeName) {
-    // Try sessionStorage first, then fallback to localStorage
-    let lastUpdated = sessionStorage.getItem(`${storeName}-lastUpdated`);
-    if (!lastUpdated) {
-      lastUpdated = localStorage.getItem(`${storeName}-lastUpdated`);
-    }
+    const lastUpdated = localStorage.getItem(`${storeName}-lastUpdated`);
     return lastUpdated ? { lastUpdated } : { lastUpdated: null };
   },
 };
@@ -79,8 +51,7 @@ async function fetchAndStoreNumbers() {
     now - parseInt(lastUpdated, 10) < DATA_RETENTION_HOURS * 60 * 60 * 1000
   ) {
     console.log("Data is fresh, no update needed.");
-    await loadDataIntoMemory(); // Load numbers into memory
-    return false; // Return false to indicate no update was performed
+    return loadDataIntoMemory(); // Load numbers into memory
   }
 
   // Otherwise, fetch data from API
@@ -98,11 +69,8 @@ async function fetchAndStoreNumbers() {
     await storeData(brandData);
 
     console.log("Data successfully updated.");
-    return true; // Return true to indicate data was updated
   } catch (error) {
     console.error("Error fetching data:", error);
-    await loadDataIntoMemory(); // Load existing data into memory
-    return false; // Return false to indicate no update was performed
   }
 }
 
@@ -142,10 +110,6 @@ async function storeData(data) {
   if (!metaRes.success) {
     throw new Error(`Failed to store meta info: ${metaRes.error}`);
   }
-
-  // Update the lastUpdated timestamp
-  const now = Date.now();
-  await sharedStorage.storeData(STORE_NAME, "lastUpdated", now);
 
   console.log(
     `Successfully stored ${data.length} brand records in ${chunkCount} chunks.`
@@ -348,58 +312,138 @@ async function printStorageContents() {
   console.log("📜 Stored Brand Data:", allData);
 }
 
-// Function to handle messages from other tabs
-function handleChannelMessage(event) {
-  if (event.data && event.data.type === 'DATA_UPDATED') {
-    console.log("Received data update notification from another tab");
+/**
+ * Check batch of message data in memory
+ */
+async function checkMessagesInMemory(messagesToCheck) {
+  if (!storedMessagesSet) {
+    await loadDataIntoMemory();
+  }
+  // Assuming we're checking against some identifier in the message objects
+  return messagesToCheck.filter(message =>
+    storedMessagesSet.some(storedMessage => storedMessage.id === message.id)
+  );
+}
 
-    // If data is included in the message, use it directly
-    if (event.data.data) {
-      console.log("Using data received from channel");
-      storedMessagesSet = event.data.data;
-      window.storedMessagesSet = storedMessagesSet;
-      console.log("✅ Data loaded from channel message:", storedMessagesSet.length);
-    } else {
-      // Otherwise load from storage
-      loadDataIntoMemory();
+// Handle messages from other tabs
+channel.onmessage = async (event) => {
+  console.log("Received message in tab:", event.data); // This will show ALL incoming messages
+
+  if (event.data.action === "ping") {
+    console.log("✅ Received ping, responding with pong...");
+    channel.postMessage({ action: "pong", tabId: Date.now() });
+    return;
+  }
+
+  if (event.data.action === "tab_opened") {
+    console.log("New tab opened, sending message data...");
+    if (!storedMessagesSet) {
+      console.log("No data in memory, loading...");
+      await loadDataIntoMemory();
+    }
+    channel.postMessage({
+      action: "response_messages",
+      result: storedMessagesSet,
+      tabId: Date.now()
+    });
+  }
+
+  if (event.data.action === "request_messages") {
+    console.log("Another tab requested message data.", storedMessagesSet);
+    if (!storedMessagesSet) {
+      console.log("No data in memory, loading...");
+      await loadDataIntoMemory();
+    }
+    channel.postMessage({
+      action: "response_messages",
+      result: storedMessagesSet,
+      tabId: Date.now()
+    });
+  }
+
+  if (event.data.action === "response_messages") {
+    console.log("Received message data from another tab:", event.data.result);
+    if (event.data.result && Array.isArray(event.data.result) && event.data.result.length > 0) {
+      // Store the received data in memory
+      storedMessagesSet = event.data.result;
+      window.storedMessagesSet = storedMessagesSet; // Update global variable
+      console.log("✅ Message data received from another tab and loaded into memory:", storedMessagesSet.length);
     }
   }
+
+  if (event.data.action === "check_messages") {
+    console.log("Received messages for lookup:", event.data.messages);
+    const result = await checkMessagesInMemory(event.data.messages);
+    channel.postMessage({
+      action: "response_messages_check",
+      result: result,
+      tabId: Date.now()
+    });
+  }
+};
+
+// Add this to test communication immediately after initialization
+setTimeout(() => {
+  console.log("Sending test ping...");
+  channel.postMessage({ action: "ping" });
+}, 2000);
+
+/**
+ * Notify other tabs that this tab has opened and request message data
+ */
+function notifyTabOpened() {
+  console.log("Notifying other tabs that this tab has opened...");
+
+  // Create a unique ID for this tab
+  const tabId = Date.now();
+
+  // First, notify other tabs that we're here
+  channel.postMessage({
+    action: "tab_opened",
+    tabId: tabId
+  });
+
+  // Then, explicitly request messages data from any existing tabs
+  setTimeout(() => {
+    channel.postMessage({
+      action: "request_messages",
+      tabId: tabId
+    });
+  }, 500); // Small delay to ensure other tabs have time to process the tab_opened message
 }
 
 // Main entrypoint (this is where everything starts)
 (async () => {
-  // Set up channel listener for cross-tab communication
-  channel.addEventListener('message', handleChannelMessage);
+  console.log("Initializing message ingestion...");
 
-  // Check if we already have data in sessionStorage
-  const metaRes = await sharedStorage.getData(STORE_NAME, "data-meta");
-  if (metaRes.success && metaRes.data) {
-    console.log("Found existing data in storage, loading into memory...");
-    await loadDataIntoMemory();
-  } else {
-    // If no data in storage, fetch from API
+  try {
+    // First, notify other tabs that we're here and request data
+    notifyTabOpened();
+
+    console.log("1. Attempting to fetch and store messages...");
     await fetchAndStoreNumbers();
-    // Notify other tabs that data has been updated (include the data)
-    if (storedMessagesSet) {
-      channel.postMessage({
-        type: 'DATA_UPDATED',
-        data: storedMessagesSet
-      });
-    }
+
+    console.log("2. Checking shared storage content...");
+    const meta = await sharedStorage.getData(STORE_NAME, "data-meta");
+    console.log("Storage meta:", meta);
+
+    console.log("3. Testing in-memory data...");
+    console.log("Current in-memory data:", storedMessagesSet);
+
+    console.log("4. Testing broadcast channel...");
+    setTimeout(() => {
+      console.log("Sending test ping...");
+      channel.postMessage({ action: "ping", from: "main_tab" });
+    }, 2000);
+
+  } catch(e) {
+    console.error("Initialization failed:", e);
+    throw e;
   }
 
-  // Print storage content
-  await printStorageContents();
-
   // Schedule periodic updates
-  setInterval(async () => {
-    const wasUpdated = await fetchAndStoreNumbers();
-    if (wasUpdated && storedMessagesSet) {
-      // Only notify other tabs if data was actually updated (include the data)
-      channel.postMessage({
-        type: 'DATA_UPDATED',
-        data: storedMessagesSet
-      });
-    }
-  }, CHECK_INTERVAL_MS);
+  console.log("Setting up periodic refresh...");
+  setInterval(fetchAndStoreNumbers, CHECK_INTERVAL_MS);
+
+  console.log("Message ingestion initialized successfully");
 })();

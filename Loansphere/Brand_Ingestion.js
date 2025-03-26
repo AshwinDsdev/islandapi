@@ -3,55 +3,26 @@ const STORE_NAME = "Brands_Store"; // Name of the object store in sharedStorage
 const CHECK_INTERVAL_MS = 10 * 60 * 1000; // 10 minutes
 const CHUNK_SIZE = 10000; // Batch size for encryption
 const SALT = "static_salt_value";
-
-// Initialize BroadcastChannel for cross-tab communication
-let channel;
-try {
-    channel = new BroadcastChannel("island_channel");
-    console.log("BroadcastChannel initialized successfully");
-} catch (error) {
-    console.error("Failed to initialize BroadcastChannel:", error);
-    // Fallback to a dummy channel that does nothing
-    channel = {
-        postMessage: (msg) => console.log("Would send message if BroadcastChannel was supported:", msg),
-        addEventListener: () => console.log("BroadcastChannel not supported in this browser"),
-        close: () => {}
-    };
-}
+const channel = new BroadcastChannel("island_channel");
 const sharedStorage = {
     async storeData(storeName, key, value) {
-        // Store in both localStorage and sessionStorage
         localStorage.setItem(`${storeName}-${key}`, JSON.stringify(value));
-        sessionStorage.setItem(`${storeName}-${key}`, JSON.stringify(value));
         return { success: true };
     },
     async getData(storeName, key) {
-        // Try to get from sessionStorage first, then fallback to localStorage
-        let data = sessionStorage.getItem(`${storeName}-${key}`);
-        if (!data) {
-            data = localStorage.getItem(`${storeName}-${key}`);
-        }
+        const data = localStorage.getItem(`${storeName}-${key}`);
         return data ? { success: true, data: JSON.parse(data) } : { success: false };
     },
     async clearStore(storeName) {
-        // Clear both localStorage and sessionStorage
         Object.keys(localStorage)
             .filter((key) => key.startsWith(`${storeName}-`))
             .forEach((key) => localStorage.removeItem(key));
-        Object.keys(sessionStorage)
-            .filter((key) => key.startsWith(`${storeName}-`))
-            .forEach((key) => sessionStorage.removeItem(key));
     },
     async getLastUpdated(storeName) {
-        // Try sessionStorage first, then fallback to localStorage
-        let lastUpdated = sessionStorage.getItem(`${storeName}-lastUpdated`);
-        if (!lastUpdated) {
-            lastUpdated = localStorage.getItem(`${storeName}-lastUpdated`);
-        }
+        const lastUpdated = localStorage.getItem(`${storeName}-lastUpdated`);
         return lastUpdated ? { lastUpdated } : { lastUpdated: null };
     }
 };
-
 // ########## DO NOT MODIFY THESE LINES - END ##########
 
 // ########## MODIFY THESE LINES AS REQUIRED ##########
@@ -63,68 +34,45 @@ const DATA_URL = "http://localhost:5000/api/brands"; // Updated API endpoint
 var storedNumbersSet = null;     // Will hold the decrypted numbers
 let encryptionKey = null;        // AES-GCM key
 
-/**
- * Fetch numbers from remote, encrypt, and store in sharedStorage
- * @param {string} dataType - Type of data being fetched (used for storage prefixing)
- * @param {string} url - URL to fetch data from (defaults to DATA_URL)
- */
-async function fetchAndStoreNumbers(dataType = 'brands', url = DATA_URL) {
-  console.log(`Checking if ${dataType} data needs updating...`);
+// Fetch numbers from remote, encrypt, and store in sharedStorage
+async function fetchAndStoreNumbers() {
+    console.log("Checking if data needs updating...");
+    const { lastUpdated } = await sharedStorage.getLastUpdated(STORE_NAME);
+    const now = Date.now();
 
-  // Use the data type prefix for storage keys
-  const storePrefix = `${dataType}-`;
+    // If data is still fresh, no update
+    if (
+        lastUpdated &&
+        now - parseInt(lastUpdated, 10) < DATA_RETENTION_HOURS * 60 * 60 * 1000
+    ) {
+        console.log("Data is fresh, no update needed.");
+        return loadDataIntoMemory(); // Load numbers into memory
+    }
 
-  // Get the last updated timestamp for this specific data type
-  const lastUpdatedRes = await sharedStorage.getData(STORE_NAME, `${storePrefix}lastUpdated`);
-  const lastUpdated = lastUpdatedRes.success ? lastUpdatedRes.data : null;
-  const now = Date.now();
+    // Otherwise, fetch data from API
+    console.log("Fetching new data...");
+    try {
+        const response = await fetch(DATA_URL);
+        if (!response.ok) throw new Error(`Fetch failed: ${response.statusText}`);
 
-  // If data is still fresh, no update
-  if (
-    lastUpdated &&
-    now - parseInt(lastUpdated, 10) < DATA_RETENTION_HOURS * 60 * 60 * 1000
-  ) {
-    console.log(`${dataType} data is fresh, no update needed.`);
-    await loadDataIntoMemory(dataType); // Load data into memory
-    return false; // Return false to indicate no update was performed
-  }
+        const jsonData = await response.json();
+        console.log(jsonData, "jsonData");
+        const brandData = jsonData;
+        console.log(
+            `Fetched ${brandData.length} brand records, storing (encrypted in batches)...`
+        );
+        await storeData(brandData);
 
-  // Otherwise, fetch data from API
-  console.log(`Fetching new ${dataType} data from ${url}...`);
-  try {
-    const response = await fetch(url);
-    if (!response.ok) throw new Error(`Fetch failed: ${response.statusText}`);
-
-    const jsonData = await response.json();
-    console.log(jsonData, "jsonData");
-    const fetchedData = jsonData;
-    console.log(
-      `Fetched ${fetchedData.length} ${dataType} records, storing (encrypted in batches)...`
-    );
-
-    // Store with the specific data type
-    await storeData(fetchedData, dataType);
-
-    console.log(`${dataType} data successfully updated.`);
-    return true; // Return true to indicate data was updated
-  } catch (error) {
-    console.error(`Error fetching ${dataType} data:`, error);
-    await loadDataIntoMemory(dataType); // Load existing data into memory
-    return false; // Return false to indicate no update was performed
-  }
+        console.log("Data successfully updated.");
+    } catch (error) {
+        console.error("Error fetching data:", error);
+    }
 }
 
-async function storeData(data, dataType = 'brands') {
-    // Use a unique prefix for this data type to avoid conflicts with other ingestion files
-    const storePrefix = `${dataType}-`;
-
-    // Clear only the data for this specific data type
-    await clearStoreByPrefix(STORE_NAME, storePrefix);
-
-    // Store in memory
+async function storeData(data) {
+    await sharedStorage.clearStore(STORE_NAME);
     storedNumbersSet = data; // Store complete objects
     window.storedNumbersSet = storedNumbersSet; // Update global variable
-
     const chunkCount = Math.ceil(data.length / CHUNK_SIZE);
 
     for (let i = 0; i < chunkCount; i++) {
@@ -134,73 +82,44 @@ async function storeData(data, dataType = 'brands') {
 
         const encryptedBatch = await encryptBatch(batch);
 
-        const chunkKey = `${storePrefix}chunk-${i}`;
+        const chunkKey = `data-chunk-${i}`;
         const result = await sharedStorage.storeData(STORE_NAME, chunkKey, encryptedBatch, {});
         if (!result.success) {
             throw new Error(`Failed to store chunk #${i}: ${result.error}`);
         }
     }
 
-    // Store meta information with data type prefix
-    const metaRecord = { chunkCount, dataType };
-    const metaRes = await sharedStorage.storeData(STORE_NAME, `${storePrefix}meta`, metaRecord, {});
+    // Store meta information
+    const metaRecord = { chunkCount };
+    const metaRes = await sharedStorage.storeData(STORE_NAME, "data-meta", metaRecord, {});
     if (!metaRes.success) {
         throw new Error(`Failed to store meta info: ${metaRes.error}`);
     }
 
-    // Update the lastUpdated timestamp with data type prefix
-    const now = Date.now();
-    await sharedStorage.storeData(STORE_NAME, `${storePrefix}lastUpdated`, now);
-
-    console.log(`Successfully stored ${data.length} ${dataType} records in ${chunkCount} chunks.`);
+    console.log(`Successfully stored ${data.length} brand records in ${chunkCount} chunks.`);
 }
 
-// Helper function to clear only specific prefixed items from storage
-async function clearStoreByPrefix(storeName, prefix) {
-    // Clear localStorage items with this prefix
-    Object.keys(localStorage)
-        .filter((key) => key.startsWith(`${storeName}-${prefix}`))
-        .forEach((key) => localStorage.removeItem(key));
+async function loadDataIntoMemory() {
+    console.log("Loading full brand data into memory...");
 
-    // Clear sessionStorage items with this prefix
-    Object.keys(sessionStorage)
-        .filter((key) => key.startsWith(`${storeName}-${prefix}`))
-        .forEach((key) => sessionStorage.removeItem(key));
-}
-
-
-async function loadDataIntoMemory(dataType = 'brands') {
-    console.log(`Loading ${dataType} data into memory...`);
-
-    // Use the data type prefix for storage keys
-    const storePrefix = `${dataType}-`;
-
-    // Retrieve meta information with the prefix
-    const metaRes = await sharedStorage.getData(STORE_NAME, `${storePrefix}meta`);
+    // Retrieve meta information
+    const metaRes = await sharedStorage.getData(STORE_NAME, "data-meta");
     if (!metaRes.success || !metaRes.data) {
-        console.warn(`⚠️ No meta record found for ${dataType}. Possibly no data stored.`);
-
-        // Set fallback data if no stored data is found
-        storedNumbersSet = [
-            { id: 1, brandName: "Brand A", logoUrl: "https://example.com/logo-a.png" },
-            { id: 2, brandName: "Brand B", logoUrl: "https://example.com/logo-b.png" },
-            { id: 3, brandName: "Brand C", logoUrl: "https://example.com/logo-c.png" }
-        ];
-        window.storedNumbersSet = storedNumbersSet;
-        return storedNumbersSet;
+        console.warn("⚠️ No meta record found. Possibly no data stored.");
+        return;
     }
 
     const { chunkCount } = metaRes.data;
-    console.log(`📦 Found ${chunkCount} chunks of ${dataType} data.`);
+    console.log(`📦 Found ${chunkCount} chunks of stored data.`);
 
     const allData = [];
 
-    // Retrieve and decrypt all chunks using the prefix
+    // Retrieve and decrypt all chunks
     for (let i = 0; i < chunkCount; i++) {
-        const chunkKey = `${storePrefix}chunk-${i}`;
+        const chunkKey = `data-chunk-${i}`;
         const chunkRes = await sharedStorage.getData(STORE_NAME, chunkKey);
         if (!chunkRes.success || !chunkRes.data) {
-            console.warn(`⚠️ Missing chunk #${i} for ${dataType}.`);
+            console.warn(`⚠️ Missing chunk #${i}.`);
             continue;
         }
 
@@ -210,55 +129,16 @@ async function loadDataIntoMemory(dataType = 'brands') {
     }
 
     // Store the decrypted data in memory
-    storedNumbersSet = allData.length > 0 ? allData : [
-        { id: 1, brandName: "Brand A", logoUrl: "https://example.com/logo-a.png" },
-        { id: 2, brandName: "Brand B", logoUrl: "https://example.com/logo-b.png" },
-        { id: 3, brandName: "Brand C", logoUrl: "https://example.com/logo-c.png" }
-    ];
+    storedNumbersSet = allData;
     window.storedNumbersSet = storedNumbersSet; // Update global variable
-    console.log(`✅ ${dataType} data loaded into memory:`, storedNumbersSet.length);
-    return storedNumbersSet;
-}
-
-/**
- * Store numbers (encrypted) in multiple chunks to avoid large message errors.
- * Each chunk is stored under a distinct key in sharedStorage.
- */
-async function storeNumbers(numbers) {
-    await sharedStorage.clearStore(STORE_NAME);
-    storedNumbersSet = new Set(numbers);
-    window.storedNumbersSet = storedNumbersSet; // Update global variable
-    const chunkCount = Math.ceil(numbers.length / CHUNK_SIZE);
-
-    for (let i = 0; i < chunkCount; i++) {
-        const startIndex = i * CHUNK_SIZE;
-        const endIndex = startIndex + CHUNK_SIZE;
-        const batch = numbers.slice(startIndex, endIndex);
-
-        const encryptedBatch = await encryptBatch(batch);
-
-        const chunkKey = `numbers-chunk-${i}`;
-        const result = await sharedStorage.storeData(STORE_NAME, chunkKey, encryptedBatch, {});
-        if (!result.success) {
-            throw new Error(`Failed to store chunk #${i}: ${result.error}`);
-        }
-    }
-
-    // Store meta information
-    const metaRecord = { chunkCount };
-    const metaRes = await sharedStorage.storeData(STORE_NAME, "numbers-meta", metaRecord, {});
-    if (!metaRes.success) {
-        throw new Error(`Failed to store meta info: ${metaRes.error}`);
-    }
-
-    console.log(`Successfully stored ${numbers.length} numbers in ${chunkCount} chunks.`);
+    console.log("✅ Full brand data loaded into memory:", storedNumbersSet.length);
 }
 
 /**
  * Encrypt a batch of numbers (CSV) using AES-GCM.
  */
 async function encryptBatch(data) {
-    console.log("Encrypting batch with full data objects"); 
+    console.log("Encrypting batch with full data objects");
     const key = await getEncryptionKey();
     const iv = crypto.getRandomValues(new Uint8Array(12)); // Generate a random IV
 
@@ -270,7 +150,6 @@ async function encryptBatch(data) {
         iv: btoa(String.fromCharCode(...iv))
     };
 }
-
 
 /**
  * Generate a consistent AES-GCM key using PBKDF2
@@ -308,7 +187,7 @@ async function getEncryptionKey() {
  */
 async function decryptBatch(encryptedObject) {
     try {
-        console.log("Decrypting batch of full data objects"); 
+        console.log("Decrypting batch of full data objects");
         const key = await getEncryptionKey();
         const encryptedBuffer = new Uint8Array(
             [...atob(encryptedObject.encryptedData)].map((char) => char.charCodeAt(0))
@@ -324,166 +203,138 @@ async function decryptBatch(encryptedObject) {
     }
 }
 
+/**
+ * Check batch of brand data in memory
+ */
+async function checkBrandsInMemory(brandsToCheck) {
+    if (!storedNumbersSet) {
+        await loadDataIntoMemory();
+    }
+    // Assuming we're checking against some identifier in the brand objects
+    return brandsToCheck.filter(brand => 
+        storedNumbersSet.some(storedBrand => storedBrand.id === brand.id)
+    );
+}
 
-async function printStorageContents(dataType = 'brands') {
-    console.log(`🔍 Fetching stored ${dataType} data...`);
+// Handle messages from other tabs
+channel.onmessage = async (event) => {
+    console.log("Received message in tab:", event.data); // This will show ALL incoming messages
 
-    // Use the data type prefix for storage keys
-    const storePrefix = `${dataType}-`;
-
-    // Retrieve meta information
-    const metaRes = await sharedStorage.getData(STORE_NAME, `${storePrefix}meta`);
-    if (!metaRes.success || !metaRes.data) {
-        console.warn(`⚠️ No meta record found for ${dataType}. Possibly no data stored.`);
+    if (event.data.action === "ping") {
+        console.log("✅ Received ping, responding with pong...");
+        channel.postMessage({ action: "pong", tabId: Date.now() });
         return;
     }
 
-    const { chunkCount } = metaRes.data;
-    console.log(`📦 Found ${chunkCount} chunks of stored ${dataType} data.`);
-
-    const allData = [];
-
-    // Retrieve and decrypt all chunks
-    for (let i = 0; i < chunkCount; i++) {
-        const chunkKey = `${storePrefix}chunk-${i}`;
-        const chunkRes = await sharedStorage.getData(STORE_NAME, chunkKey);
-        if (!chunkRes.success || !chunkRes.data) {
-            console.warn(`⚠️ Missing chunk #${i} for ${dataType}.`);
-            continue;
+    if (event.data.action === "tab_opened") {
+        console.log("New tab opened, sending brand data...");
+        if (!storedNumbersSet) {
+            console.log("No data in memory, loading...");
+            await loadDataIntoMemory();
         }
-
-        // Decrypt chunk
-        const decryptedArray = await decryptBatch(chunkRes.data);
-        allData.push(...decryptedArray);
+        channel.postMessage({
+            action: "response_brands",
+            result: storedNumbersSet,
+            tabId: Date.now()
+        });
     }
-    console.log(`📜 Stored ${dataType} Data:`, allData);
-}
+
+    if (event.data.action === "request_brands") {
+        console.log("Another tab requested brand data.", storedNumbersSet);
+        if (!storedNumbersSet) {
+            console.log("No data in memory, loading...");
+            await loadDataIntoMemory();
+        }
+        channel.postMessage({
+            action: "response_brands",
+            result: storedNumbersSet,
+            tabId: Date.now()
+        });
+    }
+
+    if (event.data.action === "response_brands") {
+        console.log("Received brand data from another tab:", event.data.result);
+        if (event.data.result && Array.isArray(event.data.result) && event.data.result.length > 0) {
+            // Store the received data in memory
+            storedNumbersSet = event.data.result;
+            window.storedNumbersSet = storedNumbersSet; // Update global variable
+            console.log("✅ Brand data received from another tab and loaded into memory:", storedNumbersSet.length);
+        }
+    }
+
+    if (event.data.action === "check_brands") {
+        console.log("Received brands for lookup:", event.data.brands);
+        const result = await checkBrandsInMemory(event.data.brands);
+        channel.postMessage({
+            action: "response_brands_check",
+            result: result,
+            tabId: Date.now()
+        });
+    }
+};
+
+// Add this to test communication immediately after initialization
+setTimeout(() => {
+    console.log("Sending test ping...");
+    channel.postMessage({ action: "ping" });
+}, 2000);
 
 /**
- * Test function to manually send a message to other tabs
- * Can be called from browser console: testBroadcastChannel()
+ * Notify other tabs that this tab has opened and request brand data
  */
-function testBroadcastChannel(customMessage = "Test message") {
-    console.log("🔊 Testing BroadcastChannel with message:", customMessage);
+function notifyTabOpened() {
+    console.log("Notifying other tabs that this tab has opened...");
 
-    // Send a test message that should be received by all tabs
+    // Create a unique ID for this tab
+    const tabId = Date.now();
+
+    // First, notify other tabs that we're here
     channel.postMessage({
-        type: 'TEST_MESSAGE',
-        message: customMessage,
-        timestamp: Date.now()
+        action: "tab_opened",
+        tabId: tabId
     });
 
-    console.log("✅ Test message sent. Check console in other tabs for reception.");
-    return "If you don't see 'Channel message received:' in other tabs, the BroadcastChannel isn't working properly.";
-}
-
-// Make the test function available globally
-window.testBroadcastChannel = testBroadcastChannel;
-
-// Function to handle messages from other tabs
-function handleChannelMessage(event) {
-    console.log("Channel message received:", event.data); // Log all messages for debugging
-
-    if (event.data && event.data.type === 'DATA_UPDATED') {
-        console.log("Received data update notification from another tab", event?.data);
-
-        // Check if this message is for our data type
-        if (event.data.dataType && event.data.dataType !== 'brands') {
-            console.log(`Ignoring update for ${event.data.dataType} (we handle 'brands')`);
-            return;
-        }
-
-        // If data is included in the message, use it directly
-        if (event.data.data) {
-            console.log("Using data received from channel");
-
-            // Store the received data in memory
-            storedNumbersSet = event.data.data;
-            window.storedNumbersSet = storedNumbersSet;
-
-            // Also store the data in sessionStorage to persist it
-            (async () => {
-                console.log("Storing received data in sessionStorage");
-                await storeData(event.data.data, 'brands');
-                console.log("✅ Data stored in sessionStorage from channel message");
-            })();
-
-            console.log("✅ Data loaded from channel message:", storedNumbersSet.length);
-        } else {
-            // Otherwise load from storage
-            loadDataIntoMemory('brands');
-        }
-    }
+    // Then, explicitly request brands data from any existing tabs
+    setTimeout(() => {
+        channel.postMessage({
+            action: "request_brands",
+            tabId: tabId
+        });
+    }, 500); // Small delay to ensure other tabs have time to process the tab_opened message
 }
 
 // Main entrypoint (this is where everything starts)
 (async () => {
-    console.log("Tab initialized with channel:", channel.name);
+    console.log("Initializing brand ingestion...");
 
-    // Define the data type for this ingestion file
-    const dataType = 'brands';
+    try {
+        // First, notify other tabs that we're here and request data
+        notifyTabOpened();
 
-    // Set up channel listener for cross-tab communication
-    channel.addEventListener('message', handleChannelMessage);
+        console.log("1. Attempting to fetch and store numbers...");
+        await fetchAndStoreNumbers();
 
-    // Send a test message to verify channel is working
-    // This will help debug if the channel is properly set up
-    setTimeout(() => {
-        console.log("Sending test message to other tabs");
-        channel.postMessage({
-            type: 'TAB_INITIALIZED',
-            dataType: dataType,
-            timestamp: Date.now()
-        });
-    }, 1000); // Wait 1 second before sending test message
+        console.log("2. Checking shared storage content...");
+        const meta = await sharedStorage.getData(STORE_NAME, "data-meta");
+        console.log("Storage meta:", meta);
 
-    // Check if we already have data in sessionStorage for this data type
-    const storePrefix = `${dataType}-`;
-    const metaRes = await sharedStorage.getData(STORE_NAME, `${storePrefix}meta`);
-    if (metaRes.success && metaRes.data) {
-        console.log(`Found existing ${dataType} data in storage, loading into memory...`);
-        await loadDataIntoMemory(dataType);
+        console.log("3. Testing in-memory data...");
+        console.log("Current in-memory data:", storedNumbersSet);
 
-        // Notify other tabs that this tab has loaded data
-        if (storedNumbersSet) {
-            console.log(`Broadcasting that this tab has loaded ${dataType} data`);
-            channel.postMessage({
-                type: 'DATA_UPDATED',
-                dataType: dataType,
-                data: storedNumbersSet,
-                source: 'loaded_from_storage'
-            });
-        }
-    } else {
-        // If no data in storage, fetch from API
-        await fetchAndStoreNumbers(dataType);
-        // Notify other tabs that data has been updated (include the data)
-        if (storedNumbersSet) {
-            console.log(`Broadcasting newly fetched ${dataType} data to other tabs`);
-            channel.postMessage({
-                type: 'DATA_UPDATED',
-                dataType: dataType,
-                data: storedNumbersSet,
-                source: 'fetched_from_api'
-            });
-        }
+        console.log("4. Testing broadcast channel...");
+        setTimeout(() => {
+            console.log("Sending test ping...");
+            channel.postMessage({ action: "ping", from: "main_tab" });
+        }, 2000);
+
+    } catch(e) {
+        console.error("Initialization failed:", e);
+        throw e;
     }
 
-    // Print storage content
-    await printStorageContents(dataType);
-
     // Schedule periodic updates
-    setInterval(async () => {
-        const wasUpdated = await fetchAndStoreNumbers(dataType);
-        if (wasUpdated && storedNumbersSet) {
-            // Only notify other tabs if data was actually updated (include the data)
-            console.log(`Broadcasting updated ${dataType} data after interval check`);
-            channel.postMessage({
-                type: 'DATA_UPDATED',
-                dataType: dataType,
-                data: storedNumbersSet,
-                source: 'interval_update'
-            });
-        }
-    }, CHECK_INTERVAL_MS);
+    console.log("Setting up periodic refresh...");
+    setInterval(fetchAndStoreNumbers, CHECK_INTERVAL_MS);
+
+    console.log("Brand ingestion initialized successfully");
 })();
