@@ -117,9 +117,10 @@ async function loadDataIntoMemory() {
 
         // Set fallback data if no stored data is found
         storedQueuesSet = [
-            { id: 1, loanNumber: "L-001", borrowerName: "John Doe", propertyInfo: "123 Main St", allowedUserTypes: ['onshore', 'offshore'] },
-            { id: 2, loanNumber: "L-002", borrowerName: "Jane Smith", propertyInfo: "456 Oak Ave", allowedUserTypes: ['onshore'] },
-            { id: 3, loanNumber: "L-003", borrowerName: "Peter Parker", propertyInfo: "789 Elm Blvd", allowedUserTypes: ['onshore', 'offshore'] }
+            { id: 1, name: "Pending Applications", type: "my", sortOrder: 1, brandIds: [5, 6, 8], restricted: false },
+            { id: 2, name: "Document Review", type: "my", sortOrder: 2, brandIds: [1, 3, 7], restricted: false },
+            { id: 3, name: "Underwriting", type: "team", sortOrder: 3, brandIds: [2, 4, 9], restricted: false },
+            { id: 4, name: "Closing", type: "team", sortOrder: 4, brandIds: [1, 5, 8], restricted: false }
         ];
         window.storedQueuesSet = storedQueuesSet;
         return storedQueuesSet;
@@ -146,9 +147,10 @@ async function loadDataIntoMemory() {
 
     // Store the decrypted data in memory
     storedQueuesSet = allData.length > 0 ? allData : [
-        { id: 1, loanNumber: "L-001", borrowerName: "John Doe", propertyInfo: "123 Main St", allowedUserTypes: ['onshore', 'offshore'] },
-        { id: 2, loanNumber: "L-002", borrowerName: "Jane Smith", propertyInfo: "456 Oak Ave", allowedUserTypes: ['onshore'] },
-        { id: 3, loanNumber: "L-003", borrowerName: "Peter Parker", propertyInfo: "789 Elm Blvd", allowedUserTypes: ['onshore', 'offshore'] }
+        { id: 1, name: "Pending Applications", type: "my", sortOrder: 1, brandIds: [5, 6, 8], restricted: false },
+        { id: 2, name: "Document Review", type: "my", sortOrder: 2, brandIds: [1, 3, 7], restricted: false },
+        { id: 3, name: "Underwriting", type: "team", sortOrder: 3, brandIds: [2, 4, 9], restricted: false },
+        { id: 4, name: "Closing", type: "team", sortOrder: 4, brandIds: [1, 5, 8], restricted: false }
     ];
     window.storedQueuesSet = storedQueuesSet; // Update global variable
     console.log("✅ Full brand data loaded into memory:", storedQueuesSet.length);

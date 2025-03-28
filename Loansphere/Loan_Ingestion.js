@@ -5,23 +5,25 @@ const CHUNK_SIZE = 10000; // Batch size for encryption
 const SALT = "static_salt_value";
 const channel = new BroadcastChannel("island_channel");
 const sharedStorage = {
-    async storeData(storeName, key, value) {
-        localStorage.setItem(`${storeName}-${key}`, JSON.stringify(value));
-        return { success: true };
-    },
-    async getData(storeName, key) {
-        const data = localStorage.getItem(`${storeName}-${key}`);
-        return data ? { success: true, data: JSON.parse(data) } : { success: false };
-    },
-    async clearStore(storeName) {
-        Object.keys(localStorage)
-            .filter((key) => key.startsWith(`${storeName}-`))
-            .forEach((key) => localStorage.removeItem(key));
-    },
-    async getLastUpdated(storeName) {
-        const lastUpdated = localStorage.getItem(`${storeName}-lastUpdated`);
-        return lastUpdated ? { lastUpdated } : { lastUpdated: null };
-    }
+  async storeData(storeName, key, value) {
+    localStorage.setItem(`${storeName}-${key}`, JSON.stringify(value));
+    return { success: true };
+  },
+  async getData(storeName, key) {
+    const data = localStorage.getItem(`${storeName}-${key}`);
+    return data
+      ? { success: true, data: JSON.parse(data) }
+      : { success: false };
+  },
+  async clearStore(storeName) {
+    Object.keys(localStorage)
+      .filter((key) => key.startsWith(`${storeName}-`))
+      .forEach((key) => localStorage.removeItem(key));
+  },
+  async getLastUpdated(storeName) {
+    const lastUpdated = localStorage.getItem(`${storeName}-lastUpdated`);
+    return lastUpdated ? { lastUpdated } : { lastUpdated: null };
+  },
 };
 
 // ########## DO NOT MODIFY THESE LINES - END ##########
@@ -32,8 +34,8 @@ const DATA_URL = "http://localhost:5000/api/loans"; // Updated API endpoint
 // ########## MODIFY THESE LINES AS REQUIRED - END ##########
 
 // Cache in memory
-var storedLoansSet = null;     // Will hold the decrypted numbers
-let encryptionKey = null;        // AES-GCM key
+var storedLoansSet = null; // Will hold the decrypted numbers
+let encryptionKey = null; // AES-GCM key
 
 /**
  * Fetch numbers from remote, encrypt, and store in sharedStorage
@@ -77,82 +79,98 @@ async function fetchAndStoreNumbers() {
 }
 
 async function storeData(data) {
-    await sharedStorage.clearStore(STORE_NAME);
-    storedLoansSet = data; // Store complete objects
-    window.storedLoansSet = storedLoansSet; // Update global variable
-    const chunkCount = Math.ceil(data.length / CHUNK_SIZE);
+  await sharedStorage.clearStore(STORE_NAME);
+  storedLoansSet = data; // Store complete objects
+  window.storedLoansSet = storedLoansSet; // Update global variable
+  const chunkCount = Math.ceil(data.length / CHUNK_SIZE);
 
-    for (let i = 0; i < chunkCount; i++) {
-        const startIndex = i * CHUNK_SIZE;
-        const endIndex = startIndex + CHUNK_SIZE;
-        const batch = data.slice(startIndex, endIndex);
+  for (let i = 0; i < chunkCount; i++) {
+    const startIndex = i * CHUNK_SIZE;
+    const endIndex = startIndex + CHUNK_SIZE;
+    const batch = data.slice(startIndex, endIndex);
 
-        const encryptedBatch = await encryptBatch(batch);
+    const encryptedBatch = await encryptBatch(batch);
 
-        const chunkKey = `data-chunk-${i}`;
-        const result = await sharedStorage.storeData(STORE_NAME, chunkKey, encryptedBatch, {});
-        if (!result.success) {
-            throw new Error(`Failed to store chunk #${i}: ${result.error}`);
-        }
+    const chunkKey = `data-chunk-${i}`;
+    const result = await sharedStorage.storeData(
+      STORE_NAME,
+      chunkKey,
+      encryptedBatch,
+      {}
+    );
+    if (!result.success) {
+      throw new Error(`Failed to store chunk #${i}: ${result.error}`);
     }
+  }
 
-    // Store meta information
-    const metaRecord = { chunkCount };
-    const metaRes = await sharedStorage.storeData(STORE_NAME, "data-meta", metaRecord, {});
-    if (!metaRes.success) {
-        throw new Error(`Failed to store meta info: ${metaRes.error}`);
-    }
+  // Store meta information
+  const metaRecord = { chunkCount };
+  const metaRes = await sharedStorage.storeData(
+    STORE_NAME,
+    "data-meta",
+    metaRecord,
+    {}
+  );
+  if (!metaRes.success) {
+    throw new Error(`Failed to store meta info: ${metaRes.error}`);
+  }
 
-    console.log(`Successfully stored ${data.length} brand records in ${chunkCount} chunks.`);
+  // Store the last updated timestamp
+  const lastUpdatedRes = await sharedStorage.storeData(
+    STORE_NAME,
+    "lastUpdated",
+    Date.now(),
+    {}
+  );
+  if (!lastUpdatedRes.success) {
+    throw new Error(
+      `Failed to store lastUpdated timestamp: ${lastUpdatedRes.error}`
+    );
+  }
+
+  console.log(
+    `Successfully stored ${data.length} brand records in ${chunkCount} chunks.`
+  );
 }
 
-
 async function loadDataIntoMemory() {
-    console.log("Loading full brand data into memory...");
+  console.log("Loading full brand data into memory...");
 
-    // Retrieve meta information
-    const metaRes = await sharedStorage.getData(STORE_NAME, "data-meta");
-    if (!metaRes.success || !metaRes.data) {
-        console.warn("⚠️ No meta record found. Possibly no data stored.");
+  // Retrieve meta information
+  const metaRes = await sharedStorage.getData(STORE_NAME, "data-meta");
+  if (!metaRes.success || !metaRes.data) {
+    console.warn("⚠️ No meta record found. Possibly no data stored.");
 
-        // Set fallback data if no stored data is found
-        storedLoansSet = [
-            { id: 1, loanNumber: "L-001", borrowerName: "John Doe", propertyInfo: "123 Main St", allowedUserTypes: ['onshore', 'offshore'] },
-            { id: 2, loanNumber: "L-002", borrowerName: "Jane Smith", propertyInfo: "456 Oak Ave", allowedUserTypes: ['onshore'] },
-            { id: 3, loanNumber: "L-003", borrowerName: "Peter Parker", propertyInfo: "789 Elm Blvd", allowedUserTypes: ['onshore', 'offshore'] }
-        ];
-        window.storedLoansSet = storedLoansSet;
-        return storedLoansSet;
-    }
-
-    const { chunkCount } = metaRes.data;
-    console.log(`📦 Found ${chunkCount} chunks of stored data.`);
-
-    const allData = [];
-
-    // Retrieve and decrypt all chunks
-    for (let i = 0; i < chunkCount; i++) {
-        const chunkKey = `data-chunk-${i}`;
-        const chunkRes = await sharedStorage.getData(STORE_NAME, chunkKey);
-        if (!chunkRes.success || !chunkRes.data) {
-            console.warn(`⚠️ Missing chunk #${i}.`);
-            continue;
-        }
-
-        // Decrypt chunk - this now returns array of objects
-        const decryptedArray = await decryptBatch(chunkRes.data);
-        allData.push(...decryptedArray);
-    }
-
-    // Store the decrypted data in memory
-    storedLoansSet = allData.length > 0 ? allData : [
-        { id: 1, loanNumber: "L-001", borrowerName: "John Doe", propertyInfo: "123 Main St", allowedUserTypes: ['onshore', 'offshore'] },
-        { id: 2, loanNumber: "L-002", borrowerName: "Jane Smith", propertyInfo: "456 Oak Ave", allowedUserTypes: ['onshore'] },
-        { id: 3, loanNumber: "L-003", borrowerName: "Peter Parker", propertyInfo: "789 Elm Blvd", allowedUserTypes: ['onshore', 'offshore'] }
-    ];
-    window.storedLoansSet = storedLoansSet; // Update global variable
-    console.log("✅ Full brand data loaded into memory:", storedLoansSet.length);
+    // Set fallback data if no stored data is found
+    storedLoansSet = [];
+    window.storedLoansSet = storedLoansSet;
     return storedLoansSet;
+  }
+
+  const { chunkCount } = metaRes.data;
+  console.log(`📦 Found ${chunkCount} chunks of stored data.`);
+
+  const allData = [];
+
+  // Retrieve and decrypt all chunks
+  for (let i = 0; i < chunkCount; i++) {
+    const chunkKey = `data-chunk-${i}`;
+    const chunkRes = await sharedStorage.getData(STORE_NAME, chunkKey);
+    if (!chunkRes.success || !chunkRes.data) {
+      console.warn(`⚠️ Missing chunk #${i}.`);
+      continue;
+    }
+
+    // Decrypt chunk - this now returns array of objects
+    const decryptedArray = await decryptBatch(chunkRes.data);
+    allData.push(...decryptedArray);
+  }
+
+  // Store the decrypted data in memory
+  storedLoansSet = allData.length > 0 ? allData : [];
+  window.storedLoansSet = storedLoansSet; // Update global variable
+  console.log("✅ Full brand data loaded into memory:", storedLoansSet.length);
+  return storedLoansSet;
 }
 
 /**
@@ -160,135 +178,158 @@ async function loadDataIntoMemory() {
  * Each chunk is stored under a distinct key in sharedStorage.
  */
 async function storeNumbers(numbers) {
-    await sharedStorage.clearStore(STORE_NAME);
-    storedLoansSet = new Set(numbers);
-    window.storedLoansSet = storedLoansSet; // Update global variable
-    const chunkCount = Math.ceil(numbers.length / CHUNK_SIZE);
+  await sharedStorage.clearStore(STORE_NAME);
+  // Keep as array instead of converting to Set
+  storedLoansSet = Array.isArray(numbers) ? numbers : Array.from(numbers);
+  window.storedLoansSet = storedLoansSet; // Update global variable
+  const chunkCount = Math.ceil(numbers.length / CHUNK_SIZE);
 
-    for (let i = 0; i < chunkCount; i++) {
-        const startIndex = i * CHUNK_SIZE;
-        const endIndex = startIndex + CHUNK_SIZE;
-        const batch = numbers.slice(startIndex, endIndex);
+  for (let i = 0; i < chunkCount; i++) {
+    const startIndex = i * CHUNK_SIZE;
+    const endIndex = startIndex + CHUNK_SIZE;
+    const batch = numbers.slice(startIndex, endIndex);
 
-        const encryptedBatch = await encryptBatch(batch);
+    const encryptedBatch = await encryptBatch(batch);
 
-        const chunkKey = `numbers-chunk-${i}`;
-        const result = await sharedStorage.storeData(STORE_NAME, chunkKey, encryptedBatch, {});
-        if (!result.success) {
-            throw new Error(`Failed to store chunk #${i}: ${result.error}`);
-        }
+    const chunkKey = `numbers-chunk-${i}`;
+    const result = await sharedStorage.storeData(
+      STORE_NAME,
+      chunkKey,
+      encryptedBatch,
+      {}
+    );
+    if (!result.success) {
+      throw new Error(`Failed to store chunk #${i}: ${result.error}`);
     }
+  }
 
-    // Store meta information
-    const metaRecord = { chunkCount };
-    const metaRes = await sharedStorage.storeData(STORE_NAME, "numbers-meta", metaRecord, {});
-    if (!metaRes.success) {
-        throw new Error(`Failed to store meta info: ${metaRes.error}`);
-    }
+  // Store meta information
+  const metaRecord = { chunkCount };
+  const metaRes = await sharedStorage.storeData(
+    STORE_NAME,
+    "numbers-meta",
+    metaRecord,
+    {}
+  );
+  if (!metaRes.success) {
+    throw new Error(`Failed to store meta info: ${metaRes.error}`);
+  }
 
-    console.log(`Successfully stored ${numbers.length} numbers in ${chunkCount} chunks.`);
+  console.log(
+    `Successfully stored ${numbers.length} numbers in ${chunkCount} chunks.`
+  );
 }
 
 /**
  * Encrypt a batch of numbers (CSV) using AES-GCM.
  */
 async function encryptBatch(data) {
-    console.log("Encrypting batch with full data objects"); 
-    const key = await getEncryptionKey();
-    const iv = crypto.getRandomValues(new Uint8Array(12)); // Generate a random IV
+  console.log("Encrypting batch with full data objects");
+  const key = await getEncryptionKey();
+  const iv = crypto.getRandomValues(new Uint8Array(12)); // Generate a random IV
 
-    const encodedData = new TextEncoder().encode(JSON.stringify(data)); // Convert array of objects to JSON string
-    const encryptedBuffer = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, encodedData);
+  const encodedData = new TextEncoder().encode(JSON.stringify(data)); // Convert array of objects to JSON string
+  const encryptedBuffer = await crypto.subtle.encrypt(
+    { name: "AES-GCM", iv },
+    key,
+    encodedData
+  );
 
-    return {
-        encryptedData: btoa(String.fromCharCode(...new Uint8Array(encryptedBuffer))),
-        iv: btoa(String.fromCharCode(...iv))
-    };
+  return {
+    encryptedData: btoa(
+      String.fromCharCode(...new Uint8Array(encryptedBuffer))
+    ),
+    iv: btoa(String.fromCharCode(...iv)),
+  };
 }
-
 
 /**
  * Generate a consistent AES-GCM key using PBKDF2
  */
 async function getEncryptionKey() {
-    if (encryptionKey) return encryptionKey;
+  if (encryptionKey) return encryptionKey;
 
-    const encoder = new TextEncoder();
-    const keyMaterial = await crypto.subtle.importKey(
-        "raw",
-        encoder.encode("fixed-secret-passphrase"),
-        { name: "PBKDF2" },
-        false,
-        ["deriveKey"]
-    );
+  const encoder = new TextEncoder();
+  const keyMaterial = await crypto.subtle.importKey(
+    "raw",
+    encoder.encode("fixed-secret-passphrase"),
+    { name: "PBKDF2" },
+    false,
+    ["deriveKey"]
+  );
 
-    encryptionKey = await crypto.subtle.deriveKey(
-        {
-            name: "PBKDF2",
-            salt: encoder.encode(SALT),
-            iterations: 100000,
-            hash: "SHA-256",
-        },
-        keyMaterial,
-        { name: "AES-GCM", length: 256 },
-        true,
-        ["encrypt", "decrypt"]
-    );
+  encryptionKey = await crypto.subtle.deriveKey(
+    {
+      name: "PBKDF2",
+      salt: encoder.encode(SALT),
+      iterations: 100000,
+      hash: "SHA-256",
+    },
+    keyMaterial,
+    { name: "AES-GCM", length: 256 },
+    true,
+    ["encrypt", "decrypt"]
+  );
 
-    return encryptionKey;
+  return encryptionKey;
 }
 
 /**
  * Decrypt a previously encrypted batch of numbers.
  */
 async function decryptBatch(encryptedObject) {
-    try {
-        console.log("Decrypting batch of full data objects"); 
-        const key = await getEncryptionKey();
-        const encryptedBuffer = new Uint8Array(
-            [...atob(encryptedObject.encryptedData)].map((char) => char.charCodeAt(0))
-        );
-        const iv = new Uint8Array([...atob(encryptedObject.iv)].map((char) => char.charCodeAt(0)));
+  try {
+    console.log("Decrypting batch of full data objects");
+    const key = await getEncryptionKey();
+    const encryptedBuffer = new Uint8Array(
+      [...atob(encryptedObject.encryptedData)].map((char) => char.charCodeAt(0))
+    );
+    const iv = new Uint8Array(
+      [...atob(encryptedObject.iv)].map((char) => char.charCodeAt(0))
+    );
 
-        const decryptedBuffer = await crypto.subtle.decrypt({ name: "AES-GCM", iv }, key, encryptedBuffer);
-        const decryptedString = new TextDecoder().decode(decryptedBuffer);
-        return JSON.parse(decryptedString); // Parse JSON to get array of objects
-    } catch (error) {
-        console.error("Decryption failed:", error);
-        return [];
-    }
+    const decryptedBuffer = await crypto.subtle.decrypt(
+      { name: "AES-GCM", iv },
+      key,
+      encryptedBuffer
+    );
+    const decryptedString = new TextDecoder().decode(decryptedBuffer);
+    return JSON.parse(decryptedString); // Parse JSON to get array of objects
+  } catch (error) {
+    console.error("Decryption failed:", error);
+    return [];
+  }
 }
 
-
 async function printStorageContents() {
-    console.log("🔍 Fetching stored brand data...");
+  console.log("🔍 Fetching stored brand data...");
 
-    // Retrieve meta information
-    const metaRes = await sharedStorage.getData(STORE_NAME, "data-meta");
-    if (!metaRes.success || !metaRes.data) {
-        console.warn("⚠️ No meta record found. Possibly no data stored.");
-        return;
+  // Retrieve meta information
+  const metaRes = await sharedStorage.getData(STORE_NAME, "data-meta");
+  if (!metaRes.success || !metaRes.data) {
+    console.warn("⚠️ No meta record found. Possibly no data stored.");
+    return;
+  }
+
+  const { chunkCount } = metaRes.data;
+  console.log(`📦 Found ${chunkCount} chunks of stored data.`);
+
+  const allData = [];
+
+  // Retrieve and decrypt all chunks
+  for (let i = 0; i < chunkCount; i++) {
+    const chunkKey = `data-chunk-${i}`;
+    const chunkRes = await sharedStorage.getData(STORE_NAME, chunkKey);
+    if (!chunkRes.success || !chunkRes.data) {
+      console.warn(`⚠️ Missing chunk #${i}.`);
+      continue;
     }
 
-    const { chunkCount } = metaRes.data;
-    console.log(`📦 Found ${chunkCount} chunks of stored data.`);
-
-    const allData = [];
-
-    // Retrieve and decrypt all chunks
-    for (let i = 0; i < chunkCount; i++) {
-        const chunkKey = `data-chunk-${i}`;
-        const chunkRes = await sharedStorage.getData(STORE_NAME, chunkKey);
-        if (!chunkRes.success || !chunkRes.data) {
-            console.warn(`⚠️ Missing chunk #${i}.`);
-            continue;
-        }
-
-        // Decrypt chunk
-        const decryptedArray = await decryptBatch(chunkRes.data);
-        allData.push(...decryptedArray);
-    }
-    console.log("📜 Stored Brand Data:", allData);
+    // Decrypt chunk
+    const decryptedArray = await decryptBatch(chunkRes.data);
+    allData.push(...decryptedArray);
+  }
+  console.log("📜 Stored Brand Data:", allData);
 }
 
 /**
@@ -298,9 +339,17 @@ async function checkLoansInMemory(loansToCheck) {
   if (!storedLoansSet) {
     await loadDataIntoMemory();
   }
+
+  // Ensure storedLoansSet is an array
+  const loansArray = Array.isArray(storedLoansSet)
+    ? storedLoansSet
+    : storedLoansSet instanceof Set
+    ? Array.from(storedLoansSet)
+    : [];
+
   // Assuming we're checking against some identifier in the loan objects
-  return loansToCheck.filter(loan =>
-    storedLoansSet.some(storedLoan => storedLoan.id === loan.id)
+  return loansToCheck.filter((loan) =>
+    loansArray.some((storedLoan) => storedLoan.id === loan.id)
   );
 }
 
@@ -323,7 +372,7 @@ channel.onmessage = async (event) => {
     channel.postMessage({
       action: "response_loans",
       result: storedLoansSet,
-      tabId: Date.now()
+      tabId: Date.now(),
     });
   }
 
@@ -336,17 +385,33 @@ channel.onmessage = async (event) => {
     channel.postMessage({
       action: "response_loans",
       result: storedLoansSet,
-      tabId: Date.now()
+      tabId: Date.now(),
     });
   }
 
   if (event.data.action === "response_loans") {
     console.log("Received loan data from another tab:", event.data.result);
-    if (event.data.result && Array.isArray(event.data.result) && event.data.result.length > 0) {
-      // Store the received data in memory
-      storedLoansSet = event.data.result;
-      window.storedLoansSet = storedLoansSet; // Update global variable
-      console.log("✅ Loan data received from another tab and loaded into memory:", storedLoansSet.length);
+    if (event.data.result) {
+      // Ensure we're working with an array
+      const loanData = Array.isArray(event.data.result)
+        ? event.data.result
+        : typeof event.data.result === "object" && event.data.result !== null
+        ? Array.from(event.data.result)
+        : [];
+
+      if (loanData.length > 0) {
+        // Store the received data in memory
+        storedLoansSet = loanData;
+        window.storedLoansSet = storedLoansSet; // Update global variable
+        console.log(
+          "✅ Loan data received from another tab and loaded into memory:",
+          storedLoansSet.length
+        );
+      } else {
+        console.warn("Received empty loan data array from another tab");
+      }
+    } else {
+      console.warn("Received undefined or null loan data from another tab");
     }
   }
 
@@ -356,7 +421,7 @@ channel.onmessage = async (event) => {
     channel.postMessage({
       action: "response_loans_check",
       result: result,
-      tabId: Date.now()
+      tabId: Date.now(),
     });
   }
 };
@@ -379,14 +444,14 @@ function notifyTabOpened() {
   // First, notify other tabs that we're here
   channel.postMessage({
     action: "tab_opened",
-    tabId: tabId
+    tabId: tabId,
   });
 
   // Then, explicitly request loans data from any existing tabs
   setTimeout(() => {
     channel.postMessage({
       action: "request_loans",
-      tabId: tabId
+      tabId: tabId,
     });
   }, 500); // Small delay to ensure other tabs have time to process the tab_opened message
 }
@@ -399,8 +464,19 @@ function notifyTabOpened() {
     // First, notify other tabs that we're here and request data
     notifyTabOpened();
 
-    console.log("1. Attempting to fetch and store loans...");
-    await fetchAndStoreNumbers();
+    // Ensure we have data in memory before proceeding
+    if (!storedLoansSet) {
+      console.log("1. Attempting to fetch and store loans...");
+      await fetchAndStoreNumbers();
+    }
+
+    // Double-check that we have data in memory
+    if (!storedLoansSet) {
+      console.log(
+        "No data in memory after fetch attempt, loading from storage..."
+      );
+      await loadDataIntoMemory();
+    }
 
     console.log("2. Checking shared storage content...");
     const meta = await sharedStorage.getData(STORE_NAME, "data-meta");
@@ -409,15 +485,22 @@ function notifyTabOpened() {
     console.log("3. Testing in-memory data...");
     console.log("Current in-memory data:", storedLoansSet);
 
+    // Ensure window.storedLoansSet is set
+    window.storedLoansSet = storedLoansSet;
+
     console.log("4. Testing broadcast channel...");
     setTimeout(() => {
       console.log("Sending test ping...");
       channel.postMessage({ action: "ping", from: "main_tab" });
     }, 2000);
-
-  } catch(e) {
+  } catch (e) {
     console.error("Initialization failed:", e);
-    throw e;
+    // Even if there's an error, try to load fallback data
+    if (!storedLoansSet) {
+      console.log("Loading fallback data due to error...");
+      storedLoansSet = [];
+      window.storedLoansSet = storedLoansSet;
+    }
   }
 
   // Schedule periodic updates

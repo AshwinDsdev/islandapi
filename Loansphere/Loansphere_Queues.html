@@ -475,7 +475,7 @@
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-12">
-                            <h2 class="mb-4">Loan Queues <span class="queue-count-badge" id="queueCount">0 Available</span></h2>
+                            <h2 class="mb-4">Queues <span class="queue-count-badge" id="queueCount">0 Available</span></h2>
 
                             <!-- Search Bar -->
                             <div class="search-container">
@@ -681,6 +681,34 @@
                             "name": "Pending Applications",
                             "type": "my",
                             "sortOrder": 1,
+                            "brandIds": [5, 6, 8],
+                            "restricted": false,
+                            "items": []
+                        },
+                        {
+                            "id": 2,
+                            "name": "Document Review",
+                            "type": "my",
+                            "sortOrder": 2,
+                            "brandIds": [1, 3, 7],
+                            "restricted": false,
+                            "items": []
+                        },
+                        {
+                            "id": 3,
+                            "name": "Underwriting",
+                            "type": "team",
+                            "sortOrder": 3,
+                            "brandIds": [2, 4, 9],
+                            "restricted": false,
+                            "items": []
+                        },
+                        {
+                            "id": 4,
+                            "name": "Closing",
+                            "type": "team",
+                            "sortOrder": 4,
+                            "brandIds": [1, 5, 8],
                             "restricted": false,
                             "items": []
                         }
@@ -1148,7 +1176,7 @@
                     // Hide loading overlay
                     setTimeout(() => {
                         document.getElementById('loading-overlay').style.display = 'none';
-                        toastr.success('Loansphere Queues loaded successfully');
+                        toastr.success('Queues loaded successfully');
 
                         // Show message about data source
                         toastr.success('Data loaded from ingestion scripts: ' +

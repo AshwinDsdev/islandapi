@@ -1313,9 +1313,71 @@
         }
 
         async function waitForLoans() {
-            while (!window.storedLoansSet) {
-                await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 100ms
+            // Wait for up to 10 seconds for the data to load
+            let attempts = 0;
+            const maxAttempts = 10;
+
+            while (!window.storedLoansSet && attempts < maxAttempts) {
+                console.log(`Waiting for loan data... Attempt ${attempts + 1}/${maxAttempts}`);
+                await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second
+                attempts++;
             }
+
+            // If we still don't have data, use fallback data
+            if (!window.storedLoansSet) {
+                console.warn("Failed to load loan data after multiple attempts. Using fallback data.");
+                window.storedLoansSet = [
+                    {
+                        "id": 1,
+                        "loginAccountUserName": "user1",
+                        "firstName": "John",
+                        "lastName": "Doe",
+                        "borrowerName": "John Doe",
+                        "emailAddress": "borrower1@example.com",
+                        "phoneNumber": "(778) 857-5381",
+                        "propertyAddress": "123 Main St, Chicago, TX 95670",
+                        "ssn": "669-15-8417",
+                        "loanNumber": "LOAN001",
+                        "status": "Active",
+                        "brand": "chase",
+                        "type": "offshore",
+                        "allowedUserTypes": ["onshore", "offshore"]
+                    },
+                    {
+                        "id": 2,
+                        "loginAccountUserName": "user2",
+                        "firstName": "Jane",
+                        "lastName": "Smith",
+                        "borrowerName": "Jane Smith",
+                        "emailAddress": "borrower2@example.com",
+                        "phoneNumber": "(778) 857-5382",
+                        "propertyAddress": "456 Oak Ave, Chicago, TX 95670",
+                        "ssn": "669-15-8418",
+                        "loanNumber": "LOAN002",
+                        "status": "Pending",
+                        "brand": "chase",
+                        "type": "onshore",
+                        "allowedUserTypes": ["onshore"]
+                    },
+                    {
+                        "id": 3,
+                        "loginAccountUserName": "user3",
+                        "firstName": "Peter",
+                        "lastName": "Parker",
+                        "borrowerName": "Peter Parker",
+                        "emailAddress": "borrower3@example.com",
+                        "phoneNumber": "(778) 857-5383",
+                        "propertyAddress": "789 Elm Blvd, Chicago, TX 95670",
+                        "ssn": "669-15-8419",
+                        "loanNumber": "LOAN003",
+                        "status": "Active",
+                        "brand": "wells",
+                        "type": "offshore",
+                        "allowedUserTypes": ["onshore", "offshore"]
+                    }
+                ];
+            }
+
             // Process the loan data to add isRestricted property
             const loans = window.storedLoansSet;
 
@@ -1325,8 +1387,10 @@
             // Add isRestricted property to each loan
             loans.forEach(loan => {
                 // A loan is restricted to offshore users if its type is "onshore"
-                loan.isRestricted = isOffshoreUser && loan.type === "onshore";
+                loan.isRestricted = isOffshoreUser && (loan.type === "onshore" ||
+                                   (loan.allowedUserTypes && !loan.allowedUserTypes.includes('offshore')));
             });
+            console.log(loans, "Loans");
 
             return loans;
         }
