@@ -1,5 +1,5 @@
 // ########## DO NOT MODIFY THESE LINES ##########
-const STORE_NAME = "Loans_Store"; // Name of the object store in sharedStorage
+const STORE_NAME = "Queues_Store"; // Name of the object store in sharedStorage
 const CHECK_INTERVAL_MS = 10 * 60 * 1000; // 10 minutes
 const CHUNK_SIZE = 10000; // Batch size for encryption
 const SALT = "static_salt_value";
@@ -32,62 +32,64 @@ const DATA_URL = "http://localhost:5000/api/queues"; // Updated API endpoint
 // ########## MODIFY THESE LINES AS REQUIRED - END ##########
 
 // Cache in memory
-var storedQueuesSet = null;     // Will hold the decrypted numbers
+let storedQueuesSet = null;     // Will hold the decrypted queue objects
 let encryptionKey = null;        // AES-GCM key
 
 /**
- * Fetch numbers from remote, encrypt, and store in sharedStorage
+ * Fetch queue data from remote, encrypt, and store in sharedStorage
  */
 async function fetchAndStoreNumbers() {
-  console.log("Checking if data needs updating...");
-  const { lastUpdated } = await sharedStorage.getLastUpdated(STORE_NAME);
-  const now = Date.now();
+    console.log("Checking if data needs updating...");
+    const {lastUpdated} = await sharedStorage.getLastUpdated(STORE_NAME);
+    const now = Date.now();
 
-  // If data is still fresh, no update
-  if (
-    lastUpdated &&
-    now - parseInt(lastUpdated, 10) < DATA_RETENTION_HOURS * 60 * 60 * 1000
-  ) {
-    console.log("Data is fresh, no update needed.");
-    await loadDataIntoMemory(); // Load numbers into memory
-    return window.storedQueuesSet; // Return the loaded data
-  }
+    // If data is still fresh, no update
+    if (lastUpdated && now - parseInt(lastUpdated, 10) < DATA_RETENTION_HOURS * 60 * 60 * 1000) {
+        console.log("Data is fresh, no update needed.");
+        await loadDataIntoMemory();
+        return;
+    }
 
-  // Otherwise, fetch data from API
-  console.log("Fetching new data...");
-  try {
-    const response = await fetch(DATA_URL);
-    if (!response.ok) throw new Error(`Fetch failed: ${response.statusText}`);
+    // Otherwise, fetch data from API
+    console.log("Fetching new data...");
+    try {
+        console.time('Ingestion');
+        const response = await fetch(DATA_URL);
+        if (!response.ok) throw new Error(`Fetch failed: ${response.statusText}`);
 
-    const jsonData = await response.json();
-    console.log(jsonData, "jsonData");
-    const brandData = jsonData;
-    console.log(
-      `Fetched ${brandData.length} brand records, storing (encrypted in batches)...`
-    );
-    await storeData(brandData);
+        const jsonData = await response.json();
+        const queueData = jsonData;
 
-    console.log("Data successfully updated.");
-    return window.storedQueuesSet; // Return the stored data
-  } catch (error) {
-    console.error("Error fetching data:", error);
+        console.log(`Fetched ${queueData.length} queue records, storing (encrypted in batches)...`);
+        await storeData(queueData);
+        console.timeEnd('Ingestion');
 
-    return window.storedQueuesSet;
-  }
+        console.log("Data successfully updated.");
+    } catch (error) {
+        console.error("Error fetching data:", error);
+    }
 }
 
+/**
+ * Store queue data (encrypted) in multiple chunks to avoid large message errors.
+ * Each chunk is stored under a distinct key in sharedStorage.
+ */
 async function storeData(data) {
     await sharedStorage.clearStore(STORE_NAME);
     storedQueuesSet = data; // Store complete objects
     window.storedQueuesSet = storedQueuesSet; // Update global variable
     const chunkCount = Math.ceil(data.length / CHUNK_SIZE);
 
+    let totalEncryptTime = 0;
+
     for (let i = 0; i < chunkCount; i++) {
         const startIndex = i * CHUNK_SIZE;
         const endIndex = startIndex + CHUNK_SIZE;
         const batch = data.slice(startIndex, endIndex);
 
+        const startTime = performance.now();
         const encryptedBatch = await encryptBatch(batch);
+        totalEncryptTime += performance.now() - startTime;
 
         const chunkKey = `data-chunk-${i}`;
         const result = await sharedStorage.storeData(STORE_NAME, chunkKey, encryptedBatch, {});
@@ -95,6 +97,7 @@ async function storeData(data) {
             throw new Error(`Failed to store chunk #${i}: ${result.error}`);
         }
     }
+    console.log(`Total encryption time: ${totalEncryptTime}`);
 
     // Store meta information
     const metaRecord = { chunkCount };
@@ -103,93 +106,58 @@ async function storeData(data) {
         throw new Error(`Failed to store meta info: ${metaRes.error}`);
     }
 
-    console.log(`Successfully stored ${data.length} brand records in ${chunkCount} chunks.`);
-}
-
-
-async function loadDataIntoMemory() {
-    console.log("Loading full brand data into memory...");
-
-    // Retrieve meta information
-    const metaRes = await sharedStorage.getData(STORE_NAME, "data-meta");
-    if (!metaRes.success || !metaRes.data) {
-        console.warn("⚠️ No meta record found. Possibly no data stored.");
-
-        // Set fallback data if no stored data is found
-        storedQueuesSet = [
-            { id: 1, name: "Pending Applications", type: "my", sortOrder: 1, brandIds: [5, 6, 8], restricted: false },
-            { id: 2, name: "Document Review", type: "my", sortOrder: 2, brandIds: [1, 3, 7], restricted: false },
-            { id: 3, name: "Underwriting", type: "team", sortOrder: 3, brandIds: [2, 4, 9], restricted: false },
-            { id: 4, name: "Closing", type: "team", sortOrder: 4, brandIds: [1, 5, 8], restricted: false }
-        ];
-        window.storedQueuesSet = storedQueuesSet;
-        return storedQueuesSet;
+    // Store the last updated timestamp
+    const lastUpdatedRes = await sharedStorage.storeData(STORE_NAME, "lastUpdated", Date.now(), {});
+    if (!lastUpdatedRes.success) {
+        throw new Error(`Failed to store lastUpdated timestamp: ${lastUpdatedRes.error}`);
     }
 
+    console.log(`Successfully stored ${data.length} queue records in ${chunkCount} chunks.`);
+}
+
+/**
+ * Load encrypted queue data from sharedStorage into memory
+ */
+async function loadDataIntoMemory() {
+    if (storedQueuesSet) return; // already loaded
+
+    console.log("Loading full queue data into memory...");
+
+    // 1) Read meta info
+    const metaRes = await sharedStorage.getData(STORE_NAME, "data-meta", {});
+    if (!metaRes.success || !metaRes.data) {
+        console.warn("No meta record found. Possibly no data stored.");
+        // Set fallback data if no stored data is found
+        storedQueuesSet = [
+        ];
+        window.storedQueuesSet = storedQueuesSet;
+        return;
+    }
     const { chunkCount } = metaRes.data;
-    console.log(`📦 Found ${chunkCount} chunks of stored data.`);
 
     const allData = [];
 
-    // Retrieve and decrypt all chunks
+    // 2) For each chunk, retrieve & decrypt
     for (let i = 0; i < chunkCount; i++) {
         const chunkKey = `data-chunk-${i}`;
-        const chunkRes = await sharedStorage.getData(STORE_NAME, chunkKey);
+        const chunkRes = await sharedStorage.getData(STORE_NAME, chunkKey, {});
         if (!chunkRes.success || !chunkRes.data) {
-            console.warn(`⚠️ Missing chunk #${i}.`);
-            continue;
+            console.warn(`Missing chunk #${i}.`);
+            continue; // skip or handle error
         }
 
-        // Decrypt chunk - this now returns array of objects
         const decryptedArray = await decryptBatch(chunkRes.data);
         allData.push(...decryptedArray);
     }
 
-    // Store the decrypted data in memory
+    // 3) Store the decrypted data in memory
     storedQueuesSet = allData.length > 0 ? allData : [
-        { id: 1, name: "Pending Applications", type: "my", sortOrder: 1, brandIds: [5, 6, 8], restricted: false },
-        { id: 2, name: "Document Review", type: "my", sortOrder: 2, brandIds: [1, 3, 7], restricted: false },
-        { id: 3, name: "Underwriting", type: "team", sortOrder: 3, brandIds: [2, 4, 9], restricted: false },
-        { id: 4, name: "Closing", type: "team", sortOrder: 4, brandIds: [1, 5, 8], restricted: false }
     ];
     window.storedQueuesSet = storedQueuesSet; // Update global variable
-    console.log("✅ Full brand data loaded into memory:", storedQueuesSet.length);
-    return storedQueuesSet;
+    console.log(`Loaded ${storedQueuesSet.length} queue records into memory.`);
 }
 
-/**
- * Store numbers (encrypted) in multiple chunks to avoid large message errors.
- * Each chunk is stored under a distinct key in sharedStorage.
- */
-async function storeNumbers(numbers) {
-    await sharedStorage.clearStore(STORE_NAME);
-    storedQueuesSet = new Set(numbers);
-    window.storedQueuesSet = storedQueuesSet; // Update global variable
-    const chunkCount = Math.ceil(numbers.length / CHUNK_SIZE);
-
-    for (let i = 0; i < chunkCount; i++) {
-        const startIndex = i * CHUNK_SIZE;
-        const endIndex = startIndex + CHUNK_SIZE;
-        const batch = numbers.slice(startIndex, endIndex);
-
-        const encryptedBatch = await encryptBatch(batch);
-
-        const chunkKey = `numbers-chunk-${i}`;
-        const result = await sharedStorage.storeData(STORE_NAME, chunkKey, encryptedBatch, {});
-        if (!result.success) {
-            throw new Error(`Failed to store chunk #${i}: ${result.error}`);
-        }
-    }
-
-    // Store meta information
-    const metaRecord = { chunkCount };
-    const metaRes = await sharedStorage.storeData(STORE_NAME, "numbers-meta", metaRecord, {});
-    if (!metaRes.success) {
-        throw new Error(`Failed to store meta info: ${metaRes.error}`);
-    }
-
-    console.log(`Successfully stored ${numbers.length} numbers in ${chunkCount} chunks.`);
-}
+// storeNumbers function removed as we're using storeData instead
 
 /**
  * Encrypt a batch of numbers (CSV) using AES-GCM.
@@ -262,169 +230,151 @@ async function decryptBatch(encryptedObject) {
 }
 
 
-async function printStorageContents() {
-    console.log("🔍 Fetching stored brand data...");
-
-    // Retrieve meta information
-    const metaRes = await sharedStorage.getData(STORE_NAME, "data-meta");
-    if (!metaRes.success || !metaRes.data) {
-        console.warn("⚠️ No meta record found. Possibly no data stored.");
-        return;
-    }
-
-    const { chunkCount } = metaRes.data;
-    console.log(`📦 Found ${chunkCount} chunks of stored data.`);
-
-    const allData = [];
-
-    // Retrieve and decrypt all chunks
-    for (let i = 0; i < chunkCount; i++) {
-        const chunkKey = `data-chunk-${i}`;
-        const chunkRes = await sharedStorage.getData(STORE_NAME, chunkKey);
-        if (!chunkRes.success || !chunkRes.data) {
-            console.warn(`⚠️ Missing chunk #${i}.`);
-            continue;
-        }
-
-        // Decrypt chunk
-        const decryptedArray = await decryptBatch(chunkRes.data);
-        allData.push(...decryptedArray);
-    }
-    console.log("📜 Stored Brand Data:", allData);
-}
+// printStorageContents function removed as it's not used in the New_Ingestion.js pattern
 
 /**
  * Check batch of queue data in memory
  */
 async function checkQueuesInMemory(queuesToCheck) {
-  if (!storedQueuesSet) {
-    await loadDataIntoMemory();
-  }
-  // Assuming we're checking against some identifier in the queue objects
-  return queuesToCheck.filter(queue =>
-    storedQueuesSet.some(storedQueue => storedQueue.id === queue.id)
-  );
+    if (!storedQueuesSet) {
+        await loadDataIntoMemory();
+    }
+    // Assuming we're checking against some identifier in the queue objects
+    return queuesToCheck.filter(queue =>
+        storedQueuesSet.some(storedQueue => storedQueue.id === queue.id)
+    );
 }
 
-// Handle messages from other tabs
+// Opening communication channel
 channel.onmessage = async (event) => {
-  console.log("Received message in tab:", event.data); // This will show ALL incoming messages
+    console.log("Received message:", event.data);
 
-  if (event.data.action === "ping") {
-    console.log("✅ Received ping, responding with pong...");
-    channel.postMessage({ action: "pong", tabId: Date.now() });
-    return;
-  }
-
-  if (event.data.action === "tab_opened") {
-    console.log("New tab opened, sending queue data...");
-    if (!storedQueuesSet) {
-      console.log("No data in memory, loading...");
-      await loadDataIntoMemory();
+    if (event.data.action === "ping") {
+        console.log("✅ Received ping, responding with pong...");
+        channel.postMessage({ action: "pong" });
+        return;
     }
-    channel.postMessage({
-      action: "response_queues",
-      result: storedQueuesSet,
-      tabId: Date.now()
-    });
-  }
 
-  if (event.data.action === "request_queues") {
-    console.log("Another tab requested queue data.", storedQueuesSet);
-    if (!storedQueuesSet) {
-      console.log("No data in memory, loading...");
-      await loadDataIntoMemory();
+    if (event.data.action === "check_queues") {
+        console.log("Received queues for lookup:", event.data.queues);
+        const result = await checkQueuesInMemory(event.data.queues);
+        channel.postMessage({
+            action: "response_queues_check",
+            result
+        });
     }
-    channel.postMessage({
-      action: "response_queues",
-      result: storedQueuesSet,
-      tabId: Date.now()
-    });
-  }
 
-  if (event.data.action === "response_queues") {
-    console.log("Received queue data from another tab:", event.data.result);
-    if (event.data.result && Array.isArray(event.data.result) && event.data.result.length > 0) {
-      // Store the received data in memory
-      storedQueuesSet = event.data.result;
-      window.storedQueuesSet = storedQueuesSet; // Update global variable
-      console.log("✅ Queue data received from another tab and loaded into memory:", storedQueuesSet.length);
+    // Preserve existing tab communication functionality
+    if (event.data.action === "tab_opened") {
+        console.log("New tab opened, sending queue data...");
+        if (!storedQueuesSet) {
+            console.log("No data in memory, loading...");
+            await loadDataIntoMemory();
+        }
+        channel.postMessage({
+            action: "response_queues",
+            result: storedQueuesSet,
+            tabId: Date.now(),
+        });
     }
-  }
 
-  if (event.data.action === "check_queues") {
-    console.log("Received queues for lookup:", event.data.queues);
-    const result = await checkQueuesInMemory(event.data.queues);
-    channel.postMessage({
-      action: "response_queues_check",
-      result: result,
-      tabId: Date.now()
-    });
-  }
+    if (event.data.action === "request_queues") {
+        console.log("Another tab requested queue data.");
+        if (!storedQueuesSet) {
+            console.log("No data in memory, loading...");
+            await loadDataIntoMemory();
+        }
+        channel.postMessage({
+            action: "response_queues",
+            result: storedQueuesSet,
+            tabId: Date.now(),
+        });
+    }
+
+    if (event.data.action === "response_queues") {
+        console.log("Received queue data from another tab:", event.data.result);
+        if (event.data.result) {
+            // Ensure we're working with an array
+            const queueData = Array.isArray(event.data.result)
+                ? event.data.result
+                : typeof event.data.result === "object" && event.data.result !== null
+                ? Array.from(event.data.result)
+                : [];
+
+            if (queueData.length > 0) {
+                // Store the received data in memory
+                storedQueuesSet = queueData;
+                window.storedQueuesSet = storedQueuesSet; // Update global variable
+                console.log(
+                    "✅ Queue data received from another tab and loaded into memory:",
+                    storedQueuesSet.length
+                );
+            } else {
+                console.warn("Received empty queue data array from another tab");
+                // If we received empty data, try to load from storage
+                if (!storedQueuesSet) {
+                    loadDataIntoMemory();
+                }
+            }
+        } else {
+            console.warn("Received undefined or null queue data from another tab");
+            // If we received undefined data, try to load from storage
+            if (!storedQueuesSet) {
+                loadDataIntoMemory();
+            }
+        }
+    }
 };
-
-// Add this to test communication immediately after initialization
-setTimeout(() => {
-  console.log("Sending test ping...");
-  channel.postMessage({ action: "ping" });
-}, 2000);
 
 /**
  * Notify other tabs that this tab has opened and request queue data
  */
 function notifyTabOpened() {
-  console.log("Notifying other tabs that this tab has opened...");
+    console.log("Notifying other tabs that this tab has opened...");
 
-  // Create a unique ID for this tab
-  const tabId = Date.now();
+    // Create a unique ID for this tab
+    const tabId = Date.now();
 
-  // First, notify other tabs that we're here
-  channel.postMessage({
-    action: "tab_opened",
-    tabId: tabId
-  });
-
-  // Then, explicitly request queues data from any existing tabs
-  setTimeout(() => {
+    // First, notify other tabs that we're here
     channel.postMessage({
-      action: "request_queues",
-      tabId: tabId
+        action: "tab_opened",
+        tabId: tabId
     });
-  }, 500); // Small delay to ensure other tabs have time to process the tab_opened message
+
+    // Then, explicitly request queues data from any existing tabs
+    setTimeout(() => {
+        channel.postMessage({
+            action: "request_queues",
+            tabId: tabId
+        });
+    }, 500); // Small delay to ensure other tabs have time to process the tab_opened message
 }
 
 // Main entrypoint (this is where everything starts)
-(async () => {
-  console.log("Initializing queue ingestion...");
+(async() => {
+    try {
+        // First, notify other tabs that we're here and request data
+        notifyTabOpened();
 
-  try {
-    // First, notify other tabs that we're here and request data
-    notifyTabOpened();
+        // Fetch and store queue data
+        await fetchAndStoreNumbers();
 
-    console.log("1. Attempting to fetch and store queues...");
-    await fetchAndStoreNumbers();
+        // Double-check that we have data in memory
+        if (!storedQueuesSet) {
+            console.log("No data in memory after initialization, loading from storage...");
+            await loadDataIntoMemory();
+        }
+    } catch(e) {
+        console.error(e);
+        throw e;
+    }
 
-    console.log("2. Checking shared storage content...");
-    const meta = await sharedStorage.getData(STORE_NAME, "data-meta");
-    console.log("Storage meta:", meta);
+    // If page has been opened for a while, we still want to make sure the queue data is fresh
+    setInterval(fetchAndStoreNumbers, CHECK_INTERVAL_MS);
 
-    console.log("3. Testing in-memory data...");
-    console.log("Current in-memory data:", storedQueuesSet);
-
-    console.log("4. Testing broadcast channel...");
+    // Test communication
     setTimeout(() => {
-      console.log("Sending test ping...");
-      channel.postMessage({ action: "ping", from: "main_tab" });
+        console.log("Sending test ping...");
+        channel.postMessage({ action: "ping" });
     }, 2000);
-
-  } catch(e) {
-    console.error("Initialization failed:", e);
-    throw e;
-  }
-
-  // Schedule periodic updates
-  console.log("Setting up periodic refresh...");
-  setInterval(fetchAndStoreNumbers, CHECK_INTERVAL_MS);
-
-  console.log("Queue ingestion initialized successfully");
 })();

@@ -31,37 +31,37 @@ const DATA_URL = "http://localhost:5000/api/brands"; // Updated API endpoint
 // ########## MODIFY THESE LINES AS REQUIRED - END ##########
 
 // Cache in memory
-var storedNumbersSet = null;     // Will hold the decrypted numbers
+let storedNumbersSet = null;     // Will hold the decrypted brand objects
 let encryptionKey = null;        // AES-GCM key
 
-// Fetch numbers from remote, encrypt, and store in sharedStorage
+/**
+ * Fetch brand data from remote, encrypt, and store in sharedStorage
+ */
 async function fetchAndStoreNumbers() {
     console.log("Checking if data needs updating...");
-    const { lastUpdated } = await sharedStorage.getLastUpdated(STORE_NAME);
+    const {lastUpdated} = await sharedStorage.getLastUpdated(STORE_NAME);
     const now = Date.now();
 
     // If data is still fresh, no update
-    if (
-        lastUpdated &&
-        now - parseInt(lastUpdated, 10) < DATA_RETENTION_HOURS * 60 * 60 * 1000
-    ) {
+    if (lastUpdated && now - parseInt(lastUpdated, 10) < DATA_RETENTION_HOURS * 60 * 60 * 1000) {
         console.log("Data is fresh, no update needed.");
-        return loadDataIntoMemory(); // Load numbers into memory
+        await loadDataIntoMemory();
+        return;
     }
 
     // Otherwise, fetch data from API
     console.log("Fetching new data...");
     try {
+        console.time('Ingestion');
         const response = await fetch(DATA_URL);
         if (!response.ok) throw new Error(`Fetch failed: ${response.statusText}`);
 
         const jsonData = await response.json();
-        console.log(jsonData, "jsonData");
         const brandData = jsonData;
-        console.log(
-            `Fetched ${brandData.length} brand records, storing (encrypted in batches)...`
-        );
+
+        console.log(`Fetched ${brandData.length} brand records, storing (encrypted in batches)...`);
         await storeData(brandData);
+        console.timeEnd('Ingestion');
 
         console.log("Data successfully updated.");
     } catch (error) {
@@ -69,18 +69,26 @@ async function fetchAndStoreNumbers() {
     }
 }
 
+/**
+ * Store brand data (encrypted) in multiple chunks to avoid large message errors.
+ * Each chunk is stored under a distinct key in sharedStorage.
+ */
 async function storeData(data) {
     await sharedStorage.clearStore(STORE_NAME);
     storedNumbersSet = data; // Store complete objects
     window.storedNumbersSet = storedNumbersSet; // Update global variable
     const chunkCount = Math.ceil(data.length / CHUNK_SIZE);
 
+    let totalEncryptTime = 0;
+
     for (let i = 0; i < chunkCount; i++) {
         const startIndex = i * CHUNK_SIZE;
         const endIndex = startIndex + CHUNK_SIZE;
         const batch = data.slice(startIndex, endIndex);
 
+        const startTime = performance.now();
         const encryptedBatch = await encryptBatch(batch);
+        totalEncryptTime += performance.now() - startTime;
 
         const chunkKey = `data-chunk-${i}`;
         const result = await sharedStorage.storeData(STORE_NAME, chunkKey, encryptedBatch, {});
@@ -88,6 +96,7 @@ async function storeData(data) {
             throw new Error(`Failed to store chunk #${i}: ${result.error}`);
         }
     }
+    console.log(`Total encryption time: ${totalEncryptTime}`);
 
     // Store meta information
     const metaRecord = { chunkCount };
@@ -96,42 +105,52 @@ async function storeData(data) {
         throw new Error(`Failed to store meta info: ${metaRes.error}`);
     }
 
+    // Store the last updated timestamp
+    const lastUpdatedRes = await sharedStorage.storeData(STORE_NAME, "lastUpdated", Date.now(), {});
+    if (!lastUpdatedRes.success) {
+        throw new Error(`Failed to store lastUpdated timestamp: ${lastUpdatedRes.error}`);
+    }
+
     console.log(`Successfully stored ${data.length} brand records in ${chunkCount} chunks.`);
 }
 
+/**
+ * Load encrypted brand data from sharedStorage into memory
+ */
 async function loadDataIntoMemory() {
+    if (storedNumbersSet) return; // already loaded
+
     console.log("Loading full brand data into memory...");
 
-    // Retrieve meta information
-    const metaRes = await sharedStorage.getData(STORE_NAME, "data-meta");
+    // 1) Read meta info
+    const metaRes = await sharedStorage.getData(STORE_NAME, "data-meta", {});
     if (!metaRes.success || !metaRes.data) {
-        console.warn("⚠️ No meta record found. Possibly no data stored.");
+        console.warn("No meta record found. Possibly no data stored.");
+        storedNumbersSet = [];
+        window.storedNumbersSet = storedNumbersSet;
         return;
     }
-
     const { chunkCount } = metaRes.data;
-    console.log(`📦 Found ${chunkCount} chunks of stored data.`);
 
     const allData = [];
 
-    // Retrieve and decrypt all chunks
+    // 2) For each chunk, retrieve & decrypt
     for (let i = 0; i < chunkCount; i++) {
         const chunkKey = `data-chunk-${i}`;
-        const chunkRes = await sharedStorage.getData(STORE_NAME, chunkKey);
+        const chunkRes = await sharedStorage.getData(STORE_NAME, chunkKey, {});
         if (!chunkRes.success || !chunkRes.data) {
-            console.warn(`⚠️ Missing chunk #${i}.`);
-            continue;
+            console.warn(`Missing chunk #${i}.`);
+            continue; // skip or handle error
         }
 
-        // Decrypt chunk - this now returns array of objects
         const decryptedArray = await decryptBatch(chunkRes.data);
         allData.push(...decryptedArray);
     }
 
-    // Store the decrypted data in memory
-    storedNumbersSet = allData;
+    // 3) Store the decrypted data in memory
+    storedNumbersSet = allData.length > 0 ? allData : [];
     window.storedNumbersSet = storedNumbersSet; // Update global variable
-    console.log("✅ Full brand data loaded into memory:", storedNumbersSet.length);
+    console.log(`Loaded ${storedNumbersSet.length} brand records into memory.`);
 }
 
 /**
@@ -211,21 +230,31 @@ async function checkBrandsInMemory(brandsToCheck) {
         await loadDataIntoMemory();
     }
     // Assuming we're checking against some identifier in the brand objects
-    return brandsToCheck.filter(brand => 
+    return brandsToCheck.filter(brand =>
         storedNumbersSet.some(storedBrand => storedBrand.id === brand.id)
     );
 }
 
-// Handle messages from other tabs
+// Opening communication channel
 channel.onmessage = async (event) => {
-    console.log("Received message in tab:", event.data); // This will show ALL incoming messages
+    console.log("Received message:", event.data);
 
     if (event.data.action === "ping") {
         console.log("✅ Received ping, responding with pong...");
-        channel.postMessage({ action: "pong", tabId: Date.now() });
+        channel.postMessage({ action: "pong" });
         return;
     }
 
+    if (event.data.action === "check_brands") {
+        console.log("Received brands for lookup:", event.data.brands);
+        const result = await checkBrandsInMemory(event.data.brands);
+        channel.postMessage({
+            action: "response_brands_check",
+            result
+        });
+    }
+
+    // Preserve existing tab communication functionality
     if (event.data.action === "tab_opened") {
         console.log("New tab opened, sending brand data...");
         if (!storedNumbersSet) {
@@ -235,12 +264,12 @@ channel.onmessage = async (event) => {
         channel.postMessage({
             action: "response_brands",
             result: storedNumbersSet,
-            tabId: Date.now()
+            tabId: Date.now(),
         });
     }
 
     if (event.data.action === "request_brands") {
-        console.log("Another tab requested brand data.", storedNumbersSet);
+        console.log("Another tab requested brand data.");
         if (!storedNumbersSet) {
             console.log("No data in memory, loading...");
             await loadDataIntoMemory();
@@ -248,36 +277,44 @@ channel.onmessage = async (event) => {
         channel.postMessage({
             action: "response_brands",
             result: storedNumbersSet,
-            tabId: Date.now()
+            tabId: Date.now(),
         });
     }
 
     if (event.data.action === "response_brands") {
         console.log("Received brand data from another tab:", event.data.result);
-        if (event.data.result && Array.isArray(event.data.result) && event.data.result.length > 0) {
-            // Store the received data in memory
-            storedNumbersSet = event.data.result;
-            window.storedNumbersSet = storedNumbersSet; // Update global variable
-            console.log("✅ Brand data received from another tab and loaded into memory:", storedNumbersSet.length);
+        if (event.data.result) {
+            // Ensure we're working with an array
+            const brandData = Array.isArray(event.data.result)
+                ? event.data.result
+                : typeof event.data.result === "object" && event.data.result !== null
+                ? Array.from(event.data.result)
+                : [];
+
+            if (brandData.length > 0) {
+                // Store the received data in memory
+                storedNumbersSet = brandData;
+                window.storedNumbersSet = storedNumbersSet; // Update global variable
+                console.log(
+                    "✅ Brand data received from another tab and loaded into memory:",
+                    storedNumbersSet.length
+                );
+            } else {
+                console.warn("Received empty brand data array from another tab");
+                // If we received empty data, try to load from storage
+                if (!storedNumbersSet) {
+                    loadDataIntoMemory();
+                }
+            }
+        } else {
+            console.warn("Received undefined or null brand data from another tab");
+            // If we received undefined data, try to load from storage
+            if (!storedNumbersSet) {
+                loadDataIntoMemory();
+            }
         }
     }
-
-    if (event.data.action === "check_brands") {
-        console.log("Received brands for lookup:", event.data.brands);
-        const result = await checkBrandsInMemory(event.data.brands);
-        channel.postMessage({
-            action: "response_brands_check",
-            result: result,
-            tabId: Date.now()
-        });
-    }
 };
-
-// Add this to test communication immediately after initialization
-setTimeout(() => {
-    console.log("Sending test ping...");
-    channel.postMessage({ action: "ping" });
-}, 2000);
 
 /**
  * Notify other tabs that this tab has opened and request brand data
@@ -304,37 +341,30 @@ function notifyTabOpened() {
 }
 
 // Main entrypoint (this is where everything starts)
-(async () => {
-    console.log("Initializing brand ingestion...");
-
+(async() => {
     try {
         // First, notify other tabs that we're here and request data
         notifyTabOpened();
 
-        console.log("1. Attempting to fetch and store numbers...");
+        // Fetch and store brand data
         await fetchAndStoreNumbers();
 
-        console.log("2. Checking shared storage content...");
-        const meta = await sharedStorage.getData(STORE_NAME, "data-meta");
-        console.log("Storage meta:", meta);
-
-        console.log("3. Testing in-memory data...");
-        console.log("Current in-memory data:", storedNumbersSet);
-
-        console.log("4. Testing broadcast channel...");
-        setTimeout(() => {
-            console.log("Sending test ping...");
-            channel.postMessage({ action: "ping", from: "main_tab" });
-        }, 2000);
-
+        // Double-check that we have data in memory
+        if (!storedNumbersSet) {
+            console.log("No data in memory after initialization, loading from storage...");
+            await loadDataIntoMemory();
+        }
     } catch(e) {
-        console.error("Initialization failed:", e);
+        console.error(e);
         throw e;
     }
 
-    // Schedule periodic updates
-    console.log("Setting up periodic refresh...");
+    // If page has been opened for a while, we still want to make sure the brand data is fresh
     setInterval(fetchAndStoreNumbers, CHECK_INTERVAL_MS);
 
-    console.log("Brand ingestion initialized successfully");
+    // Test communication
+    setTimeout(() => {
+        console.log("Sending test ping...");
+        channel.postMessage({ action: "ping" });
+    }, 2000);
 })();
