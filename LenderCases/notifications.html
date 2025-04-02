@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lender Cases</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="cache-control" content="no-cache">
+    <meta http-equiv="expires" content="0">
+    <meta http-equiv="pragma" content="no-cache">
+    <link rel="stylesheet" href="/libraries/jquery-ui/css/jquery-ui-1.12.1.css">
+    <script src="/libraries/jquery/jquery-3.5.0.min.js"></script>
+    <script src="/libraries/jquery-ui/js/jquery-ui-1.12.1.js"></script>
+    <script src="/include/Common.js"></script>
+    <script src="/include/Validate.js"></script>
+    <script src="/include/RoboHelpCSH.js"></script>
+</head>
+<body topmargin="0" marginwidth="2" bottommargin="2" leftmargin="2" bgcolor="#EEEEEE">
+    <form name="main" action="/servlet/RouterServlet" method="POST">
+    <!--Include the header & Subheader -->
+    
+    
+    
+    
+    <script language="JavaScript" src="/include/Common.js"></script>
+    <script language="JavaScript" src="/include/Validate.js"></script>
+    <script language="JavaScript" src="/include/RoboHelpCSH.js"></script>
+    <script src="/libraries/jquery/jquery-3.5.0.min.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        jQuery.noConflict();	
+        //alert(jQuery().jquery);   //To display the version of jQuery
+    </script>
+    <script language="JavaScript">
+    if (document.styleSheets[0].cssRules) {
+    crossrule=document.styleSheets[0].cssRules
+    } else if (document.styleSheets[0].rules) {
+    crossrule=document.styleSheets[0].rules }
+    if (false) {
+        crossrule[81].style.color = '#8E8E8E';
+        crossrule[99].style.color = '#8E8E8E';
+    }
+    
+    var isArchive = false;
+                 
+    
+        isArchive = true;
+    
+    
+    </script>
+    <style type="text/css">
+    /* Uncomment below to show maintenance message and commnet out the p_banner style currently active
+       Change the color, font-family and font-size if needed*/
+    /*#p_banner{
+        padding:10px; margin:0;
+        min-width:752px;
+        width:100%; height:38px;
+        background: url(/images/FPHT_LogoBarSegment_1px.png) top left repeat-x;
+        color: yellow;
+        font-family: Arial, Verdana, Geneva, Helvetica, sans-serif;
+        font-size: 16px;
+    }
+    */
+    
+    #p_banner{
+        padding:0; margin:0;
+        min-width:752px;
+        width:100%; height:38px;
+        background: url(/images/FPHT_LogoBarSegment_1px.png) top left repeat-x;
+    }
+    
+    #p_banner_center{
+        width:752px; height:43px;
+        margin:0;
+        padding:0;
+        border:0;outline:none;
+    }
+    body{margin:0px;}
+    </style>
+    <!-- Uncomment below to show maintenance message 
+    <div id="p_banner" ><b>UPCOMING SERVICE OUTAGE:</b> Thursday, August 11th - 12:00am to 6:00am Central</div></div>
+    -->
+    
+    <!-- Comment out below to show maintenance message-->
+    <div id="p_banner"><div id="p_banner_center"><a href="http://www.firstprestonht.com/?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" target="fphtWindow" id="fpht"><img src="/images/FPHT_LogoBar.png?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" height="43px" alt="A First Preston HT Company" border="0" align="top"></a></div></div>
+    
+    <table width="766" border="0" cellspacing="0" cellpadding="0" bgcolor="#ffffff">
+        
+        <tbody><tr>
+            <td valign="middle" width="175">&nbsp;</td>
+            <td width="200" align="middle">&nbsp;</td>
+            <td width="391" valign="middle" align="right" class="bodytext">
+                <img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" border="0" width="20px" height="3px"><br>
+            <a href="/servlet/RouterServlet?p_process_page=Logout&amp;HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" class="headerLinks ">Logout</a><img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" border="0" width="30px" height="1px">
+            </td>
+        </tr>
+            
+        <tr>
+            <td width="175" valign="bottom" rowspan="2" align="right">
+            
+                <a href="javascript:navigate('Home&amp;ni=0','Y', 'false')"><img src="/images/htlogo.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" border="0" alt="...............Home Tracker®..............." name="myLogo"></a><br>
+                <img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" border="0" width="20px" height="10px">
+            
+            </td>
+            <td valign="center" colspan="2" align="left" class="displayHeader" height="32px"><img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" border="0" width="40px" height="1px">
+            
+            Lender Center for Cenlar FSB (SubServicer) - Subservicer
+            
+            </td>
+        </tr>
+                                        
+    
+    
+        <tr>
+            <td width="591" colspan="2" valign="bottom" nowrap="">
+                <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                    <tbody><tr>
+                        
+                        <td nowrap="" bgcolor="#0056a6"><img src="/images/1begin.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="33" height="24" border="0/"></td>
+                        <td width="20%" align="center" nowrap="" bgcolor="#0056a6">&nbsp;&nbsp;
+                          
+                                
+                                    <a class="tab" href="javascript:navigate('Home&amp;ni=0','Y', false)">Home</a>
+                                                
+                        </td>					
+                        
+                        <td nowrap="" bgcolor="#e0791c"><img src="/images/1downend.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="36" height="24" border="0/"></td>
+                        <td width="20%" align="center" nowrap="" bgcolor="#e0791c">&nbsp;&nbsp;
+                          
+                                <a class="tab" href="javascript:navigate('CaseList&amp;ni=1','Y', false)">Lender Cases</a>
+                                                
+                        </td>
+                        
+                        <td nowrap="" bgcolor="#7f559e"><img src="/images/2downend.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="36" height="24" border="0/"></td>
+                        <td width="20%" align="center" nowrap="" bgcolor="#7f559e">&nbsp;&nbsp;
+                          
+                                
+                                    <a class="tab" href="javascript:navigate('ReportOptions&amp;ni=2','Y', false)">Reports</a>
+                                                    
+                             <!--a class="tab" href="javascript:navigate('ReportOptions&ni=2','Y')">Reports</a -->
+                        </td>
+                        
+                        <td nowrap="" bgcolor="#a61a18"><img src="/images/3downend.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="36" height="24" border="0/"></td>
+                        <td width="20%" align="center" nowrap="" bgcolor="#a61a18">&nbsp;&nbsp;
+                          
+                                <a class="tab" href="javascript:navigate('LcNotificationList&amp;ni=3','Y', false)">Notifications</a>
+                            
+                        </td>
+                        
+                        <td nowrap="" bgcolor="#007053"><img src="/images/4downend.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="36" height="24" border="0/"></td>
+                        <td width="20%" align="center" nowrap="" bgcolor="#007053">&nbsp;&nbsp;
+                          
+                                <a class="tab" href="javascript:navigate('User&amp;ni=4','Y', false)">Admin</a>
+                                
+                                
+                        </td>					
+                        
+                    </tr>
+                    <tr>
+                        
+                        <td bgcolor="white"></td>
+                        <td bgcolor="white"></td>
+                        
+                        <td bgcolor="white"></td>
+                        <td bgcolor="white"></td>
+                        
+                        <td bgcolor="white"></td>
+                        <td bgcolor="white"></td>
+                        
+                        <td bgcolor="#a61a18"></td>
+                        <td bgcolor="#a61a18"></td>
+                        
+                        <td bgcolor="white"></td>
+                        <td bgcolor="white"></td>
+                        
+                    </tr>
+                </tbody></table>
+            </td>
+        </tr>
+        
+        <tr>
+            <td width="100%" colspan="3" valign="Top" bgcolor="#a61a18" align="left">
+                <table border="0" cellspacing="0" cellpadding="0">
+                    <tbody><tr>
+                        <td align="left"><img src="/images/4end.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" border="0"></td>
+                        <td align="left" class="headerDivide"></td>
+                    </tr>
+                </tbody></table>
+                
+            </td>
+        </tr>
+    </tbody></table>
+    
+    <!-- Include the tiertiary navigation -->
+      
+    
+    
+    <div>
+        <input type="hidden" name="p_rpt_back_list" value="">
+        <input type="hidden" name="p_btl_ni" value="">
+        <input type="hidden" name="p_dash_choice_id" value="">
+        <input type="hidden" name="p_show_as_user_id" value="">
+        <input type="hidden" name="p_show_as_user_client_id" value="">
+        <input type="hidden" name="p_quick_searched" value="N">
+    </div>
+    
+    <table width="766" border="0" cellspacing="0" cellpadding="0" bgcolor="#762527">
+        <tbody><tr>
+            <td rowspan="2" bgcolor="#eeeeee"><img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" border="0" width="18px" height="1px">
+                <input type="hidden" name="p_start">
+                <input type="hidden" name="p_mode" value="">
+                <input type="hidden" name="p_action" value="">
+                <input type="hidden" name="p_criteria" value="">
+            </td>
+            <td nowrap="" rowspan="2" width="110" valign="top" class="headline" bgcolor="#eeeeee">Notifications</td>
+            <td rowspan="2" valign="top" bgcolor="#eeeeee"><img src="/images/4upends.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws"></td>
+            <td width="656" colspan="2">
+                <table border="0" cellpadding="0" cellspacing="0" height="24px" width="100%">
+                    <tbody><tr>
+                        <td>
+                            <table width="100%" cellspacing="0" cellpadding="0" border="0">
+                                <tbody><tr>
+                                  <td>&nbsp;</td>
+                                    <td nowrap="">&nbsp;</td>
+                                    <td>&nbsp;</td>
+                    
+                                    <td width="5%" class="subnav"><script language="javascript"> document.write("<a href=\"javascript:void homeTelosWindowOpen('/servlet/RouterServlet?p_build_page=Filter&xsi_check=','general_window','directories=no,toolbar=no,scrollbars=yes,width=400,height=310,resizable=yes')\" class='rlinks'>Filter</a>"); </script><a href="javascript:void homeTelosWindowOpen('/servlet/RouterServlet?p_build_page=Filter&amp;xsi_check=','general_window','directories=no,toolbar=no,scrollbars=yes,width=400,height=310,resizable=yes')" class="rlinks">Filter</a></td>
+                                    <td>&nbsp;&nbsp;</td>
+                                    <td width="5%" class="subnav"><script language="javascript"> document.write("<a href=\"javascript:void homeTelosWindowOpen('/servlet/RouterServlet?p_build_page=Sort','general_window','directories=no,toolbar=no,scrollbars=yes,width=450,height=315,resizable=yes')\" class='rlinks'>Sort</a>"); </script><a href="javascript:void homeTelosWindowOpen('/servlet/RouterServlet?p_build_page=Sort','general_window','directories=no,toolbar=no,scrollbars=yes,width=450,height=315,resizable=yes')" class="rlinks">Sort</a></td>
+                                    <td>&nbsp;&nbsp;</td>
+                                    <td class="subnav" nowrap="">1 - 25 of 72</td>
+                                    <td>&nbsp;</td>
+                                    <td width="5%" class="subnav"></td>
+                                    <td>&nbsp;</td>
+                                    <td width="5%" class="subnav"><a class="rlinks" href="javascript:saveChanges( '26' )">Next</a>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                </tr>
+                            </tbody></table>
+                        </td>
+                        <td valign="middle" width="20%" align="right" class="headerQuickSearch" nowrap="">
+                            
+                            
+                            Search: FNMA Loan #&nbsp;&nbsp;<input class="bodytextsmall" type="text" name="p_quick_search_fnma_loan" value="" size="12" maxlength="15" onkeyup="javascript:checkQuickSearchSubmitLists(event,'QS_FNMA_LOAN');">&nbsp;&nbsp;<input class="bodytextsmall" type="button" name="p_submit" onclick="javascript:changeCriteria('QS_FNMA_LOAN')" value="GO">&nbsp;&nbsp;
+                            Servicer Loan&nbsp;#&nbsp;<input class="bodytextsmall" type="text" name="p_quick_search_loan" value="" size="12" maxlength="15" onkeyup="javascript:checkQuickSearchSubmitLists(event,'QS_LOAN');">&nbsp;&nbsp;<input class="bodytextsmall" type="button" name="p_submit" onclick="javascript:changeCriteria('QS_LOAN')" value="GO">&nbsp;&nbsp;
+                            
+                        </td>
+                    </tr>
+                </tbody></table>
+            </td>
+        </tr>
+        <tr>
+            <td bgcolor="#a61a18">&nbsp;</td>
+        </tr>	
+    </tbody></table>
+    
+      
+    <table width="766" border="0" cellspacing="0" cellpadding="0" bgcolor="#EEEEEE">
+            <tbody><tr>
+                        <td width="3%"><img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" border="0" width="18px" height="1px"></td>
+                        <td width="97%" class="bodytextbold">This is a detailed list of all automated email notifications that have been sent to users within your organization or email notifications sent based on actions taken by users in your organization. </td>
+            </tr>
+            <tr><td colspan="2">&nbsp;</td></tr>
+    </tbody></table>
+    
+    <table width="766" border="0" cellspacing="0" cellpadding="0" bgcolor="#EEEEEE">
+        <tbody><tr>
+            <td class="bodytextbold" width="3%">&nbsp;</td>
+            <td width="97%" colspan="8">&nbsp;<input type="checkbox" name="p_check_all" value="Y" onclick="javascript:selectDeselectAll()">&nbsp;Check to select all Notifications <a href="javaScript:printAllSelected()">(Print All Selected)</a></td>
+        </tr>
+        <tr>
+            <td width="3%">&nbsp;</td>
+            <td width="3%">&nbsp;</td>
+            <td width="3%">#</td>
+            
+            <td class="bodytextbold" width="12%" nowrap="">&nbsp;&nbsp;Loan #</td>
+            <td class="bodytextbold" width="12%" nowrap="">&nbsp;&nbsp;Case #</td>
+            
+            <td class="bodytextbold" width="8%" nowrap="">&nbsp;&nbsp;Sent Date / Time</td>
+            <td class="bodytextbold" width="20%" nowrap="">&nbsp;&nbsp;Sent To Name</td>
+            <td class="bodytextbold" width="20%" nowrap="">&nbsp;&nbsp;Sent To Email</td>
+            <td class="bodytextbold" width="10%" nowrap="">&nbsp;&nbsp;Method</td>		
+            <td class="bodytextbold" width="10%" nowrap="">&nbsp;&nbsp;Type Of <br>&nbsp;&nbsp;Notification</td>
+        </tr>
+    
+            <tr bgcolor="#eeeeee">
+                <td width="3%" bgcolor="#eeeeee">&nbsp;</td>			
+                <td class="bodytextbold"><input type="checkbox" name="p_file_id" value="63238415"></td>
+                <td width="3%" class="bodytext">1.&nbsp;</td>
+                <td class="bodytext" width="12%" nowrap="">&nbsp;&nbsp;
+                
+                    <a href="/servlet/RouterServlet?p_build_page=LcPandP&amp;p_btl_ni=3&amp;p_process_page=&amp;p_view=LC&amp;p_pandp_id=2211918&amp;p_index=1&amp;p_retain_state=Y&amp;p_start=1&amp;p_action=&amp;p_back_list=LcNotificationList&amp;HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws">000004771698042</a>
+                
+                </td>
+    
+                
+                
+                
+                <td class="bodytext" width="12%" nowrap="">&nbsp;&nbsp;
+                
+                    0923-1082282
+                
+                </td>
+                
+                
+                <td class="bodytext" width="8%" nowrap="">&nbsp;&nbsp;02/11/2025 12:30 PM</td>
+                <td class="bodytext" width="20%" nowrap="">&nbsp;&nbsp;Allen Nysha</td>
+                <td class="bodytext" width="20%" nowrap="">&nbsp;&nbsp;nysha.allen@safeguardproperties.com</td>
+                <td class="bodytext" width="10%" nowrap="">&nbsp;&nbsp;Email</td>			
+                <td class="bodytext" width="10%" nowrap="">&nbsp;&nbsp;P&amp;P Approved</td>
+            </tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim_menu.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>		
+        
+            <tr bgcolor="#ffffff">
+                <td width="3%" bgcolor="#eeeeee">&nbsp;</td>			
+                <td class="bodytextbold"><input type="checkbox" name="p_file_id" value="63238418"></td>
+                <td width="3%" class="bodytext">2.&nbsp;</td>
+                <td class="bodytext" width="12%" nowrap="">&nbsp;&nbsp;
+                
+                    <a href="/servlet/RouterServlet?p_build_page=LcPandP&amp;p_btl_ni=3&amp;p_process_page=&amp;p_view=LC&amp;p_pandp_id=2211914&amp;p_index=2&amp;p_retain_state=Y&amp;p_start=1&amp;p_action=&amp;p_back_list=LcNotificationList&amp;HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws">000000171627672</a>
+                
+                </td>
+    
+                
+                
+                
+                <td class="bodytext" width="12%" nowrap="">&nbsp;&nbsp;
+                
+                    0934-24702204
+                
+                </td>
+                
+                
+                <td class="bodytext" width="8%" nowrap="">&nbsp;&nbsp;02/11/2025 01:00 PM</td>
+                <td class="bodytext" width="20%" nowrap="">&nbsp;&nbsp;Jackson Chunaice</td>
+                <td class="bodytext" width="20%" nowrap="">&nbsp;&nbsp;chunaice.jackson@safeguardproperties.com</td>
+                <td class="bodytext" width="10%" nowrap="">&nbsp;&nbsp;Email</td>			
+                <td class="bodytext" width="10%" nowrap="">&nbsp;&nbsp;P&amp;P Approved</td>
+            </tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim_menu.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>		
+        
+            <tr bgcolor="#EEEEEE">
+                <td width="3%" bgcolor="#eeeeee">&nbsp;</td>			
+                <td class="bodytextbold"><input type="checkbox" name="p_file_id" value="63238416"></td>
+                <td width="3%" class="bodytext">3.&nbsp;</td>
+                <td class="bodytext" width="12%" nowrap="">&nbsp;&nbsp;
+                
+                    <a href="/servlet/RouterServlet?p_build_page=LcPandP&amp;p_btl_ni=3&amp;p_process_page=&amp;p_view=LC&amp;p_pandp_id=2211924&amp;p_index=3&amp;p_retain_state=Y&amp;p_start=1&amp;p_action=&amp;p_back_list=LcNotificationList&amp;HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws">000004770977611</a>
+                
+                </td>
+    
+                
+                
+                
+                <td class="bodytext" width="12%" nowrap="">&nbsp;&nbsp;
+                
+                    0914-25363921
+                
+                </td>
+                
+                
+                <td class="bodytext" width="8%" nowrap="">&nbsp;&nbsp;02/11/2025 12:30 PM</td>
+                <td class="bodytext" width="20%" nowrap="">&nbsp;&nbsp;MEDLEY Robert</td>
+                <td class="bodytext" width="20%" nowrap="">&nbsp;&nbsp;Robert.medley@msionline.com</td>
+                <td class="bodytext" width="10%" nowrap="">&nbsp;&nbsp;Email</td>			
+                <td class="bodytext" width="10%" nowrap="">&nbsp;&nbsp;P&amp;P Approved</td>
+            </tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim_menu.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>		
+        
+            <tr bgcolor="#ffffff">
+                <td width="3%" bgcolor="#eeeeee">&nbsp;</td>			
+                <td class="bodytextbold"><input type="checkbox" name="p_file_id" value="63238420"></td>
+                <td width="3%" class="bodytext">4.&nbsp;</td>
+                <td class="bodytext" width="12%" nowrap="">&nbsp;&nbsp;
+                
+                    <a href="/servlet/RouterServlet?p_build_page=LcPandP&amp;p_btl_ni=3&amp;p_process_page=&amp;p_view=LC&amp;p_pandp_id=2211920&amp;p_index=4&amp;p_retain_state=Y&amp;p_start=1&amp;p_action=&amp;p_back_list=LcNotificationList&amp;HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws">000000171543739</a>
+                
+                </td>
+    
+                
+                
+                
+                <td class="bodytext" width="12%" nowrap="">&nbsp;&nbsp;
+                
+                    0911-26039882
+                
+                </td>
+                
+                
+                <td class="bodytext" width="8%" nowrap="">&nbsp;&nbsp;02/11/2025 01:00 PM</td>
+                <td class="bodytext" width="20%" nowrap="">&nbsp;&nbsp;Allen Nysha</td>
+                <td class="bodytext" width="20%" nowrap="">&nbsp;&nbsp;nysha.allen@safeguardproperties.com</td>
+                <td class="bodytext" width="10%" nowrap="">&nbsp;&nbsp;Email</td>			
+                <td class="bodytext" width="10%" nowrap="">&nbsp;&nbsp;P&amp;P Approved</td>
+            </tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim_menu.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>		
+        
+            <tr bgcolor="#EEEEEE">
+                <td width="3%" bgcolor="#eeeeee">&nbsp;</td>			
+                <td class="bodytextbold"><input type="checkbox" name="p_file_id" value="63238562"></td>
+                <td width="3%" class="bodytext">5.&nbsp;</td>
+                <td class="bodytext" width="12%" nowrap="">&nbsp;&nbsp;
+                
+                    <a href="/servlet/RouterServlet?p_build_page=LcPandP&amp;p_btl_ni=3&amp;p_process_page=&amp;p_view=LC&amp;p_pandp_id=2211913&amp;p_index=5&amp;p_retain_state=Y&amp;p_start=1&amp;p_action=&amp;p_back_list=LcNotificationList&amp;HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws">000000103812830</a>
+                
+                </td>
+    
+                
+                
+                
+                <td class="bodytext" width="12%" nowrap="">&nbsp;&nbsp;
+                
+                    0919-25426469
+                
+                </td>
+                
+                
+                <td class="bodytext" width="8%" nowrap="">&nbsp;&nbsp;02/11/2025 05:00 PM</td>
+                <td class="bodytext" width="20%" nowrap="">&nbsp;&nbsp;Allen Nysha</td>
+                <td class="bodytext" width="20%" nowrap="">&nbsp;&nbsp;nysha.allen@safeguardproperties.com</td>
+                <td class="bodytext" width="10%" nowrap="">&nbsp;&nbsp;Email</td>			
+                <td class="bodytext" width="10%" nowrap="">&nbsp;&nbsp;P&amp;P Denied</td>
+            </tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim_menu.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>		
+        
+            <tr bgcolor="#ffffff">
+                <td width="3%" bgcolor="#eeeeee">&nbsp;</td>			
+                <td class="bodytextbold"><input type="checkbox" name="p_file_id" value="63238678"></td>
+                <td width="3%" class="bodytext">6.&nbsp;</td>
+                <td class="bodytext" width="12%" nowrap="">&nbsp;&nbsp;
+                
+                    <a href="/servlet/RouterServlet?p_build_page=LcPandP&amp;p_btl_ni=3&amp;p_process_page=&amp;p_view=LC&amp;p_pandp_id=2211944&amp;p_index=6&amp;p_retain_state=Y&amp;p_start=1&amp;p_action=&amp;p_back_list=LcNotificationList&amp;HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws">000000025434838</a>
+                
+                </td>
+    
+                
+                
+                
+                <td class="bodytext" width="12%" nowrap="">&nbsp;&nbsp;
+                
+                    0933-2816431
+                
+                </td>
+                
+                
+                <td class="bodytext" width="8%" nowrap="">&nbsp;&nbsp;02/12/2025 12:30 PM</td>
+                <td class="bodytext" width="20%" nowrap="">&nbsp;&nbsp;Jackson Chunaice</td>
+                <td class="bodytext" width="20%" nowrap="">&nbsp;&nbsp;chunaice.jackson@safeguardproperties.com</td>
+                <td class="bodytext" width="10%" nowrap="">&nbsp;&nbsp;Email</td>			
+                <td class="bodytext" width="10%" nowrap="">&nbsp;&nbsp;P&amp;P Approved</td>
+            </tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim_menu.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>		
+        
+            <tr bgcolor="#EEEEEE">
+                <td width="3%" bgcolor="#eeeeee">&nbsp;</td>			
+                <td class="bodytextbold"><input type="checkbox" name="p_file_id" value="63238755"></td>
+                <td width="3%" class="bodytext">7.&nbsp;</td>
+                <td class="bodytext" width="12%" nowrap="">&nbsp;&nbsp;
+                
+                    <a href="/servlet/RouterServlet?p_build_page=LcPandP&amp;p_btl_ni=3&amp;p_process_page=&amp;p_view=LC&amp;p_pandp_id=2212016&amp;p_index=7&amp;p_retain_state=Y&amp;p_start=1&amp;p_action=&amp;p_back_list=LcNotificationList&amp;HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws">000000027535368</a>
+                
+                </td>
+    
+                
+                
+                
+                <td class="bodytext" width="12%" nowrap="">&nbsp;&nbsp;
+                
+                    0910-14361301
+                
+                </td>
+                
+                
+                <td class="bodytext" width="8%" nowrap="">&nbsp;&nbsp;02/13/2025 06:00 AM</td>
+                <td class="bodytext" width="20%" nowrap="">&nbsp;&nbsp;Jackson Chunaice</td>
+                <td class="bodytext" width="20%" nowrap="">&nbsp;&nbsp;chunaice.jackson@safeguardproperties.com</td>
+                <td class="bodytext" width="10%" nowrap="">&nbsp;&nbsp;Email</td>			
+                <td class="bodytext" width="10%" nowrap="">&nbsp;&nbsp;P&amp;P Denied</td>
+            </tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim_menu.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>		
+        
+            <tr bgcolor="#ffffff">
+                <td width="3%" bgcolor="#eeeeee">&nbsp;</td>			
+                <td class="bodytextbold"><input type="checkbox" name="p_file_id" value="63238857"></td>
+                <td width="3%" class="bodytext">8.&nbsp;</td>
+                <td class="bodytext" width="12%" nowrap="">&nbsp;&nbsp;
+                
+                    <a href="/servlet/RouterServlet?p_build_page=LcPandP&amp;p_btl_ni=3&amp;p_process_page=&amp;p_view=LC&amp;p_pandp_id=2212040&amp;p_index=8&amp;p_retain_state=Y&amp;p_start=1&amp;p_action=&amp;p_back_list=LcNotificationList&amp;HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws">000000027535368</a>
+                
+                </td>
+    
+                
+                
+                
+                <td class="bodytext" width="12%" nowrap="">&nbsp;&nbsp;
+                
+                    0910-14361301
+                
+                </td>
+                
+                
+                <td class="bodytext" width="8%" nowrap="">&nbsp;&nbsp;02/13/2025 11:00 AM</td>
+                <td class="bodytext" width="20%" nowrap="">&nbsp;&nbsp;Jackson Chunaice</td>
+                <td class="bodytext" width="20%" nowrap="">&nbsp;&nbsp;chunaice.jackson@safeguardproperties.com</td>
+                <td class="bodytext" width="10%" nowrap="">&nbsp;&nbsp;Email</td>			
+                <td class="bodytext" width="10%" nowrap="">&nbsp;&nbsp;P&amp;P Approved</td>
+            </tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim_menu.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>		
+        
+            <tr bgcolor="#EEEEEE">
+                <td width="3%" bgcolor="#eeeeee">&nbsp;</td>			
+                <td class="bodytextbold"><input type="checkbox" name="p_file_id" value="63238644"></td>
+                <td width="3%" class="bodytext">9.&nbsp;</td>
+                <td class="bodytext" width="12%" nowrap="">&nbsp;&nbsp;
+                
+                    <a href="/servlet/RouterServlet?p_build_page=LcPandP&amp;p_btl_ni=3&amp;p_process_page=&amp;p_view=LC&amp;p_pandp_id=2212000&amp;p_index=9&amp;p_retain_state=Y&amp;p_start=1&amp;p_action=&amp;p_back_list=LcNotificationList&amp;HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws">000000105730477</a>
+                
+                </td>
+    
+                
+                
+                
+                <td class="bodytext" width="12%" nowrap="">&nbsp;&nbsp;
+                
+                    0945-14751353
+                
+                </td>
+                
+                
+                <td class="bodytext" width="8%" nowrap="">&nbsp;&nbsp;02/12/2025 10:30 AM</td>
+                <td class="bodytext" width="20%" nowrap="">&nbsp;&nbsp;Reynoso Cynthia</td>
+                <td class="bodytext" width="20%" nowrap="">&nbsp;&nbsp;cynthia.reynoso@safeguardproperties.com</td>
+                <td class="bodytext" width="10%" nowrap="">&nbsp;&nbsp;Email</td>			
+                <td class="bodytext" width="10%" nowrap="">&nbsp;&nbsp;P&amp;P Approved</td>
+            </tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim_menu.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>		
+        
+            <tr bgcolor="#ffffff">
+                <td width="3%" bgcolor="#eeeeee">&nbsp;</td>			
+                <td class="bodytextbold"><input type="checkbox" name="p_file_id" value="63238948"></td>
+                <td width="3%" class="bodytext">10.&nbsp;</td>
+                <td class="bodytext" width="12%" nowrap="">&nbsp;&nbsp;
+                
+                    <a href="/servlet/RouterServlet?p_build_page=LcPandP&amp;p_btl_ni=3&amp;p_process_page=&amp;p_view=LC&amp;p_pandp_id=2212005&amp;p_index=10&amp;p_retain_state=Y&amp;p_start=1&amp;p_action=&amp;p_back_list=LcNotificationList&amp;HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws">000000103812830</a>
+                
+                </td>
+    
+                
+                
+                
+                <td class="bodytext" width="12%" nowrap="">&nbsp;&nbsp;
+                
+                    0919-25426469
+                
+                </td>
+                
+                
+                <td class="bodytext" width="8%" nowrap="">&nbsp;&nbsp;02/13/2025 04:00 PM</td>
+                <td class="bodytext" width="20%" nowrap="">&nbsp;&nbsp;Allen Nysha</td>
+                <td class="bodytext" width="20%" nowrap="">&nbsp;&nbsp;nysha.allen@safeguardproperties.com</td>
+                <td class="bodytext" width="10%" nowrap="">&nbsp;&nbsp;Email</td>			
+                <td class="bodytext" width="10%" nowrap="">&nbsp;&nbsp;P&amp;P Approved</td>
+            </tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim_menu.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>		
+        
+            <tr bgcolor="#EEEEEE">
+                <td width="3%" bgcolor="#eeeeee">&nbsp;</td>			
+                <td class="bodytextbold"><input type="checkbox" name="p_file_id" value="63238705"></td>
+                <td width="3%" class="bodytext">11.&nbsp;</td>
+                <td class="bodytext" width="12%" nowrap="">&nbsp;&nbsp;
+                
+                    <a href="/servlet/RouterServlet?p_build_page=LcPandP&amp;p_btl_ni=3&amp;p_process_page=&amp;p_view=LC&amp;p_pandp_id=2211931&amp;p_index=11&amp;p_retain_state=Y&amp;p_start=1&amp;p_action=&amp;p_back_list=LcNotificationList&amp;HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws">000000162423511</a>
+                
+                </td>
+    
+                
+                
+                
+                <td class="bodytext" width="12%" nowrap="">&nbsp;&nbsp;
+                
+                    0904-26874162
+                
+                </td>
+                
+                
+                <td class="bodytext" width="8%" nowrap="">&nbsp;&nbsp;02/12/2025 02:00 PM</td>
+                <td class="bodytext" width="20%" nowrap="">&nbsp;&nbsp;MEDLEY Robert</td>
+                <td class="bodytext" width="20%" nowrap="">&nbsp;&nbsp;Robert.medley@msionline.com</td>
+                <td class="bodytext" width="10%" nowrap="">&nbsp;&nbsp;Email</td>			
+                <td class="bodytext" width="10%" nowrap="">&nbsp;&nbsp;P&amp;P Approved</td>
+            </tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim_menu.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>		
+        
+            <tr bgcolor="#ffffff">
+                <td width="3%" bgcolor="#eeeeee">&nbsp;</td>			
+                <td class="bodytextbold"><input type="checkbox" name="p_file_id" value="63239122"></td>
+                <td width="3%" class="bodytext">12.&nbsp;</td>
+                <td class="bodytext" width="12%" nowrap="">&nbsp;&nbsp;
+                
+                    <a href="/servlet/RouterServlet?p_build_page=LcPandP&amp;p_btl_ni=3&amp;p_process_page=&amp;p_view=LC&amp;p_pandp_id=2212028&amp;p_index=12&amp;p_retain_state=Y&amp;p_start=1&amp;p_action=&amp;p_back_list=LcNotificationList&amp;HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws">000004771306208</a>
+                
+                </td>
+    
+                
+                
+                
+                <td class="bodytext" width="12%" nowrap="">&nbsp;&nbsp;
+                
+                    0915-287491
+                
+                </td>
+                
+                
+                <td class="bodytext" width="8%" nowrap="">&nbsp;&nbsp;02/14/2025 01:30 PM</td>
+                <td class="bodytext" width="20%" nowrap="">&nbsp;&nbsp;Bartz Kimberly</td>
+                <td class="bodytext" width="20%" nowrap="">&nbsp;&nbsp;Kimberly.bartz@msionline.com</td>
+                <td class="bodytext" width="10%" nowrap="">&nbsp;&nbsp;Email</td>			
+                <td class="bodytext" width="10%" nowrap="">&nbsp;&nbsp;P&amp;P Approved</td>
+            </tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim_menu.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>		
+        
+            <tr bgcolor="#EEEEEE">
+                <td width="3%" bgcolor="#eeeeee">&nbsp;</td>			
+                <td class="bodytextbold"><input type="checkbox" name="p_file_id" value="63239484"></td>
+                <td width="3%" class="bodytext">13.&nbsp;</td>
+                <td class="bodytext" width="12%" nowrap="">&nbsp;&nbsp;
+                
+                    <a href="/servlet/RouterServlet?p_build_page=LcPandP&amp;p_btl_ni=3&amp;p_process_page=&amp;p_view=LC&amp;p_pandp_id=2212146&amp;p_index=13&amp;p_retain_state=Y&amp;p_start=1&amp;p_action=&amp;p_back_list=LcNotificationList&amp;HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws">000004771042464</a>
+                
+                </td>
+    
+                
+                
+                
+                <td class="bodytext" width="12%" nowrap="">&nbsp;&nbsp;
+                
+                    0933-2180393
+                
+                </td>
+                
+                
+                <td class="bodytext" width="8%" nowrap="">&nbsp;&nbsp;02/19/2025 10:00 AM</td>
+                <td class="bodytext" width="20%" nowrap="">&nbsp;&nbsp;Reynoso Cynthia</td>
+                <td class="bodytext" width="20%" nowrap="">&nbsp;&nbsp;cynthia.reynoso@safeguardproperties.com</td>
+                <td class="bodytext" width="10%" nowrap="">&nbsp;&nbsp;Email</td>			
+                <td class="bodytext" width="10%" nowrap="">&nbsp;&nbsp;P&amp;P Denied</td>
+            </tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim_menu.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>		
+        
+            <tr bgcolor="#ffffff">
+                <td width="3%" bgcolor="#eeeeee">&nbsp;</td>			
+                <td class="bodytextbold"><input type="checkbox" name="p_file_id" value="63239484"></td>
+                <td width="3%" class="bodytext">14.&nbsp;</td>
+                <td class="bodytext" width="12%" nowrap="">&nbsp;&nbsp;
+                
+                    <a href="/servlet/RouterServlet?p_build_page=LcPandP&amp;p_btl_ni=3&amp;p_process_page=&amp;p_view=LC&amp;p_pandp_id=2212145&amp;p_index=14&amp;p_retain_state=Y&amp;p_start=1&amp;p_action=&amp;p_back_list=LcNotificationList&amp;HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws">000004771042464</a>
+                
+                </td>
+    
+                
+                
+                
+                <td class="bodytext" width="12%" nowrap="">&nbsp;&nbsp;
+                
+                    0933-2180393
+                
+                </td>
+                
+                
+                <td class="bodytext" width="8%" nowrap="">&nbsp;&nbsp;02/19/2025 10:00 AM</td>
+                <td class="bodytext" width="20%" nowrap="">&nbsp;&nbsp;Reynoso Cynthia</td>
+                <td class="bodytext" width="20%" nowrap="">&nbsp;&nbsp;cynthia.reynoso@safeguardproperties.com</td>
+                <td class="bodytext" width="10%" nowrap="">&nbsp;&nbsp;Email</td>			
+                <td class="bodytext" width="10%" nowrap="">&nbsp;&nbsp;P&amp;P Denied</td>
+            </tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim_menu.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>		
+        
+            <tr bgcolor="#EEEEEE">
+                <td width="3%" bgcolor="#eeeeee">&nbsp;</td>			
+                <td class="bodytextbold"><input type="checkbox" name="p_file_id" value="63239706"></td>
+                <td width="3%" class="bodytext">15.&nbsp;</td>
+                <td class="bodytext" width="12%" nowrap="">&nbsp;&nbsp;
+                
+                    <a href="/servlet/RouterServlet?p_build_page=LcPandP&amp;p_btl_ni=3&amp;p_process_page=&amp;p_view=LC&amp;p_pandp_id=2212132&amp;p_index=15&amp;p_retain_state=Y&amp;p_start=1&amp;p_action=&amp;p_back_list=LcNotificationList&amp;HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws">000000025434838</a>
+                
+                </td>
+    
+                
+                
+                
+                <td class="bodytext" width="12%" nowrap="">&nbsp;&nbsp;
+                
+                    0933-2816431
+                
+                </td>
+                
+                
+                <td class="bodytext" width="8%" nowrap="">&nbsp;&nbsp;02/19/2025 11:30 AM</td>
+                <td class="bodytext" width="20%" nowrap="">&nbsp;&nbsp;Jackson Chunaice</td>
+                <td class="bodytext" width="20%" nowrap="">&nbsp;&nbsp;chunaice.jackson@safeguardproperties.com</td>
+                <td class="bodytext" width="10%" nowrap="">&nbsp;&nbsp;Email</td>			
+                <td class="bodytext" width="10%" nowrap="">&nbsp;&nbsp;P&amp;P Approved</td>
+            </tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim_menu.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>		
+        
+            <tr bgcolor="#ffffff">
+                <td width="3%" bgcolor="#eeeeee">&nbsp;</td>			
+                <td class="bodytextbold"><input type="checkbox" name="p_file_id" value="63239713"></td>
+                <td width="3%" class="bodytext">16.&nbsp;</td>
+                <td class="bodytext" width="12%" nowrap="">&nbsp;&nbsp;
+                
+                    <a href="/servlet/RouterServlet?p_build_page=LcPandP&amp;p_btl_ni=3&amp;p_process_page=&amp;p_view=LC&amp;p_pandp_id=2212114&amp;p_index=16&amp;p_retain_state=Y&amp;p_start=1&amp;p_action=&amp;p_back_list=LcNotificationList&amp;HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws">000000025434838</a>
+                
+                </td>
+    
+                
+                
+                
+                <td class="bodytext" width="12%" nowrap="">&nbsp;&nbsp;
+                
+                    0933-2816431
+                
+                </td>
+                
+                
+                <td class="bodytext" width="8%" nowrap="">&nbsp;&nbsp;02/19/2025 12:00 PM</td>
+                <td class="bodytext" width="20%" nowrap="">&nbsp;&nbsp;Jackson Chunaice</td>
+                <td class="bodytext" width="20%" nowrap="">&nbsp;&nbsp;chunaice.jackson@safeguardproperties.com</td>
+                <td class="bodytext" width="10%" nowrap="">&nbsp;&nbsp;Email</td>			
+                <td class="bodytext" width="10%" nowrap="">&nbsp;&nbsp;P&amp;P Denied</td>
+            </tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim_menu.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>		
+        
+            <tr bgcolor="#EEEEEE">
+                <td width="3%" bgcolor="#eeeeee">&nbsp;</td>			
+                <td class="bodytextbold"><input type="checkbox" name="p_file_id" value="63239394"></td>
+                <td width="3%" class="bodytext">17.&nbsp;</td>
+                <td class="bodytext" width="12%" nowrap="">&nbsp;&nbsp;
+                
+                    <a href="/servlet/RouterServlet?p_build_page=LcPandP&amp;p_btl_ni=3&amp;p_process_page=&amp;p_view=LC&amp;p_pandp_id=2212111&amp;p_index=17&amp;p_retain_state=Y&amp;p_start=1&amp;p_action=&amp;p_back_list=LcNotificationList&amp;HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws">000000082346263</a>
+                
+                </td>
+    
+                
+                
+                
+                <td class="bodytext" width="12%" nowrap="">&nbsp;&nbsp;
+                
+                    0910-9472566
+                
+                </td>
+                
+                
+                <td class="bodytext" width="8%" nowrap="">&nbsp;&nbsp;02/18/2025 05:30 PM</td>
+                <td class="bodytext" width="20%" nowrap="">&nbsp;&nbsp;Jackson Chunaice</td>
+                <td class="bodytext" width="20%" nowrap="">&nbsp;&nbsp;chunaice.jackson@safeguardproperties.com</td>
+                <td class="bodytext" width="10%" nowrap="">&nbsp;&nbsp;Email</td>			
+                <td class="bodytext" width="10%" nowrap="">&nbsp;&nbsp;P&amp;P Approved</td>
+            </tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim_menu.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>		
+        
+            <tr bgcolor="#ffffff">
+                <td width="3%" bgcolor="#eeeeee">&nbsp;</td>			
+                <td class="bodytextbold"><input type="checkbox" name="p_file_id" value="63239395"></td>
+                <td width="3%" class="bodytext">18.&nbsp;</td>
+                <td class="bodytext" width="12%" nowrap="">&nbsp;&nbsp;
+                
+                    <a href="/servlet/RouterServlet?p_build_page=LcPandP&amp;p_btl_ni=3&amp;p_process_page=&amp;p_view=LC&amp;p_pandp_id=2212098&amp;p_index=18&amp;p_retain_state=Y&amp;p_start=1&amp;p_action=&amp;p_back_list=LcNotificationList&amp;HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws">000000082346263</a>
+                
+                </td>
+    
+                
+                
+                
+                <td class="bodytext" width="12%" nowrap="">&nbsp;&nbsp;
+                
+                    0910-9472566
+                
+                </td>
+                
+                
+                <td class="bodytext" width="8%" nowrap="">&nbsp;&nbsp;02/18/2025 05:30 PM</td>
+                <td class="bodytext" width="20%" nowrap="">&nbsp;&nbsp;Close Kevin</td>
+                <td class="bodytext" width="20%" nowrap="">&nbsp;&nbsp;RPA@safeguardproperties.com</td>
+                <td class="bodytext" width="10%" nowrap="">&nbsp;&nbsp;Email</td>			
+                <td class="bodytext" width="10%" nowrap="">&nbsp;&nbsp;P&amp;P Denied</td>
+            </tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim_menu.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>		
+        
+            <tr bgcolor="#EEEEEE">
+                <td width="3%" bgcolor="#eeeeee">&nbsp;</td>			
+                <td class="bodytextbold"><input type="checkbox" name="p_file_id" value="63239395"></td>
+                <td width="3%" class="bodytext">19.&nbsp;</td>
+                <td class="bodytext" width="12%" nowrap="">&nbsp;&nbsp;
+                
+                    <a href="/servlet/RouterServlet?p_build_page=LcPandP&amp;p_btl_ni=3&amp;p_process_page=&amp;p_view=LC&amp;p_pandp_id=2212097&amp;p_index=19&amp;p_retain_state=Y&amp;p_start=1&amp;p_action=&amp;p_back_list=LcNotificationList&amp;HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws">000000082346263</a>
+                
+                </td>
+    
+                
+                
+                
+                <td class="bodytext" width="12%" nowrap="">&nbsp;&nbsp;
+                
+                    0910-9472566
+                
+                </td>
+                
+                
+                <td class="bodytext" width="8%" nowrap="">&nbsp;&nbsp;02/18/2025 05:30 PM</td>
+                <td class="bodytext" width="20%" nowrap="">&nbsp;&nbsp;Close Kevin</td>
+                <td class="bodytext" width="20%" nowrap="">&nbsp;&nbsp;RPA@safeguardproperties.com</td>
+                <td class="bodytext" width="10%" nowrap="">&nbsp;&nbsp;Email</td>			
+                <td class="bodytext" width="10%" nowrap="">&nbsp;&nbsp;P&amp;P Denied</td>
+            </tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim_menu.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>		
+        
+            <tr bgcolor="#ffffff">
+                <td width="3%" bgcolor="#eeeeee">&nbsp;</td>			
+                <td class="bodytextbold"><input type="checkbox" name="p_file_id" value="63239306"></td>
+                <td width="3%" class="bodytext">20.&nbsp;</td>
+                <td class="bodytext" width="12%" nowrap="">&nbsp;&nbsp;
+                
+                    <a href="/servlet/RouterServlet?p_build_page=LcPandP&amp;p_btl_ni=3&amp;p_process_page=&amp;p_view=LC&amp;p_pandp_id=2212119&amp;p_index=20&amp;p_retain_state=Y&amp;p_start=1&amp;p_action=&amp;p_back_list=LcNotificationList&amp;HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws">000000027535368</a>
+                
+                </td>
+    
+                
+                
+                
+                <td class="bodytext" width="12%" nowrap="">&nbsp;&nbsp;
+                
+                    0910-14361301
+                
+                </td>
+                
+                
+                <td class="bodytext" width="8%" nowrap="">&nbsp;&nbsp;02/18/2025 10:30 AM</td>
+                <td class="bodytext" width="20%" nowrap="">&nbsp;&nbsp;Jackson Chunaice</td>
+                <td class="bodytext" width="20%" nowrap="">&nbsp;&nbsp;chunaice.jackson@safeguardproperties.com</td>
+                <td class="bodytext" width="10%" nowrap="">&nbsp;&nbsp;Email</td>			
+                <td class="bodytext" width="10%" nowrap="">&nbsp;&nbsp;P&amp;P Denied</td>
+            </tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim_menu.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>		
+        
+            <tr bgcolor="#EEEEEE">
+                <td width="3%" bgcolor="#eeeeee">&nbsp;</td>			
+                <td class="bodytextbold"><input type="checkbox" name="p_file_id" value="63239211"></td>
+                <td width="3%" class="bodytext">21.&nbsp;</td>
+                <td class="bodytext" width="12%" nowrap="">&nbsp;&nbsp;
+                
+                    <a href="/servlet/RouterServlet?p_build_page=LcPandP&amp;p_btl_ni=3&amp;p_process_page=&amp;p_view=LC&amp;p_pandp_id=2212099&amp;p_index=21&amp;p_retain_state=Y&amp;p_start=1&amp;p_action=&amp;p_back_list=LcNotificationList&amp;HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws">000000027535368</a>
+                
+                </td>
+    
+                
+                
+                
+                <td class="bodytext" width="12%" nowrap="">&nbsp;&nbsp;
+                
+                    0910-14361301
+                
+                </td>
+                
+                
+                <td class="bodytext" width="8%" nowrap="">&nbsp;&nbsp;02/18/2025 06:00 AM</td>
+                <td class="bodytext" width="20%" nowrap="">&nbsp;&nbsp;Close Kevin</td>
+                <td class="bodytext" width="20%" nowrap="">&nbsp;&nbsp;RPA@safeguardproperties.com</td>
+                <td class="bodytext" width="10%" nowrap="">&nbsp;&nbsp;Email</td>			
+                <td class="bodytext" width="10%" nowrap="">&nbsp;&nbsp;P&amp;P Denied</td>
+            </tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim_menu.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>		
+        
+            <tr bgcolor="#ffffff">
+                <td width="3%" bgcolor="#eeeeee">&nbsp;</td>			
+                <td class="bodytextbold"><input type="checkbox" name="p_file_id" value="63239036"></td>
+                <td width="3%" class="bodytext">22.&nbsp;</td>
+                <td class="bodytext" width="12%" nowrap="">&nbsp;&nbsp;
+                
+                    <a href="/servlet/RouterServlet?p_build_page=LcPandP&amp;p_btl_ni=3&amp;p_process_page=&amp;p_view=LC&amp;p_pandp_id=2212070&amp;p_index=22&amp;p_retain_state=Y&amp;p_start=1&amp;p_action=&amp;p_back_list=LcNotificationList&amp;HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws">000000105730477</a>
+                
+                </td>
+    
+                
+                
+                
+                <td class="bodytext" width="12%" nowrap="">&nbsp;&nbsp;
+                
+                    0945-14751353
+                
+                </td>
+                
+                
+                <td class="bodytext" width="8%" nowrap="">&nbsp;&nbsp;02/14/2025 07:00 AM</td>
+                <td class="bodytext" width="20%" nowrap="">&nbsp;&nbsp;Allen Nysha</td>
+                <td class="bodytext" width="20%" nowrap="">&nbsp;&nbsp;nysha.allen@safeguardproperties.com</td>
+                <td class="bodytext" width="10%" nowrap="">&nbsp;&nbsp;Email</td>			
+                <td class="bodytext" width="10%" nowrap="">&nbsp;&nbsp;P&amp;P Approved</td>
+            </tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim_menu.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>		
+        
+            <tr bgcolor="#EEEEEE">
+                <td width="3%" bgcolor="#eeeeee">&nbsp;</td>			
+                <td class="bodytextbold"><input type="checkbox" name="p_file_id" value="63239441"></td>
+                <td width="3%" class="bodytext">23.&nbsp;</td>
+                <td class="bodytext" width="12%" nowrap="">&nbsp;&nbsp;
+                
+                    <a href="/servlet/RouterServlet?p_build_page=LcPandP&amp;p_btl_ni=3&amp;p_process_page=&amp;p_view=LC&amp;p_pandp_id=2212135&amp;p_index=23&amp;p_retain_state=Y&amp;p_start=1&amp;p_action=&amp;p_back_list=LcNotificationList&amp;HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws">000000100683143</a>
+                
+                </td>
+    
+                
+                
+                
+                <td class="bodytext" width="12%" nowrap="">&nbsp;&nbsp;
+                
+                    0939-21104518
+                
+                </td>
+                
+                
+                <td class="bodytext" width="8%" nowrap="">&nbsp;&nbsp;02/19/2025 08:00 AM</td>
+                <td class="bodytext" width="20%" nowrap="">&nbsp;&nbsp;Jackson Chunaice</td>
+                <td class="bodytext" width="20%" nowrap="">&nbsp;&nbsp;chunaice.jackson@safeguardproperties.com</td>
+                <td class="bodytext" width="10%" nowrap="">&nbsp;&nbsp;Email</td>			
+                <td class="bodytext" width="10%" nowrap="">&nbsp;&nbsp;P&amp;P Approved</td>
+            </tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim_menu.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>		
+        
+            <tr bgcolor="#ffffff">
+                <td width="3%" bgcolor="#eeeeee">&nbsp;</td>			
+                <td class="bodytextbold"><input type="checkbox" name="p_file_id" value="63239096"></td>
+                <td width="3%" class="bodytext">24.&nbsp;</td>
+                <td class="bodytext" width="12%" nowrap="">&nbsp;&nbsp;
+                
+                    <a href="/servlet/RouterServlet?p_build_page=LcPandP&amp;p_btl_ni=3&amp;p_process_page=&amp;p_view=LC&amp;p_pandp_id=2212082&amp;p_index=24&amp;p_retain_state=Y&amp;p_start=1&amp;p_action=&amp;p_back_list=LcNotificationList&amp;HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws">000000173103805</a>
+                
+                </td>
+    
+                
+                
+                
+                <td class="bodytext" width="12%" nowrap="">&nbsp;&nbsp;
+                
+                    0923-23269410
+                
+                </td>
+                
+                
+                <td class="bodytext" width="8%" nowrap="">&nbsp;&nbsp;02/14/2025 12:00 PM</td>
+                <td class="bodytext" width="20%" nowrap="">&nbsp;&nbsp;Bartz Kimberly</td>
+                <td class="bodytext" width="20%" nowrap="">&nbsp;&nbsp;Kimberly.bartz@msionline.com</td>
+                <td class="bodytext" width="10%" nowrap="">&nbsp;&nbsp;Email</td>			
+                <td class="bodytext" width="10%" nowrap="">&nbsp;&nbsp;P&amp;P Denied</td>
+            </tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim_menu.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>		
+        
+            <tr bgcolor="#EEEEEE">
+                <td width="3%" bgcolor="#eeeeee">&nbsp;</td>			
+                <td class="bodytextbold"><input type="checkbox" name="p_file_id" value="63240453"></td>
+                <td width="3%" class="bodytext">25.&nbsp;</td>
+                <td class="bodytext" width="12%" nowrap="">&nbsp;&nbsp;
+                
+                    <a href="/servlet/RouterServlet?p_build_page=LcPandP&amp;p_btl_ni=3&amp;p_process_page=&amp;p_view=LC&amp;p_pandp_id=2212242&amp;p_index=25&amp;p_retain_state=Y&amp;p_start=1&amp;p_action=&amp;p_back_list=LcNotificationList&amp;HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws">000004771459379</a>
+                
+                </td>
+    
+                
+                
+                
+                <td class="bodytext" width="12%" nowrap="">&nbsp;&nbsp;
+                
+                    0933-1538892
+                
+                </td>
+                
+                
+                <td class="bodytext" width="8%" nowrap="">&nbsp;&nbsp;02/24/2025 10:30 AM</td>
+                <td class="bodytext" width="20%" nowrap="">&nbsp;&nbsp;Jackson Chunaice</td>
+                <td class="bodytext" width="20%" nowrap="">&nbsp;&nbsp;chunaice.jackson@safeguardproperties.com</td>
+                <td class="bodytext" width="10%" nowrap="">&nbsp;&nbsp;Email</td>			
+                <td class="bodytext" width="10%" nowrap="">&nbsp;&nbsp;P&amp;P Approved</td>
+            </tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim_menu.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>
+                <tr><td colspan="10" align="center" valign="top"><img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="100%" height="1" border="0"></td></tr>		
+        
+    
+    </tbody></table><table width="766" border="0" cellspacing="0" cellpadding="0" bgcolor="#eeeeee">
+            <tbody><tr><td>&nbsp;</td></tr>
+            <tr>
+                <td colspan="10" align="center" class="copyright">
+                
+    
+    
+    © 2000 - 2025 HomeTracker LP. All rights reserved.
+    
+    <br>
+    U.S. Patents: <a href="http://www.firstprestonht.com/patents/?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" target="_new">http://www.firstprestonht.com/patents/</a> U.S. Patent Pending.
+    <br>
+    
+                </td>
+            </tr>
+    </tbody></table>
+    <input type="hidden" name="p_build_page" value="LcNotificationList">
+    <input type="hidden" name="p_process_page" value="LcNotificationList">
+    <input type="hidden" name="p_view" value="">
+    
+    <input type="hidden" name="HTOWASP_CSRFTKN" value="LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws">
+    </form>
+    <script language="JavaScript">
+    
+        var tokenName = 'HTOWASP_CSRFTKN';
+        var tokenValue = 'LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws';
+    
+        function isHttpLinkColon(a){var b=0;if(a.length>0&&a.indexOf(":")===-1){b=1}return b}function isHttpLinkSlash(a){var b=0;if(a.substring(0,1)==="/"){b=1}return b}function isHttpLinkHTTP(a){var b=0;if(a.substring(0,4)==="http"){b=1}return b}function isHttpLink(a){var b=0;if(isHttpLinkHTTP(a)||isHttpLinkSlash(a)||isHttpLinkColon(a)){b=1}return b}function updateTag(a,b){var c=document.getElementsByTagName(a);for(i=0;i<c.length;i++){var d=c[i].getAttribute(b);if(d!=null&&d!=""){if(isHttpLink(d)){var e=d.indexOf("?");if(d.match(tokenName)==null){if(e!=-1){d=d+"&"+tokenName+"="+tokenValue}else{d=d+"?"+tokenName+"="+tokenValue}}c[i].setAttribute(b,d)}}}}function updateForms(){var a=document.getElementsByTagName("form");for(i=0;i<a.length;i++){var b=a[i].innerHTML;b+="<input type=hidden name="+tokenName+" value="+tokenValue+" />";a[i].innerHTML=b}}function updateImages(){updateTag("img","src")}function updateScripts(){updateTag("script","src")}function updateStyles(){updateTag("style","src")}function updateIFrames(){updateTag("iframe","src")}function updateFrames(){updateTag("frame","src")}function updateAreas(){updateTag("area","href")}function updateLinks(){updateTag("link","href")}function updateAnchors(){updateTag("a","href")}updateAnchors();updateAreas();updateFrames();updateIFrames();updateStyles();updateImages();	
+    </script>
+    <meta http-equiv="cache-control" content="no-cache"><meta http-equiv="expires" content="0"><meta http-equiv="pragma" content="no-cache">
+    
+    
+    
+    
+    
+    
+    
+    </body>
+    </html>
+    

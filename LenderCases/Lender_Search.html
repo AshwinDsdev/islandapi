@@ -1,0 +1,837 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lender Cases</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="cache-control" content="no-cache">
+    <meta http-equiv="expires" content="0">
+    <meta http-equiv="pragma" content="no-cache">
+    <link rel="stylesheet" href="/libraries/jquery-ui/css/jquery-ui-1.12.1.css">
+    <script src="/libraries/jquery/jquery-3.5.0.min.js"></script>
+    <script src="/libraries/jquery-ui/js/jquery-ui-1.12.1.js"></script>
+    <script src="/include/Common.js"></script>
+    <script src="/include/Validate.js"></script>
+    <script src="/include/RoboHelpCSH.js"></script>
+</head>
+
+<body topmargin="0" marginwidth="2" bottommargin="2" leftmargin="2" bgcolor="#eeeeee" onload="disableConveyed()">
+    <form name="main" action="/servlet/RouterServlet" method="POST" autocomplete="OFF">
+        
+        <input type="hidden" name="p_case_id" value="280355">
+        <input type="hidden" name="p_region_id" value="9">
+        <input type="hidden" name="p_view" value="LC">
+        
+        <input type="hidden" name="p_chg_conv_date" value="">
+        <input type="hidden" name="p_header_section" value="">
+        <input type="hidden" name="p_old_case_number1" value="0933">
+        <input type="hidden" name="p_old_case_number2" value="280355">    
+        <input type="hidden" name="p_original_case_number" value="0933-280355">
+        
+        <input type="hidden" name="p_process_page" value="Case">
+        <input type="hidden" name="p_build_page" value="Case">
+        <input type="hidden" name="p_rpt_back_list" value=""> 
+    
+        
+        <input type="hidden" name="js_changed" value="">
+        <input type="hidden" name="p_form_action" value="">
+    
+    <!--INCLUDE THE HEADER & SUBHEADER -->
+    
+    
+    
+    
+    <script language="JavaScript" src="/include/Common.js"></script>
+    <script language="JavaScript" src="/include/Validate.js"></script>
+    <script language="JavaScript" src="/include/RoboHelpCSH.js"></script>
+    <script src="/libraries/jquery/jquery-3.5.0.min.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        jQuery.noConflict();	
+        //alert(jQuery().jquery);   //To display the version of jQuery
+    </script>
+    <script language="JavaScript">
+    if (document.styleSheets[0].cssRules) {
+    crossrule=document.styleSheets[0].cssRules
+    } else if (document.styleSheets[0].rules) {
+    crossrule=document.styleSheets[0].rules }
+    if (false) {
+        crossrule[81].style.color = '#8E8E8E';
+        crossrule[99].style.color = '#8E8E8E';
+    }
+    
+    var isArchive = false;
+                 
+    
+        isArchive = true;
+    
+    
+    </script>
+    <style type="text/css">
+    /* Uncomment below to show maintenance message and commnet out the p_banner style currently active
+       Change the color, font-family and font-size if needed*/
+    /*#p_banner{
+        padding:10px; margin:0;
+        min-width:752px;
+        width:100%; height:38px;
+        background: url(/images/FPHT_LogoBarSegment_1px.png) top left repeat-x;
+        color: yellow;
+        font-family: Arial, Verdana, Geneva, Helvetica, sans-serif;
+        font-size: 16px;
+    }
+    */
+    
+    #p_banner{
+        padding:0; margin:0;
+        min-width:752px;
+        width:100%; height:38px;
+        background: url(/images/FPHT_LogoBarSegment_1px.png) top left repeat-x;
+    }
+    
+    #p_banner_center{
+        width:752px; height:43px;
+        margin:0;
+        padding:0;
+        border:0;outline:none;
+    }
+    body{margin:0px;}
+    </style>
+    <!-- Uncomment below to show maintenance message 
+    <div id="p_banner" ><b>UPCOMING SERVICE OUTAGE:</b> Thursday, August 11th - 12:00am to 6:00am Central</div></div>
+    -->
+    
+    <!-- Comment out below to show maintenance message-->
+    <div id="p_banner"><div id="p_banner_center"><a href="http://www.firstprestonht.com/?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" target="fphtWindow" id="fpht"><img src="/images/FPHT_LogoBar.png?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" height="43px" alt="A First Preston HT Company" border="0" align="top"></a></div></div>
+    
+    <table width="766" border="0" cellspacing="0" cellpadding="0" bgcolor="#ffffff">
+        
+        <tbody><tr>
+            <td valign="middle" width="175">&nbsp;</td>
+            <td width="200" align="middle">&nbsp;</td>
+            <td width="391" valign="middle" align="right" class="bodytext">
+                <img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" border="0" width="20px" height="3px"><br>
+            <a href="/servlet/RouterServlet?p_process_page=Logout&amp;HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" class="headerLinks ">Logout</a><img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" border="0" width="30px" height="1px">
+            </td>
+        </tr>
+            
+        <tr>
+            <td width="175" valign="bottom" rowspan="2" align="right">
+            
+                <a href="javascript:navigate('Home&amp;ni=0','Y', 'false')"><img src="/images/htlogo.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" border="0" alt="...............Home Tracker®..............." name="myLogo"></a><br>
+                <img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" border="0" width="20px" height="10px">
+            
+            </td>
+            <td valign="center" colspan="2" align="left" class="displayHeader" height="32px"><img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" border="0" width="40px" height="1px">
+            
+            Lender Center for Cenlar FSB (SubServicer) - Subservicer
+            
+            </td>
+        </tr>
+                                        
+    
+    
+        <tr>
+            <td width="591" colspan="2" valign="bottom" nowrap="">
+                <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                    <tbody><tr>
+                        
+                        <td nowrap="" bgcolor="#0056a6"><img src="/images/1begin.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="33" height="24" border="0/"></td>
+                        <td width="20%" align="center" nowrap="" bgcolor="#0056a6">&nbsp;&nbsp;
+                          
+                                
+                                    <a class="tab" href="javascript:navigate('Home&amp;ni=0','Y', false)">Home</a>
+                                                
+                        </td>					
+                        
+                        <td nowrap="" bgcolor="#e0791c"><img src="/images/1downend.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="36" height="24" border="0/"></td>
+                        <td width="20%" align="center" nowrap="" bgcolor="#e0791c">&nbsp;&nbsp;
+                          
+                                <a class="tab" href="javascript:navigate('CaseList&amp;ni=1','Y', false)">Lender Cases</a>
+                                                
+                        </td>
+                        
+                        <td nowrap="" bgcolor="#7f559e"><img src="/images/2downend.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="36" height="24" border="0/"></td>
+                        <td width="20%" align="center" nowrap="" bgcolor="#7f559e">&nbsp;&nbsp;
+                          
+                                
+                                    <a class="tab" href="javascript:navigate('ReportOptions&amp;ni=2','Y', false)">Reports</a>
+                                                    
+                             <!--a class="tab" href="javascript:navigate('ReportOptions&ni=2','Y')">Reports</a -->
+                        </td>
+                        
+                        <td nowrap="" bgcolor="#a61a18"><img src="/images/3downend.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="36" height="24" border="0/"></td>
+                        <td width="20%" align="center" nowrap="" bgcolor="#a61a18">&nbsp;&nbsp;
+                          
+                                <a class="tab" href="javascript:navigate('LcNotificationList&amp;ni=3','Y', false)">Notifications</a>
+                            
+                        </td>
+                        
+                        <td nowrap="" bgcolor="#007053"><img src="/images/4downend.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="36" height="24" border="0/"></td>
+                        <td width="20%" align="center" nowrap="" bgcolor="#007053">&nbsp;&nbsp;
+                          
+                                <a class="tab" href="javascript:navigate('User&amp;ni=4','Y', false)">Admin</a>
+                                
+                                
+                        </td>					
+                        
+                    </tr>
+                    <tr>
+                        
+                        <td bgcolor="white"></td>
+                        <td bgcolor="white"></td>
+                        
+                        <td bgcolor="#e0791c"></td>
+                        <td bgcolor="#e0791c"></td>
+                        
+                        <td bgcolor="white"></td>
+                        <td bgcolor="white"></td>
+                        
+                        <td bgcolor="white"></td>
+                        <td bgcolor="white"></td>
+                        
+                        <td bgcolor="white"></td>
+                        <td bgcolor="white"></td>
+                        
+                    </tr>
+                </tbody></table>
+            </td>
+        </tr>
+        
+        <tr>
+            <td width="100%" colspan="3" valign="Top" bgcolor="#e0791c" align="left">
+                <table border="0" cellspacing="0" cellpadding="0">
+                    <tbody><tr>
+                        <td align="left"><img src="/images/2end.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" border="0"></td>
+                        <td align="left" class="headerDivide">
+                        
+                        
+                        
+                                <a href="javascript:navigate('Case&amp;ni=1,0', '', false)" class="rlinks">Case Summary</a>	
+                        &nbsp;|
+                                        
+                        
+                        
+                        
+                                <a href="javascript:navigate('LcPandP&amp;ni=1,1', '', false)" class="rlinks">P&amp;P</a>	
+                        &nbsp;|
+                                        
+                        
+                        
+                        
+                                <a href="javascript:navigate('Note&amp;ni=1,3', '', false)" class="rlinks">Case Notes</a>	
+                        &nbsp;|
+                                        
+                        
+                        
+                        
+                                <a href="javascript:navigate('Attachment&amp;ni=1,4', '', false)" class="rlinks">Attachments</a>	
+                        &nbsp;|
+                                        
+                        
+                        
+                        
+                                <a href="javascript:navigate('LcQCInspection&amp;ni=1,5', '', false)" class="rlinks">QC Inspections</a>	
+                        &nbsp;|
+                                        
+                        
+                        
+                        
+                                <a href="javascript:navigate('PandPWCWL&amp;ni=1,6', '', false)" class="rlinks">Worklist</a>	
+                        </td>
+                    </tr>
+                </tbody></table>
+                
+            </td>
+        </tr>
+    </tbody></table>
+    
+    
+    <!--INCLUDE TIERTIARY NAV, IF ANY --> 
+    
+    
+    
+                     
+    
+    
+    
+    <table width="766" border="0" cellspacing="0" cellpadding="0" bgcolor="#ffffff">
+        <tbody><tr>
+            <td width="182" valign="middle" class="headline" bgcolor="#eeeeee">
+                <img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" border="0" width="15" height="1px">Case Summary
+                
+                    
+                    <input type="hidden" name="p_back_list" value="CaseList">
+                    <input type="hidden" name="p_start" value="1">
+                    <input type="hidden" name="p_action" value="REPOSITION">
+                    <input type="hidden" name="p_index" value="1">
+                    <input type="hidden" name="p_retain_state" value="Y">
+                    <input type="hidden" name="p_btl_ni" value="1">
+                    <input type="hidden" name="p_dash_choice_id" value="">
+                            
+            </td>
+            <td width="584" colspan="2" bgcolor="#a2512e">
+                <table border="0" cellpadding="0" cellspacing="0" height="24px" width="100%">
+                    <tbody><tr>
+                        <td width="36px"><img src="/images/2upends.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" border="0"></td>
+                        
+                        <td>&nbsp;&nbsp;<a href="javascript:hyperLink('/servlet/RouterServlet?p_build_page=CaseList&amp;p_start=1&amp;p_action=REPOSITION&amp;p_pointer=1&amp;p_retain_state=Y&amp;p_rpt_back_list=&amp;ni=1&amp;p_dash_choice_id=')" class="rlinks">Back To List</a>
+                        </td>
+                        <td valign="middle" width="30%" align="right" class="headerQuickSearch" nowrap="">Search: <select name="p_quick_search_by" class="bodytext"> <option value="QS_FNMA_LOAN">FNMA Loan #</option><option value="QS_LOAN">Servicer Loan #</option><option value="QS_ADDRESS">Address</option></select>&nbsp;<input class="input" type="text" name="p_quick_search_value" value="" size="12" maxlength="15" onkeypress="return checkQuickSearchSubmitForQSDropDown(event)">&nbsp;<input class="bodytextsmall" type="button" name="p_submit" value="GO" onclick="javascript:submitFromQSForQSDropDown()"><input type="hidden" name="p_quick_case_number"><input type="hidden" name="p_quick_loan_number"><input type="hidden" name="p_quick_fnma_loan_number"><input type="hidden" name="p_quick_address"><input type="hidden" name="p_quick_reo_number"><input type="hidden" name="p_quick_search_type_value"><input type="hidden" name="p_reset" value="Y"><input type="hidden" name="QUICKSEARCHUSED"><input type="hidden" name="p_quick_search_excel" value="">
+                        </td>
+                        
+                    </tr>
+                </tbody></table>
+            </td>
+        </tr>
+    </tbody></table>
+    
+    
+    <!-- Display User messages-->
+    <!-- This displays the user messages meant for the data entry pages -->
+    
+     
+    
+    <table width="766" border="0" cellspacing="0" cellpadding="2" bgcolor="#eeeeee">
+        <tbody><tr>
+            <td align="Left" width="15" class="bodytext" nowrap="">
+                <img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" border="0" width="15" height="1px">
+            </td>
+            <td align="Left" width="186px" class="bodytext" nowrap="">
+                <img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" border="0" width="186px" height="1px">
+            </td>
+            <td align="left" height="100%">
+                <table border="0" cellspacing="0" cellpadding="1" width="100%" height="100%">
+                    <tbody><tr class="caseInfoBorder">
+                        <td>
+                            <table border="0" cellspacing="0" cellpadding="2" width="100%" height="100%">
+                                <tbody><tr class="caseInfoContent">
+                                    <td valign="middle" align="right" width="100%">
+                                        <table border="0" cellspacing="0" cellpadding="0" width="100%">
+                                        <tbody><tr>
+                                            <!-- Display icons  for notes etc.-->
+                                            <td width="20%" align="left">
+                                            <img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" border="0" width="5px" height="1px">
+                                                
+                                                <a href="javascript:Notes('Case','&amp;p_case_id=280355','')">
+                                                
+                                                        <img src="/images/note_icon.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" border="0" alt="Case Notes">
+                                                    
+                                                </a>
+                                                
+                                                                                        
+                                                                                            
+                                            </td>
+                                            
+                                                <script>
+    function showppopupwin(clnt){
+        var URL = '/servlet/RouterServlet?p_build_page=LoanNumberValidation&p_from_case=1&p_client_id=' + clnt;
+          hWnd=homeTelosWindowOpen(URL,"popup","width=400,height=200,resizable=yes,scrollbars=yes")
+    
+    }
+    
+    function showMessage(){
+        var risk = document.main.p_servicer_risk_code.value;
+        if ( risk == '2'){
+            confirm ("By selecting the value of 'Lender' in the Servicer Risk field, the loan will be identified as such and no overallowables requests may be submitted. Select OK to continue or Cancel.");
+        }
+        
+    }
+    </script>
+    
+    <!-- Display Buttons (disable if 'view only' access) SAVE CANCEL NEW-->
+                                            
+                                            <td align="right" valign="middle">
+                                                
+                                                <input type="button" class="bodytext" value="Save" name="p_submit_button" onclick="javascript:doFormAction('SAVE')">
+                                                
+                                                <input type="button" class="bodytext" value="Cancel" name="p_submit_button" onclick="javascript:doFormAction('CANCEL')">
+                                                
+                                                <input type="button" class="bodytext" value="New" name="p_submit_button" onclick="javascript:showppopupwin('9')">
+                                                
+                                                <img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" border="0" width="25px" height="1px">
+                                            </td>
+                                            
+    
+                                        </tr>
+                                        </tbody></table>
+                                    </td>
+                                </tr>
+                            </tbody></table>
+                        </td>
+                    </tr>
+                </tbody></table>
+            </td>
+        </tr>
+    </tbody></table>
+    
+    
+    <!--END OF HEADER & SUBHEADER -->
+    
+    <table width="766" border="0" cellspacing="0" cellpadding="0" bgcolor="#eeeeee">
+    
+    
+    
+    
+    
+    
+    
+    
+        <tbody><tr><td>&nbsp;</td></tr>
+      
+      
+        
+        <tr>
+            <td width="3%"></td>		
+            <td align="right" nowrap="" class="">Case # </td>		
+            <td align="left" class="bodytext">		
+                <input type="text" name="p_case_numb" disabled="" maxlength="11" size="11" class="bodytext" value="0933-280355" onkeyup="autotab(this,4);">			
+            </td>
+            <td width="3%"></td>
+            <td align="right" nowrap="" class="bodytext"></td>
+            <td align="right" colspan="3" nowrap="" class="bodytext"></td>
+        </tr>
+    
+        <tr>
+            <td width="3%">
+            </td><td align="right" nowrap="" class="mandatory">Address &nbsp;</td>
+            <td align="left" colspan="4" class="bodytext"><input type="text" name="p_DISABLEDaddress1" disabled="" maxlength="50" size="50" class="bodytext" value="714 VAN SICLEN AVE" onchange="javascript:checkField('p_address1','')"></td>
+            <td align="right" nowrap="" class="disabled"></td>
+            <td class="disabled"></td>
+            <td align="right" nowrap="" class="bodytext"></td>
+            <td align="left" class="bodytext"></td>		
+        </tr>	
+        <tr>
+            <td width="3%">
+            </td><td class="bodytext">&nbsp;</td>
+            <td align="left" colspan="4" class="bodytext"><input type="text" name="p_DISABLEDaddress2" disabled="" maxlength="50" size="50" class="bodytext" value="" onchange="javascript:checkField('p_address2','')"></td>
+            <td align="right" nowrap="" class="bodytext"></td>
+            <td class="bodytext"></td>
+            <td align="right" nowrap="" class="bodytext"></td>
+            <td align="left" class="bodytext"></td>
+        </tr>
+        <tr>
+            <td width="3%">
+            </td><td align="right" nowrap="" class="mandatory">Zip<img name="errp_zip" id="errp_zip" border="0" width="10" height="10" src="/images/ErrorIndicator_off.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" onclick="javascript:alertErr('errp_zip')"></td>
+            <td class="bodytext">
+                <input type="text" name="p_DISABLEDzip" disabled="" maxlength="5" size="5" class="bodytext" value="11207" onchange="javascript:checkField('p_zip','zip_code')">
+                <input type="hidden" name="p_original_zip" value="11207">
+                
+            </td>
+            <td align="right" nowrap="" class="mandatory">City &nbsp;</td>
+            <td class="bodytext">
+                <input type="text" name="p_DISABLEDcity" disabled="" maxlength="30" size="20" class="bodytext" value="BROOKLYN" onchange="javascript:checkField('p_city','')">
+                <input type="hidden" name="p_original_city" value="BROOKLYN">
+            </td>
+            <td align="right" nowrap="" class="mandatory">State &nbsp;</td>
+            <td class="bodytext">
+                
+                <select name="p_DISABLEDstate" class="bodytext" disabled="" onchange="javascript:checkField('p_state','')" p_disabledstate"="" ','')"="">
+      <option value="" selected=""></option>
+      <option value="AL">AL-Alabama</option>
+      <option value="AK">AK-Alaska</option>
+      <option value="AZ">AZ-Arizona</option>
+      <option value="AR">AR-Arkansas</option>
+      <option value="CA">CA-California</option>
+      <option value="CO">CO-Colorado</option>
+      <option value="CT">CT-Connecticut</option>
+      <option value="DC">DC-Washington D.C.</option>
+      <option value="DE">DE-Delaware</option>
+      <option value="FL">FL-Florida</option>
+      <option value="GA">GA-Georgia</option>
+      <option value="HI">HI-Hawaii</option>
+      <option value="ID">ID-Idaho</option>
+      <option value="IL">IL-Illinois</option>
+      <option value="IN">IN-Indiana</option>
+      <option value="IA">IA-Iowa</option>
+      <option value="KS">KS-Kansas</option>
+      <option value="KY">KY-Kentucky</option>
+      <option value="LA">LA-Louisiana</option>
+      <option value="ME">ME-Maine</option>
+      <option value="MD">MD-Maryland</option>
+      <option value="MA">MA-Massachusetts</option>
+      <option value="MI">MI-Michigan</option>
+      <option value="MN">MN-Minnesota</option>
+      <option value="MS">MS-Mississippi</option>
+      <option value="MO">MO-Missouri</option>
+      <option value="MT">MT-Montana</option>
+      <option value="NE">NE-Nebraska</option>
+      <option value="NV">NV-Nevada</option>
+      <option value="NH">NH-New Hampshire</option>
+      <option value="NJ">NJ-New Jersey</option>
+      <option value="NM">NM-New Mexico</option>
+      <option selected="" value="NY">NY-New York</option>
+      <option value="NC">NC-North Carolina</option>
+      <option value="ND">ND-North Dakota</option>
+      <option value="OH">OH-Ohio</option>
+      <option value="OK">OK-Oklahoma</option>
+      <option value="OR">OR-Oregon</option>
+      <option value="PA">PA-Pennsylvania</option>
+      <option value="PR">PR-Puerto Rico</option>
+      <option value="RI">RI-Rhode Island</option>
+      <option value="SC">SC-South Carolina</option>
+      <option value="SD">SD-South Dakota</option>
+      <option value="TN">TN-Tennessee</option>
+      <option value="TX">TX-Texas</option>
+      <option value="UT">UT-Utah</option>
+      <option value="VT">VT-Vermont</option>
+      <option value="VA">VA-Virginia</option>
+      <option value="WA">WA-Washington</option>
+      <option value="WV">WV-West Virginia</option>
+      <option value="WI">WI-Wisconsin</option>
+      <option value="WY">WY-Wyoming</option>
+      <option value="AS">AS-American Samoa</option>
+      <option value="FM">FM-Micronesia</option>
+      <option value="GU">GU-Guam</option>
+      <option value="MH">MH-Marshall Islands</option>
+      <option value="MP">MP-N Mariana Islands</option>
+      <option value="PW">PW-Palau</option>
+      <option value="PR">PR-Puerto Rico</option>
+      <option value="UM">UM-Outlying Islands</option>
+      <option value="VI">VI-Virgin Islands</option>
+    </select>
+    
+    
+                <input type="hidden" name="p_original_state" value="NY">
+            </td>
+            <td width="10%"></td>
+        </tr>
+        <tr>
+            <td width="3%">
+            </td><td align="right" nowrap="" class="">County &nbsp;</td>
+            <td class="bodytext">
+                <input type="text" name="p_county" maxlength="20" size="20" class="bodytext" value="" onchange="javascript:checkField('p_county','')">
+                <input type="hidden" name="p_original_county" value="">
+            </td>
+            <td align="right" nowrap="" class="bodytext"></td>
+            <td class="bodytext" colspan="3"></td>
+            <td align="right" nowrap="" class="bodytext"></td>
+            <td align="left" class="bodytext"></td>
+        </tr>
+    
+        <tr>
+            <td width="3%">
+            </td><td align="right" nowrap="" class="">Investor &nbsp;</td>
+            <td class="bodytext">
+                <input type="text" name="p_asset_manager" disabled="" maxlength="30" size="20" class="bodytext" value="Fannie Mae">
+                <input type="hidden" name="p_asset_manager" value="Fannie Mae">
+            </td>
+            <td align="right" nowrap="" class="">FNMA Loan # &nbsp;</td>
+            <td class="bodytext">
+                <input type="text" name="p_DISABLEDfnma_loan_number" disabled="" maxlength="10" size="20" class="bodytext" value="4005614684">
+                
+            </td>
+            <td align="right" nowrap="" class="bodytext"></td>
+            <td align="left" class="bodytext"></td>
+        </tr>
+            
+    </tbody></table>
+    
+    <table width="766" border="0" cellspacing="0" cellpadding="0" bgcolor="#eeeeee">
+        <tbody><tr><td width="3%"></td><td colspan="5"><hr></td></tr>
+        <tr>
+            <td width="3%">
+            </td><td align="right" nowrap="" class="">Original Expected Conveyance Date<img name="errp_expected_conveyance_date" id="errp_expected_conveyance_date" border="0" width="10" height="10" src="/images/ErrorIndicator_off.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" onclick="javascript:alertErr('errp_expected_conveyance_date')"></td>
+            
+            <td align="left" class="bodytext"><input type="text" name="p_expected_conveyance_date" maxlength="10" size="10" class="bodytext" value="" onchange="javascript:chgConDate();javascript:checkField('p_expected_conveyance_date','date')">&nbsp;&nbsp;</td>
+            
+            <td align="right" nowrap="" class="bodytext">Current Expected Conveyance Date<img name="errp_current_expected_conveyance_date" id="errp_current_expected_conveyance_date" border="0" width="10" height="10" src="/images/ErrorIndicator_off.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" onclick="javascript:alertErr('errp_current_expected_conveyance_date')"></td>
+            <td align="left" class="bodytext"><input type="text" name="p_current_expected_conveyance_date" maxlength="10" size="10" class="bodytext" value="" onchange="javascript:checkField('p_current_expected_conveyance_date','date')"></td>
+                    
+            <td width="20%">
+        </td></tr>
+        <tr>
+            <td width="3%">
+            </td><td align="right" nowrap="" class="bodytext">Deed Recorded Date<img name="errp_deed_recorded_date" id="errp_deed_recorded_date" border="0" width="10" height="10" src="/images/ErrorIndicator_off.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" onclick="javascript:alertErr('errp_deed_recorded_date')"></td>
+            <td align="left" class="bodytext"><input type="text" name="p_deed_recorded_date" maxlength="10" size="10" class="bodytext" value="" onchange="javascript:checkField('p_deed_recorded_date','date')"></td>
+            <td align="right" nowrap="" class="bodytext">Foreclosure Deed/Trust Sale Date<img name="errp_foreclosure_date" id="errp_foreclosure_date" border="0" width="10" height="10" src="/images/ErrorIndicator_off.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" onclick="javascript:alertErr('errp_foreclosure_date')"></td>
+            <td align="left" class="bodytext"><input type="text" name="p_foreclosure_date" maxlength="10" size="10" class="bodytext" value="" onchange="javascript:checkField('p_foreclosure_date','date')"></td>
+            <td width="20%">
+        </td></tr>	
+        <tr>
+            <td width="3%">
+            </td><td align="right" nowrap="" class="bodytext"></td>
+            <td align="left" class="bodytext"></td>
+            <td align="right" nowrap="" class="bodytext">Redemption Expiration Date<img name="errp_redemption_expiration_date" id="errp_redemption_expiration_date" border="0" width="10" height="10" src="/images/ErrorIndicator_off.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" onclick="javascript:alertErr('errp_redemption_expiration_date')"></td>
+            <td align="left" class="bodytext"><input type="text" name="p_redemption_expiration_date" maxlength="10" size="10" class="bodytext" value="" onchange="javascript:checkField('p_redemption_expiration_date','date')"></td>
+            <td width="20%">
+        </td></tr>
+    
+        <tr><td width="3%"></td><td colspan="5"><hr></td></tr>
+         
+        <tr>
+            <td width="3%">
+            </td><td align="right" nowrap="" class="bodytext">Servicer&nbsp;&nbsp;&nbsp;</td>
+            <td align="left" class="bodytext"><input type="text" name="p_disabled_lender_name" disabled="" maxlength="80" size="30" value="Mid-Island Mortgage Corp." onchange="javascript:checkField('p_disabled_lender_name','')"></td>
+            <input type="hidden" name="p_lender_name" maxlength="80" value="Mid-Island Mortgage Corp." onchange="javascript:checkField('p_disabled_lender_name','')">
+        </tr>
+         
+        
+        <tr>
+        <td width="3%">
+            </td><td align="right" nowrap="" class="mandatory">Servicer Loan # &nbsp;</td>
+            <td align="left" class="bodytext"><input type="text" name="p_DISABLEDloan_number" disabled="" maxlength="15" size="20" class="bodytext" value="000000021485883" onchange="javascript:checkField('p_loan_number','')"></td>
+            <td align="right" nowrap="" class="">Last Paid Installment Date<img name="errp_last_paid_installment_date" id="errp_last_paid_installment_date" border="0" width="10" height="10" src="/images/ErrorIndicator_off.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" onclick="javascript:alertErr('errp_last_paid_installment_date')"></td>
+            <td align="left" class="bodytext"><input type="text" name="p_DISABLEDlast_paid_installment_date" disabled="" maxlength="15" size="15" class="bodytext" value="01/01/2009" onchange="javascript:checkField('p_last_paid_installment_date','date')"></td>
+            <td width="15%">
+        </td></tr>
+        <tr>
+            <td width="3%">
+            </td><td align="right" nowrap="" class="">Servicer Risk&nbsp;&nbsp;&nbsp;</td>
+            <td align="left" class="bodytext">
+            <select name="p_DISABLEDservicer_risk_code" disabled="" onchange="javascript:showMessage()">
+                        <option value=""></option>	
+                        <option value="2">Lender</option>
+                        <option selected="" value="1">Fannie Mae</option>										
+                        <option value="4">Shared-FNMAmarkets</option>
+                        <option value="3">Shared-Lendermarkets</option>
+            </select></td>
+            
+            <td align="right" nowrap="" class="">Unpaid Principal Balance<img name="errp_unpaid_principal_balance" id="errp_unpaid_principal_balance" border="0" width="10" height="10" src="/images/ErrorIndicator_off.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" onclick="javascript:alertErr('errp_unpaid_principal_balance')"></td>
+            <td class="bodytext"><input type="text" name="p_DISABLEDunpaid_principal_balance" disabled="" maxlength="15" size="15" class="bodytext" value="" onchange="javascript:checkField('p_unpaid_principal_balance','money')"></td>
+        </tr>
+         
+        <tr>
+            <td width="3%">
+            </td><td align="right" nowrap="" class="">Subservicer&nbsp;&nbsp;&nbsp;</td>
+            <td align="left" class="">
+            <input type="text" name="p_disabled_subservicer_name" size="30" maxlength="80" disabled="" value="Cenlar FSB (SubServicer)" onchange="javascript:checkField('p_disabled_subservicer_name','')"></td>
+            <input type="hidden" name="p_subservicer_name" maxlength="80" value="Cenlar FSB (SubServicer)" onchange="javascript:checkField('p_disabled_subservicer_name','')">
+            <!--  -->
+            <td width="3%">
+        </td></tr>
+         
+    </tbody></table>	
+    <input type="hidden" name="p_subservicer_id" value="835" onchange="javascript:checkField('p_disabled_subservicer_name','')">
+    <input type="hidden" name="p_lender_id" value="705" onchange="javascript:checkField('p_disabled_lender_name','')">	
+    <input type="hidden" name="p_vacancy_date" value="">
+    <input type="hidden" name="p_is_source_feed" value="Y">
+    <input type="hidden" name="p_chg_off_can_rew_code" value="">
+    <input type="hidden" name="p_from_case" value="0">
+    
+    <input type="hidden" name="p_address1" value="714 VAN SICLEN AVE">
+    <input type="hidden" name="p_address2" value="">
+    <input type="hidden" name="p_zip" value="11207">
+    <input type="hidden" name="p_city" value="BROOKLYN">
+    <input type="hidden" name="p_state" value="NY">
+    <input type="hidden" name="p_fnma_loan_number" value="4005614684">
+    <input type="hidden" name="p_loan_number" value="000000021485883">
+    <input type="hidden" name="p_last_paid_installment_date" value="01/01/2009">
+    <input type="hidden" name="p_servicer_risk_code" value="1">
+    <input type="hidden" name="p_unpaid_principal_balance" value="">
+    
+    
+    
+    
+                                            
+    <table width="800" border="0" cellspacing="0" cellpadding="0" bgcolor="#eeeeee">
+        <tbody><tr><td width="3%"></td><td colspan="4"><hr></td></tr>
+        <tr>
+            <td width="3%">
+            </td><td width="180px" align="center" nowrap="" class="bodytext">Parcel Number &nbsp;</td>
+            <td width="180px" align="center" nowrap="" class="bodytext">Tax Number &nbsp;</td>
+            <td width="180px" align="center" nowrap="" class="bodytext">Taxes Due &nbsp;</td>
+            <td width="180px" align="center" nowrap="" class="bodytext">Taxes Paid &nbsp;</td>
+        </tr>
+        <tr>
+            <td width="3%">
+            </td><td class="bodytext" align="center"><input type="text" name="p_parcel_number" maxlength="25" size="25" class="bodytext" value="" onchange="javascript:checkField('p_parcel_number','')"></td>
+            <td class="bodytext" align="center"><input type="text" name="p_tax_id" maxlength="25" size="25" class="bodytext" value="" onchange="javascript:checkField('p_tax_id','')"></td>
+            <td class="bodytext" align="center"><img name="errp_taxes_due_amt" id="errp_taxes_due_amt" border="0" width="10" height="10" src="/images/ErrorIndicator_off.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" onclick="javascript:alertErr('errp_taxes_due_amt')"><input type="text" name="p_taxes_due_amt" maxlength="15" size="10" class="bodytext" value="" onchange="javascript:checkField('p_taxes_due_amt','money')"></td>
+            <td class="bodytext" align="center"><img name="errp_taxes_paid_amt" id="errp_taxes_paid_amt" border="0" width="10" height="10" src="/images/ErrorIndicator_off.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" onclick="javascript:alertErr('errp_taxes_paid_amt')"><input type="text" name="p_taxes_paid_amt" maxlength="15" size="10" class="bodytext" value="" onchange="javascript:checkField('p_taxes_paid_amt','money')"></td>
+        </tr>
+        <tr>
+            <td width="3%">
+            </td><td class="bodytext" align="center"><input type="text" name="p_parcel_number1" maxlength="25" size="25" class="bodytext" value="" onchange="javascript:checkField('p_parcel_number1','')"></td>
+            <td class="bodytext" align="center"><input type="text" name="p_tax_number1" maxlength="25" size="25" class="bodytext" value="" onchange="javascript:checkField('p_tax_number1','')"></td>
+            <td class="bodytext" align="center"><img name="errp_taxes_due_amt1" id="errp_taxes_due_amt1" border="0" width="10" height="10" src="/images/ErrorIndicator_off.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" onclick="javascript:alertErr('errp_taxes_due_amt1')"><input type="text" name="p_taxes_due_amt1" maxlength="15" size="10" class="bodytext" value="" onchange="javascript:checkField('p_taxes_due_amt1','money')"></td>
+            <td class="bodytext" align="center"><img name="errp_taxes_paid_amt1" id="errp_taxes_paid_amt1" border="0" width="10" height="10" src="/images/ErrorIndicator_off.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" onclick="javascript:alertErr('errp_taxes_paid_amt1')"><input type="text" name="p_taxes_paid_amt1" maxlength="15" size="10" class="bodytext" value="" onchange="javascript:checkField('p_taxes_paid_amt1','money')"></td>
+        </tr>
+        <tr>
+            <td width="3%">
+            </td><td class="bodytext" align="center"><input type="text" name="p_parcel_number2" maxlength="25" size="25" class="bodytext" value="" onchange="javascript:checkField('p_parcel_number2','')"></td>
+            <td class="bodytext" align="center"><input type="text" name="p_tax_number2" maxlength="25" size="25" class="bodytext" value="" onchange="javascript:checkField('p_tax_number2','')"></td>
+            <td class="bodytext" align="center"><img name="errp_taxes_due_amt2" id="errp_taxes_due_amt2" border="0" width="10" height="10" src="/images/ErrorIndicator_off.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" onclick="javascript:alertErr('errp_taxes_due_amt2')"><input type="text" name="p_taxes_due_amt2" maxlength="15" size="10" class="bodytext" value="" onchange="javascript:checkField('p_taxes_due_amt2','money')"></td>
+            <td class="bodytext" align="center"><img name="errp_taxes_paid_amt2" id="errp_taxes_paid_amt2" border="0" width="10" height="10" src="/images/ErrorIndicator_off.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" onclick="javascript:alertErr('errp_taxes_paid_amt2')"><input type="text" name="p_taxes_paid_amt2" maxlength="15" size="10" class="bodytext" value="" onchange="javascript:checkField('p_taxes_paid_amt2','money')"></td>
+        </tr>
+        <tr>
+            <td width="3%">
+            </td><td class="bodytext" align="center"><input type="text" name="p_parcel_number3" maxlength="25" size="25" class="bodytext" value="" onchange="javascript:checkField('p_parcel_number3','')"></td>
+            <td class="bodytext" align="center"><input type="text" name="p_tax_number3" maxlength="25" size="25" class="bodytext" value="" onchange="javascript:checkField('p_tax_number3','')"></td>
+            <td class="bodytext" align="center"><img name="errp_taxes_due_amt3" id="errp_taxes_due_amt3" border="0" width="10" height="10" src="/images/ErrorIndicator_off.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" onclick="javascript:alertErr('errp_taxes_due_amt3')"><input type="text" name="p_taxes_due_amt3" maxlength="15" size="10" class="bodytext" value="" onchange="javascript:checkField('p_taxes_due_amt3','money')"></td>
+            <td class="bodytext" align="center"><img name="errp_taxes_paid_amt3" id="errp_taxes_paid_amt3" border="0" width="10" height="10" src="/images/ErrorIndicator_off.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" onclick="javascript:alertErr('errp_taxes_paid_amt3')"><input type="text" name="p_taxes_paid_amt3" maxlength="15" size="10" class="bodytext" value="" onchange="javascript:checkField('p_taxes_paid_amt3','money')"></td>
+        </tr>
+    </tbody></table>
+    <table width="766" border="0" cellspacing="0" cellpadding="0" bgcolor="#eeeeee">
+        <tbody><tr><td width="3%"></td><td colspan="10"><hr></td></tr>
+        <tr>
+            <td width="3%">
+            </td><td align="right" valign="middle" class="bodytext">Comments &nbsp;</td>
+            <td colspan="6" class="bodytext"><textarea name="p_comments" id="p_comments" cols="115" rows="4" onchange="javascript:checkField('p_comments','');;limitLength( this, 2000, event );" onkeyup="javascript:limitLength( this, 2000, event );"></textarea>
+        </td></tr>
+        <tr><td class="bodytext">&nbsp;</td></tr>
+    </tbody></table>
+    <table width="766" border="0" cellspacing="0" cellpadding="0" bgcolor="#eeeeee">
+        <tbody><tr><td width="3%"></td><td colspan="4"><hr></td></tr>
+        <tr><td width="3%"></td><td colspan="4" class="subheadline">Foreclosing Attorney</td></tr>
+        <tr>
+            <td width="3%">&nbsp;</td>
+            <td width="15%" class="bodytext" align="right">Business Name&nbsp;&nbsp;&nbsp;</td>
+            <td class="bodytext" width="25%" align="left" nowrap="">
+                <input type="text" name="p_fc_attorney_business_name" value="" size="32" onchange="javascript:checkField('p_fc_attorney_business_name','')">
+            </td>
+            <td align="right" class="disabled" width="12%">&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td width="3%">&nbsp;</td>
+            <td align="right" nowrap="" class="bodytext">Address&nbsp;&nbsp;&nbsp;</td>
+            <td align="left" colspan="3"><input type="text" name="p_fc_attorney_address1" size="30" value=""></td>
+        </tr>
+        <tr>
+            <td width="3%">&nbsp;</td>
+            <td>&nbsp;</td>
+            <td align="left" colspan="3"><input type="text" name="p_fc_attorney_address2" size="30" value=""></td>
+        </tr>
+        <tr>
+            <td width="3%">&nbsp;</td>
+            <td align="right" nowrap="" class="bodytext">City&nbsp;&nbsp;&nbsp;</td>
+            <td><input type="text" size="20" name="p_fc_attorney_city" value=""></td>
+            <td class="bodytext" align="right">State<img name="errp_fc_attorney_state" id="errp_fc_attorney_state" border="0" width="10" height="10" src="/images/ErrorIndicator_off.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" onclick="javascript:alertErr('errp_fc_attorney_state')">&nbsp;</td>
+            <td class="bodytext"><input type="text" size="2" maxlength="2" name="p_fc_attorney_state" value="" onchange="javascript:checkField('p_fc_attorney_state','name')">&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            Zip:<img name="errp_fc_attorney_zip" id="errp_fc_attorney_zip" border="0" width="10" height="10" src="/images/ErrorIndicator_off.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" onclick="javascript:alertErr('errp_fc_attorney_zip')"><input type="text" size="5" maxlength="5" name="p_fc_attorney_zip" value="" onchange="javascript:checkField('p_fc_attorney_zip','zip_code')"></td>
+        </tr>
+        <tr><td colspan="5">&nbsp;</td></tr>
+        <tr>
+            <td width="3px">&nbsp;</td>
+            <td align="right" class="bodytext" width="12%">Contact Name&nbsp;&nbsp;&nbsp;</td>
+            <td><input type="text" name="p_fc_attorney_contact_name" size="25" maxlength="80" value=""></td>
+            <td align="right" nowrap="" class="bodytext">Email<img name="errp_fc_attorney_email" id="errp_fc_attorney_email" border="0" width="10" height="10" src="/images/ErrorIndicator_off.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" onclick="javascript:alertErr('errp_fc_attorney_email')">&nbsp;</td>
+            <td><input type="text" size="25" name="p_fc_attorney_email" value="" onchange="javascript:checkField('p_fc_attorney_email','email')"></td>
+        </tr>		
+        <tr>
+            <td width="3%">&nbsp;</td>
+            <td align="right" nowrap="" class="bodytext">Phone<img name="errp_fc_attorney_phone" id="errp_fc_attorney_phone" border="0" width="10" height="10" src="/images/ErrorIndicator_off.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" onclick="javascript:alertErr('errp_fc_attorney_phone')"></td>
+            <td class="bodytext" nowrap="">
+                <input type="text" name="p_fc_attorney_phone1" maxlength="3" size="3" value="" onkeyup="autotab(this,3);" onchange="javascript:checkPhone('p_fc_attorney_phone1','p_fc_attorney_phone2', 'p_fc_attorney_phone3', 'p_fc_attorney_phone')">-
+                <input type="text" name="p_fc_attorney_phone2" maxlength="3" size="3" value="" onkeyup="autotab(this,3);" onchange="javascript:checkPhone('p_fc_attorney_phone1','p_fc_attorney_phone2', 'p_fc_attorney_phone3', 'p_fc_attorney_phone')">-
+                <input type="text" name="p_fc_attorney_phone3" maxlength="4" size="4" value="" onchange="javascript:checkPhone('p_fc_attorney_phone1','p_fc_attorney_phone2', 'p_fc_attorney_phone3', 'p_fc_attorney_phone')">&nbsp;
+                Ext<img name="errp_fc_attorney_phone_ext" id="errp_fc_attorney_phone_ext" border="0" width="10" height="10" src="/images/ErrorIndicator_off.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" onclick="javascript:alertErr('errp_fc_attorney_phone_ext')"><input type="text" name="p_fc_attorney_phone_ext" maxlength="5" size="4" class="bodytext" value="" onchange="javascript:checkField('p_fc_attorney_phone_ext','number')">
+            </td>
+            <td align="right" class="bodytext">Fax&nbsp;<img name="errp_fc_attorney_fax" id="errp_fc_attorney_fax" border="0" width="10" height="10" src="/images/ErrorIndicator_off.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" onclick="javascript:alertErr('errp_fc_attorney_fax')"></td>
+            <td>
+                <input type="text" name="p_fc_attorney_fax1" maxlength="3" size="3" value="" onkeyup="autotab(this,3);" onchange="javascript:checkPhone('p_fc_attorney_fax1','p_fc_attorney_fax2', 'p_fc_attorney_fax3', 'p_fc_attorney_fax')">-
+                <input type="text" name="p_fc_attorney_fax2" maxlength="3" size="3" value="" onkeyup="autotab(this,3);" onchange="javascript:checkPhone('p_fc_attorney_fax1','p_fc_attorney_fax2', 'p_fc_attorney_fax3', 'p_fc_attorney_fax')">-
+                <input type="text" name="p_fc_attorney_fax3" maxlength="4" size="4" value="" onchange="javascript:checkPhone('p_fc_attorney_fax1','p_fc_attorney_fax2', 'p_fc_attorney_fax3', 'p_fc_attorney_fax')">
+            </td>
+        </tr>
+    
+    </tbody></table>
+    <!--table width="775" border="0" cellspacing="0" cellpadding="0" bgcolor="#eeeeee" >
+        <tr><td width="3%"/><td colspan="10"><hr></td></tr>
+        <tr>
+            <td width="3%"/>
+            <td align="right" nowrap class="DISABLED">BCD Received Date&nbsp;&nbsp;&nbsp;</td>
+            <td align="left" class="DISABLED"><INPUT type="text" name="p_bcd_received_date" DISABLED maxlength="10" size="10" class="DISABLED" value=""></td>
+            <td align="right" nowrap class="DISABLED">BCD Reviewed Date&nbsp;&nbsp;&nbsp;</td>
+            <td align="left" class="DISABLED"><INPUT type="text" name="p_bcd_reviewed_date" DISABLED maxlength="10" size="10" class="DISABLED" value=""></td>
+            <td align="right" nowrap class="DISABLED">BCD Approved&nbsp;&nbsp;&nbsp;</td>
+            <td class="BODYTEXT">
+                <Select name="p_bcd_approved_yn" DISABLED class="DISABLED">
+                    <option value="" ></option>
+                    <option value="Y" >Yes</option>
+                    <option value="N" >No</option>
+                </select>
+            </td>
+            <td width="15%"/>
+        </tr>
+        <tr>
+            <td width="3%"/>
+            <td align=right vAlign="middle" class=DISABLED>BCD Comments &nbsp;</td>
+            <td colspan=6 class="bodytext">
+            <textarea name="p_comments"  id="p_comments"  cols="115"  rows="4"  DISABLED ></textarea>
+            </td>
+        </tr>
+    </table>-->
+    
+    
+    
+    
+    <table width="766" border="0" cellspacing="0" cellpadding="0" bgcolor="#eeeeee">
+        
+        <tbody><tr align="center">
+            <td colspan="10" align="center">
+            
+                <input type="button" class="bodytext" value="Save" name="p_submit_button" onclick="javascript:doFormAction('SAVE')">
+                <input type="button" class="bodytext" value="Cancel" name="p_submit_button" onclick="javascript:doFormAction('CANCEL')">
+                <input type="button" class="bodytext" value="New" name="p_submit_button" onclick="javascript:doFormAction('NEW')">
+                
+            </td>
+        </tr>
+        
+    
+        <tr><td class="bodytext">&nbsp;</td></tr>
+        <tr align="center">
+            <td width="3%">
+            </td><td width="30%">
+            </td><td align="right" class="bodytext" nowrap="">Created By:&nbsp;</td>
+            <td align="left" class="bodytext" nowrap="">System&nbsp;</td>
+            <td align="right" class="bodytext" nowrap="">Created On:&nbsp;</td>
+            <td align="left" class="bodytext" nowrap="">05/06/2009 12:43 PM&nbsp;</td>
+            <td width="30%">
+        </td></tr>
+        <tr align="center">
+            <td width="3%">
+            </td><td width="30%">
+            </td><td align="right" class="bodytext" nowrap="">Last Updated By:&nbsp;</td>
+            <td align="left" class="bodytext" nowrap="">System&nbsp;</td>
+            <td align="right" class="bodytext" nowrap="">Updated On:&nbsp;</td>
+            <td align="left" class="bodytext" nowrap="">03/13/2025 01:02 AM&nbsp;</td>
+            <td width="30%">
+        </td></tr>
+        
+        
+        
+        <tr><td class="bodytext">&nbsp;</td></tr>
+    </tbody></table>
+    <table width="766" border="0" cellspacing="0" cellpadding="0" bgcolor="#eeeeee">
+        <tbody><tr>
+            <td colspan="10" align="center" class="copyright">
+                
+    
+    
+    © 2000 - 2025 HomeTracker LP. All rights reserved.
+    
+    <br>
+    U.S. Patents: <a href="http://www.firstprestonht.com/patents/?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" target="_new">http://www.firstprestonht.com/patents/</a> U.S. Patent Pending.
+    <br>
+    
+            </td>
+        </tr>
+    </tbody></table>
+    <input type="hidden" name="p_created_by_name" value="System">
+    <input type="hidden" name="p_created_date" value="05/06/2009 12:43 PM">
+    <input type="hidden" name="p_property_mortgage_info_id" value="">
+    <input type="hidden" name="p_ht_case_id" value="">
+    <input type="hidden" name="p_associate_ac_case" value="">
+    
+    <input type="hidden" name="p_property_servicer_id" value="">
+    
+    <input type="hidden" name="HTOWASP_CSRFTKN" value="LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws">
+    </form>
+    <script language="JavaScript">
+    
+        var tokenName = 'HTOWASP_CSRFTKN';
+        var tokenValue = 'LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws';
+    
+        function isHttpLinkColon(a){var b=0;if(a.length>0&&a.indexOf(":")===-1){b=1}return b}function isHttpLinkSlash(a){var b=0;if(a.substring(0,1)==="/"){b=1}return b}function isHttpLinkHTTP(a){var b=0;if(a.substring(0,4)==="http"){b=1}return b}function isHttpLink(a){var b=0;if(isHttpLinkHTTP(a)||isHttpLinkSlash(a)||isHttpLinkColon(a)){b=1}return b}function updateTag(a,b){var c=document.getElementsByTagName(a);for(i=0;i<c.length;i++){var d=c[i].getAttribute(b);if(d!=null&&d!=""){if(isHttpLink(d)){var e=d.indexOf("?");if(d.match(tokenName)==null){if(e!=-1){d=d+"&"+tokenName+"="+tokenValue}else{d=d+"?"+tokenName+"="+tokenValue}}c[i].setAttribute(b,d)}}}}function updateForms(){var a=document.getElementsByTagName("form");for(i=0;i<a.length;i++){var b=a[i].innerHTML;b+="<input type=hidden name="+tokenName+" value="+tokenValue+" />";a[i].innerHTML=b}}function updateImages(){updateTag("img","src")}function updateScripts(){updateTag("script","src")}function updateStyles(){updateTag("style","src")}function updateIFrames(){updateTag("iframe","src")}function updateFrames(){updateTag("frame","src")}function updateAreas(){updateTag("area","href")}function updateLinks(){updateTag("link","href")}function updateAnchors(){updateTag("a","href")}updateAnchors();updateAreas();updateFrames();updateIFrames();updateStyles();updateImages();	
+    </script>
+    <meta http-equiv="cache-control" content="no-cache"><meta http-equiv="expires" content="0"><meta http-equiv="pragma" content="no-cache">
+    
+    
+    
+    </body>
+    </html>
+    
+    

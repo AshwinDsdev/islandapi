@@ -1,0 +1,1946 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Admin - User Profile</title>
+</head>
+
+<body topmargin="0" marginwidth="2" bottommargin="2" leftmargin="2" bgcolor="#EEEEEE"
+    onload="javascript:initializeLayers();CCInfoAlert();displayDiv()" id="ext-gen35" class=" ext-safari">
+    <form name="main" action="/servlet/RouterServlet" method="POST" autocomplete="OFF" id="ext-gen63">
+        <!--Include the header-->
+
+
+
+
+        <script language="JavaScript" src="/include/Common.js"></script>
+        <script language="JavaScript" src="/include/Validate.js"></script>
+        <script language="JavaScript" src="/include/RoboHelpCSH.js"></script>
+        <script src="/libraries/jquery/jquery-3.5.0.min.js" type="text/javascript"></script>
+        <script type="text/javascript">
+            jQuery.noConflict();
+            //alert(jQuery().jquery);   //To display the version of jQuery
+        </script>
+        <script language="JavaScript">
+            if (document.styleSheets[0].cssRules) {
+                crossrule = document.styleSheets[0].cssRules
+            } else if (document.styleSheets[0].rules) {
+                crossrule = document.styleSheets[0].rules
+            }
+            if (false) {
+                crossrule[81].style.color = '#8E8E8E';
+                crossrule[99].style.color = '#8E8E8E';
+            }
+
+            var isArchive = false;
+
+
+            isArchive = true;
+
+
+        </script>
+        <style type="text/css">
+            /* Uncomment below to show maintenance message and commnet out the p_banner style currently active
+       Change the color, font-family and font-size if needed*/
+            /*#p_banner{
+        padding:10px; margin:0;
+        min-width:752px;
+        width:100%; height:38px;
+        background: url(/images/FPHT_LogoBarSegment_1px.png) top left repeat-x;
+        color: yellow;
+        font-family: Arial, Verdana, Geneva, Helvetica, sans-serif;
+        font-size: 16px;
+    }
+    */
+
+            #p_banner {
+                padding: 0;
+                margin: 0;
+                min-width: 752px;
+                width: 100%;
+                height: 38px;
+                background: url(/images/FPHT_LogoBarSegment_1px.png) top left repeat-x;
+            }
+
+            #p_banner_center {
+                width: 752px;
+                height: 43px;
+                margin: 0;
+                padding: 0;
+                border: 0;
+                outline: none;
+            }
+
+            body {
+                margin: 0px;
+            }
+        </style>
+        <!-- Uncomment below to show maintenance message 
+    <div id="p_banner" ><b>UPCOMING SERVICE OUTAGE:</b> Thursday, August 11th - 12:00am to 6:00am Central</div></div>
+    -->
+
+        <!-- Comment out below to show maintenance message-->
+        <div id="p_banner">
+            <div id="p_banner_center"><a
+                    href="http://www.firstprestonht.com/?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws"
+                    target="fphtWindow" id="fpht"><img
+                        src="/images/FPHT_LogoBar.png?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws"
+                        height="43px" alt="A First Preston HT Company" border="0" align="top"></a></div>
+        </div>
+
+        <table width="766" border="0" cellspacing="0" cellpadding="0" bgcolor="#ffffff">
+
+            <tbody>
+                <tr>
+                    <td valign="middle" width="175">&nbsp;</td>
+                    <td width="200" align="middle">&nbsp;</td>
+                    <td width="391" valign="middle" align="right" class="bodytext">
+                        <img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws"
+                            border="0" width="20px" height="3px"><br>
+                        <a href="/servlet/RouterServlet?p_process_page=Logout&amp;HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws"
+                            class="headerLinks ">Logout</a><img
+                            src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws"
+                            border="0" width="30px" height="1px">
+                    </td>
+                </tr>
+
+                <tr>
+                    <td width="175" valign="bottom" rowspan="2" align="right">
+
+                        <a href="javascript:navigate('Home&amp;ni=0','Y', 'false')"><img
+                                src="/images/htlogo.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws"
+                                border="0" alt="...............Home Tracker®..............." name="myLogo"></a><br>
+                        <img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws"
+                            border="0" width="20px" height="10px">
+
+                    </td>
+                    <td valign="center" colspan="2" align="left" class="displayHeader" height="32px"><img
+                            src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws"
+                            border="0" width="40px" height="1px">
+
+                        Lender Center for Cenlar FSB (SubServicer) - Subservicer
+
+                    </td>
+                </tr>
+
+
+
+                <tr>
+                    <td width="591" colspan="2" valign="bottom" nowrap="">
+                        <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                            <tbody>
+                                <tr>
+
+                                    <td nowrap="" bgcolor="#0056a6"><img
+                                            src="/images/1begin.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws"
+                                            width="33" height="24" border="0/"></td>
+                                    <td width="20%" align="center" nowrap="" bgcolor="#0056a6">&nbsp;&nbsp;
+
+
+                                        <a class="tab" href="javascript:navigate('Home&amp;ni=0','Y', false)">Home</a>
+
+                                    </td>
+
+                                    <td nowrap="" bgcolor="#e0791c"><img
+                                            src="/images/1downend.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws"
+                                            width="36" height="24" border="0/"></td>
+                                    <td width="20%" align="center" nowrap="" bgcolor="#e0791c">&nbsp;&nbsp;
+
+                                        <a class="tab" href="javascript:navigate('CaseList&amp;ni=1','Y', false)">Lender
+                                            Cases</a>
+
+                                    </td>
+
+                                    <td nowrap="" bgcolor="#7f559e"><img
+                                            src="/images/2downend.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws"
+                                            width="36" height="24" border="0/"></td>
+                                    <td width="20%" align="center" nowrap="" bgcolor="#7f559e">&nbsp;&nbsp;
+
+
+                                        <a class="tab"
+                                            href="javascript:navigate('ReportOptions&amp;ni=2','Y', false)">Reports</a>
+
+                                        <!--a class="tab" href="javascript:navigate('ReportOptions&ni=2','Y')">Reports</a -->
+                                    </td>
+
+                                    <td nowrap="" bgcolor="#a61a18"><img
+                                            src="/images/3downend.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws"
+                                            width="36" height="24" border="0/"></td>
+                                    <td width="20%" align="center" nowrap="" bgcolor="#a61a18">&nbsp;&nbsp;
+
+                                        <a class="tab"
+                                            href="javascript:navigate('LcNotificationList&amp;ni=3','Y', false)">Notifications</a>
+
+                                    </td>
+
+                                    <td nowrap="" bgcolor="#007053"><img
+                                            src="/images/4downend.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws"
+                                            width="36" height="24" border="0/"></td>
+                                    <td width="20%" align="center" nowrap="" bgcolor="#007053" id="ext-gen62">
+                                        &nbsp;&nbsp;
+
+                                        <a class="tab" href="javascript:navigate('User&amp;ni=4','Y', false)">Admin</a>
+
+
+                                    </td>
+
+                                </tr>
+                                <tr>
+
+                                    <td bgcolor="white"></td>
+                                    <td bgcolor="white"></td>
+
+                                    <td bgcolor="white"></td>
+                                    <td bgcolor="white"></td>
+
+                                    <td bgcolor="white"></td>
+                                    <td bgcolor="white"></td>
+
+                                    <td bgcolor="white"></td>
+                                    <td bgcolor="white"></td>
+
+                                    <td bgcolor="#007053"></td>
+                                    <td bgcolor="#007053"></td>
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td width="100%" colspan="3" valign="Top" bgcolor="#007053" align="left">
+                        <table border="0" cellspacing="0" cellpadding="0">
+                            <tbody>
+                                <tr>
+                                    <td align="left"><img
+                                            src="/images/5end.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws"
+                                            border="0"></td>
+                                    <td align="left" class="headerDivide">
+
+
+
+                                        <a href="javascript:navigate('User&amp;ni=4,0', '', false)" class="rlinks">My
+                                            User Profile</a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+
+        <!--INCLUDE TIERTIARY NAV, IF ANY -->
+
+
+
+
+
+
+
+
+
+        <table width="766" border="0" cellspacing="0" cellpadding="0" bgcolor="#ffffff">
+            <tbody>
+                <tr>
+                    <td rowspan="2" bgcolor="#eeeeee"><img
+                            src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws"
+                            border="0" width="18px" height="1px">
+
+
+
+                        <input type="hidden" name="p_additional_param" value="">
+                        <input type="hidden" name="p_back_list" value="">
+                        <input type="hidden" name="p_start" value="">
+                        <input type="hidden" name="p_action" value="">
+                        <input type="hidden" name="p_index" value="">
+                        <input type="hidden" name="p_retain_state" value="">
+                        <input type="hidden" name="p_btl_ni" value="">
+                        <input type="hidden" name="p_dash_choice_id" value="">
+                        <input type="hidden" name="p_show_as_user_id" value="">
+                        <input type="hidden" name="p_show_as_user_client_id" value="">
+                        <input type="hidden" name="p_quick_searched" value="N">
+
+
+                    </td>
+
+                    <td rowspan="2" width="182" valign="middle" class="headline" bgcolor="#eeeeee" nowrap="">My User
+                        Profile</td>
+
+
+                    <td width="76%" colspan="2" bgcolor="#1e514a">
+                        <table border="0" cellpadding="0" cellspacing="0" height="24px" width="100%">
+                            <tbody>
+                                <tr>
+                                    <td width="36px"><img
+                                            src="/images/5upends.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws"
+                                            border="0"></td>
+
+                                    <td>&nbsp;
+                                    </td>
+                                    <td valign="middle" width="30%" align="right" class="headerQuickSearch" nowrap="">
+                                    </td>
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+
+        <!-- Display User messages -->
+        <!-- This displays the user messages meant for the data entry pages -->
+
+
+
+        <!-- Display the Icons, Buttons and the Basic Case Info information -->
+        <table width="766" border="0" cellspacing="0" cellpadding="2" bgcolor="#eeeeee">
+            <tbody>
+                <tr>
+                    <td align="Left" width="15" class="bodytext" nowrap="">
+                        <img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws"
+                            border="0" width="15" height="1px">
+                    </td>
+                    <td align="Left" width="186px" class="bodytext" nowrap="">
+                        <img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws"
+                            border="0" width="186px" height="1px">
+                    </td>
+                    <td align="left" height="100%">
+                        <table border="0" cellspacing="0" cellpadding="1" width="100%" height="100%">
+                            <tbody>
+                                <tr class="caseInfoBorder">
+                                    <td>
+                                        <table border="0" cellspacing="0" cellpadding="2" width="100%" height="100%">
+                                            <tbody>
+                                                <tr class="caseInfoContent">
+                                                    <td valign="middle" align="right" width="100%">
+                                                        <table border="0" cellspacing="0" cellpadding="0" width="100%">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <!-- Display icons  for notes etc.-->
+                                                                    <td width="20%" align="left" valign="middle">
+                                                                        <img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws"
+                                                                            border="0" width="5px" height="1px">
+
+                                                                        <img src="/images/lookup.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws"
+                                                                            border="0" alt="Locate a User">
+
+                                                                        <!-- Display Buttons SAVE CANCEL NEW-->
+                                                                    </td>
+                                                                    <td align="left" valign="middle">
+
+                                                                        <input type="button" class="bodytext"
+                                                                            value="Save" name="p_submit"
+                                                                            onclick="javascript:saveUserInfo()">
+                                                                        <input type="button" class="bodytext"
+                                                                            value="Cancel" name="p_submit"
+                                                                            onclick="javascript:doFormAction('CANCEL')">
+                                                                        <input type="button" class="bodytext"
+                                                                            value="New" name="p_submit"
+                                                                            onclick="javascript:checkValidPassword()"
+                                                                            disabled="">
+
+                                                                        <img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws"
+                                                                            border="0" width="25px" height="1px">
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                    <td align="right" valign="top" bgcolor="#eeeeee" height="100%">
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+
+
+        <table width="766" border="0" cellspacing="0" cellpadding="2" bgcolor="#EEEEEE">
+            <tbody>
+                <tr>
+                    <td colspan="2" align="left">
+                        <table width="60%" border="0" cellspacing="0" cellpadding="0">
+                            <tbody>
+                                <tr>
+                                    <td width="40%" nowrap=""><img
+                                            src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws"
+                                            border="0" width="16px" height="1px">
+                                    </td>
+                                    <td width="60%" align="center" nowrap="">
+                                        <img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws"
+                                            border="0" width="75px" height="1px">
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <table width="766" border="0" cellspacing="0" cellpadding="0">
+            <tbody>
+                <tr>
+                    <td width="3%"><img
+                            src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws"
+                            border="0" width="15px" height="1px"></td>
+                    <td class="subheadline" align="right">Login Information: </td>
+                    <td width="15%" align="right"></td>
+                    <td width="25%" align="right"></td>
+                    <td width="15%" align="right"></td>
+                    <td align="right"></td>
+                </tr>
+                <tr>
+                    <td class="bodytext" width="3%"><img
+                            src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws"
+                            border="0" width="15px" height="1px"></td>
+
+                    <td class="disabledMandatory" width="15%" align="right">Login&nbsp;&nbsp;&nbsp;</td>
+                    <td class="disabled" width="25%" align="left">
+                        <input disabled="" type="text" name="p_disabled_login" size="20" maxlength="50" value="bdpilz">
+                        <input type="hidden" name="p_login" value="bdpilz">
+                    </td>
+
+                    <td class="disabled" width="15%" align="right">Status&nbsp;&nbsp;</td>
+                    <td class="bodytext" align="left">
+                        <select disabled="" name="p_disabled_status" class="bodytext"
+                            onchange="javascript:checkField('p_status','')">
+                            <option selected="" value="A">Active</option>
+                            <option value="I">Inactive</option>
+                        </select>
+
+                        <input type="hidden" name="p_status" value="A">
+
+                    </td>
+                </tr>
+
+
+                <tr>
+                    <td width="3%"><img
+                            src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws"
+                            border="0" width="15px" height="1px"></td>
+                    <td class="subheadline" align="right">Change Password: </td>
+                    <td width="15%" align="right"></td>
+                    <td width="25%" align="right"></td>
+                    <td width="15%" align="right"></td>
+                    <td align="right"></td>
+                </tr>
+                <tr>
+                    <td class="bodytext" width="3%">&nbsp;</td>
+                    <td class="bodytext" width="3%">&nbsp;</td>
+                    <td class="bodytext" colspan="3">
+                        <p>To change your password, follow the steps below:</p>
+                        <ul class="passwdDetailDiv">
+                            <li>First enter your current password in the Verify Current Password box.(This may be
+                                prefilled for you.)</li>
+                            <li>Next, enter your new password in the Password box.(Cannot be a password used in the last
+                                6 months.)</li>
+                            <li>Next, enter your new password again in the Confirm Password box.</li>
+                            <li>Click Save.</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="bodytext" width="3%">&nbsp;</td>
+                    <td class="bodytext" width="20%" align="right">Verify Current Password<img
+                            name="errp_existing_password" id="errp_existing_password" border="0" width="10" height="10"
+                            src="/images/ErrorIndicator_off.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws"
+                            onclick="javascript:alertErr('errp_existing_password')"></td>
+
+                    <td class="bodytext" width="25%" align="left" nowrap=""><input type="password"
+                            name="p_dis_existing_password" size="20" maxlength="20"
+                            onchange="javascript:checkField('p_existing_password','')"></td>
+                    <input type="hidden" name="p_existing_password" value="!)!)!)!)!^">
+
+                </tr>
+                <tr>
+                    <td class="bodytext" width="3%">&nbsp;</td>
+                    <td class="mandatory" width="15%" align="right">Password<img name="errp_password" id="errp_password"
+                            border="0" width="10" height="10"
+                            src="/images/ErrorIndicator_off.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws"
+                            onclick="javascript:alertErr('errp_password')"></td>
+
+                    <td class="bodytext" width="25%" align="left" nowrap=""><input type="password" name="p_password"
+                            size="20" maxlength="20" value="!)!)!)!)!^" onchange="javascript:isUpdatedPasswordValid();">
+                    </td>
+
+                    <td class="mandatory" width="15%" align="right" nowrap="">Confirm Password<img
+                            name="errp_confirm_password" id="errp_confirm_password" border="0" width="10" height="10"
+                            src="/images/ErrorIndicator_off.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws"
+                            onclick="javascript:alertErr('errp_confirm_password')"></td>
+
+                    <td class="bodytext" width="42%" align="left" nowrap=""><input type="password"
+                            name="p_confirm_password" size="20" maxlength="20" value="!)!)!)!)!^"
+                            onchange="javascript:checkField('p_confirm_password','')">
+
+
+                    </td>
+                </tr>
+                <tr>
+                    <td width="3%"><img
+                            src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws"
+                            border="0" width="15px" height="1px"></td>
+                    <td class="subheadline" align="right">Set Password: </td>
+                    <td width="15%" align="right"></td>
+                    <td width="25%" align="right"></td>
+                    <td width="15%" align="right"></td>
+                    <td align="right"></td>
+                </tr>
+                <tr>
+                    <td class="bodytext" width="3%">&nbsp;</td>
+                    <td class="bodytext" width="3%">&nbsp;</td>
+                    <td class="bodytext" colspan="3">
+
+                        <p>Passwords must meet the requirements below:</p>
+                        <ul class="passwdDetailDiv">
+                            <li id="disp_1" style="display:block">Must contain at least 8 characters, but not more than
+                                20 characters</li>
+                            <li id="disp_2" style="display:block">Must contain at least one letter</li>
+                            <li id="disp_3" style="display:block">Must contain at least one number</li>
+                            <li id="disp_4" style="display:block">Must contain at least one symbol { - + ? * $ ^ . \ | `
+                                ~ ! @ # % &amp; _ = : ; ' , / }</li>
+                            <li id="disp_5" style="display:block">Password cannot contain user login </li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="3%"><img
+                            src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws"
+                            border="0" width="15px" height="1px"></td>
+                    <td class="subheadline" align="right">Security Questions: </td>
+                    <td width="15%" align="right"></td>
+                    <td width="25%" align="right"></td>
+                    <td width="15%" align="right"></td>
+                    <td align="right"></td>
+                </tr>
+
+
+                <tr>
+                    <td class="bodytext" width="3%">&nbsp;</td>
+                    <td class="mandatory" width="15%" align="right">1. &nbsp;&nbsp;</td>
+                    <td rowspan="1" width="25%" nowrap="" class="bodytext" colspan="3">
+                        <div id="sec-questions" name="sec-questions">
+                            <select name="p_sec_questions_1" id="p_sec_questions_1"
+                                onchange="javascript:checkField('p_sec_questions_1','')">
+                                <option value=""></option>
+
+                                <option value="650001">What is your favorite song?</option>
+
+                                <option value="650002" disabled="">What is your favorite beverage?</option>
+
+                                <option selected="" value="650003" disabled="">What is your mother's maiden name?
+                                </option>
+
+                                <option value="650004">What city were you born in?</option>
+
+                                <option value="650005">What is your favorite movie?</option>
+
+                                <option value="650006">What is your favorite dessert?</option>
+
+                                <option value="650007">What is your favorite board game?</option>
+
+                                <option value="650008">What is the date of your anniversary?</option>
+
+                                <option value="650009" disabled="">What is your favorite pizza topping?</option>
+
+                                <option value="650010" disabled="">What was the color of your first automobile?</option>
+
+                                <option value="650011">What was the name of your first pet?</option>
+
+                                <option value="650012">Who is your favorite author?</option>
+
+                                <option value="650013">What was the name of your first girlfriend/boyfriend?</option>
+
+                                <option value="650014">What is your favorite vacation spot?</option>
+
+                                <option value="650015" disabled="">What is your favorite sports team?</option>
+
+                            </select><input type="hidden" name="p_sec_questions_id_old_1" value="650003">
+                            <input type="hidden" name="p_security_answer_old_1" value="Meidinger">
+                            <input type="hidden" name="p_sec_questions_question_id_1" value="90757">
+
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="bodytext" width="3%">&nbsp;</td>
+                    <td class="bodytext" width="15%" align="right">&nbsp;</td>
+                    <td class="mandatory" width="40%" colspan="3" align="left">
+                        <div style="float:left">
+                            <div style="padding-left: 20px; width: 50px; float:left" id="ext-gen324">Answer</div>
+                            <div style="float:left">
+
+                                <input type="text"
+                                    style="width: 250px; box-sizing: border-box; -moz-box-sizing:border-box; -webkit-box-sizing:border-box;"
+                                    size="25" id="p_security_answer_1" name="p_security_answer_1" maxlength="50"
+                                    value="Meidinger" onchange="javascript:checkField('p_security_answer_1','')">
+                                (max 50 characters)
+
+                            </div>
+                        </div>
+
+                    </td>
+
+                </tr>
+
+
+                <tr>
+                    <td class="bodytext" width="3%">&nbsp;</td>
+                    <td class="mandatory" width="15%" align="right">2. &nbsp;&nbsp;</td>
+                    <td rowspan="1" width="25%" nowrap="" class="bodytext" colspan="3">
+                        <div id="sec-questions" name="sec-questions">
+                            <select name="p_sec_questions_2" id="p_sec_questions_2"
+                                onchange="javascript:checkField('p_sec_questions_2','')">
+                                <option value=""></option>
+
+                                <option value="650001">What is your favorite song?</option>
+
+                                <option value="650002" disabled="">What is your favorite beverage?</option>
+
+                                <option value="650003" disabled="">What is your mother's maiden name?</option>
+
+                                <option value="650004">What city were you born in?</option>
+
+                                <option value="650005">What is your favorite movie?</option>
+
+                                <option value="650006">What is your favorite dessert?</option>
+
+                                <option value="650007">What is your favorite board game?</option>
+
+                                <option value="650008">What is the date of your anniversary?</option>
+
+                                <option value="650009" disabled="">What is your favorite pizza topping?</option>
+
+                                <option selected="" value="650010" disabled="">What was the color of your first
+                                    automobile?</option>
+
+                                <option value="650011">What was the name of your first pet?</option>
+
+                                <option value="650012">Who is your favorite author?</option>
+
+                                <option value="650013">What was the name of your first girlfriend/boyfriend?</option>
+
+                                <option value="650014">What is your favorite vacation spot?</option>
+
+                                <option value="650015" disabled="">What is your favorite sports team?</option>
+
+                            </select><input type="hidden" name="p_sec_questions_id_old_2" value="650010">
+                            <input type="hidden" name="p_security_answer_old_2" value="black">
+                            <input type="hidden" name="p_sec_questions_question_id_2" value="90758">
+
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="bodytext" width="3%">&nbsp;</td>
+                    <td class="bodytext" width="15%" align="right">&nbsp;</td>
+                    <td class="mandatory" width="40%" colspan="3" align="left">
+                        <div style="float:left">
+                            <div style="padding-left: 20px; width: 50px; float:left" id="ext-gen324">Answer</div>
+                            <div style="float:left">
+
+                                <input type="text"
+                                    style="width: 250px; box-sizing: border-box; -moz-box-sizing:border-box; -webkit-box-sizing:border-box;"
+                                    size="25" id="p_security_answer_2" name="p_security_answer_2" maxlength="50"
+                                    value="black" onchange="javascript:checkField('p_security_answer_2','')">
+                                (max 50 characters)
+
+                            </div>
+                        </div>
+
+                    </td>
+
+                </tr>
+
+
+                <tr>
+                    <td class="bodytext" width="3%">&nbsp;</td>
+                    <td class="mandatory" width="15%" align="right">3. &nbsp;&nbsp;</td>
+                    <td rowspan="1" width="25%" nowrap="" class="bodytext" colspan="3">
+                        <div id="sec-questions" name="sec-questions">
+                            <select name="p_sec_questions_3" id="p_sec_questions_3"
+                                onchange="javascript:checkField('p_sec_questions_3','')">
+                                <option value=""></option>
+
+                                <option value="650001">What is your favorite song?</option>
+
+                                <option value="650002" disabled="">What is your favorite beverage?</option>
+
+                                <option value="650003" disabled="">What is your mother's maiden name?</option>
+
+                                <option value="650004">What city were you born in?</option>
+
+                                <option value="650005">What is your favorite movie?</option>
+
+                                <option value="650006">What is your favorite dessert?</option>
+
+                                <option value="650007">What is your favorite board game?</option>
+
+                                <option value="650008">What is the date of your anniversary?</option>
+
+                                <option value="650009" disabled="">What is your favorite pizza topping?</option>
+
+                                <option value="650010" disabled="">What was the color of your first automobile?</option>
+
+                                <option value="650011">What was the name of your first pet?</option>
+
+                                <option value="650012">Who is your favorite author?</option>
+
+                                <option value="650013">What was the name of your first girlfriend/boyfriend?</option>
+
+                                <option value="650014">What is your favorite vacation spot?</option>
+
+                                <option selected="" value="650015" disabled="">What is your favorite sports team?
+                                </option>
+
+                            </select><input type="hidden" name="p_sec_questions_id_old_3" value="650015">
+                            <input type="hidden" name="p_security_answer_old_3" value="cardinals">
+                            <input type="hidden" name="p_sec_questions_question_id_3" value="90759">
+
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="bodytext" width="3%">&nbsp;</td>
+                    <td class="bodytext" width="15%" align="right">&nbsp;</td>
+                    <td class="mandatory" width="40%" colspan="3" align="left">
+                        <div style="float:left">
+                            <div style="padding-left: 20px; width: 50px; float:left" id="ext-gen324">Answer</div>
+                            <div style="float:left">
+
+                                <input type="text"
+                                    style="width: 250px; box-sizing: border-box; -moz-box-sizing:border-box; -webkit-box-sizing:border-box;"
+                                    size="25" id="p_security_answer_3" name="p_security_answer_3" maxlength="50"
+                                    value="cardinals" onchange="javascript:checkField('p_security_answer_3','')">
+                                (max 50 characters)
+
+                            </div>
+                        </div>
+
+                    </td>
+
+                </tr>
+
+
+                <tr>
+                    <td class="bodytext" width="3%">&nbsp;</td>
+                    <td class="mandatory" width="15%" align="right">4. &nbsp;&nbsp;</td>
+                    <td rowspan="1" width="25%" nowrap="" class="bodytext" colspan="3">
+                        <div id="sec-questions" name="sec-questions">
+                            <select name="p_sec_questions_4" id="p_sec_questions_4"
+                                onchange="javascript:checkField('p_sec_questions_4','')">
+                                <option value=""></option>
+
+                                <option value="650001">What is your favorite song?</option>
+
+                                <option selected="" value="650002" disabled="">What is your favorite beverage?</option>
+
+                                <option value="650003" disabled="">What is your mother's maiden name?</option>
+
+                                <option value="650004">What city were you born in?</option>
+
+                                <option value="650005">What is your favorite movie?</option>
+
+                                <option value="650006">What is your favorite dessert?</option>
+
+                                <option value="650007">What is your favorite board game?</option>
+
+                                <option value="650008">What is the date of your anniversary?</option>
+
+                                <option value="650009" disabled="">What is your favorite pizza topping?</option>
+
+                                <option value="650010" disabled="">What was the color of your first automobile?</option>
+
+                                <option value="650011">What was the name of your first pet?</option>
+
+                                <option value="650012">Who is your favorite author?</option>
+
+                                <option value="650013">What was the name of your first girlfriend/boyfriend?</option>
+
+                                <option value="650014">What is your favorite vacation spot?</option>
+
+                                <option value="650015" disabled="">What is your favorite sports team?</option>
+
+                            </select><input type="hidden" name="p_sec_questions_id_old_4" value="650002">
+                            <input type="hidden" name="p_security_answer_old_4" value="mountain dew">
+                            <input type="hidden" name="p_sec_questions_question_id_4" value="90760">
+
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="bodytext" width="3%">&nbsp;</td>
+                    <td class="bodytext" width="15%" align="right">&nbsp;</td>
+                    <td class="mandatory" width="40%" colspan="3" align="left">
+                        <div style="float:left">
+                            <div style="padding-left: 20px; width: 50px; float:left" id="ext-gen324">Answer</div>
+                            <div style="float:left">
+
+                                <input type="text"
+                                    style="width: 250px; box-sizing: border-box; -moz-box-sizing:border-box; -webkit-box-sizing:border-box;"
+                                    size="25" id="p_security_answer_4" name="p_security_answer_4" maxlength="50"
+                                    value="mountain dew" onchange="javascript:checkField('p_security_answer_4','')">
+                                (max 50 characters)
+
+                            </div>
+                        </div>
+
+                    </td>
+
+                </tr>
+
+
+                <tr>
+                    <td class="bodytext" width="3%">&nbsp;</td>
+                    <td class="mandatory" width="15%" align="right">5. &nbsp;&nbsp;</td>
+                    <td rowspan="1" width="25%" nowrap="" class="bodytext" colspan="3">
+                        <div id="sec-questions" name="sec-questions">
+                            <select name="p_sec_questions_5" id="p_sec_questions_5"
+                                onchange="javascript:checkField('p_sec_questions_5','')">
+                                <option value=""></option>
+
+                                <option value="650001">What is your favorite song?</option>
+
+                                <option value="650002" disabled="">What is your favorite beverage?</option>
+
+                                <option value="650003" disabled="">What is your mother's maiden name?</option>
+
+                                <option value="650004">What city were you born in?</option>
+
+                                <option value="650005">What is your favorite movie?</option>
+
+                                <option value="650006">What is your favorite dessert?</option>
+
+                                <option value="650007">What is your favorite board game?</option>
+
+                                <option value="650008">What is the date of your anniversary?</option>
+
+                                <option selected="" value="650009" disabled="">What is your favorite pizza topping?
+                                </option>
+
+                                <option value="650010" disabled="">What was the color of your first automobile?</option>
+
+                                <option value="650011">What was the name of your first pet?</option>
+
+                                <option value="650012">Who is your favorite author?</option>
+
+                                <option value="650013">What was the name of your first girlfriend/boyfriend?</option>
+
+                                <option value="650014">What is your favorite vacation spot?</option>
+
+                                <option value="650015" disabled="">What is your favorite sports team?</option>
+
+                            </select><input type="hidden" name="p_sec_questions_id_old_5" value="650009">
+                            <input type="hidden" name="p_security_answer_old_5" value="pepperoni">
+                            <input type="hidden" name="p_sec_questions_question_id_5" value="90761">
+
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="bodytext" width="3%">&nbsp;</td>
+                    <td class="bodytext" width="15%" align="right">&nbsp;</td>
+                    <td class="mandatory" width="40%" colspan="3" align="left">
+                        <div style="float:left">
+                            <div style="padding-left: 20px; width: 50px; float:left" id="ext-gen324">Answer</div>
+                            <div style="float:left">
+
+                                <input type="text"
+                                    style="width: 250px; box-sizing: border-box; -moz-box-sizing:border-box; -webkit-box-sizing:border-box;"
+                                    size="25" id="p_security_answer_5" name="p_security_answer_5" maxlength="50"
+                                    value="pepperoni" onchange="javascript:checkField('p_security_answer_5','')">
+                                (max 50 characters)
+
+                            </div>
+                        </div>
+
+                    </td>
+
+                </tr>
+
+                <tr>
+                    <td class="bodytext" width="3%">&nbsp;</td>
+                    <td class="bodytext" width="3%">&nbsp;</td>
+                    <td class="bodytext" width="3%">&nbsp;</td>
+                </tr>
+
+                <tr>
+                    <td class="bodytext" width="3%">&nbsp;</td>
+                    <td class="mandatory" width="15%" align="right">Name&nbsp;&nbsp;</td>
+                    <td class="bodytext" width="25%" align="left">
+                        <input type="text" name="p_first_name" size="8" maxlength="50" value="Boyd"
+                            onchange="javascript:checkField('p_first_name','')">
+                        &nbsp;&nbsp;<input type="text" name="p_last_name" size="15" maxlength="50" value="Pilz"
+                            onchange="javascript:checkField('p_last_name','')">
+                    </td>
+                    <td class="disabled" width="15%" align="right">Manager Y/N&nbsp;&nbsp;&nbsp;</td>
+                    <td class="bodytext" align="left" nowrap="">
+                        <select disabled="" name="p_disabled_is_dept_manager_yn" class="bodytext"
+                            onchange="javascript:toggleDOA()">
+                            <option selected="" value="N">No</option>
+                            <option value="Y">Yes</option>
+                        </select>
+
+                        <input type="hidden" name="p_is_dept_manager_yn" value="N">
+
+                        <div id="DOAdiv" class="bodytext" style="display:none;position:absolute">(Delegation of
+                            Authority over $30,000)</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="bodytext" width="3%">&nbsp;</td>
+                    <td class="bodytext" width="15%" align="right">Title&nbsp;&nbsp;&nbsp;</td>
+                    <td class="bodytext" width="25%" align="left" nowrap=""><input type="text" name="p_title"
+                            value="Property Preservation Admin" size="25" maxlength="50"
+                            onchange="javascript:checkField('p_title','')"></td>
+                    <td class="bodytext" width="57%" align="left" colspan="2" nowrap="">&nbsp;</td>
+                </tr>
+                <tr>
+                    <td class="bodytext" width="3%">&nbsp;</td>
+                    <td class="bodytext" width="15%" align="right">Phone<img name="errp_phone1" id="errp_phone1"
+                            border="0" width="10" height="10"
+                            src="/images/ErrorIndicator_off.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws"
+                            onclick="javascript:alertErr('errp_phone1')"></td>
+                    <td class="bodytext" width="25%" align="left" nowrap="">
+                        <input type="text" name="p_phone1" size="3" maxlength="3" value="636"
+                            onkeyup="javascript:autotab(this,3);"
+                            onchange="javascript:checkPhone('p_phone1','p_phone2','p_phone3','p_phone1')">-
+                        <input type="text" name="p_phone2" size="3" maxlength="3" value="300"
+                            onkeyup="javascript:autotab(this,3);"
+                            onchange="javascript:checkPhone('p_phone1','p_phone2','p_phone3','p_phone1')">-
+                        <input type="text" name="p_phone3" size="4" maxlength="4" value="3900"
+                            onkeyup="javascript:autotab(this,4);"
+                            onchange="javascript:checkPhone('p_phone1','p_phone2','p_phone3','p_phone1')">
+                        Ext.<input type="text" name="p_ext" size="4" maxlength="4" value="1872"
+                            onchange="javascript:checkPhoneExtension('p_ext', 'p_ext')"><img name="errp_ext"
+                            id="errp_ext" border="0" width="10" height="10"
+                            src="/images/ErrorIndicator_off.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws"
+                            onclick="javascript:alertErr('errp_ext')">
+                    </td>
+
+                    <td class="bodytext" width="15%" align="right">Fax<img name="errp_fax1" id="errp_fax1" border="0"
+                            width="10" height="10"
+                            src="/images/ErrorIndicator_off.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws"
+                            onclick="javascript:alertErr('errp_fax1')"></td>
+                    <td class="bodytext" width="42%" align="left" nowrap="">
+                        <input type="text" name="p_fax1" size="3" maxlength="3" value=""
+                            onkeyup="javascript:autotab(this,3);"
+                            onchange="javascript:checkPhone('p_fax1','p_fax2','p_fax3','p_fax1')">-
+                        <input type="text" name="p_fax2" size="3" maxlength="3" value=""
+                            onkeyup="javascript:autotab(this,3);"
+                            onchange="javascript:checkPhone('p_fax1','p_fax2','p_fax3','p_fax1')">-
+                        <input type="text" name="p_fax3" size="4" maxlength="4" value=""
+                            onchange="javascript:checkPhone('p_fax1','p_fax2','p_fax3','p_fax1')">
+                    </td>
+                </tr>
+
+
+
+                <tr>
+                    <td class="bodytext" width="3%">&nbsp;</td>
+
+
+                    <td class="disabled" width="15%" align="right">Email<img name="errp_email" id="errp_email"
+                            border="0" width="10" height="10"
+                            src="/images/ErrorIndicator_off.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws"
+                            onclick="javascript:alertErr('errp_email')"></td>
+                    <td class="disabled" align="left" width="25%">
+                        <input disabled="" type="text" name="p_dis_email" size="25" maxlength="80"
+                            value="bdpilz@cenlar.com">
+                        <input type="hidden" name="p_email" value="bdpilz@cenlar.com">
+                    </td>
+
+
+                    <td class="bodytext" width="15%" align="right">Preferred Notification
+                        &nbsp;&nbsp;&nbsp;<br>Method&nbsp;&nbsp;&nbsp;</td>
+                    <td class="bodytext" align="left">
+                        <select name="p_notification_method" class="bodytext">
+                            <!--<option value=""></option>-->
+                            <option value="E" selected="">Email</option>
+                        </select>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="bodytext" width="3%">&nbsp;</td>
+                    <td class="mandatory" width="15%" align="right">User Type<img name="errp_user_type"
+                            id="errp_user_type" border="0" width="10" height="10"
+                            src="/images/ErrorIndicator_off.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws"
+                            onclick="javascript:alertErr('errp_user_type')"></td>
+                    <td class="bodytext" align="left" width="25%">
+
+                        <input type="hidden" name="p_user_type" value="S">
+                        <select class="bodytext" name="p_user_type_disabled" disabled="">
+
+                            <option value="">Select</option>
+
+                            <option class="bodytext" value="S" selected="">Servicer</option>
+
+                            <option class="bodytext" value="V">Vendor</option>
+
+                            <option class="bodytext" value="O">Other</option>
+
+                        </select>
+                    </td>
+                    <td class="bodytext" colspan="2">
+                    </td>
+                </tr>
+
+                <tr id="company_name_div" style="display:none">
+                    <td class="bodytext" width="3%">&nbsp;</td>
+                    <td class="mandatory" width="15%" align="right">Company Name<img name="errp_vendor_name"
+                            id="errp_vendor_name" border="0" width="10" height="10"
+                            src="/images/ErrorIndicator_off.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws"
+                            onclick="javascript:alertErr('errp_vendor_name')"></td>
+                    <td class="bodytext" align="left" width="25%">
+
+                        <input type="hidden" name="p_vendor_company" value="0">
+                        <select class="bodytext" name="p_vendor_company_disabled" disabled="">
+
+
+                            <option value="">Select</option>
+
+                            <option value="15034"> ABBA Construction</option>
+
+                            <option value="15001"> Altisource</option>
+
+                            <option value="15035"> American Mortgage Consultants</option>
+
+                            <option value="15048"> Assero Services</option>
+
+                            <option value="15004"> Black Knight Financial Services</option>
+
+                            <option value="15005"> Brookstone Management</option>
+
+                            <option value="15025"> Carrington Home Solutions</option>
+
+                            <option value="15006"> Cognizant</option>
+
+                            <option value="15036"> Convergence - Lewisville TX</option>
+
+                            <option value="15007"> CoreLogic</option>
+
+                            <option value="15026"> CRFS</option>
+
+                            <option value="15027"> Cyprexx Services, LLC</option>
+
+                            <option value="15010"> Dimont</option>
+
+                            <option value="15049"> First Allegiance</option>
+
+                            <option value="15011"> Five Brothers</option>
+
+                            <option value="15050"> FNF</option>
+
+                            <option value="15037"> Greco USA</option>
+
+                            <option value="15012"> Guardian Asset Management</option>
+
+                            <option value="15038"> Infosys</option>
+
+                            <option value="15039"> ISGN</option>
+
+                            <option value="15028"> LOAN CARE</option>
+
+                            <option value="15029"> M &amp; M Mortgage Services, Inc.</option>
+
+                            <option value="15040"> MB Field Services</option>
+
+                            <option value="15013"> MCS</option>
+
+                            <option value="15014"> MSI</option>
+
+                            <option value="15031"> National General Lender Services</option>
+
+                            <option value="15041"> Nations Property Solutions</option>
+
+                            <option value="15015"> Navigant</option>
+
+                            <option value="15016"> NFR</option>
+
+                            <option value="15045"> NSM Services Private Limited</option>
+
+                            <option value="15042"> Property Preservation Specialist</option>
+
+                            <option value="15032"> Rowe Enterprises, Inc.</option>
+
+                            <option value="15017"> RRR Review</option>
+
+                            <option value="15018"> S3 Shared Service Solutions, LLC</option>
+
+                            <option value="15019"> Safeguard Properties</option>
+
+                            <option value="15043"> Sand Castle Field Services</option>
+
+                            <option value="15020"> ServiceLink</option>
+
+                            <option value="15051"> Single Source Property Solutions</option>
+
+                            <option value="15044"> Solid Foundation Properties</option>
+
+                            <option value="15033"> Solomon Edwards Group, LLC</option>
+
+                            <option value="15021"> Spectrum Field Services, Inc</option>
+
+                            <option value="15046"> Tata America</option>
+
+                            <option value="15047"> Tata America International Corporation</option>
+
+                            <option value="15022"> TCS</option>
+
+                            <option value="15023"> Vision ET Systems</option>
+
+                            <option value="15003"> Xome Field Services</option>
+
+                            <option value="15024"> ZVN Properties, Inc</option>
+
+                        </select>
+                    </td>
+                    <td class="bodytext" colspan="2">
+                    </td>
+                </tr>
+
+                <tr id="other_company_name_div" name="other_company_name_div" style="display:none">
+                    <td class="bodytext" width="3%">&nbsp;</td>
+                    <td class="mandatory" width="15%" align="right">Company Name<img name="errp_vendor_company_other"
+                            id="errp_vendor_company_other" border="0" width="10" height="10"
+                            src="/images/ErrorIndicator_off.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws"
+                            onclick="javascript:alertErr('errp_vendor_company_other')"></td>
+                    <td class="bodytext" align="left" width="25%">
+
+                        <input type="hidden" name="p_vendor_company_other" value="">
+                        <input type="text" value="" size="25" name="p_vendor_company_other_disabled" disabled="">
+
+
+                    </td>
+                    <td class="bodytext" colspan="2">
+                    </td>
+                </tr>
+
+
+                <tr>
+                    <td class="bodytext" width="3%">&nbsp;</td>
+                </tr>
+                <tr>
+                    <td width="6%">&nbsp;</td>
+                    <!-- check to see if user is lender and admin to assign view only permission -->
+                    <!-- view only for fannie client -->
+
+                </tr>
+                <tr id="fannie_doa_div" style="display:none">
+                    <td class="bodytext" width="3%">&nbsp;</td>
+                    <td class="bodytext" colspan="4">
+                        <table border="0" cellspacing="0" cellpadding="1" width="100%" height="100%">
+
+                            <tbody>
+                                <tr>
+                                    <td>&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <td class="bodytextbold" colspan="5">Delegation of Authority:</td>
+                                </tr>
+                                <tr>
+                                    <td>&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <td>
+
+                                        <input type="radio" name="p_chkdelauth_r" id="p_chkdelauth_r"
+                                            onchange="javascript:setDelAuth()" value="5">&nbsp;Up to and including
+                                        $5,000.00
+
+                                        <input type="radio" name="p_chkdelauth_r" id="p_chkdelauth_r"
+                                            onchange="javascript:setDelAuth()" value="10">&nbsp;Up to and including
+                                        $10,000.00
+
+                                        <input type="radio" name="p_chkdelauth_r" id="p_chkdelauth_r"
+                                            onchange="javascript:setDelAuth()" value="25">&nbsp;Up to and including
+                                        $25,000.00
+
+                                        <input type="radio" name="p_chkdelauth_r" id="p_chkdelauth_r"
+                                            onchange="javascript:setDelAuth()" value="30">&nbsp;Up to and including
+                                        $30,000.00
+
+                                        <input type="radio" name="p_chkdelauth_r" id="p_chkdelauth_r"
+                                            onchange="javascript:setDelAuth()" value="-1">&nbsp;None
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>&nbsp;</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+
+                <input type="hidden" name="p_chkdelauth" id="p_chkdelauth" value="0">
+
+                <tr>
+                    <td width="3%">&nbsp;</td>
+                    <td align="right" valign="middle" class="bodytext">Comments&nbsp;&nbsp;&nbsp;</td>
+                    <td colspan="3" class="bodytext">
+                        <textarea name="p_comments" id="p_comments" cols="85" rows="3"
+                            onchange="javascript:checkField('p_comments','');;limitLength( this, 2000, event );"
+                            onkeyup="javascript:limitLength( this, 2000, event );"></textarea>
+                        <input type="hidden" value="" name="p_sysadmin_comments_ro">
+                    </td>
+                </tr>
+
+                <tr>
+                    <td width="3%"><img
+                            src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws"
+                            border="0" width="15px" height="1px"></td>
+                    <td class="subheadline" align="left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Role:
+                    </td>
+                </tr>
+
+
+                <tr>
+                    <td class="bodytext" width="3%">&nbsp;</td>
+                    <td class="bodytext" width="15%" align="right">Client&nbsp;&nbsp;&nbsp;</td>
+                    <td class="bodytext" align="left" width="25%">
+                        Fannie Mae
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="bodytext" width="3%">&nbsp;</td>
+                    <td class="bodytext" width="15%" align="right">Role&nbsp;&nbsp;&nbsp;</td>
+                    <td class="bodytext" align="left" width="25%">
+                        Subservicer
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="bodytext" width="3%">&nbsp;</td>
+                    <td class="bodytext" width="15%" align="right">Organization&nbsp;&nbsp;&nbsp;</td>
+                    <td class="bodytext" align="left" width="25%">
+
+                        Cenlar FSB (SubServicer)
+
+                    </td>
+                </tr>
+
+
+
+
+                <tr>
+                    <td width="3%">&nbsp;</td>
+                </tr>
+
+
+
+            </tbody>
+        </table>
+
+
+        <div id="assetinfo" style="display:none;position:relative">
+            <table width="766" border="0" cellspacing="0" cellpadding="0">
+                <tbody>
+                    <tr>
+                        <td width="3%"></td>
+                        <td colspan="5">
+                            <table cellspacing="0" cellpadding="0" border="0">
+                                <tbody>
+                                    <tr>
+                                        <td class="mandatory">Default</td>
+                                        <td>&nbsp;</td>
+                                        <td class="mandatory">Client</td>
+                                        <td>&nbsp;</td>
+                                        <td class="mandatory">
+                                        </td>
+                                        <td>&nbsp;</td>
+                                        <td>Region</td>
+
+                                    </tr>
+
+                                    <tr>
+                                        <td><input type="radio" name="p_default_client_id" id="p_default_client_id_1"
+                                                value="1" onclick="dynaModifyApplChoicesByRole(9);">
+                                        </td>
+                                        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+
+
+                                        <td align="left" valign="middle" class="bodytext" nowrap="">
+
+                                            <input type="checkbox" name="p_client_id_1" id="p_client_id_1" value="1">
+
+
+                                            HUD
+
+                                        </td>
+                                        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                        <td>
+
+                                            <input type="hidden" id="p_role_id_1" name="p_role_id_1" value="3">
+
+                                        </td>
+                                        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                        <td>
+
+
+                                            <select name="p_disabled_region_id_1" id="p_disabled_region_id_1"
+                                                class="bodytext" style="height: 22px; width: 140px" disabled="disabled">
+
+                                            </select>
+
+
+
+
+
+                                        </td>
+
+                                    </tr>
+
+                                    <tr>
+                                        <td><input type="radio" name="p_default_client_id" id="p_default_client_id_6"
+                                                value="6" onclick="dynaModifyApplChoicesByRole(9);">
+                                        </td>
+                                        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+
+
+                                        <td align="left" valign="middle" class="bodytext" nowrap="">
+
+                                            <input type="checkbox" name="p_client_id_6" id="p_client_id_6" value="6">
+
+
+                                            BidSelect
+
+                                        </td>
+                                        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                        <td>
+
+                                            <input type="hidden" id="p_role_id_6" name="p_role_id_6" value="3">
+
+                                        </td>
+                                        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                        <td>
+
+
+                                            <select name="p_disabled_region_id_6" id="p_disabled_region_id_6"
+                                                class="bodytext" style="height: 22px; width: 140px" disabled="disabled">
+
+                                            </select>
+
+
+
+
+
+                                        </td>
+
+                                    </tr>
+
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><input type="hidden" name="p_department_id" value=""> </td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+
+
+        <div id="applicationinfo" style="display:none;position:relative">
+            <table width="766" border="0" cellspacing="0" cellpadding="0" bgcolor="#EEEEEE" disable="">
+                <tbody>
+                    <tr>
+                        <td colspan="6"><img
+                                src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws"
+                                border="0" width="100%" height="5px"></td>
+                    </tr>
+                    <tr>
+                        <td class="bodytext" width="3%"><img
+                                src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws"
+                                border="0" width="15px" height="1px"></td>
+                        <td class="mandatorySubHeadline" colspan="5" width="97%" align="left">Application
+                            Access:&nbsp;&nbsp;<font class="bodytextsmall">(At least one must be selected)</font><img
+                                name="errp_user_appl" id="errp_user_appl" border="0" width="10" height="10"
+                                src="/images/ErrorIndicator_off.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws"
+                                onclick="javascript:alertErr('errp_user_appl')">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td class="bodytext" width="3%"><img
+                                src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws"
+                                border="0" width="15px" height="1px"></td>
+                        <td colspan="4">
+
+                            <font class="applAC">
+
+                                <input type="checkbox" name="p_disabled_user_appl" value="1" disabled="">
+                                Asset Center&nbsp;<img
+                                    src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws"
+                                    border="0" width="25px" height="1px">
+                            </font>
+
+
+
+                            <font class="applBC">
+
+                                <input type="checkbox" name="p_disabled_user_appl" value="2" disabled="">
+                                Broker Center&nbsp;<img
+                                    src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws"
+                                    border="0" width="25px" height="1px">
+                            </font>
+
+
+
+                            <font class="applLC">
+
+                                <input type="checkbox" checked="true" name="p_disabled_user_appl" value="3" disabled="">
+                                Lender Center&nbsp;<img
+                                    src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws"
+                                    border="0" width="25px" height="1px">
+                            </font>
+
+
+
+                            <font class="applSC">
+
+                                <input type="checkbox" name="p_disabled_user_appl" value="4" disabled="">
+                                Service Center&nbsp;<img
+                                    src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws"
+                                    border="0" width="25px" height="1px">
+                            </font>
+
+
+
+                            <font class="applCS">
+
+                                <input type="checkbox" name="p_disabled_user_appl" value="5" disabled="">
+                                Customer Service&nbsp;<img
+                                    src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws"
+                                    border="0" width="25px" height="1px">
+                            </font>
+
+
+
+                            <font class="">
+
+                                <input type="checkbox" name="p_disabled_user_appl" value="6" disabled="">
+                                User Administration&nbsp;<img
+                                    src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws"
+                                    border="0" width="25px" height="1px">
+                            </font>
+
+
+
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+
+        <div id="userpermissionsinfo" style="display:none;position:relative">
+
+
+
+            <table width="766" border="0" cellspacing="0" cellpadding="0">
+                <tbody>
+                    <tr>
+                        <td class="bodytext" width="3%">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td width="3%">&nbsp;</td>
+                        <td align="left" nowrap="" class="subheadline">Permissions:&nbsp;&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td width="3%">&nbsp;</td>
+                        <td nowrap="" align="left" colspan="3">
+                            <div id="AddPermissions">
+                                <div id="ext-gen9" class="x-panel">
+                                    <div class="x-panel-bwrap" id="ext-gen36">
+                                        <div class="x-panel-body x-panel-body-noheader" id="ext-gen37"
+                                            style="padding: 15px;">
+                                            <div id="ext-gen31" class="x-panel x-panel-noborder">
+                                                <div class="x-panel-bwrap" id="ext-gen38">
+                                                    <div class="x-panel-body x-panel-body-noheader x-panel-body-noborder x-table-layout-ct"
+                                                        id="ext-gen39">
+                                                        <table class="x-table-layout" cellspacing="0">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td class="x-table-layout-cell" id="ext-gen40">
+                                                                        <div id="ext-gen33"
+                                                                            class="x-plain x-plain-noborder">
+                                                                            <div class="x-plain-bwrap" id="ext-gen41">
+                                                                                <div class="x-plain-body x-plain-body-noheader x-plain-body-noborder"
+                                                                                    id="ext-gen42"
+                                                                                    style="padding: 0px 0px 15px;">
+                                                                                    <div id="ext-gen27"
+                                                                                        class="x-panel x-panel-noborder">
+                                                                                        <div class="x-panel-bwrap"
+                                                                                            id="ext-gen43">
+                                                                                            <div class="x-panel-body x-panel-body-noheader x-panel-body-noborder x-table-layout-ct"
+                                                                                                id="ext-gen44">
+                                                                                                <table
+                                                                                                    class="x-table-layout"
+                                                                                                    cellspacing="0">
+                                                                                                    <tbody>
+                                                                                                        <tr>
+                                                                                                            <td class="x-table-layout-cell"
+                                                                                                                id="ext-gen45">
+                                                                                                                <div id="ext-gen29"
+                                                                                                                    class="x-plain x-plain-noborder">
+                                                                                                                    <div class="x-plain-bwrap"
+                                                                                                                        id="ext-gen46">
+                                                                                                                        <div class="x-plain-body x-plain-body-noheader x-plain-body-noborder"
+                                                                                                                            id="ext-gen47"
+                                                                                                                            style="padding: 0px 20px 0px 0px;">
+                                                                                                                            <div id="ext-gen14"
+                                                                                                                                class="x-panel x-tree"
+                                                                                                                                style="width: 300px;">
+                                                                                                                                <div class="x-panel-header x-unselectable"
+                                                                                                                                    id="ext-gen48">
+                                                                                                                                    <span
+                                                                                                                                        class="x-panel-header-text"
+                                                                                                                                        id="ext-gen58">Assigned
+                                                                                                                                        Permissions</span>
+                                                                                                                                </div>
+                                                                                                                                <div class="x-panel-bwrap"
+                                                                                                                                    id="ext-gen49">
+                                                                                                                                    <div class="x-panel-body"
+                                                                                                                                        id="ext-gen50"
+                                                                                                                                        style="overflow: auto; width: 300px; height: 175px;">
+                                                                                                                                        <ul class="x-tree-root-ct x-tree-lines"
+                                                                                                                                            id="ext-gen52">
+                                                                                                                                            <div
+                                                                                                                                                class="x-tree-root-node">
+                                                                                                                                            </div>
+                                                                                                                                        </ul>
+                                                                                                                                    </div>
+                                                                                                                                </div>
+                                                                                                                            </div>
+                                                                                                                        </div>
+                                                                                                                    </div>
+                                                                                                                </div>
+                                                                                                            </td>
+                                                                                                        </tr>
+                                                                                                    </tbody>
+                                                                                                </table>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="bodytext" width="3%">&nbsp;</td>
+                    </tr>
+
+                </tbody>
+            </table>
+
+        </div>
+
+
+        <div id="dashboardchoicesinfo" style="position: relative;">
+            <table width="766" border="0" cellspacing="0" cellpadding="0">
+                <tbody>
+                    <tr>
+                        <td colspan="6"><img
+                                src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws"
+                                border="0" width="100%" height="5px"></td>
+                    </tr>
+                    <tr>
+                        <td class="bodytext" width="3%"><img
+                                src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws"
+                                border="0" width="15px" height="1px"></td>
+                        <td class="subheadline" colspan="4">Customize Quicklinks For Home Page Display:&nbsp;</td>
+                    </tr>
+                </tbody>
+            </table>
+            <table width="766" border="0" cellspacing="0" cellpadding="0">
+                <tbody>
+                    <tr>
+                        <td class="bodytext" width="3%">&nbsp;</td>
+                        <td>
+                            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+
+                                <tbody>
+                                    <tr>
+                                        <td class="bodytext" bgcolor="#eeeeee" width="2%">&nbsp;</td>
+                                        <td class="bodytextbold" bgcolor="#eeeeee" width="25%" align="left">Lender
+                                            Center Options</td>
+                                        <td class="bodytext" bgcolor="#eeeeee" colspan="2" width="73%" align="center">
+                                            &nbsp;</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="bodytext" bgcolor="#eeeeee" width="2%">&nbsp;</td>
+                                        <td class="bodytextbold" bgcolor="#eeeeee" width="25%" align="right">Quicklinks
+                                        </td>
+                                        <td class="bodytextbold" bgcolor="#eeeeee" width="15%" align="center">Visible
+                                        </td>
+                                        <td class="bodytextbold" bgcolor="#eeeeee" width="58%">Not Visible (on Home
+                                            Page)</td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="bodytext" width="2%" bgcolor="#eeeeee">&nbsp;</td>
+                                        <td class="bodytext" width="25%" bgcolor="#eeeeee" align="right">Case Inventory
+                                            Summary<input type="hidden" name="p_quicklink" value="4182"></td>
+                                        <td class="bodytext" width="15%" bgcolor="#eeeeee" align="center"><input
+                                                type="radio" name="p_4182" value="A" checked=""></td>
+                                        <td class="bodytext" width="58%" bgcolor="#eeeeee"><input type="radio"
+                                                name="p_4182" value="I"></td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="bodytext" width="2%" bgcolor="#eeeeee">&nbsp;</td>
+                                        <td class="bodytext" width="25%" bgcolor="#eeeeee" align="right">Enter New
+                                            Properties<input type="hidden" name="p_quicklink" value="4170"></td>
+                                        <td class="bodytext" width="15%" bgcolor="#eeeeee" align="center"><input
+                                                type="radio" name="p_4170" value="A" checked=""></td>
+                                        <td class="bodytext" width="58%" bgcolor="#eeeeee"><input type="radio"
+                                                name="p_4170" value="I"></td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="bodytext" width="2%" bgcolor="#eeeeee">&nbsp;</td>
+                                        <td class="bodytext" width="25%" bgcolor="#eeeeee" align="right">Open
+                                            Tasks<input type="hidden" name="p_quicklink" value="4185"></td>
+                                        <td class="bodytext" width="15%" bgcolor="#eeeeee" align="center"><input
+                                                type="radio" name="p_4185" value="A" checked=""></td>
+                                        <td class="bodytext" width="58%" bgcolor="#eeeeee"><input type="radio"
+                                                name="p_4185" value="I"></td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="bodytext" width="2%" bgcolor="#eeeeee">&nbsp;</td>
+                                        <td class="bodytext" width="25%" bgcolor="#eeeeee" align="right">P&amp;P<input
+                                                type="hidden" name="p_quicklink" value="6639"></td>
+                                        <td class="bodytext" width="15%" bgcolor="#eeeeee" align="center"><input
+                                                type="radio" name="p_6639" value="A" checked=""></td>
+                                        <td class="bodytext" width="58%" bgcolor="#eeeeee"><input type="radio"
+                                                name="p_6639" value="I"></td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="bodytext" width="2%" bgcolor="#eeeeee">&nbsp;</td>
+                                        <td class="bodytext" width="25%" bgcolor="#eeeeee" align="right">P&amp;P /
+                                            Extension Listing<input type="hidden" name="p_quicklink" value="4183"></td>
+                                        <td class="bodytext" width="15%" bgcolor="#eeeeee" align="center"><input
+                                                type="radio" name="p_4183" value="A" checked=""></td>
+                                        <td class="bodytext" width="58%" bgcolor="#eeeeee"><input type="radio"
+                                                name="p_4183" value="I"></td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="bodytext" width="2%" bgcolor="#eeeeee">&nbsp;</td>
+                                        <td class="bodytext" width="25%" bgcolor="#eeeeee" align="right">Request
+                                            Tracking By User<input type="hidden" name="p_quicklink" value="4184"></td>
+                                        <td class="bodytext" width="15%" bgcolor="#eeeeee" align="center"><input
+                                                type="radio" name="p_4184" value="A" checked=""></td>
+                                        <td class="bodytext" width="58%" bgcolor="#eeeeee"><input type="radio"
+                                                name="p_4184" value="I"></td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="bodytext" width="2%" bgcolor="#eeeeee">&nbsp;</td>
+                                        <td class="bodytext" width="25%" bgcolor="#eeeeee" align="right">Resolved
+                                            Tasks<input type="hidden" name="p_quicklink" value="6395"></td>
+                                        <td class="bodytext" width="15%" bgcolor="#eeeeee" align="center"><input
+                                                type="radio" name="p_6395" value="A" checked=""></td>
+                                        <td class="bodytext" width="58%" bgcolor="#eeeeee"><input type="radio"
+                                                name="p_6395" value="I"></td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="bodytext" width="2%" bgcolor="#eeeeee">&nbsp;</td>
+                                        <td class="bodytext" width="25%" bgcolor="#eeeeee" align="right">Review
+                                            Extension Requests<input type="hidden" name="p_quicklink" value="6855"></td>
+                                        <td class="bodytext" width="15%" bgcolor="#eeeeee" align="center"><input
+                                                type="radio" name="p_6855" value="A" checked=""></td>
+                                        <td class="bodytext" width="58%" bgcolor="#eeeeee"><input type="radio"
+                                                name="p_6855" value="I"></td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="bodytext" width="2%" bgcolor="#eeeeee">&nbsp;</td>
+                                        <td class="bodytext" width="25%" bgcolor="#eeeeee" align="right">Review P&amp;P
+                                            Requests<input type="hidden" name="p_quicklink" value="6856"></td>
+                                        <td class="bodytext" width="15%" bgcolor="#eeeeee" align="center"><input
+                                                type="radio" name="p_6856" value="A" checked=""></td>
+                                        <td class="bodytext" width="58%" bgcolor="#eeeeee"><input type="radio"
+                                                name="p_6856" value="I"></td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="bodytext" width="2%" bgcolor="#eeeeee">&nbsp;</td>
+                                        <td class="bodytext" width="25%" bgcolor="#eeeeee" align="right">Vacancy
+                                            Report<input type="hidden" name="p_quicklink" value="6390"></td>
+                                        <td class="bodytext" width="15%" bgcolor="#eeeeee" align="center"><input
+                                                type="radio" name="p_6390" value="A" checked=""></td>
+                                        <td class="bodytext" width="58%" bgcolor="#eeeeee"><input type="radio"
+                                                name="p_6390" value="I"></td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="bodytext" width="2%" bgcolor="#eeeeee">&nbsp;</td>
+                                        <td class="bodytext" width="25%" bgcolor="#eeeeee" align="right">Work
+                                            Completion<input type="hidden" name="p_quicklink" value="6638"></td>
+                                        <td class="bodytext" width="15%" bgcolor="#eeeeee" align="center"><input
+                                                type="radio" name="p_6638" value="A" checked=""></td>
+                                        <td class="bodytext" width="58%" bgcolor="#eeeeee"><input type="radio"
+                                                name="p_6638" value="I"></td>
+                                    </tr>
+
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table width="766" border="0" cellspacing="0" cellpadding="4">
+                <tbody>
+                    <tr>
+                        <td align="center" valign="middle">
+
+                            <input type="button" class="bodytext" value="Save" name="p_submit"
+                                onclick="javascript:saveUserInfo()">
+                            <input type="button" class="bodytext" value="Cancel" name="p_submit"
+                                onclick="javascript:doFormAction('CANCEL')">
+                            <input type="button" class="bodytext" value="New" name="p_submit"
+                                onclick="javascript:doFormAction('NEW')" disabled="">
+
+                            <img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws"
+                                border="0" width="25px" height="1px">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="copyright" align="center">Last Updated By: Boyd Pilz &nbsp; Updated On:12/19/2024
+                            06:01 PM</td>
+                    </tr>
+                    <tr>
+                        <td class="copyright" align="center">
+
+
+                            © 2000 - 2025 HomeTracker LP. All rights reserved.
+
+                            <br>
+                            U.S. Patents: <a
+                                href="http://www.firstprestonht.com/patents/?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws"
+                                target="_new">http://www.firstprestonht.com/patents/</a> U.S. Patent Pending.
+                            <br>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+
+
+        <div id="clientadmininfo" style="display:none;position:relative">
+
+        </div>
+
+
+        <div id="lenderinfo" style="display:none;position:relative">
+            <table width="766" border="0" cellspacing="0" cellpadding="0">
+
+
+                <tbody>
+                    <tr>
+                        <td class="bodytext" width="3%">&nbsp;</td>
+                        <td class="mandatory" width="15%" align="right">Lender&nbsp;&nbsp;&nbsp;</td>
+                        <td class="bodytext" width="25%" align="left" nowrap="">
+                            <input type="text" name="p_disabled_lender_name" value="Cenlar FSB (SubServicer)" size="32"
+                                onchange="javascript:checkField('p_disabled_lender_name','')" disabled="">
+                        </td>
+                        <td class="bodytext" width="57%" align="left" colspan="2" nowrap="">
+                            <!--<a href="javascript:getLender()"><img valign="center" src="/images/lookup.gif" border="0" alt="Select Lender"></a>-->
+                            <input type="hidden" name="p_lender_id" value="835">
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><input type="hidden" name="p_department_id" value=""> </td>
+                    </tr>
+
+                    <tr>
+                        <td class="bodytext" width="3%">&nbsp;</td>
+                        <td class="mandatory" align="right">Default&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                        <td class="mandatory">Client</td>
+                        <td class="mandatory" colspan="2"></td>
+                    </tr>
+
+
+                </tbody>
+            </table>
+        </div>
+
+
+        <div id="brokerinfo" style="display:none;position:relative">
+            <table width="766" border="0" cellspacing="0" cellpadding="0">
+                <tbody>
+                    <tr>
+                        <td class="mandatory" width="15%" align="right">Broker:&nbsp;&nbsp;&nbsp;</td>
+                        <td class="bodytext" width="25%" align="left" nowrap="">
+                            <input type="text" name="p_disabled_broker_name" value="" size="32"
+                                onchange="javascript:checkField('p_disabled_broker_name','')" disabled="">
+                        </td>
+                        <td class="bodytext" width="57%" align="left" colspan="2" nowrap="">
+                            <a href="javascript:getBroker(163)"><img align="middle"
+                                    src="/images/lookup.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws"
+                                    border="0" alt="Select Broker"></a>
+                            <input type="hidden" name="p_broker_id" value="">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+
+        <div id="contractorinfo" style="display:none;position:relative">
+            <table width="766" border="0" cellspacing="0" cellpadding="0">
+                <tbody>
+                    <tr>
+                        <td class="mandatory" width="15%" align="right">Contractor:&nbsp;&nbsp;&nbsp;</td>
+                        <td class="bodytext" width="25%" align="left" nowrap="">
+                            <input type="text" name="p_disabled_contr_name" value="" size="32"
+                                onchange="javascript:checkField('p_disabled_contr_name','')" disabled="">
+                        </td>
+                        <td class="bodytext" width="57%" align="left" colspan="2" nowrap="">
+                            <a href="javascript:getContractor()"><img align="middle"
+                                    src="/images/lookup.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws"
+                                    border="0" alt="Select Contractor"></a>
+                            <input type="hidden" name="p_contractor_id" value="">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div id="homeownerInfo" style="display:none;position:relative">
+            <table width="766" border="0" cellspacing="0" cellpadding="0">
+                <tbody>
+                    <tr>
+                        <td class="mandatory" width="15%" align="right">Homeowner:&nbsp;&nbsp;&nbsp;</td>
+                        <td class="bodytext" width="25%" align="left" nowrap="">
+                            <input type="text" name="p_disabled_homeowner_name" size="32" value=""
+                                onchange="javascript:checkField('p_disabled_homeowner_name','')" disabled="">
+                        </td>
+                        <td class="bodytext" width="57%" align="left" colspan="2" nowrap="">
+                            <a href="javascript:getHomeowner()"><img align="middle"
+                                    src="/images/lookup.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws"
+                                    border="0" alt="Select Homeowner"></a>
+                            <input type="hidden" name="p_homeowner_id" value="">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+
+        <div id="saveinfo" style="display:none;position:relative">
+            <br>
+            <table width="766" border="0" cellspacing="0" cellpadding="4">
+
+                <tbody>
+                    <tr>
+                        <td align="center" valign="middle">
+
+                            <input type="button" class="bodytext" value="Save" name="p_submit"
+                                onclick="javascript:saveUserInfo()">
+                            <input type="button" class="bodytext" value="Cancel" name="p_submit"
+                                onclick="javascript:doFormAction('CANCEL')">
+                            <input type="button" class="bodytext" value="New" name="p_submit"
+                                onclick="javascript:doFormAction('NEW')" disabled="">
+
+                            <img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws"
+                                border="0" width="25px" height="1px">
+                            <br><br>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="copyright" align="center">Last Updated By: Boyd Pilz &nbsp; Updated On:12/19/2024
+                            06:01 PM<br><br></td>
+                    </tr>
+                    <tr>
+                        <td class="copyright" align="center">
+
+
+                            © 2000 - 2025 HomeTracker LP. All rights reserved.
+
+                            <br>
+                            U.S. Patents: <a
+                                href="http://www.firstprestonht.com/patents/?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws"
+                                target="_new">http://www.firstprestonht.com/patents/</a> U.S. Patent Pending.
+                            <br>
+                            <br><br>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <input type="hidden" name="p_process_page" value="User">
+        <input type="hidden" name="p_build_page" value="User">
+        <input type="hidden" name="p_last_access_date" value="3/13/2025/13/36/46">
+        <input type="hidden" name="p_password_exp_date" value="3/19/2025/18/2/18">
+        <input type="hidden" name="p_company_id" value="">
+        <input type="hidden" name="p_client_id" value="9">
+        <input type="hidden" name="p_user_id" value="60776">
+        <input type="hidden" name="p_login_role_id" value="10">
+        <input type="hidden" name="p_audit_user_id" value="60776">
+        <input type="hidden" name="ccinfo_indicator" id="ccinfo_indicator" value="null">
+
+
+        <input type="hidden" name="js_changed" value="">
+        <input type="hidden" name="p_form_action" value="">
+
+        <input type="hidden" name="p_section" value="">
+        <input type="hidden" name="p_view" value="">
+        <input type="hidden" name="p_password_error_flag" value="">
+        <input type="hidden" name="p_tou_date" value="1/13/2020/14/46/49">
+        <input type="hidden" name="p_expire_lockout">
+        <input type="hidden" name="HTOWASP_CSRFTKN" value="LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws">
+    </form>
+    <script language="JavaScript">
+
+        var tokenName = 'HTOWASP_CSRFTKN';
+        var tokenValue = 'LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws';
+
+        function isHttpLinkColon(a) { var b = 0; if (a.length > 0 && a.indexOf(":") === -1) { b = 1 } return b } function isHttpLinkSlash(a) { var b = 0; if (a.substring(0, 1) === "/") { b = 1 } return b } function isHttpLinkHTTP(a) { var b = 0; if (a.substring(0, 4) === "http") { b = 1 } return b } function isHttpLink(a) { var b = 0; if (isHttpLinkHTTP(a) || isHttpLinkSlash(a) || isHttpLinkColon(a)) { b = 1 } return b } function updateTag(a, b) { var c = document.getElementsByTagName(a); for (i = 0; i < c.length; i++) { var d = c[i].getAttribute(b); if (d != null && d != "") { if (isHttpLink(d)) { var e = d.indexOf("?"); if (d.match(tokenName) == null) { if (e != -1) { d = d + "&" + tokenName + "=" + tokenValue } else { d = d + "?" + tokenName + "=" + tokenValue } } c[i].setAttribute(b, d) } } } } function updateForms() { var a = document.getElementsByTagName("form"); for (i = 0; i < a.length; i++) { var b = a[i].innerHTML; b += "<input type=hidden name=" + tokenName + " value=" + tokenValue + " />"; a[i].innerHTML = b } } function updateImages() { updateTag("img", "src") } function updateScripts() { updateTag("script", "src") } function updateStyles() { updateTag("style", "src") } function updateIFrames() { updateTag("iframe", "src") } function updateFrames() { updateTag("frame", "src") } function updateAreas() { updateTag("area", "href") } function updateLinks() { updateTag("link", "href") } function updateAnchors() { updateTag("a", "href") } updateAnchors(); updateAreas(); updateFrames(); updateIFrames(); updateStyles(); updateImages();	
+    </script>
+    <meta http-equiv="cache-control" content="no-cache">
+    <meta http-equiv="expires" content="0">
+    <meta http-equiv="pragma" content="no-cache">
+
+    <iframe src="javascript:''" id="userPermissions" tabindex="-1"
+        style="position: absolute; width: 0px; height: 0px; border: none;"></iframe>
+</body>
+
+</html>

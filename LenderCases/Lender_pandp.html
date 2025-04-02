@@ -1,0 +1,539 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lender Cases</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="cache-control" content="no-cache">
+    <meta http-equiv="expires" content="0">
+    <meta http-equiv="pragma" content="no-cache">
+    <link rel="stylesheet" href="/libraries/jquery-ui/css/jquery-ui-1.12.1.css">
+    <script src="/libraries/jquery/jquery-3.5.0.min.js"></script>
+    <script src="/libraries/jquery-ui/js/jquery-ui-1.12.1.js"></script>
+    <script src="/include/Common.js"></script>
+    <script src="/include/Validate.js"></script>
+    <script src="/include/RoboHelpCSH.js"></script>
+</head>
+<body topmargin="0" marginwidth="2" bottommargin="2" leftmargin="2" bgcolor="#EEEEEE" onload="CCInfoAlert()">
+	<form name="main" action="/servlet/RouterServlet" method="POST">
+		<input type="hidden" name="p_view" value="LC"> <input type="hidden" name="ccinfo_ind" id="ccinfo_ind" value="">
+		<input type="hidden" name="pastDue_ind" id="pastDue_ind" value="">
+		<!--Include the header-->
+		
+
+
+
+<script language="JavaScript" src="/include/Common.js"></script>
+<script language="JavaScript" src="/include/Validate.js"></script>
+<script language="JavaScript" src="/include/RoboHelpCSH.js"></script>
+<script src="/libraries/jquery/jquery-3.5.0.min.js" type="text/javascript"></script>
+<script type="text/javascript">
+	jQuery.noConflict();	
+	//alert(jQuery().jquery);   //To display the version of jQuery
+</script>
+<script language="JavaScript">
+if (document.styleSheets[0].cssRules) {
+crossrule=document.styleSheets[0].cssRules
+} else if (document.styleSheets[0].rules) {
+crossrule=document.styleSheets[0].rules }
+if (false) {
+	crossrule[81].style.color = '#8E8E8E';
+	crossrule[99].style.color = '#8E8E8E';
+}
+
+var isArchive = false;
+	 		
+
+	isArchive = true;
+
+
+</script>
+<style type="text/css">
+/* Uncomment below to show maintenance message and commnet out the p_banner style currently active
+   Change the color, font-family and font-size if needed*/
+/*#p_banner{
+	padding:10px; margin:0;
+	min-width:752px;
+	width:100%; height:38px;
+	background: url(/images/FPHT_LogoBarSegment_1px.png) top left repeat-x;
+	color: yellow;
+	font-family: Arial, Verdana, Geneva, Helvetica, sans-serif;
+	font-size: 16px;
+}
+*/
+
+#p_banner{
+	padding:0; margin:0;
+	min-width:752px;
+	width:100%; height:38px;
+	background: url(/images/FPHT_LogoBarSegment_1px.png) top left repeat-x;
+}
+
+#p_banner_center{
+	width:752px; height:43px;
+	margin:0;
+	padding:0;
+	border:0;outline:none;
+}
+body{margin:0px;}
+</style>
+<!-- Uncomment below to show maintenance message 
+<div id="p_banner" ><b>UPCOMING SERVICE OUTAGE:</b> Thursday, August 11th - 12:00am to 6:00am Central</div></div>
+-->
+
+<!-- Comment out below to show maintenance message-->
+<div id="p_banner"><div id="p_banner_center"><a href="http://www.firstprestonht.com/?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" target="fphtWindow" id="fpht"><img src="/images/FPHT_LogoBar.png?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" height="43px" alt="A First Preston HT Company" border="0" align="top"></a></div></div>
+
+<table width="766" border="0" cellspacing="0" cellpadding="0" bgcolor="#ffffff">
+	
+	<tbody><tr>
+		<td valign="middle" width="175">&nbsp;</td>
+		<td width="200" align="middle">&nbsp;</td>
+		<td width="391" valign="middle" align="right" class="bodytext">
+			<img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" border="0" width="20px" height="3px"><br>
+        <a href="/servlet/RouterServlet?p_process_page=Logout&amp;HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" class="headerLinks ">Logout</a><img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" border="0" width="30px" height="1px">
+		</td>
+	</tr>
+		
+	<tr>
+		<td width="175" valign="bottom" rowspan="2" align="right">
+		
+			<a href="javascript:navigate('Home&amp;ni=0','Y', 'false')"><img src="/images/htlogo.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" border="0" alt="...............Home Tracker®..............." name="myLogo"></a><br>
+			<img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" border="0" width="20px" height="10px">
+		
+		</td>
+		<td valign="center" colspan="2" align="left" class="displayHeader" height="32px"><img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" border="0" width="40px" height="1px">
+		
+		Lender Center for Cenlar FSB (SubServicer) - Subservicer
+		
+		</td>
+	</tr>
+									
+
+
+	<tr>
+		<td width="591" colspan="2" valign="bottom" nowrap="">
+			<table width="100%" border="0" cellspacing="0" cellpadding="0">
+				<tbody><tr>
+					
+					<td nowrap="" bgcolor="#0056a6"><img src="/images/1begin.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="33" height="24" border="0/"></td>
+					<td width="20%" align="center" nowrap="" bgcolor="#0056a6">&nbsp;&nbsp;
+					  
+							
+								<a class="tab" href="javascript:navigate('Home&amp;ni=0','Y', false)">Home</a>
+											
+					</td>					
+					
+					<td nowrap="" bgcolor="#e0791c"><img src="/images/1downend.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="36" height="24" border="0/"></td>
+					<td width="20%" align="center" nowrap="" bgcolor="#e0791c">&nbsp;&nbsp;
+					  
+							<a class="tab" href="javascript:navigate('CaseList&amp;ni=1','Y', false)">Lender Cases</a>
+											
+					</td>
+					
+					<td nowrap="" bgcolor="#7f559e"><img src="/images/2downend.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="36" height="24" border="0/"></td>
+					<td width="20%" align="center" nowrap="" bgcolor="#7f559e">&nbsp;&nbsp;
+					  
+							
+								<a class="tab" href="javascript:navigate('ReportOptions&amp;ni=2','Y', false)">Reports</a>
+												
+ 						<!--a class="tab" href="javascript:navigate('ReportOptions&ni=2','Y')">Reports</a -->
+					</td>
+					
+					<td nowrap="" bgcolor="#a61a18"><img src="/images/3downend.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="36" height="24" border="0/"></td>
+					<td width="20%" align="center" nowrap="" bgcolor="#a61a18">&nbsp;&nbsp;
+					  
+							<a class="tab" href="javascript:navigate('LcNotificationList&amp;ni=3','Y', false)">Notifications</a>
+						
+					</td>
+					
+					<td nowrap="" bgcolor="#007053"><img src="/images/4downend.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="36" height="24" border="0/"></td>
+					<td width="20%" align="center" nowrap="" bgcolor="#007053">&nbsp;&nbsp;
+					  
+							<a class="tab" href="javascript:navigate('User&amp;ni=4','Y', false)">Admin</a>
+							
+							
+					</td>					
+					
+				</tr>
+				<tr>
+					
+					<td bgcolor="#0056a6"></td>
+					<td bgcolor="#0056a6"></td>
+					
+					<td bgcolor="white"></td>
+					<td bgcolor="white"></td>
+					
+					<td bgcolor="white"></td>
+					<td bgcolor="white"></td>
+					
+					<td bgcolor="white"></td>
+					<td bgcolor="white"></td>
+					
+					<td bgcolor="white"></td>
+					<td bgcolor="white"></td>
+					
+				</tr>
+			</tbody></table>
+		</td>
+	</tr>
+	
+	<tr>
+		<td width="100%" colspan="3" valign="Top" bgcolor="#0056a6" align="left">
+			<table border="0" cellspacing="0" cellpadding="0">
+				<tbody><tr>
+					<td align="left"><img src="/images/1end.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" border="0"></td>
+					<td align="left" class="headerDivide">&nbsp;<font class="headerGreeting">Welcome Boyd Pilz!</font></td>
+				</tr>
+			</tbody></table>
+			
+		</td>
+	</tr>
+</tbody></table>
+
+
+		<!--INCLUDE TIERTIARY NAV, IF ANY -->
+		
+                 
+
+
+
+<table width="766" border="0" cellspacing="0" cellpadding="0" bgcolor="#ffffff">
+	<tbody><tr>
+		<td width="176" valign="middle" class="headline" bgcolor="#eeeeee" nowrap="">
+		<img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" border="0" width="15" height="1px">&nbsp;</td><!-- don't show name; blank space looks better -->
+		<td width="-76%" colspan="2" bgcolor="#1e4375">
+			<table border="0" cellpadding="0" cellspacing="0" height="24px" width="100%">
+				<tbody><tr>
+					<td width="36px"><img src="/images/1upends.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" border="0"></td>
+					<td>&nbsp;</td>
+					<td valign="middle" width="30%" align="right" class="headerQuickSearch" nowrap="">
+					
+					
+						
+							Search: 
+							
+								Servicer Loan #&nbsp;&nbsp;<input class="bodytextsmall" type="text" name="p_quick_loan_number" size="12" maxlength="15">&nbsp;&nbsp;
+							
+													
+							Address&nbsp;&nbsp;<input class="bodytextsmall" type="text" name="p_quick_address" size="12" maxlength="15">&nbsp;&nbsp;
+							
+							
+								FNMA Loan #&nbsp;&nbsp;<input class="bodytextsmall" type="text" name="p_quick_fnma_loan_number" size="12" maxlength="20">&nbsp;&nbsp;
+							
+							<input class="bodytextsmall" type="submit" name="p_submit" value="GO">&nbsp;&nbsp;<img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" border="0" width="30px" height="1px">
+						
+					</td>
+				</tr>
+			</tbody></table>
+		</td>
+	</tr>
+</tbody></table>
+						
+
+
+
+		<!-- USED FOR DOWNTIME MESSGE-->
+		<table width="766" border="0" cellspacing="0" cellpadding="0" bgcolor="#eeeeee">
+			<tbody><tr>
+				<td><img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" border="0" width="100%" height="3px">
+				</td>
+			</tr>
+		</tbody></table>
+		<table width="766" border="0" cellspacing="0" cellpadding="0" bgcolor="#eeeeee">
+			<tbody><tr>
+				<td width="28%" valign="top">
+					<!-- Zone to display all quick links --> 
+					<table width="100%" border="0" cellspacing="0" cellpadding="0" bgcolor="#eeeeee">
+						<tbody><tr>
+							<td width="10%"><img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" border="0" width="18" height="1px"><img src="/images/bluearrow_pointing_right.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws">&nbsp;</td>
+							<td width="90%" class="homePageZone">Security
+								Status&nbsp;&nbsp;</td>
+						</tr>
+						<tr>
+							<td width="10%">&nbsp;</td>
+							<td width="90%" class="bodytext" nowrap="">- Login
+								Date:&nbsp;&nbsp;03/13/2025 01:31 PM
+								(CT)</td>
+						</tr>
+						<tr>
+							<td width="10%">&nbsp;</td>
+							<td width="90%" class="bodytext" nowrap="">- Failed Attempts
+								since<br>&nbsp;&nbsp;Last Login:&nbsp;&nbsp;0</td>
+						</tr>
+						<tr>
+							<td colspan="2">&nbsp;</td>
+						</tr>
+					</tbody></table> 
+					<table width="100%" border="0" cellspacing="0" cellpadding="0" bgcolor="#eeeeee">
+						<tbody><tr>
+							<td width="10%"><img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" border="0" width="18" height="1px"><img src="/images/bluearrow_pointing_right.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws">&nbsp;</td>
+							<td width="90%" class="homePageZone">Quick Links&nbsp;&nbsp;</td>
+						</tr>
+						
+						<tr>
+							<td width="10%">&nbsp;</td>
+							<td width="90%" class="bodytext" nowrap="">- <a href="http://www.efanniemae.com/home/index.jsp?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" onclick="javascript:openPopup('http://www.efanniemae.com/home/index.jsp'); return false;">Fannie
+									Mae</a>
+							</td>
+						</tr>
+						
+
+						<tr>
+							<td width="10%">&nbsp;</td>
+							<td width="90%" class="bodytext" nowrap="">
+								  - <a href="/servlet/RouterServlet?p_build_page=LcRptOversight&amp;ni=2&amp;p_from_home_page=Y&amp;HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws">Case Inventory Summary
+													  </a><br>  
+									- <a href="javascript:navigate('Case&amp;ni=1,0,0','')">Enter New Properties
+										  </a><br>   - <a href="/servlet/RouterServlet?p_build_page=LcOpenTasksWL&amp;ni=2&amp;p_from_home_page=Y&amp;HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws">Open Tasks
+													  </a><br>   - <a href="/servlet/RouterServlet?p_build_page=LcPandPWL&amp;ni=2&amp;p_from_home_page=Y&amp;HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws">P&amp;P
+													  </a><br>   - <a href="/servlet/RouterServlet?p_build_page=LcRptPandPExtension&amp;ni=2&amp;p_from_home_page=Y&amp;HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws">P&amp;P / Extension Listing
+													  </a><br>   - <a href="/servlet/RouterServlet?p_build_page=LcRptRequestStatus&amp;ni=2&amp;p_from_home_page=Y&amp;HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws">Request Tracking By User
+													  </a><br>   - <a href="/servlet/RouterServlet?p_build_page=LcResolvedTasksWL&amp;ni=2&amp;p_from_home_page=Y&amp;HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws">Resolved Tasks
+													  </a><br>   - <a href="/servlet/RouterServlet?p_build_page=LcRptExtensionWL&amp;ni=2&amp;p_from_home_page=Y&amp;HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws">Review Extension Requests
+													  </a><br>   - <a href="/servlet/RouterServlet?p_build_page=LcRptPandPWL&amp;ni=2&amp;p_from_home_page=Y&amp;HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws">Review P&amp;P Requests
+													  </a><br>   - <a href="/servlet/RouterServlet?p_build_page=LcRptVacancyData&amp;ni=2&amp;p_from_home_page=Y&amp;HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws">Vacancy Report
+													  </a><br>   - <a href="/servlet/RouterServlet?p_build_page=LcWorkCompletionWL&amp;ni=2&amp;p_from_home_page=Y&amp;HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws">Work Completion
+													  </a><br>  
+										
+							</td>
+						</tr>
+						<tr>
+							<td colspan="2">&nbsp;</td>
+						</tr>
+					</tbody></table>
+					<table width="100%" border="0" cellspacing="0" cellpadding="0" bgcolor="#eeeeee">
+						<tbody><tr>
+							<td width="10%"><img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" border="0" width="18" height="1px"><img src="/images/bluearrow_pointing_right.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws">&nbsp;</td>
+							<td width="90%" class="homePageZone">Learning
+								Center&nbsp;&nbsp;<img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" border="0" width="18" height="1">
+							</td>
+						</tr>
+						<tr>
+							<td width="10%">&nbsp;</td>
+							<td width="90%" class="bodytext" nowrap="">- <a href="javascript:openLearningCenter()">View Reference
+									Materials</a>
+							</td>
+						</tr>
+						<tr>
+							<td width="10%">&nbsp;</td>
+							<td width="90%" class="bodytextboldred" nowrap=""></td>
+						</tr>
+						<tr>
+							<td colspan="2">&nbsp;</td>
+						</tr>
+					</tbody></table> <!-- End of Quick links --> <!-- Zone to display all available application links -->
+					 <!-- End of Application links --> <!-- Zone to display Key Statistics -->
+					 <!-- End of Key Statistics display -->
+					<!-- Zone to display TOU and Privacy Policy --> <br>
+					<center>
+						<img src="/images/1pxl_black.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" border="0" width="75%" height="1px"><br>
+						<br>
+					</center>
+					<p style="margin-left:20">
+						<img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" border="0" width="18" height="1px"><a href="javascript:doNothing()" onclick="javascript:showTermsOfUse();" class="lookup">Terms
+							of Use</a><br> <img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" border="0" width="18" height="1px"><a href="javascript:doNothing()" onclick="javascript:showPrivacyPolicy();" class="lookup">Privacy
+							Policy</a>
+					</p>
+					<br>
+				<br>
+					<center>
+						<img src="/images/1pxl_black.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" border="0" width="75%" height="1px"><br>
+						<br>
+					</center> <br>  <!-- Zone to display Login As -->  <!-- End of Login As display --></td>
+	
+				<td width="1%" valign="bottom" height="100%"><img src="/images/1pxl_black.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" border="0" width="1px" valign="bottom" height="100%">
+				</td>
+				<td width="69%" valign="top">
+					<table width="100%" border="0" cellspacing="0" cellpadding="0" bgcolor="#eeeeee">
+						<tbody><tr>
+							<td width="1%" height="100%"><img src="/images/shim.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" border="0" width="5px" height="100%">
+							</td>
+							<td width="71%" valign="top">
+								<table width="100%" border="0" cellspacing="0" cellpadding="0" bgcolor="#eeeeee">
+									<tbody><tr height="18px">
+										<td width="90%" class="homePageZone" valign="bottom"><a name="TASKS_TOP">My Tasks&nbsp;&nbsp;</a>
+										</td>
+										<td width="10%" rowspan="2" class="bodytext" valign="bottom"><img src="/images/bluetab.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" border="0">
+										</td>
+									</tr>
+									<tr height="2px">
+										<td width="90%" height="2px" valign="bottom"><img src="/images/1pix-blue.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" border="0" width="100%" height="2px" valign="top">
+										</td>
+									</tr>
+									</tbody></table>
+								</td></tr></tbody></table> <!-- Display Tasks -->  
+									<table width="100%" border="0" cellspacing="0" cellpadding="1" bgcolor="#cccccc">
+										
+										<tbody><tr>
+											<td colspan="4" class="homePageZone">Over Due:</td>
+										</tr>
+										<tr height="20px">
+											<td height="20px" colspan="4" class="bodytextbold">Tasks:</td>
+										</tr>
+										<!-- Display All Case specific tasks -->
+										
+										<tr height="20px">
+											<td height="20px" class="bodytext" colspan="4" nowrap=""><i>No
+													tasks found.</i>
+											</td>
+										</tr>
+										
+									</tbody></table>
+									
+								<table width="100%" border="0" cellspacing="0" cellpadding="0" bgcolor="#ffffff">
+									<tbody><tr height="2px">
+										<td colspan="4" width="100%" height="2px" valign="top"><img src="/images/1pix-blue.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" border="0" width="100%" height="2px" valign="top">
+										</td>
+									</tr>
+								</tbody></table>  
+									<table width="100%" border="0" cellspacing="0" cellpadding="1" bgcolor="#ffffff">
+										
+										<tbody><tr>
+											<td colspan="4" class="homePageZone">Due Today:</td>
+										</tr>
+										<tr height="20px">
+											<td height="20px" colspan="4" class="bodytextbold">Tasks:</td>
+										</tr>
+										<!-- Display All Case specific tasks -->
+										
+										<tr height="20px">
+											<td height="20px" class="bodytext" colspan="4" nowrap=""><i>No
+													tasks found.</i>
+											</td>
+										</tr>
+										
+									</tbody></table>
+									
+								<table width="100%" border="0" cellspacing="0" cellpadding="0" bgcolor="#eeeeee">
+									<tbody><tr height="2px">
+										<td colspan="4" width="100%" height="2px" valign="top"><img src="/images/1pix-blue.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" border="0" width="100%" height="2px" valign="top">
+										</td>
+									</tr>
+								</tbody></table>  
+									<table width="100%" border="0" cellspacing="0" cellpadding="1" bgcolor="#eeeeee">
+										
+										<tbody><tr>
+											<td colspan="4" class="homePageZone">Due Later:</td>
+										</tr>
+										<tr height="20px">
+											<td height="20px" colspan="4" class="bodytextbold">Tasks:</td>
+										</tr>
+										<!-- Display All Case specific tasks -->
+										
+										<tr height="20px">
+											<td height="20px" class="bodytext" colspan="4" nowrap=""><i>No
+													tasks found.</i>
+											</td>
+										</tr>
+										
+									</tbody></table>
+									
+									<!-- End of Display Tasks -->
+									<table width="100%" border="0" cellspacing="0" cellpadding="0" bgcolor="#eeeeee">
+										<tbody><tr>
+											<td width="95%" valign="top"><img src="/images/1pix-blue.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" border="0" width="100%" height="2px" valign="top">
+											</td>
+											<td width="5%" class="bodytext" valign="top"><a href="#TASKS_TOP?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws"><img src="/images/uparrow.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" border="0">
+											</a>
+											</td>
+										</tr>
+									</tbody></table>
+									<table width="100%" border="0" cellspacing="0" cellpadding="0" bgcolor="#eeeeee">
+										<tbody><tr height="2px">
+											<td width="100%" height="2px" valign="top"><br>
+											</td>
+										</tr>
+									</tbody></table>
+									<!-- Display Worklists  -->
+									
+									<table width="100%" border="0" cellspacing="0" cellpadding="0" bgcolor="#eeeeee">
+										<tbody><tr height="18px">
+											<td width="90%" class="homePageZone" valign="bottom"><a name="WORKLISTS_TOP">My Worklists&nbsp;&nbsp;</a>
+											</td>
+											<td width="10%" rowspan="2" class="bodytext" valign="bottom"><img src="/images/bluetab.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" border="0">
+											</td>
+										</tr>
+										<tr height="2px">
+											<td width="90%" height="2px" valign="bottom"><img src="/images/1pix-blue.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" border="0" width="100%" height="2px" valign="top">
+											</td>
+											<td width="10%" class="bodytext" height="2px">&nbsp;</td>
+										</tr>
+									</tbody></table>
+									<table width="100%" border="0" cellspacing="4" cellpadding="1" bgcolor="#cccccc">
+										
+										<tbody><tr>
+											<td colspan="4"><a href="/servlet/RouterServlet?p_build_page=LcRptNewRequestWL&amp;p_home_page=Y&amp;p_dash_choice_id=4533&amp;ni=2&amp;HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws">New P&amp;P Interface Requests</a>
+												(4)</td>
+										</tr>
+										
+										<tr>
+											<td width="100%" height="6px" align="center" valign="center"><img src="/images/shim_menu.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" width="95%" height="1" border="0">
+											</td>
+										</tr>
+										
+										<tr>
+											<td colspan="4"><a href="/servlet/RouterServlet?p_build_page=LcRptPandPWL&amp;p_home_page=Y&amp;p_dash_choice_id=6856&amp;ni=2&amp;HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws">Review P&amp;P Requests</a>
+												(2)</td>
+										</tr>
+										
+									</tbody></table>
+									
+
+									<!-- End of Display Worklists  -->
+									<table width="100%" border="0" cellspacing="0" cellpadding="0" bgcolor="#eeeeee">
+										<tbody><tr>
+											<td width="95%" valign="top"><img src="/images/1pix-blue.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" border="0" width="100%" height="2px" valign="top">
+											</td>
+											<td width="5%" class="bodytext" valign="top"><a href="#WORKLISTS_TOP?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws"><img src="/images/uparrow.gif?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" border="0">
+											</a>
+											</td>
+										</tr>
+									</tbody></table>
+									
+									<table width="100%" border="0" cellspacing="0" cellpadding="0" bgcolor="#eeeeee">
+										<tbody><tr>
+											<td width="95%" valign="top">
+												</td>
+											<td width="5%" class="bodytext" valign="top"></td>
+										</tr>
+									</tbody></table>
+									</td>
+									</tr>
+								</tbody></table>
+						
+					 <br> <!-- These are required on every page that does Validation.js -->
+					<input type="hidden" name="js_changed" value=""> <input type="hidden" name="p_form_action" value=""> <input type="hidden" name="p_process_page" value="Home"> <input type="hidden" name="p_build_page" value="Home"> <input type="hidden" name="p_rpt_back_list" value="Home">
+					<table width="766" border="0" cellspacing="0" cellpadding="0" bgcolor="#eeeeee">
+						<tbody><tr>
+							<td colspan="10" align="center" class="copyright">
+
+
+© 2000 - 2025 HomeTracker LP. All rights reserved.
+
+<br>
+U.S. Patents: <a href="http://www.firstprestonht.com/patents/?HTOWASP_CSRFTKN=LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws" target="_new">http://www.firstprestonht.com/patents/</a> U.S. Patent Pending.
+<br>
+
+								&nbsp;&nbsp;</td>
+						</tr>
+					</tbody></table>
+		
+	<input type="hidden" name="HTOWASP_CSRFTKN" value="LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws">
+</form>
+<script language="JavaScript">
+
+	var tokenName = 'HTOWASP_CSRFTKN';
+	var tokenValue = 'LQy9iv6d3FQ9nd4TGr1XiHqQ4SsKcU2z4flqVIb7Ocws';
+
+	function isHttpLinkColon(a){var b=0;if(a.length>0&&a.indexOf(":")===-1){b=1}return b}function isHttpLinkSlash(a){var b=0;if(a.substring(0,1)==="/"){b=1}return b}function isHttpLinkHTTP(a){var b=0;if(a.substring(0,4)==="http"){b=1}return b}function isHttpLink(a){var b=0;if(isHttpLinkHTTP(a)||isHttpLinkSlash(a)||isHttpLinkColon(a)){b=1}return b}function updateTag(a,b){var c=document.getElementsByTagName(a);for(i=0;i<c.length;i++){var d=c[i].getAttribute(b);if(d!=null&&d!=""){if(isHttpLink(d)){var e=d.indexOf("?");if(d.match(tokenName)==null){if(e!=-1){d=d+"&"+tokenName+"="+tokenValue}else{d=d+"?"+tokenName+"="+tokenValue}}c[i].setAttribute(b,d)}}}}function updateForms(){var a=document.getElementsByTagName("form");for(i=0;i<a.length;i++){var b=a[i].innerHTML;b+="<input type=hidden name="+tokenName+" value="+tokenValue+" />";a[i].innerHTML=b}}function updateImages(){updateTag("img","src")}function updateScripts(){updateTag("script","src")}function updateStyles(){updateTag("style","src")}function updateIFrames(){updateTag("iframe","src")}function updateFrames(){updateTag("frame","src")}function updateAreas(){updateTag("area","href")}function updateLinks(){updateTag("link","href")}function updateAnchors(){updateTag("a","href")}updateAnchors();updateAreas();updateFrames();updateIFrames();updateStyles();updateImages();	
+</script>
+<meta http-equiv="cache-control" content="no-cache"><meta http-equiv="expires" content="0"><meta http-equiv="pragma" content="no-cache">
+
+
+</body>
+
+</html>
+
