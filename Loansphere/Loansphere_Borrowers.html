@@ -17,755 +17,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
         integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <style>
-        /* Base styles */
-        body {
-            margin: 0;
-            font-family: Roboto, "Helvetica Neue", sans-serif;
-            background-color: #f5f5f5;
-        }
-
-        /* Layout */
-        .wrapper {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* Header styles */
-        .header2 {
-            background-color: #1976d2;
-            color: white;
-            position: fixed;
-            width: 100%;
-            z-index: 1000;
-            top: 0;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Dropdown styles */
-        .mat-mdc-form-field {
-            width: 100%;
-            min-width: 200px;
-            margin: 8px 0;
-        }
-
-        .context-dropdown-adjust {
-            background-color: white;
-            border-radius: 4px;
-        }
-
-        .header-panel-adjust {
-            max-height: 400px;
-            overflow-y: auto;
-        }
-
-        /* Navigation drawer */
-        .drawer-container {
-            margin-top: 64px;
-            height: calc(100vh - 64px);
-            display: flex;
-        }
-
-        .app-drawer {
-            width: 216px;
-            background-color: white;
-            box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
-        }
-
-        /* Navigation items */
-        .drawer-list-item {
-            list-style: none;
-            margin: 4px 0;
-        }
-
-        .drawer-item {
-            color: rgba(0, 0, 0, 0.87);
-            text-decoration: none;
-            display: block;
-            padding: 12px 16px;
-            transition: background-color 0.2s;
-        }
-
-        .drawer-item:hover {
-            background-color: rgba(0, 0, 0, 0.04);
-        }
-
-        .drawer-feature-item {
-            padding: 8px 32px;
-            color: rgba(0, 0, 0, 0.87);
-            text-decoration: none;
-            display: block;
-            transition: background-color 0.2s;
-        }
-
-        .active-child-menu-item {
-            background-color: rgba(25, 118, 210, 0.1);
-            border-left: 4px solid #1976d2;
-        }
-
-        /* AG-Grid customization */
-        .ag-theme-material {
-            --ag-header-height: 55px;
-            --ag-header-foreground-color: rgba(0, 0, 0, 0.87);
-            --ag-header-background-color: #fafafa;
-            --ag-row-hover-color: rgba(25, 118, 210, 0.04);
-        }
-
-        .grid-align-left {
-            text-align: left !important;
-        }
-
-        /* Material Design form fields */
-        .mat-mdc-form-field-appearance-fill .mat-mdc-form-field-flex {
-            background-color: rgba(0, 0, 0, 0.04);
-        }
-
-        .mat-mdc-form-field-appearance-fill:hover .mat-mdc-form-field-flex {
-            background-color: rgba(0, 0, 0, 0.08);
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .drawer-container {
-                margin-top: 56px;
-            }
-
-            .app-drawer {
-                position: fixed;
-                height: 100%;
-                transform: translateX(-100%);
-            }
-
-            .app-drawer.mat-drawer-opened {
-                transform: translateX(0);
-            }
-        }
-
-        .mat-mdc-form-field {
-            width: 200px;
-            margin: 0 12px;
-        }
-
-        .context-dropdown-adjust {
-            background: transparent;
-        }
-
-        .mat-mdc-select-value-text {
-            color: white !important;
-        }
-
-        .mat-mdc-select-arrow {
-            color: white;
-        }
-
-        .mat-mdc-form-field-flex {
-            background: rgba(255, 255, 255, 0.1) !important;
-        }
-
-        .mat-mdc-form-field-infix {
-            padding: 8px 0;
-        }
-
-        /* Dropdown Panel Styling */
-        .mat-select-panel {
-            background: white;
-            border-radius: 4px;
-            margin-top: 4px;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-
-        .mat-option {
-            padding: 8px 16px;
-            color: rgba(0, 0, 0, 0.87);
-            font-size: 14px;
-            line-height: 36px;
-        }
-
-        .mat-option:hover {
-            background: rgba(0, 0, 0, 0.04);
-        }
-
-        /* Institution Name Styling */
-        .institution-name {
-            color: white;
-            font-size: 16px;
-            margin-right: 24px;
-            white-space: nowrap;
-        }
-
-        /* Header Main Adjustments */
-        .header-main-1 {
-            display: flex;
-            align-items: center;
-        }
-
-        .header-main-2 {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
-        /* Form Field Icon Color */
-        .mat-mdc-form-field-icon-prefix {
-            color: white;
-        }
-
-        .mat-mdc-select-panel {
-            background-color: #ffffff !important;
-            border-radius: 4px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            margin-top: 4px;
-            padding: 8px 0;
-        }
-
-        .mat-mdc-option {
-            color: #333333 !important;
-            padding: 12px 16px;
-            font-size: 14px;
-            line-height: 20px;
-        }
-
-        .mat-mdc-option:hover {
-            background-color: rgba(25, 118, 210, 0.04);
-        }
-
-        .mat-mdc-option.mat-selected {
-            background-color: rgba(25, 118, 210, 0.08);
-            color: #1976d2 !important;
-        }
-
-        /* Dropdown Container Alignment */
-
-        .brand-dropdown-container {
-            position: relative;
-            min-width: 200px;
-        }
-
-        .brand-select {
-            width: 100%;
-            padding: 10px 14px;
-            border: 1px solid rgba(255, 255, 255, 0.4);
-            background: rgba(255, 255, 255, 0.15);
-            color: white;
-            border-radius: 4px;
-            cursor: pointer;
-            appearance: none;
-            -webkit-appearance: none;
-            font-size: 14px;
-            transition: all 0.2s ease;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 10px center;
-            background-size: 16px;
-            padding-right: 30px;
-        }
-
-        .brand-select option {
-            background: white;
-            color: #333;
-            padding: 10px;
-            font-size: 14px;
-        }
-
-        .brand-select:focus {
-            outline: none;
-            border-color: rgba(255, 255, 255, 0.8);
-            box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2);
-        }
-
-        .brand-select:hover {
-            background-color: rgba(255, 255, 255, 0.25);
-        }
-
-        .mat-mdc-form-field {
-            margin: 0 8px;
-            min-width: 200px;
-            background: #1976d2;
-        }
-
-        /* Dropdown Trigger Button */
-        .mat-mdc-select-trigger {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 4px;
-            padding: 8px 12px;
-        }
-
-        /* Overlay Container */
-        .cdk-overlay-container {
-            z-index: 1060;
-        }
-
-        .cdk-overlay-pane {
-            margin-top: 4px;
-        }
-
-        .header-parts-client {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            padding: 8px 16px;
-            position: relative;
-            /* Change from fixed to relative */
-        }
-
-        .mat-mdc-form-field.context-dropdown-adjust {
-            width: 200px;
-            margin-left: 16px;
-        }
-
-        .institution-name {
-            color: white;
-            font-size: 16px;
-            white-space: nowrap;
-        }
-
-        /* Ensure dropdown panel appears correctly */
-        .mat-select-panel {
-            background: white;
-            border-radius: 4px;
-            margin-top: 4px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-
-        .mat-option {
-            color: rgba(0, 0, 0, 0.87) !important;
-            padding: 8px 16px;
-        }
-
-        .header-main-2 {
-            margin-top: 0em;
-            margin-left: 32em;
-        }
-
-        .form-control {
-            padding: 10px 14px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            width: 100%;
-            font-size: 14px;
-            transition: all 0.2s ease;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-        }
-
-        /* Adjust column width */
-        .col-6.col-lg-4.col-xl-2 {
-            min-width: 250px;
-            margin-bottom: 1.25rem;
-            padding: 0 12px;
-        }
-
-        .form-control:focus {
-            border-color: #1976d2;
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.15);
-        }
-
-        .form-control:hover {
-            border-color: #bbb;
-        }
-
-        .btn-primary {
-            background-color: #1976d2;
-            border: none;
-            padding: 10px 20px;
-            font-size: 14px;
-            font-weight: 500;
-            border-radius: 4px;
-            color: white;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        .btn-primary:hover {
-            background-color: #1565c0;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-        }
-
-        .btn-primary:active {
-            background-color: #0d47a1;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            transform: translateY(1px);
-        }
-
-        .text-link {
-            color: #1976d2;
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 500;
-            transition: color 0.2s ease;
-        }
-
-        .text-link:hover {
-            color: #0d47a1;
-            text-decoration: underline;
-        }
-
-        .hero {
-            margin-top: 6em;
-            padding: 20px;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 6px;
-            font-size: 14px;
-            font-weight: 500;
-            color: #333;
-        }
-
-        .header-main-1 h4 {
-            font-size: 20px;
-            font-weight: 600;
-            color: #333;
-            margin: 0;
-            padding: 20px 0 10px 20px;
-        }
-
-        .search-container {
-            background-color: white;
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        }
-
-        .search-title {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 20px;
-            color: #333;
-            border-bottom: 2px solid #f0f0f0;
-            padding-bottom: 10px;
-        }
-
-        .search-actions {
-            margin-top: 20px;
-            display: flex;
-            align-items: center;
-        }
-
-        .mat-mdc-select-panel {
-            background: #ffffff !important;
-            border-radius: 8px !important;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15) !important;
-            padding: 8px 0 !important;
-            min-width: 200px !important;
-        }
-
-        .mat-mdc-option {
-            color: #333333 !important;
-            font-size: 14px !important;
-            line-height: 40px !important;
-            height: 40px !important;
-            padding: 0 16px !important;
-            transition: background-color 0.2s ease;
-        }
-
-        .mat-mdc-option:hover {
-            background-color: #f5f5f5 !important;
-        }
-
-        .mat-mdc-option.mat-selected {
-            background-color: #e3f2fd !important;
-            color: #1976d2 !important;
-            font-weight: 500 !important;
-        }
-
-        .mat-mdc-option.mat-active {
-            background-color: #f0f7ff !important;
-        }
-
-        /* Dropdown Panel Max Height */
-        .mat-select-panel:not([class*=mat-elevation-z]) {
-            max-height: 280px !important;
-            overflow-y: auto !important;
-        }
-
-        /* Scrollbar Styling */
-        .mat-select-panel::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .mat-select-panel::-webkit-scrollbar-thumb {
-            background-color: #c1c1c1;
-            border-radius: 3px;
-        }
-
-        .mat-select-panel::-webkit-scrollbar-track {
-            background-color: #f1f1f1;
-        }
-
-        mat-mdc-select-panel,
-        .mat-select-panel {
-            background-color: #ffffff !important;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15) !important;
-        }
-
-        .mat-mdc-option,
-        .mat-option {
-            cursor: pointer !important;
-            background-color: #ffffff !important;
-            color: #333333 !important;
-            transition: background-color 0.2s ease;
-        }
-
-        .mat-mdc-option:hover,
-        .mat-option:hover {
-            background-color: #f5f5f5 !important;
-        }
-
-        .mat-mdc-option.mat-selected,
-        .mat-option.mat-selected {
-            background-color: #e3f2fd !important;
-            color: #1976d2 !important;
-        }
-
-        /* Dropdown Container */
-        .mat-mdc-select-panel-wrap {
-            background-color: #ffffff !important;
-        }
-
-        /* Option Text Color */
-        .mat-mdc-option .mdc-list-item__primary-text,
-        .mat-option .mat-option-text {
-            color: #333333 !important;
-        }
-
-        /* Selected Option Indicator */
-        .mat-mdc-option.mat-selected .mat-pseudo-checkbox-checked {
-            background-color: #1976d2 !important;
-        }
-
-        .mat-mdc-select-value-text {
-            color: #e0e0e0 !important;
-        }
-
-        .mat-mdc-select-arrow {
-            color: #e0e0e0 !important;
-        }
-
-        /* Dropdown Options */
-        .mat-mdc-option,
-        .mat-option {
-            color: #333333 !important;
-            background-color: #ffffff !important;
-        }
-
-        .mat-mdc-option .mdc-list-item__primary-text {
-            color: #333333 !important;
-        }
-
-        /* Selected Option */
-        .mat-mdc-option.mat-selected {
-            color: #1976d2 !important;
-            background-color: #e3f2fd !important;
-        }
-
-        /* Hover State */
-        .mat-mdc-option:hover {
-            background-color: #f5f5f5 !important;
-            color: #1976d2 !important;
-        }
-
-        /* Selected Text in Dropdown Trigger */
-        .mat-mdc-select-min-line {
-            color: #e0e0e0 !important;
-        }
-
-        .header2 {
-            background-color: #1976d2;
-            color: white;
-            position: fixed;
-            width: 100%;
-            z-index: 1000;
-            top: 0;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        mat-option {
-            padding: 8px 16px;
-            font-size: 14px;
-            line-height: 20px;
-            color: #333333;
-            transition: background-color 0.2s ease;
-
-        }
-
-        .ag-theme-material {
-            --ag-header-height: 50px;
-            --ag-row-height: 48px;
-            --ag-header-foreground-color: #333;
-            --ag-font-size: 14px;
-        }
-
-        #myGrid {
-            margin: 15px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .ag-theme-material {
-            height: 600px;
-            width: 100%;
-            margin: 15px;
-        }
-
-        .ag-header-cell-label {
-            font-weight: bold;
-            color: #333;
-        }
-
-        .ag-row {
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        .table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            background: white;
-            font-size: 14px;
-        }
-
-        .table th {
-            background: #f5f5f5;
-            padding: 14px 16px;
-            text-align: left;
-            font-weight: 600;
-            color: #333;
-            border-bottom: 2px solid #1976d2;
-            position: sticky;
-            top: 0;
-            z-index: 10;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-        }
-
-        .table td {
-            padding: 14px 16px;
-            border-bottom: 1px solid #eee;
-            vertical-align: middle;
-            transition: background-color 0.15s ease;
-        }
-
-        .table tr:hover {
-            background-color: rgba(25, 118, 210, 0.05);
-        }
-
-        .table tr:last-child td {
-            border-bottom: none;
-        }
-
-        .table-responsive {
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            border-radius: 8px;
-            margin: 20px 0;
-            overflow: hidden;
-            width: 100%;
-        }
-
-        /* Zebra striping for better readability */
-        .table tbody tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-
-        /* First column styling */
-        .table td:first-child,
-        .table th:first-child {
-            padding-left: 20px;
-        }
-
-        /* Last column styling */
-        .table td:last-child,
-        .table th:last-child {
-            padding-right: 20px;
-        }
-
-        .alert {
-            padding: 16px 20px;
-            margin: 20px 0;
-            border: 1px solid transparent;
-            border-radius: 6px;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-        }
-
-        .alert-warning {
-            color: #856404;
-            background-color: #fff3cd;
-            border-color: #ffeeba;
-        }
-
-        .alert-info {
-            color: #0c5460;
-            background-color: #d1ecf1;
-            border-color: #bee5eb;
-        }
-
-        .alert::before {
-            margin-right: 10px;
-            font-family: "Font Awesome 5 Free";
-            font-weight: 900;
-        }
-
-        .alert-warning::before {
-            content: "\\f071";  /* Font Awesome exclamation triangle */
-            color: #f0ad4e;
-        }
-
-        .alert-info::before {
-            content: "\\f05a";  /* Font Awesome info circle */
-            color: #17a2b8;
-        }
-
-        .text-center {
-            text-align: center;
-        }
-
-        /* Loading indicator */
-        #loading-indicator {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: rgba(255, 255, 255, 0.9);
-            padding: 20px 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-            z-index: 2000;
-            display: none;
-            font-size: 16px;
-            font-weight: 500;
-            color: #333;
-        }
-
-        #loading-indicator::after {
-            content: "";
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            margin-left: 10px;
-            border: 3px solid #1976d2;
-            border-radius: 50%;
-            border-top-color: transparent;
-            animation: spin 1s linear infinite;
-            vertical-align: middle;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-
-    </style>
+    <link rel="stylesheet" href="./borrower.css" />
 
     <!-- Add AG-Grid Script -->
     <script src="https://cdn.jsdelivr.net/npm/ag-grid-community/dist/ag-grid-community.min.js"></script>
@@ -820,7 +72,7 @@
 <!-- ... rest of your existing body content ... -->
 
 
-<body>
+<body data-offshore-restrictions data-user-type="offshore">
     <div id="loading-indicator" style="padding: 40px; display: none;">
         Loading...
     </div>
@@ -874,7 +126,7 @@
                                                             <div class="mat-mdc-form-field-infix ng-tns-c508571215-22">
                                                                 <div class="brand-dropdown-container">
                                                                     <select id="brandSelect" class="brand-select">
-                                                                        <option value="all" selected>All Brands</option>
+                                                                        <!-- <option value="all" selected>All Brands</option> -->
                                                                         <!-- Brand options will be populated dynamically -->
                                                                     </select>
                                                                 </div>
@@ -1075,7 +327,8 @@
                                     <div _ngcontent-ng-c2291702866="" class="container xl">
                                         <div class="search-container">
                                             <div class="search-title">
-                                                <i class="fa fa-search" style="margin-right: 10px;"></i> Search Borrowers
+                                                <i class="fa fa-search" style="margin-right: 10px;"></i> Search
+                                                Borrowers
                                             </div>
                                             <bk-form _ngcontent-ng-c2291702866="">
                                                 <form novalidate="" name="form" autocomplete="off"
@@ -1124,10 +377,13 @@
                                                     </div>
                                                     <div class="search-actions">
                                                         <button type="button" id="searchButton" class="btn btn-primary">
-                                                            <i class="fa fa-search" style="margin-right: 5px;"></i> Search
+                                                            <i class="fa fa-search" style="margin-right: 5px;"></i>
+                                                            Search
                                                         </button>
-                                                        <a class="text-link" style="cursor: pointer; margin-left: 15px;">
-                                                            <i class="fa fa-times" style="margin-right: 5px;"></i> Clear Search
+                                                        <a class="text-link"
+                                                            style="cursor: pointer; margin-left: 15px;">
+                                                            <i class="fa fa-times" style="margin-right: 5px;"></i> Clear
+                                                            Search
                                                         </a>
                                                     </div>
                                                 </form>
@@ -1155,15 +411,20 @@
                                             </div>
                                             </div> -->
                                                 <div class="search-container" style="margin-top: 20px;">
-                                                    <div class="search-title d-flex justify-content-between align-items-center">
+                                                    <div
+                                                        class="search-title d-flex justify-content-between align-items-center">
                                                         <div>
-                                                            <i class="fa fa-users" style="margin-right: 10px;"></i> Borrower Results
+                                                            <i class="fa fa-users" style="margin-right: 10px;"></i>
+                                                            Borrower Results
                                                         </div>
-                                                        <button type="button" class="btn btn-success" id="createMessageButton">
-                                                            <i class="fa fa-envelope" style="margin-right: 5px;"></i> Create Message
+                                                        <button type="button" class="btn btn-success"
+                                                            id="createMessageButton">
+                                                            <i class="fa fa-envelope" style="margin-right: 5px;"></i>
+                                                            Create Message
                                                         </button>
                                                     </div>
-                                                    <div class="table-responsive" style="width: 100%; height: 600px; overflow: auto;">
+                                                    <div class="table-responsive"
+                                                        style="width: 100%; height: 600px; overflow: auto;">
                                                         <table class="table table-hover">
                                                             <thead>
                                                                 <tr>
@@ -1196,16 +457,6 @@
                 </lsdadmin-home><!----></main>
         </div>
     </app-root>
-    <link rel="modulepreload" href="chunk-S735BLLZ.js">
-    <link rel="modulepreload" href="chunk-X6OGZ2XM.js">
-    <link rel="modulepreload" href="chunk-UFDSLR2R.js">
-    <link rel="modulepreload" href="chunk-SB5BZARG.js">
-    <link rel="modulepreload" href="chunk-6E4CRX44.js">
-    <link rel="modulepreload" href="chunk-MPYADVNX.js">
-    <link rel="modulepreload" href="chunk-GRV5ZUSL.js">
-    <link rel="modulepreload" href="chunk-AQPD4LOG.js">
-    <link rel="modulepreload" href="chunk-2T5GH5PT.js">
-    <link rel="modulepreload" href="chunk-PBQTADCT.js">
     <script src="polyfills-CRUMOBOH.js" type="module"></script>
     <!-- <script src="scripts-K3V24XRE.js" defer=""></script>
     <script src="main-IFZO33RI.js" type="module"></script> -->
@@ -1219,12 +470,14 @@
     </div>
 
     <!-- Create Message Modal -->
-    <div class="modal fade" id="createMessageModal" tabindex="-1" aria-labelledby="createMessageModalLabel" aria-hidden="true">
+    <div class="modal fade" id="createMessageModal" tabindex="-1" aria-labelledby="createMessageModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header" style="background-color: #1976d2; color: white;">
                     <h5 class="modal-title" id="createMessageModalLabel">Create New Message</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form id="createMessageForm">
@@ -1270,12 +523,14 @@
 
                         <div class="mb-3">
                             <label for="messageSubject" class="form-label">Subject</label>
-                            <input type="text" class="form-control" id="messageSubject" placeholder="Enter message subject" required>
+                            <input type="text" class="form-control" id="messageSubject"
+                                placeholder="Enter message subject" required>
                         </div>
 
                         <div class="mb-3">
                             <label for="messageText" class="form-label">Message</label>
-                            <textarea class="form-control" id="messageText" rows="5" placeholder="Type your message here..." required></textarea>
+                            <textarea class="form-control" id="messageText" rows="5"
+                                placeholder="Type your message here..." required></textarea>
                         </div>
 
                         <div class="mb-3">
@@ -1299,8 +554,11 @@
     </div>
 
     <script src="Brand_Ingestion.js" type="module"></script>
+    <script src="filter_onshore_brands.js"></script>
     <script src="Loan_Ingestion.js" type="module"></script>
+    <script src="filter_onshore_loans.js"></script>
     <script src="Queue_Ingestion.js" type="module"></script>
+    <script src="filter_onshore_queues.js"></script>
 
     <script type="module">
 
@@ -1378,21 +636,7 @@
                 ];
             }
 
-            // Process the loan data to add isRestricted property
-            const loans = window.storedLoansSet;
-
-            // Determine if the current user is offshore
-            const isOffshoreUser = true; // This would be determined by user authentication
-
-            // Add isRestricted property to each loan
-            loans.forEach(loan => {
-                // A loan is restricted to offshore users if its type is "onshore"
-                loan.isRestricted = isOffshoreUser && (loan.type === "onshore" ||
-                                   (loan.allowedUserTypes && !loan.allowedUserTypes.includes('offshore')));
-            });
-            console.log(loans, "Loans");
-
-            return loans;
+            return window.storedLoansSet;
         }
 
         async function waitForQueues() {
@@ -1405,77 +649,43 @@
         var borrowerData = [];
 
         function updateTable(data) {
+            console.log("Called Update from html")
             const tableBody = document.getElementById('borrowerTableBody');
             tableBody.innerHTML = '';
-
-            // Special case 1: If we have exactly one result and it's a restricted loan
-            // This handles the case where search by loan number, username, etc. returns exactly one restricted loan
-            if (data.length === 1 && data[0].isRestricted) {
-                // Display "Loan not provisioned to you" message
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td colspan="10" class="text-center">
-                        <div class="alert alert-warning">
-                            Loan not provisioned to you
-                        </div>
-                    </td>
-                `;
-                tableBody.appendChild(tr);
-                return;
-            }
 
             // If no results at all
             if (data.length === 0) {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td colspan="10" class="text-center">
-                        <div class="alert alert-info">
-                            No matching records found
-                        </div>
-                    </td>
-                `;
+                <td colspan="10" class="text-center">
+                    <div class="alert alert-info">
+                        Loan is not provisioned to you
+                    </div>
+                </td>
+            `;
                 tableBody.appendChild(tr);
                 return;
             }
 
-            // Filter out restricted loans for display
-            // This handles case 2: When searching by fields that return multiple results,
-            // only show records for loans that are not restricted
-            const nonRestrictedData = data.filter(row => !row.isRestricted);
-
-            // If all results were restricted
-            if (nonRestrictedData.length === 0) {
+            // Display all data
+            data.forEach(row => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td colspan="10" class="text-center">
-                        <div class="alert alert-warning">
-                            Loan not provisioned to you
-                        </div>
-                    </td>
-                `;
-                tableBody.appendChild(tr);
-                return;
-            }
-
-            // Display the non-restricted data
-            // Maintain the original sort order as per requirement 3
-            nonRestrictedData.forEach(row => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${row.loginAccountUserName}</td>
-                    <td>${row.firstName}</td>
-                    <td>${row.lastName}</td>
-                    <td>${row.emailAddress}</td>
-                    <td>${row.phoneNumber}</td>
-                    <td>${row.propertyAddress}</td>
-                    <td>${row.ssn}</td>
-                    <td>${row.brand}</td>
-                    <td>${row.loanNumber}</td>
-                    <td>${row.status}</td>
-                `;
+                <td>${row.loginAccountUserName}</td>
+                <td>${row.firstName}</td>
+                <td>${row.lastName}</td>
+                <td>${row.emailAddress}</td>
+                <td>${row.phoneNumber}</td>
+                <td>${row.propertyAddress}</td>
+                <td>${row.ssn}</td>
+                <td>${row.brand}</td>
+                <td>${row.loanNumber}</td>
+                <td>${row.status}</td>
+            `;
                 tableBody.appendChild(tr);
             });
         }
+
         document.addEventListener('DOMContentLoaded', function () {
             // Show/hide menu functionality
             const hamburgerMenu = document.querySelector('.hamburger-menu');
@@ -1496,6 +706,7 @@
                 });
             });
         });
+
         document.addEventListener('DOMContentLoaded', function () {
             // Initialize brand dropdown
             const brandSelect = document.querySelector('mat-select[name="brandSelect"]');
@@ -1518,8 +729,8 @@
                     });
                 });
             }
-
         });
+
         document.addEventListener('DOMContentLoaded', async function () {
             const tableBody = document.getElementById('borrowerTableBody');
             let data = []
@@ -1530,13 +741,8 @@
             // Initialize window.selectedBrandValue
             window.selectedBrandValue = 'all';
 
-            // For offshore users, only show non-restricted loans by default
-            // This ensures requirement 2 is met: only show records associated with loans not restricted
-            const nonRestrictedData = data.filter(row => !row.isRestricted);
-
-            // Update table with non-restricted loans using the updateTable function
-            // This ensures consistent display and handling of the data
-            updateTable(nonRestrictedData);
+            // Update table with all loans
+            updateTable(data);
         });
 
         let brandData = [];
@@ -1561,15 +767,6 @@
                 brandSelect.remove(1);
             }
 
-            // User Story 4: If a Brand name is selected, limit search results by the selected Brand
-            // Filter brands to only show those with non-restricted loans for offshore users
-            const availableBrands = brands.filter(brand => {
-                // For offshore users, only show brands that have at least one non-restricted loan
-                return borrowerData.some(loan =>
-                    loan.brand === brand.value && !loan.isRestricted
-                );
-            });
-
             // Add "All Brands" option if it doesn't exist
             if (brandSelect.options.length === 0) {
                 const allOption = document.createElement('option');
@@ -1578,8 +775,8 @@
                 brandSelect.appendChild(allOption);
             }
 
-            // Populate brand options with only available brands
-            availableBrands.forEach(brand => {
+            // Populate brand options with all brands
+            brands.forEach(brand => {
                 const option = document.createElement('option');
                 option.value = brand.value;
                 option.textContent = brand.name;
@@ -1590,7 +787,7 @@
             window.selectedBrandValue = 'all';
 
             // Handle brand selection
-            brandSelect.addEventListener('change', function() {
+            brandSelect.addEventListener('change', function () {
                 const selectedValue = this.value;
                 const selectedBrand = selectedValue === 'all'
                     ? { name: 'All Brands', value: 'all' }
@@ -1614,19 +811,13 @@
                         filteredData = filteredData.filter(row => row.brand === selectedBrand.value);
                     }
 
-                    // Always filter out restricted loans for offshore users
-                    // This ensures requirement 2 is met: only show records associated with loans not restricted
-                    filteredData = filteredData.filter(row => !row.isRestricted);
-
                     // Update the table with filtered data
-                    // The updateTable function will maintain the sort order as per requirement 3
                     updateTable(filteredData);
                 }
             });
         });
 
         document.addEventListener('DOMContentLoaded', async function () {
-
             const searchButton = document.getElementById('searchButton');
             const tableBody = document.getElementById('borrowerTableBody');
 
@@ -1634,11 +825,8 @@
                 borrowerData = res
             });
 
-            // Filter out restricted loans for initial display
-            const nonRestrictedData = borrowerData.filter(row => !row.isRestricted);
-
-            // Initial table population with non-restricted loans only
-            updateTable(nonRestrictedData);
+            // Initial table population with all loans
+            updateTable(borrowerData);
 
             // Search functionality
             searchButton.addEventListener('click', function () {
@@ -1673,40 +861,12 @@
                     filteredData = filteredData.filter(row => row.brand === window.selectedBrandValue);
                 }
 
-                // User Story 1: If searching by loan number (or other specific fields) and exactly one restricted loan is found
-                // Show "Loan not provisioned to you" message
-                const isSearchingBySpecificFields = searchCriteria.loanNumber ||
-                                                  searchCriteria.username ||
-                                                  searchCriteria.firstName ||
-                                                  searchCriteria.lastName ||
-                                                  searchCriteria.email ||
-                                                  searchCriteria.phone ||
-                                                  searchCriteria.address ||
-                                                  searchCriteria.ssn;
-
-                if (isSearchingBySpecificFields &&
-                    filteredData.length === 1 &&
-                    filteredData[0].isRestricted) {
-                    // This will trigger the "Loan not provisioned to you" message in updateTable
-                    document.getElementById('loading-indicator').style.display = 'none';
-                    updateTable(filteredData);
-                    return;
-                }
-
-                // User Story 2: If searching by fields that return multiple results
-                // Only show records for loans that are not restricted
-                // This is handled by the updateTable function which filters out restricted loans
-
                 // Hide loading indicator
                 document.getElementById('loading-indicator').style.display = 'none';
 
                 // Update the table with filtered data
-                // The updateTable function will handle filtering out restricted loans
-                // and maintaining the sort order as per requirement 3
                 updateTable(filteredData);
             });
-
-
 
             // Clear search functionality
             document.querySelector('.text-link').addEventListener('click', function () {
@@ -1730,23 +890,15 @@
                     matSelectText.textContent = 'All Brands';
                 }
 
-                // For offshore users, only show non-restricted loans
-                const nonRestrictedData = borrowerData.filter(row => !row.isRestricted);
-
-                // Update the table with non-restricted data
-                updateTable(nonRestrictedData);
+                // Update the table with all data
+                updateTable(borrowerData);
             });
         });
 
-
-
-        // Clear search functionality is now handled in the event listener above
-
         // Create Message functionality
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // Categories will be loaded from API in a real implementation
             // For now, we'll use a static list
-
             const categories = [
                 { id: 1, name: "General Inquiry" },
                 { id: 2, name: "Payment Issues" },
@@ -1768,17 +920,10 @@
 
             /**
              * Open the create message modal
-             * Populates the loan dropdown with only accessible loans
              */
             function openCreateMessageModal() {
                 // Show loading indicator
                 document.getElementById('loading-indicator').style.display = 'block';
-
-                // Hide any previous restriction messages
-                const modalRestrictionMessage = document.getElementById('modalRestrictionMessage');
-                if (modalRestrictionMessage) {
-                    modalRestrictionMessage.style.display = 'none';
-                }
 
                 // Reset the form
                 const createMessageForm = document.getElementById('createMessageForm');
@@ -1786,17 +931,14 @@
                     createMessageForm.reset();
                 }
 
-                // Populate the loan dropdown with only accessible loans
+                // Populate the loan dropdown
                 const loanSelect = document.getElementById('messageLoan');
                 if (loanSelect) {
                     loanSelect.innerHTML = '<option value="" disabled selected>Choose a loan...</option>';
 
-                    // Get accessible loans (not restricted to offshore users)
-                    const accessibleLoans = borrowerData.filter(loan => !loan.isRestricted);
-
-                    accessibleLoans.forEach((loan, index) => {
+                    borrowerData.forEach((loan, index) => {
                         const option = document.createElement('option');
-                        option.value = index; // Use index as ID since borrowerData might not have id property
+                        option.value = index;
                         option.textContent = `${loan.loanNumber} - ${loan.propertyAddress || ''}`;
                         loanSelect.appendChild(option);
                     });
@@ -1809,14 +951,11 @@
 
                     // Wait for queue data to load
                     waitForQueues().then(queues => {
-                        // Filter out restricted queues for offshore users
-                        const accessibleQueues = queues.filter(queue => !queue.restricted);
-
                         // Sort queues by sortOrder
-                        accessibleQueues.sort((a, b) => a.sortOrder - b.sortOrder);
+                        queues.sort((a, b) => a.sortOrder - b.sortOrder);
 
                         // Add queue options to dropdown
-                        accessibleQueues.forEach(queue => {
+                        queues.forEach(queue => {
                             const option = document.createElement('option');
                             option.value = queue.id;
                             option.textContent = queue.name;
@@ -1850,13 +989,11 @@
 
             /**
              * Send a new message
-             * Creates a new message object and adds it to the messages array
              */
             function sendMessage() {
                 // Validate the form
                 const form = document.getElementById('createMessageForm');
                 if (!form.checkValidity()) {
-                    // Trigger browser's native form validation
                     form.reportValidity();
                     return;
                 }
@@ -1870,23 +1007,10 @@
                 const messageText = document.getElementById('messageText').value;
                 const isUrgent = document.getElementById('messageUrgent').checked;
 
-                // Get accessible loans
-                const accessibleLoans = borrowerData.filter(loan => !loan.isRestricted);
-
                 // Get the selected loan using the index
-                const loan = accessibleLoans[loanIndex];
-
-                // Double-check that the loan is accessible (not restricted)
-                if (!loan || loan.isRestricted) {
-                    const modalRestrictionMessage = document.getElementById('modalRestrictionMessage');
-                    if (modalRestrictionMessage) {
-                        modalRestrictionMessage.style.display = 'block';
-                    }
-                    return;
-                }
+                const loan = borrowerData[loanIndex];
 
                 // In a real application, you would send this data to the server
-                // For now, we'll just show a success message
                 alert("Message sent successfully!");
 
                 // Close the modal

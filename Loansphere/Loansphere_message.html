@@ -343,6 +343,9 @@
     <script src="Loan_Ingestion.js" type="module"></script>
     <script src="Message_Ingestion.js" type="module"></script>
     <script src="Queue_Ingestion.js" type="module"></script>
+    <script src="filter_onshore_messages.js"></script>
+    <script src="filter_onshore_loans.js"></script>
+    <script src="filter_onshore_queues.js"></script>
 
     <script>
         /**
@@ -352,7 +355,7 @@
          * It provides features for searching, filtering, and displaying message data
          * with proper handling of restricted loans and brands.
          */
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // Global state
             let loans = [];
             let messages = [];
@@ -499,10 +502,10 @@
             async function loadMessages() {
                 const messagesData = await waitForData('storedMessagesSet', 'messages', []);
 
-                // Process message data to add isRestricted property based on type
+                // Process message data - modified to never mark messages as restricted
                 return messagesData.map(message => ({
                     ...message,
-                    isRestricted: message.type === "onshore"
+                    isRestricted: false // Never mark messages as restricted
                 }));
             }
 
@@ -540,36 +543,29 @@
             }
 
             /**
-             * Check if a loan is accessible to an offshore user
+             * Check if a loan is accessible - modified to show all loans
              * @param {Object} loan - The loan to check
-             * @returns {boolean} True if the loan is accessible
+             * @returns {boolean} Always returns true for valid loans
              */
             function isLoanAccessible(loan) {
-                return loan && !loan.restricted;
+                return loan !== null && loan !== undefined; // Show all loans regardless of restrictions
             }
 
             /**
-             * Check if a message is accessible to an offshore user
+             * Check if a message is accessible - modified to show all messages
              * @param {Object} message - The message to check
-             * @returns {boolean} True if the message is accessible
+             * @returns {boolean} Always returns true to show all messages
              */
             function isMessageAccessible(message) {
                 if (!message) return false;
 
-                // Get the associated loan and brand
+                // Get the associated loan and brand (for reference only)
                 const loan = loans.find(l => l.id === message.loanId);
                 const brand = brands.find(b => b.id === message.brandId);
 
-                // For offshore users:
-                // 1. Message is not accessible if the loan is restricted (type === "onshore")
-                // 2. Message is not accessible if the brand is restricted
-                // 3. Message is not accessible if the message itself is restricted (type === "onshore")
-
-                const isLoanAccessible = loan && !loan.restricted;
-                const isBrandAccessible = !brand || !brand.restricted;
-                const isMessageTypeAccessible = message.type !== "onshore";
-
-                return isLoanAccessible && isBrandAccessible && isMessageTypeAccessible;
+                // Modified to show all messages regardless of restrictions
+                // This ensures all data is displayed (onshore + offshore)
+                return true;
             }
 
             /**
@@ -581,23 +577,20 @@
             }
 
             /**
-             * Get accessible brands for offshore users
-             * @returns {Array} Accessible brands
+             * Get accessible brands - modified to show all brands
+             * @returns {Array} All brands regardless of restrictions
              */
             function getAccessibleBrands() {
-                return brands.filter(brand => !brand.restricted);
+                return brands; // Return all brands without filtering
             }
 
             /**
-             * Check if a queue should be visible to the current user
+             * Check if a queue should be visible - modified to show all queues
              * @param {Object} queue - The queue to check
-             * @returns {boolean} True if the queue is visible
+             * @returns {boolean} Always returns true to show all queues
              */
             function isQueueVisibleToUser(queue) {
-                if (queue.hasOwnProperty('restricted')) {
-                    return !queue.restricted;
-                }
-                return true;
+                return true; // Show all queues regardless of restrictions
             }
 
             /**
@@ -913,39 +906,23 @@
                 // Step 2: Requirement 1 - If search on specific fields results in exactly one record
                 // that is restricted, show "Loan is not provisioned to the user" message
                 const isSearchingBySpecificFields = criteria.loanNumber ||
-                                                  criteria.selectedQueue.length > 0 ||
-                                                  criteria.selectedCategory ||
-                                                  criteria.firstName ||
-                                                  criteria.lastName ||
-                                                  criteria.showDeleted ||
-                                                  criteria.startDate ||
-                                                  criteria.endDate;
+                    criteria.selectedQueue.length > 0 ||
+                    criteria.selectedCategory ||
+                    criteria.firstName ||
+                    criteria.lastName ||
+                    criteria.showDeleted ||
+                    criteria.startDate ||
+                    criteria.endDate;
 
-                // Check if any of the filtered messages are associated with restricted loans
-                const restrictedMessages = filteredMessages.filter(message => {
-                    const loan = loans.find(l => l.id === message.loanId);
-                    const brand = brands.find(b => b.id === message.brandId);
-                    const isMessageRestricted = message.type === "onshore";
+                // Modified to never show restriction message and always show all messages
+                // No need to check for restricted messages anymore
 
-                    return (loan && loan.restricted) || (brand && brand.restricted) || isMessageRestricted;
-                });
+                // Always hide the restriction message
+                document.getElementById('restrictionMessage').style.display = 'none';
 
-                // If searching by specific fields and we found exactly one message that's restricted,
-                // or if all found messages are restricted, show the restriction message
-                if ((isSearchingBySpecificFields && filteredMessages.length === 1 && restrictedMessages.length === 1) ||
-                    (filteredMessages.length > 0 && restrictedMessages.length === filteredMessages.length)) {
-                    document.getElementById('restrictionMessage').style.display = 'block';
-                    document.getElementById('loading-indicator').style.display = 'none';
-                    searchResults = [];
-                    updateMessageTable();
-                    return;
-                }
-
-                // Step 3: Requirement 2 - If search on fields returns a list,
-                // display only records not restricted to offshore user
-                let accessibleMessages = filteredMessages.filter(message =>
-                    isMessageAccessible(message)
-                );
+                // Step 3: Modified to show all messages regardless of restrictions
+                // Show all data (onshore + offshore)
+                let accessibleMessages = filteredMessages; // No filtering - show all messages
 
                 // Step 4: Requirement 4 - Maintain default sort order when excluding restricted records
                 accessibleMessages.sort((a, b) => new Date(b.messageDate) - new Date(a.messageDate));
@@ -977,19 +954,15 @@
                 // Hide restriction message
                 document.getElementById('restrictionMessage').style.display = 'none';
 
-                // Filter out messages that are not accessible to offshore users
-                // This ensures requirement 6 is met - refresh should not show restricted records
+                // Show all messages regardless of restrictions
+                // Modified to show all data (onshore + offshore)
                 let accessibleMessages = messages.filter(message => {
-                    // Get the associated loan and brand
+                    // Get the associated loan and brand for reference only
                     const loan = loans.find(l => l.id === message.loanId);
                     const brand = brands.find(b => b.id === message.brandId);
 
-                    // Check if message is accessible based on loan, brand, and message type
-                    const isLoanAccessible = loan && !loan.restricted;
-                    const isBrandAccessible = !brand || !brand.restricted;
-                    const isMessageTypeAccessible = message.type !== "onshore";
-
-                    return isLoanAccessible && isBrandAccessible && isMessageTypeAccessible;
+                    // Return true for all messages to show everything
+                    return true; // Modified to show all data (onshore + offshore)
                 });
 
                 // Apply brand filter if a brand is selected
@@ -1021,19 +994,15 @@
                 // Hide restriction message
                 document.getElementById('restrictionMessage').style.display = 'none';
 
-                // Filter out messages that are not accessible to offshore users
-                // This ensures User Story 2 requirement 1 is met - display loan records not restricted to the user
+                // Show all messages regardless of restrictions
+                // Modified to show all data (onshore + offshore)
                 let accessibleMessages = messages.filter(message => {
-                    // Get the associated loan and brand
+                    // Get the associated loan and brand for reference only
                     const loan = loans.find(l => l.id === message.loanId);
                     const brand = brands.find(b => b.id === message.brandId);
 
-                    // Check if message is accessible based on loan, brand, and message type
-                    const isLoanAccessible = loan && !loan.restricted;
-                    const isBrandAccessible = !brand || !brand.restricted;
-                    const isMessageTypeAccessible = message.type !== "onshore";
-
-                    return isLoanAccessible && isBrandAccessible && isMessageTypeAccessible;
+                    // Return true for all messages to show everything
+                    return true; // Modified to show all data (onshore + offshore)
                 });
 
                 // Apply brand filter if a brand is selected
@@ -1101,25 +1070,25 @@
                     document.getElementById('removeLoanButton').addEventListener('click', removeLoan);
 
                     // Handle brand selection
-                    document.getElementById('selectedBrand').addEventListener('change', function() {
+                    document.getElementById('selectedBrand').addEventListener('change', function () {
                         const brandId = this.value;
                         selectedBrand = brands.find(b => b.id.toString() === brandId);
                     });
 
                     // Handle channel selection
-                    document.getElementById('selectedChannel').addEventListener('change', function() {
+                    document.getElementById('selectedChannel').addEventListener('change', function () {
                         const channelId = this.value;
                         selectedChannel = channels.find(c => c.id.toString() === channelId);
                     });
 
                     // Handle loan selection
-                    document.getElementById('selectedLoan').addEventListener('change', function() {
+                    document.getElementById('selectedLoan').addEventListener('change', function () {
                         const loanId = this.value;
                         selectedLoan = loans.find(l => l.id.toString() === loanId);
                     });
 
                     // Handle loan to remove selection
-                    document.getElementById('loanToRemove').addEventListener('change', function() {
+                    document.getElementById('loanToRemove').addEventListener('change', function () {
                         document.getElementById('removeLoanButton').disabled = !this.value;
                     });
 

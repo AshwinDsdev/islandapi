@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -63,8 +64,13 @@
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
 
         /* Header Styles */
@@ -209,6 +215,7 @@
         }
     </style>
 </head>
+
 <body>
     <div id="loading-indicator" style="display: none;">
         <div class="loading-spinner"></div>
@@ -237,26 +244,34 @@
                                         </div>
                                         <div _ngcontent-ng-c2667574091="" class="d-inline-block ml-md-2 header-main-2">
                                             <div _ngcontent-ng-c2667574091="" class="header-parts-client py-2">
-                                                <div class="select-container" style="position: relative; margin: 8px 0;">
-                                                    <div class="select-icon" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); z-index: 1;">
+                                                <div class="select-container"
+                                                    style="position: relative; margin: 8px 0;">
+                                                    <div class="select-icon"
+                                                        style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); z-index: 1;">
                                                         <i class="fa-sharp fa-light fa-circle-info"></i>
                                                     </div>
-                                                    <select id="channelSelect" name="channelSelect" class="form-select" style="padding-left: 35px; width: 100%; height: 40px; border-radius: 4px; border: 1px solid #ccc; background-color: white; color: #333; font-size: 14px;">
-                                                        <option value="borrower-self-service" selected>Borrower Self-Service</option>
+                                                    <select id="channelSelect" name="channelSelect" class="form-select"
+                                                        style="padding-left: 35px; width: 100%; height: 40px; border-radius: 4px; border: 1px solid #ccc; background-color: white; color: #333; font-size: 14px;">
+                                                        <option value="borrower-self-service" selected>Borrower
+                                                            Self-Service</option>
                                                         <option value="customer-service">Customer Service</option>
                                                         <option value="loan-servicing">Loan Servicing</option>
                                                     </select>
-                                                </div></div>
+                                                </div>
+                                            </div>
                                         </div><!----><!---->
                                         <div _ngcontent-ng-c2667574091=""
                                             class="d-inline-block ml-md-2 header-main-2 ng-star-inserted">
                                             <div _ngcontent-ng-c2667574091="" style="display: inline-block;">
-                                                <div class="select-container" style="position: relative; margin: 8px 0;">
-                                                    <select id="brandSelect" name="brandSelect" class="form-select" style="width: 100%; height: 40px; border-radius: 4px; border: 1px solid #ccc; background-color: white; color: #333; font-size: 14px;">
+                                                <div class="select-container"
+                                                    style="position: relative; margin: 8px 0;">
+                                                    <select id="brandSelect" name="brandSelect" class="form-select"
+                                                        style="width: 100%; height: 40px; border-radius: 4px; border: 1px solid #ccc; background-color: white; color: #333; font-size: 14px;">
                                                         <option value="all" selected>All Brands</option>
                                                         <!-- Brand options will be populated by JavaScript -->
                                                     </select>
-                                                </div></div>
+                                                </div>
+                                            </div>
                                         </div><!----><!----><!---->
                                     </div>
                                 </div>
@@ -312,21 +327,24 @@
                                                     <div _ngcontent-ng-c1816347493="" class="indicator"></div><span
                                                         _ngcontent-ng-c1816347493=""
                                                         class="drawer-feature-item-span">Borrowers</span>
-                                                </a></li><!----><!---->
+                                                </a>
+                                            </li><!----><!---->
                                             <li _ngcontent-ng-c1816347493="" class="drawer-list-item ng-star-inserted">
                                                 <a _ngcontent-ng-c1816347493="" class="drawer-feature-item"
                                                     href="/admin/messaging2">
                                                     <div _ngcontent-ng-c1816347493="" class="indicator"></div><span
                                                         _ngcontent-ng-c1816347493=""
                                                         class="drawer-feature-item-span">Messages</span>
-                                                </a></li><!---->
+                                                </a>
+                                            </li><!---->
                                             <li _ngcontent-ng-c1816347493="" class="drawer-list-item ng-star-inserted">
                                                 <a _ngcontent-ng-c1816347493="" class="drawer-feature-item"
                                                     href="/admin/queues">
                                                     <div _ngcontent-ng-c1816347493="" class="indicator"></div><span
                                                         _ngcontent-ng-c1816347493=""
                                                         class="drawer-feature-item-span">Queues</span>
-                                                </a></li><!----><!----><!----><!----><!---->
+                                                </a>
+                                            </li><!----><!----><!----><!----><!---->
                                             <li _ngcontent-ng-c1816347493="" class="drawer-list-item ng-star-inserted">
                                                 <a _ngcontent-ng-c1816347493=""
                                                     class="drawer-feature-item active-child-menu-item"
@@ -334,7 +352,8 @@
                                                     <div _ngcontent-ng-c1816347493="" class="indicator"></div><span
                                                         _ngcontent-ng-c1816347493=""
                                                         class="drawer-feature-item-span">Customer Statistics</span>
-                                                </a></li><!---->
+                                                </a>
+                                            </li><!---->
                                         </div><!---->
                                     </ul>
                                     <ul _ngcontent-ng-c1816347493="" style="display: none;"><a
@@ -357,7 +376,8 @@
                                 <div _ngcontent-ng-c1792275222="" class="container mt4">
                                     <div _ngcontent-ng-c1792275222="" class="row mx-0">
                                         <!-- Customer Statistics Summary Card -->
-                                        <mat-card _ngcontent-ng-c1792275222="" class="mat-mdc-card mdc-card col-12 col-lg-6 mb-4">
+                                        <mat-card _ngcontent-ng-c1792275222=""
+                                            class="mat-mdc-card mdc-card col-12 col-lg-6 mb-4">
                                             <mat-card-header _ngcontent-ng-c1792275222="" class="mat-mdc-card-header">
                                                 <div class="mat-mdc-card-header-text">
                                                     <h5 class="mb-0 fw-bold">Customer Summary</h5>
@@ -367,13 +387,16 @@
                                                 <div _ngcontent-ng-c1792275222="" class="row mt-3">
                                                     <div _ngcontent-ng-c1792275222="" class="col-8">
                                                         <p _ngcontent-ng-c1792275222="" class="fw-semibold mb-3">
-                                                            Registered Loan Count:<br _ngcontent-ng-c1792275222="" class="mb-2">
-                                                            Registered User Count:<br _ngcontent-ng-c1792275222="" class="mb-2">
+                                                            Registered Loan Count:<br _ngcontent-ng-c1792275222=""
+                                                                class="mb-2">
+                                                            Registered User Count:<br _ngcontent-ng-c1792275222=""
+                                                                class="mb-2">
                                                             Locked User Count:
                                                         </p>
                                                     </div>
                                                     <div _ngcontent-ng-c1792275222="" class="col-4">
-                                                        <p _ngcontent-ng-c1792275222="" class="text-primary fw-bold mb-3">
+                                                        <p _ngcontent-ng-c1792275222=""
+                                                            class="text-primary fw-bold mb-3">
                                                             12,458<br _ngcontent-ng-c1792275222="" class="mb-2">
                                                             8,742<br _ngcontent-ng-c1792275222="" class="mb-2">
                                                             124
@@ -384,7 +407,8 @@
                                         </mat-card>
 
                                         <!-- Monthly Activity Card -->
-                                        <mat-card _ngcontent-ng-c1792275222="" class="mat-mdc-card mdc-card col-12 col-lg-6 mb-4">
+                                        <mat-card _ngcontent-ng-c1792275222=""
+                                            class="mat-mdc-card mdc-card col-12 col-lg-6 mb-4">
                                             <mat-card-header _ngcontent-ng-c1792275222="" class="mat-mdc-card-header">
                                                 <div class="mat-mdc-card-header-text">
                                                     <h5 class="mb-0 fw-bold">Monthly Activity</h5>
@@ -394,13 +418,15 @@
                                                 <div _ngcontent-ng-c1792275222="" class="row mt-3">
                                                     <div _ngcontent-ng-c1792275222="" class="col-8">
                                                         <p _ngcontent-ng-c1792275222="" class="fw-semibold mb-3">
-                                                            New Registrations:<br _ngcontent-ng-c1792275222="" class="mb-2">
+                                                            New Registrations:<br _ngcontent-ng-c1792275222=""
+                                                                class="mb-2">
                                                             Active Users:<br _ngcontent-ng-c1792275222="" class="mb-2">
                                                             Account Lockouts:
                                                         </p>
                                                     </div>
                                                     <div _ngcontent-ng-c1792275222="" class="col-4">
-                                                        <p _ngcontent-ng-c1792275222="" class="text-primary fw-bold mb-3">
+                                                        <p _ngcontent-ng-c1792275222=""
+                                                            class="text-primary fw-bold mb-3">
                                                             342<br _ngcontent-ng-c1792275222="" class="mb-2">
                                                             5,128<br _ngcontent-ng-c1792275222="" class="mb-2">
                                                             18
@@ -414,14 +440,16 @@
                                     <!-- Detailed Statistics Section -->
                                     <div _ngcontent-ng-c1792275222="" class="row mx-0">
                                         <!-- User Activity Chart Card -->
-                                        <mat-card _ngcontent-ng-c1792275222="" class="mat-mdc-card mdc-card col-12 mb-4">
+                                        <mat-card _ngcontent-ng-c1792275222=""
+                                            class="mat-mdc-card mdc-card col-12 mb-4">
                                             <mat-card-header _ngcontent-ng-c1792275222="" class="mat-mdc-card-header">
                                                 <div class="mat-mdc-card-header-text">
                                                     <h5 class="mb-0 fw-bold">User Activity Trends</h5>
                                                 </div>
                                             </mat-card-header>
                                             <mat-card-content>
-                                                <div class="chart-container" style="position: relative; height:300px; width:100%">
+                                                <div class="chart-container"
+                                                    style="position: relative; height:300px; width:100%">
                                                     <canvas id="activityChart"></canvas>
                                                 </div>
                                             </mat-card-content>
@@ -430,13 +458,15 @@
                                         <!-- User Demographics Card -->
                                         <div class="col-12 col-lg-6 mb-4">
                                             <mat-card _ngcontent-ng-c1792275222="" class="mat-mdc-card mdc-card h-100">
-                                                <mat-card-header _ngcontent-ng-c1792275222="" class="mat-mdc-card-header">
+                                                <mat-card-header _ngcontent-ng-c1792275222=""
+                                                    class="mat-mdc-card-header">
                                                     <div class="mat-mdc-card-header-text">
                                                         <h5 class="mb-0 fw-bold">User Demographics</h5>
                                                     </div>
                                                 </mat-card-header>
                                                 <mat-card-content>
-                                                    <div class="chart-container" style="position: relative; height:250px; width:100%">
+                                                    <div class="chart-container"
+                                                        style="position: relative; height:250px; width:100%">
                                                         <canvas id="demographicsChart"></canvas>
                                                     </div>
                                                 </mat-card-content>
@@ -446,13 +476,15 @@
                                         <!-- Registration Sources Card -->
                                         <div class="col-12 col-lg-6 mb-4">
                                             <mat-card _ngcontent-ng-c1792275222="" class="mat-mdc-card mdc-card h-100">
-                                                <mat-card-header _ngcontent-ng-c1792275222="" class="mat-mdc-card-header">
+                                                <mat-card-header _ngcontent-ng-c1792275222=""
+                                                    class="mat-mdc-card-header">
                                                     <div class="mat-mdc-card-header-text">
                                                         <h5 class="mb-0 fw-bold">Registration Sources</h5>
                                                     </div>
                                                 </mat-card-header>
                                                 <mat-card-content>
-                                                    <div class="chart-container" style="position: relative; height:250px; width:100%">
+                                                    <div class="chart-container"
+                                                        style="position: relative; height:250px; width:100%">
                                                         <canvas id="sourcesChart"></canvas>
                                                     </div>
                                                 </mat-card-content>
@@ -506,6 +538,7 @@
     </div>
     <script src="./Brand_Ingestion.js" type="module"></script>
     <script src="./User_Ingestion.js" type="module"></script>
+    <script src="filter_onshore_brands.js"></script>
 
     <!-- Bootstrap JS Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -582,7 +615,7 @@
         /**
          * Initialize the application when DOM is loaded
          */
-        document.addEventListener('DOMContentLoaded', async function() {
+        document.addEventListener('DOMContentLoaded', async function () {
             try {
                 showLoading(true);
 
@@ -742,7 +775,7 @@
             const channelSelect = document.getElementById('channelSelect');
             if (!channelSelect) return;
 
-            channelSelect.addEventListener('change', function() {
+            channelSelect.addEventListener('change', function () {
                 console.log('Channel changed to:', this.value);
                 // Additional channel-specific functionality can be added here
             });
@@ -763,7 +796,7 @@
             populateBrandDropdown(brands, brandSelect);
 
             // Add change event listener to the brand dropdown
-            brandSelect.addEventListener('change', function() {
+            brandSelect.addEventListener('change', function () {
                 const selectedValue = this.value;
                 const selectedBrand = selectedValue === 'all' ? null :
                     window.storedNumbersSet.find(brand => brand.value === selectedValue);
@@ -778,7 +811,7 @@
             const hamburgerMenu = document.querySelector('.hamburger-menu');
             if (!hamburgerMenu) return;
 
-            hamburgerMenu.addEventListener('click', function() {
+            hamburgerMenu.addEventListener('click', function () {
                 const drawer = document.querySelector('.app-drawer');
                 const drawerContent = document.querySelector('mat-drawer-content');
 
@@ -806,7 +839,7 @@
             }
 
             // Add brand options
-            brands.forEach(function(brand) {
+            brands.forEach(function (brand) {
                 const option = document.createElement('option');
                 option.value = brand.value;
                 option.textContent = brand.name;
@@ -815,29 +848,14 @@
         }
 
         /**
-         * Get brands accessible to the current user
-         * @returns {Array} - Array of accessible brand objects
+         * Get brands accessible to the current user - modified to show all brands
+         * @returns {Array} - Array of all brand objects
          */
         function getAccessibleBrands() {
             if (!window.storedNumbersSet) return [];
 
-            // If no user data, return all non-restricted brands
-            if (!state.currentUser) {
-                return window.storedNumbersSet.filter(brand => !brand.restricted);
-            }
-
-            // For offshore users, filter based on accessible brands
-            if (state.currentUser.userType === 'offshore') {
-                return window.storedNumbersSet.filter(brand => {
-                    return !brand.restricted && (
-                        state.currentUser.accessibleBrands.includes('all') ||
-                        state.currentUser.accessibleBrands.includes(brand.value)
-                    );
-                });
-            }
-
-            // For onshore users, return all non-restricted brands
-            return window.storedNumbersSet.filter(brand => !brand.restricted);
+            // Return all brands regardless of restrictions
+            return window.storedNumbersSet;
         }
 
         /**
@@ -854,9 +872,9 @@
         }
 
         /**
-         * Generate statistics for a specific brand
+         * Generate statistics for a specific brand - modified to show all data
          * @param {Object} brand - The brand object
-         * @returns {Object|null} - Statistics object or null if restricted
+         * @returns {Object} - Statistics object for the brand
          */
         function generateBrandStatistics(brand) {
             // If no user data, use default statistics with variations
@@ -865,20 +883,8 @@
             }
 
             const brandValue = brand.value;
-            const isOffshoreUser = state.currentUser.userType === 'offshore';
-            const hasAccessToBrand = state.currentUser.accessibleBrands.includes(brandValue) ||
-                                    state.currentUser.accessibleBrands.includes('all');
 
-            // For offshore users without access to this brand, return zeros
-            if (isOffshoreUser && !hasAccessToBrand) {
-                return generateEmptyStatistics();
-            }
-
-            // If brand is restricted and user is not offshore, return null
-            if (brand.restricted && !isOffshoreUser) {
-                return null;
-            }
-
+            // Modified to always show data regardless of restrictions
             // Check if user has statistics for this brand
             if (state.currentUser.statistics[brandValue] || brandValue === 'all') {
                 return generateUserBrandStatistics(brand);
@@ -976,14 +982,15 @@
             const demographics = Object.values(state.currentUser.demographics.ageGroups);
             const sources = Object.values(state.currentUser.registrationSources);
 
-            // For offshore users viewing "all" brands, calculate totals based on accessible brands only
+            // Modified to always show all data regardless of user type
             let summaryData = {
                 loanCount: userSummary.totalRegisteredLoans,
                 userCount: userSummary.totalRegisteredUsers,
                 lockedCount: userSummary.totalLockedUsers
             };
 
-            if (state.currentUser.userType === 'offshore' && brandValue === 'all') {
+            // Always calculate totals for all brands when viewing "all"
+            if (brandValue === 'all') {
                 summaryData = calculateOffshoreAllBrandsTotals();
             }
 
@@ -1003,20 +1010,20 @@
         }
 
         /**
-         * Calculate totals for offshore users viewing "All Brands"
-         * @returns {Object} - Summary data with totals for accessible brands only
+         * Calculate totals for all brands - modified to include all brands
+         * @returns {Object} - Summary data with totals for all brands
          */
         function calculateOffshoreAllBrandsTotals() {
             let totalLoans = 0;
             let totalUsers = 0;
             let totalLocked = 0;
 
-            // Sum up statistics for each accessible brand
-            state.currentUser.accessibleBrands.forEach(accessibleBrand => {
-                if (accessibleBrand !== 'all' && state.currentUser.customerSummary[accessibleBrand]) {
-                    totalLoans += state.currentUser.customerSummary[accessibleBrand].totalRegisteredLoans || 0;
-                    totalUsers += state.currentUser.customerSummary[accessibleBrand].totalRegisteredUsers || 0;
-                    totalLocked += state.currentUser.customerSummary[accessibleBrand].totalLockedUsers || 0;
+            // Sum up statistics for all brands
+            Object.keys(state.currentUser.customerSummary).forEach(brandKey => {
+                if (brandKey !== 'all') {
+                    totalLoans += state.currentUser.customerSummary[brandKey].totalRegisteredLoans || 0;
+                    totalUsers += state.currentUser.customerSummary[brandKey].totalRegisteredUsers || 0;
+                    totalLocked += state.currentUser.customerSummary[brandKey].totalLockedUsers || 0;
                 }
             });
 
@@ -1028,18 +1035,15 @@
         }
 
         /**
-         * Select a brand and update statistics
+         * Select a brand and update statistics - modified to never show restrictions
          * @param {Object|null} brand - The selected brand or null for "All Brands"
          */
         function selectBrand(brand) {
             state.selectedBrand = brand;
             updateStatistics();
 
-            // Show restriction warning if applicable
-            const isRestricted = brand && brand.restricted &&
-                               state.currentUser && state.currentUser.userType !== 'offshore';
-
-            showRestrictionMessage(isRestricted);
+            // Never show restriction warnings
+            showRestrictionMessage(false);
         }
 
         /**
@@ -1074,7 +1078,7 @@
                 if (state.currentUser && state.currentUser.userType === 'offshore') {
                     const brandValue = state.selectedBrand.value;
                     const hasAccess = state.currentUser.accessibleBrands.includes(brandValue) ||
-                                     state.currentUser.accessibleBrands.includes('all');
+                        state.currentUser.accessibleBrands.includes('all');
 
                     // If brand is not accessible, show zeros for summary
                     if (!hasAccess) {
@@ -1471,5 +1475,5 @@
     </script>
     </script>
 </body>
-</html>
 
+</html>

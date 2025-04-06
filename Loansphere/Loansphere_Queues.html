@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,11 +21,13 @@
             margin: 0;
             padding: 0;
         }
+
         .wrapper {
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
         }
+
         .header2 {
             background-color: #333;
             color: whitesmoke;
@@ -32,33 +35,41 @@
             border-radius: 5px;
             margin-bottom: 20px;
         }
+
         .menu-hamburger {
             display: flex;
             align-items: center;
         }
+
         .menu-hamburger i {
             margin-right: 10px;
         }
+
         .institution-name {
             font-size: 1.2em;
             font-weight: bold;
         }
+
         .header-main-1 {
             display: flex;
             align-items: center;
             justify-content: space-between;
         }
+
         .header-main-1-formfld {
             min-width: 200px;
         }
+
         .right-icons {
             display: flex;
             align-items: center;
         }
+
         .right-icons i {
             margin-right: 10px;
             cursor: pointer;
         }
+
         .loan-dropdown-menu {
             background-color: #444;
             color: whitesmoke;
@@ -67,22 +78,28 @@
             border-radius: 5px;
             cursor: pointer;
         }
+
         .loan-dropdown-menu:hover {
             background-color: #555;
         }
+
         mat-icon {
             vertical-align: middle;
         }
+
         .btn-custom {
             background-color: #007bff;
             color: white;
         }
+
         .btn-custom:hover {
             background-color: #0056b3;
         }
+
         .form-control {
             border-radius: 5px;
         }
+
         .sidebar {
             position: fixed;
             top: 0;
@@ -96,45 +113,55 @@
             padding-top: 60px;
             overflow-y: auto;
         }
+
         .sidebar.active {
             left: 0;
         }
+
         .sidebar ul {
             list-style: none;
             padding: 0;
             margin: 0;
         }
+
         .sidebar ul li {
             padding: 10px 15px;
             border-bottom: 1px solid #444;
         }
+
         .sidebar ul li a {
             color: white;
             text-decoration: none;
             display: block;
         }
+
         .sidebar ul li:hover {
             background-color: #444;
         }
+
         .content-wrapper {
             margin-left: 0;
             transition: all 0.3s;
         }
+
         .content-wrapper.active {
             margin-left: 250px;
         }
+
         .queue-card {
             background-color: white;
             border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             margin-bottom: 20px;
             padding: 15px;
             transition: transform 0.3s;
         }
+
         .queue-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
+
         .queue-header {
             display: flex;
             justify-content: space-between;
@@ -143,10 +170,12 @@
             padding-bottom: 10px;
             margin-bottom: 10px;
         }
+
         .queue-title {
             font-weight: bold;
             font-size: 1.2em;
         }
+
         .queue-count {
             background-color: #007bff;
             color: white;
@@ -157,55 +186,67 @@
             align-items: center;
             justify-content: center;
         }
+
         .queue-items {
             max-height: 300px;
             overflow-y: auto;
         }
+
         .queue-item {
             padding: 10px;
             border-bottom: 1px solid #eee;
             cursor: pointer;
         }
+
         .queue-item:hover {
             background-color: #f9f9f9;
         }
+
         .queue-item-header {
             display: flex;
             justify-content: space-between;
         }
+
         .queue-item-title {
             font-weight: bold;
         }
+
         .queue-item-date {
             color: #777;
             font-size: 0.9em;
         }
+
         .queue-item-details {
             margin-top: 5px;
             font-size: 0.9em;
         }
+
         .badge-priority-high {
             background-color: #dc3545;
         }
+
         .badge-priority-medium {
             background-color: #ffc107;
             color: #212529;
         }
+
         .badge-priority-low {
             background-color: #28a745;
         }
+
         .loading-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0,0,0,0.5);
+            background-color: rgba(0, 0, 0, 0.5);
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 9999;
         }
+
         .spinner {
             width: 40px;
             height: 40px;
@@ -214,48 +255,63 @@
             border-radius: 50%;
             animation: spin 2s linear infinite;
         }
+
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
+
         .user-profile {
             position: relative;
             cursor: pointer;
         }
+
         .user-menu {
             position: absolute;
             top: 100%;
             right: 0;
             background-color: white;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             border-radius: 5px;
             width: 200px;
             display: none;
             z-index: 1000;
         }
+
         .user-menu.active {
             display: block;
         }
+
         .user-menu ul {
             list-style: none;
             padding: 0;
             margin: 0;
         }
+
         .user-menu ul li {
             padding: 10px 15px;
             border-bottom: 1px solid #eee;
         }
+
         .user-menu ul li:last-child {
             border-bottom: none;
         }
+
         .user-menu ul li a {
             color: #333;
             text-decoration: none;
             display: block;
         }
+
         .user-menu ul li:hover {
             background-color: #f5f5f5;
         }
+
         .notification-badge {
             position: absolute;
             top: -5px;
@@ -270,10 +326,12 @@
             align-items: center;
             justify-content: center;
         }
+
         .search-container {
             position: relative;
             margin-bottom: 20px;
         }
+
         .search-container input {
             width: 100%;
             padding: 10px 15px;
@@ -281,6 +339,7 @@
             border-radius: 5px;
             border: 1px solid #ddd;
         }
+
         .search-container i {
             position: absolute;
             left: 15px;
@@ -344,7 +403,7 @@
 
         /* Table styling */
         .table {
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             border-radius: 5px;
             overflow: hidden;
         }
@@ -398,6 +457,7 @@
         }
     </style>
 </head>
+
 <body>
     <!-- Loading Overlay -->
     <div id="loading-overlay" class="loading-overlay">
@@ -424,12 +484,15 @@
                     <div class="row align-items-center">
                         <div class="col-12 col-md-3 d-flex align-items-center mb-2 mb-md-0">
                             <div class="menu-hamburger mr-3">
-                                <i class="fa-sharp fa-solid fa-bars hamburger-menu" style="cursor: pointer; font-size: 1.2em;" id="toggleSidebar"></i>
+                                <i class="fa-sharp fa-solid fa-bars hamburger-menu"
+                                    style="cursor: pointer; font-size: 1.2em;" id="toggleSidebar"></i>
                             </div>
-                            <div style="color: whitesmoke; font-family: 'Suisse-SemiBold'; font-size: 1.5em;">One Admin</div>
+                            <div style="color: whitesmoke; font-family: 'Suisse-SemiBold'; font-size: 1.5em;">One Admin
+                            </div>
                         </div>
                         <div class="col-12 col-md-5 d-flex flex-column flex-md-row align-items-md-center mb-2 mb-md-0">
-                            <div class="institution-name mb-2 mb-md-0 mr-md-4" style="color: white; font-size: 1.2em; font-weight: bold;">Cenlar FSB</div>
+                            <div class="institution-name mb-2 mb-md-0 mr-md-4"
+                                style="color: white; font-size: 1.2em; font-weight: bold;">Cenlar FSB</div>
                             <div class="channel-selector mb-2 mb-md-0 mr-md-4">
                                 <select class="form-control" id="selectedChannel">
                                     <!-- Options will be populated by JavaScript -->
@@ -448,14 +511,16 @@
                                 <div class="position-relative mr-4">
                                     <button class="btn btn-dark position-relative" id="toggleNotifications">
                                         <i class="fas fa-bell"></i>
-                                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger notification-count"
-                                              style="top: -5px; right: -10px; display: none;">
+                                        <span
+                                            class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger notification-count"
+                                            style="top: -5px; right: -10px; display: none;">
                                             0
                                         </span>
                                     </button>
                                 </div>
                                 <div class="user-profile dropdown">
-                                    <button class="btn btn-dark dropdown-toggle" type="button" id="userDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <button class="btn btn-dark dropdown-toggle" type="button" id="userDropdown"
+                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         <i class="fas fa-user-circle mr-1"></i>
                                         <span class="d-none d-md-inline user-name">John Doe</span>
                                     </button>
@@ -463,7 +528,8 @@
                                         <a class="dropdown-item" href="#"><i class="fas fa-user mr-2"></i> Profile</a>
                                         <a class="dropdown-item" href="#"><i class="fas fa-cog mr-2"></i> Settings</a>
                                         <div class="dropdown-divider"></div>
-                                        <a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt mr-2"></i> Logout</a>
+                                        <a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt mr-2"></i>
+                                            Logout</a>
                                     </div>
                                 </div>
                             </div>
@@ -475,20 +541,24 @@
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-12">
-                            <h2 class="mb-4">Queues <span class="queue-count-badge" id="queueCount">0 Available</span></h2>
+                            <h2 class="mb-4">Queues <span class="queue-count-badge" id="queueCount">0 Available</span>
+                            </h2>
 
                             <!-- Search Bar -->
                             <div class="search-container">
                                 <i class="fas fa-search"></i>
-                                <input type="text" class="form-control" id="searchQuery" placeholder="Search queues or loans...">
+                                <input type="text" class="form-control" id="searchQuery"
+                                    placeholder="Search queues or loans...">
                             </div>
 
                             <!-- Queue Filters -->
                             <div class="mb-4">
                                 <div class="btn-group" id="filterButtons">
                                     <button type="button" class="btn btn-primary" data-filter="all">All Queues</button>
-                                    <button type="button" class="btn btn-outline-primary" data-filter="my">My Queues</button>
-                                    <button type="button" class="btn btn-outline-primary" data-filter="team">Team Queues</button>
+                                    <button type="button" class="btn btn-outline-primary" data-filter="my">My
+                                        Queues</button>
+                                    <button type="button" class="btn btn-outline-primary" data-filter="team">Team
+                                        Queues</button>
                                 </div>
                             </div>
 
@@ -511,7 +581,8 @@
                             </div>
 
                             <!-- Queue Items Modal -->
-                            <div class="modal fade" id="queueItemsModal" tabindex="-1" role="dialog" aria-labelledby="queueItemsModalLabel" aria-hidden="true">
+                            <div class="modal fade" id="queueItemsModal" tabindex="-1" role="dialog"
+                                aria-labelledby="queueItemsModalLabel" aria-hidden="true">
                                 <div class="modal-dialog modal-lg" role="document">
                                     <div class="modal-content">
                                         <div class="modal-header">
@@ -544,7 +615,8 @@
                                             </table>
                                         </div>
                                         <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                            <button type="button" class="btn btn-secondary"
+                                                data-dismiss="modal">Close</button>
                                         </div>
                                     </div>
                                 </div>
@@ -577,9 +649,12 @@
     <script src="Brand_Ingestion.js" type="module"></script>
     <script src="Loan_Ingestion.js" type="module"></script>
     <script src="Queue_Ingestion.js" type="module"></script>
+    <script src="filter_onshore_brands.js"></script>
+    <script src="filter_onshore_loans.js"></script>
+    <script src="filter_onshore_queues.js"></script>
     <!-- Custom JS -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // Global state
             let loans = [];
             let brands = [];
@@ -719,38 +794,31 @@
                 return window.storedQueuesSet;
             }
 
-            // Get accessible loans based on restrictions
+            // Get accessible loans - modified to show all loans
             function getAccessibleLoans() {
-                // Now we need to filter loans based on their type
-                // For offshore users, loans with type "onshore" are restricted
-                return loans.filter(loan => !loan.restricted);
+                // Return all loans regardless of restrictions
+                return loans;
             }
 
-            // Get brands accessible to the current user
+            // Get brands accessible to the current user - modified to show all brands
             function getAccessibleBrands() {
-                // Now we need to filter brands based on their type
-                // For offshore users, brands with type "onshore" are restricted
-                return brands.filter(brand => !brand.restricted);
+                // Return all brands regardless of restrictions
+                return brands;
             }
 
-            // Check if a queue should be visible to the current user
+            // Check if a queue should be visible - modified to show all queues
             function isQueueVisibleToUser(queue) {
-                // Now we need to check the queue's restricted property
-                return !queue.restricted;
+                // Return true for all queues regardless of restrictions
+                return true;
             }
 
-            // Get the count of accessible items in a queue
+            // Get the count of accessible items in a queue - modified to show all items
             function getAccessibleQueueItemsCount(queue) {
-                // Now we need to filter queue items based on their associated loan's type
+                // Return all items regardless of restrictions
                 if (!queue.items) return 0;
 
-                // For offshore users, items associated with "onshore" loans are restricted
-                const accessibleItems = queue.items.filter(item => {
-                    const loan = loans.find(l => l.loanNumber === item.loanNumber);
-                    return loan && !loan.restricted;
-                });
-
-                return accessibleItems.length;
+                // Return the total count of all items
+                return queue.items.length;
             }
 
             // Apply all queue filters
@@ -883,20 +951,17 @@
                 document.getElementById('queueCount').textContent = `${filteredQueues.length} Available`;
             }
 
-            // View all items in a queue
+            // View all items in a queue - modified to show all items
             function viewAllItems(queue) {
-                // Filter queue items based on their associated loan's type
-                const accessibleItems = queue.items ? queue.items.filter(item => {
-                    const loan = loans.find(l => l.loanNumber === item.loanNumber);
-                    return loan && !loan.restricted;
-                }) : [];
+                // Show all items regardless of restrictions
+                const accessibleItems = queue.items || [];
 
                 selectedQueueItems = accessibleItems;
                 selectedQueueName = queue.name;
 
-                // Get the brands associated with this queue
+                // Get all brands associated with this queue regardless of restrictions
                 visibleBrands = brands.filter(brand =>
-                    queue.brandIds && queue.brandIds.includes(brand.id) && !brand.restricted
+                    queue.brandIds && queue.brandIds.includes(brand.id)
                 );
 
                 // Update the modal title
@@ -1250,4 +1315,5 @@
         });
     </script>
 </body>
+
 </html>
