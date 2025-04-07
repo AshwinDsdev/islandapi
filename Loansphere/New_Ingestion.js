@@ -1,13 +1,49 @@
-//StaticStorage.js
+//LOAN INGESTION LATEST
 
+
+// ########## DO NOT MODIFY THESE LINES ##########
 const STORE_NAME = "LoanNumbers"; // Name of the object store in sharedStorage
-const DATA_RETENTION_HOURS = 24; // How fresh the loan numbers should be kept (24 hours)
-const DATA = "0111016226,3161708273,7754653631,2065589362,5618511812,5566574458,2863014032,8382264810,8825464137,6232248500,7602569582,8608576728,6145523024,2143289498,9279774989,6753548796";
 const CHECK_INTERVAL_MS = 10 * 60 * 1000; // 10 minutes
 const CHUNK_SIZE = 10000; // Batch size for encryption
 const SALT = "static_salt_value";
 const channel = new BroadcastChannel("island_channel");
 const sharedStorage = rpa.sdk.sharedStorage;
+// ########## DO NOT MODIFY THESE LINES - END ##########
+
+async function downloadFileInChunks(fileUrl, chunkSize = 1024 * 1024, onProgress) {
+    const response = await fetch(fileUrl, { method: 'HEAD' });
+    if (!response.ok) throw new Error(`Failed to get file info: ${response.statusText}`);
+    
+    const contentLength = parseInt(response.headers.get('content-length'), 10);
+    if (isNaN(contentLength)) throw new Error('Content-Length header missing');
+    
+    let receivedBytes = 0;
+    let fileData = new Uint8Array(contentLength);
+    
+    for (let start = 0; start < contentLength; start += chunkSize) {
+        const end = Math.min(start + chunkSize - 1, contentLength - 1);
+        
+        const chunkResponse = await fetch(fileUrl, {
+            headers: { 'Range': `bytes=${start}-${end}` }
+        });
+        
+        if (!chunkResponse.ok) throw new Error(`Failed to fetch chunk: ${chunkResponse.statusText}`);
+        
+        const chunk = new Uint8Array(await chunkResponse.arrayBuffer());
+        fileData.set(chunk, start);
+        receivedBytes += chunk.length;
+        
+        if (onProgress) onProgress(receivedBytes, contentLength);
+    }
+    
+    return fileData;
+}
+
+// ########## MODIFY THESE LINES AS REQUIRED ##########
+const DATA_RETENTION_HOURS = 24; // How fresh the loan numbers should be kept (24 hours)
+// const DATA_URL = "http://localhost:8081/random_numbers.txt"; // To be replaced with the real URL
+const DATA_URL = "https://sad1plzprodislanddata01.blob.core.windows.net/islanddata/AllowedLoans.csv?sp=r&st=2025-03-19T20:35:27Z&se=2025-09-30T04:35:27Z&sv=2024-11-04&sr=c&sig=xEaFXmQKRREGVHXp0JafunJoRJPAnAIFeka035UZKgg%3D"
+// ########## MODIFY THESE LINES AS REQUIRED - END##########
 
 // Cache in memory
 let storedNumbersSet = null;     // Will hold the decrypted numbers
@@ -84,25 +120,21 @@ async function storeNumbers(numbers) {
   storedNumbersSet = new Set(numbers);
   const chunkCount = Math.ceil(numbers.length / CHUNK_SIZE);
 
-  let totalEncryptTime = 0
-
   for (let i = 0; i < chunkCount; i++) {
     const startIndex = i * CHUNK_SIZE;
     const endIndex = startIndex + CHUNK_SIZE;
     const batch = numbers.slice(startIndex, endIndex);
 
-    const startTime = performance.now()    
     const encryptedBatch = await encryptBatch(batch);
-    totalEncryptTime += performance.now() - startTime;
+
     const chunkKey = `numbers-chunk-${i}`;
     const result = await sharedStorage.storeData(STORE_NAME, chunkKey, encryptedBatch, {});
     if (!result.success) {
       throw new Error(`Failed to store chunk #${i}: ${result.error}`);
     }
   }
-  console.log(`Total encryption time: ${totalEncryptTime}`)
 
-  // Finally, store a small “meta” record with total chunk info
+  // Finally, store a small "meta" record with total chunk info
   // This helps you know how many chunks to retrieve later
   const metaRecord = { chunkCount };
   const metaRes = await sharedStorage.storeData(STORE_NAME, "numbers-meta", metaRecord, {});
@@ -130,13 +162,18 @@ async function fetchAndStoreNumbers() {
     // Otherwise, fetch data from url
     console.log("Fetching new data...");
     try {
-        console.time('Ingestion')
-        const textData = DATA;
-        const numbers = textData.split(",");
+        // const response = await fetch(DATA_URL);
+        // if (!response.ok) throw new Error(`Fetch failed: ${response.statusText}`);
+        const fileData = await downloadFileInChunks(DATA_URL, 30 * 1024 * 1024, (received, total) => {
+            console.log(`Downloaded: ${((received / total) * 100).toFixed(2)}%`);
+        });
+
+        const textData = new TextDecoder().decode(fileData);
+        // const textData = await response.text();
+        const numbers = textData.trim().split("\r\n");
 
         console.log(`Fetched ${numbers.length} numbers, storing (encrypted in batches)...`);
         await storeNumbers(numbers);
-        console.timeEnd('Ingestion')
 
         console.log("Data successfully updated.");
     } catch (error) {
@@ -183,20 +220,17 @@ async function loadNumbersIntoMemory() {
  * Check batch of numbers in memory
  */
 async function checkNumbersInMemory(numbersToCheck) {
+  console.log("Checking numbers in memory...");
     if (!storedNumbersSet) {
+        console.log("No data in stored in memory, pulling from source...");
         await loadNumbersIntoMemory();
     }
     return numbersToCheck.filter(num => storedNumbersSet.has(num));
 }
 
 // Main entrypoint (this is where everything starts)
-(async() => {
-  try {
-    await fetchAndStoreNumbers();
-  } catch(e) {
-    console.error(e);
-    throw e;
-  }
+(async () => {
+  await fetchAndStoreNumbers();
   
   // If page has been opened for a while, we still want to make sure the loan numbers are fresh
   setInterval(fetchAndStoreNumbers, CHECK_INTERVAL_MS);
@@ -204,13 +238,13 @@ async function checkNumbersInMemory(numbersToCheck) {
   // Opening communication channel
   channel.onmessage = async (event) => {
     if (event.data.action === "ping") {
-        console.log("✅ Received ping, responding with pong...");
+        console.log("âœ… Received ping, responding with pong...");
         channel.postMessage({ action: "pong" });
         return;
     }
 
     if (event.data.action === "check_numbers") {
-        console.log("Received batch for lookup:", event.data.numbers);
+        console.log("Received batch for lookup:", event?.data?.numbers);
         const result = await checkNumbersInMemory(event.data.numbers);
         channel.postMessage({ action: "response_numbers", result });
     }

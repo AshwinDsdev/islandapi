@@ -31,6 +31,38 @@ const DATA_RETENTION_HOURS = 24; // How fresh the loan numbers should be kept (2
 const DATA_URL = "http://localhost:5000/api/users/1"; // Updated API endpoint
 // ########## MODIFY THESE LINES AS REQUIRED - END ##########
 
+/**
+ * Downloads a file in chunks to handle large files efficiently
+ */
+async function downloadFileInChunks(fileUrl, chunkSize = 1024 * 1024, onProgress) {
+    const response = await fetch(fileUrl, { method: 'HEAD' });
+    if (!response.ok) throw new Error(`Failed to get file info: ${response.statusText}`);
+    
+    const contentLength = parseInt(response.headers.get('content-length'), 10);
+    if (isNaN(contentLength)) throw new Error('Content-Length header missing');
+    
+    let receivedBytes = 0;
+    let fileData = new Uint8Array(contentLength);
+    
+    for (let start = 0; start < contentLength; start += chunkSize) {
+        const end = Math.min(start + chunkSize - 1, contentLength - 1);
+        
+        const chunkResponse = await fetch(fileUrl, {
+            headers: { 'Range': `bytes=${start}-${end}` }
+        });
+        
+        if (!chunkResponse.ok) throw new Error(`Failed to fetch chunk: ${chunkResponse.statusText}`);
+        
+        const chunk = new Uint8Array(await chunkResponse.arrayBuffer());
+        fileData.set(chunk, start);
+        receivedBytes += chunk.length;
+        
+        if (onProgress) onProgress(receivedBytes, contentLength);
+    }
+    
+    return fileData;
+}
+
 // Cache in memory
 let storedUsersSet = null;     // Will hold the decrypted user objects
 let encryptionKey = null;        // AES-GCM key
@@ -50,15 +82,55 @@ async function fetchAndStoreNumbers() {
         return;
     }
 
-    // Otherwise, fetch data from API
+    // Otherwise, fetch data from URL
     console.log("Fetching new data...");
     try {
         console.time('Ingestion');
-        const response = await fetch(DATA_URL);
-        if (!response.ok) throw new Error(`Fetch failed: ${response.statusText}`);
-
-        const jsonData = await response.json();
-        const userData = jsonData;
+        
+        // Try to use chunked download for large files
+        let userData;
+        try {
+            // First try to use chunked download for large files
+            const fileData = await downloadFileInChunks(DATA_URL, 30 * 1024 * 1024, (received, total) => {
+                console.log(`Downloaded: ${((received / total) * 100).toFixed(2)}%`);
+            });
+            const textData = new TextDecoder().decode(fileData);
+            
+            // Try to parse as JSON first
+            try {
+                userData = JSON.parse(textData);
+                console.log(`Parsed JSON data with ${userData.length} user records`);
+            } catch (jsonError) {
+                // If not valid JSON, try to parse as CSV
+                console.log("Not valid JSON, trying to parse as CSV");
+                const userIds = textData.trim().split(/\r?\n/); // Handle different line endings
+                
+                // Convert to user objects with IDs
+                userData = userIds.filter(id => id && id.trim()).map(id => ({ id: id.trim() }));
+                console.log(`Parsed ${userData.length} user IDs from CSV`);
+            }
+        } catch (downloadError) {
+            console.log("Chunked download failed, falling back to regular fetch:", downloadError);
+            
+            // Fall back to regular fetch
+            const response = await fetch(DATA_URL);
+            if (!response.ok) throw new Error(`Fetch failed: ${response.statusText}`);
+            
+            // Try to parse as JSON first
+            try {
+                userData = await response.json();
+                console.log(`Parsed JSON data with ${userData.length} user records`);
+            } catch (jsonError) {
+                // If not valid JSON, try to parse as CSV
+                console.log("Not valid JSON, trying to parse as CSV");
+                const textData = await response.text();
+                const userIds = textData.trim().split(/\r?\n/); // Handle different line endings
+                
+                // Convert to user objects with IDs
+                userData = userIds.filter(id => id && id.trim()).map(id => ({ id: id.trim() }));
+                console.log(`Parsed ${userData.length} user IDs from CSV`);
+            }
+        }
 
         console.log(`Fetched ${userData.length} user records, storing (encrypted in batches)...`);
         await storeData(userData);
@@ -75,10 +147,15 @@ async function fetchAndStoreNumbers() {
  * Each chunk is stored under a distinct key in sharedStorage.
  */
 async function storeData(data) {
+    console.log(`Storing ${data.length} user records...`);
     await sharedStorage.clearStore(STORE_NAME);
-    storedUsersSet = data; // Store complete objects
+    
+    // Store the full user objects in memory
+    storedUsersSet = data;
     window.storedUsersSet = storedUsersSet; // Update global variable
+    
     const chunkCount = Math.ceil(data.length / CHUNK_SIZE);
+    console.log(`Splitting data into ${chunkCount} chunks of max size ${CHUNK_SIZE}`);
 
     let totalEncryptTime = 0;
 
@@ -87,6 +164,7 @@ async function storeData(data) {
         const endIndex = startIndex + CHUNK_SIZE;
         const batch = data.slice(startIndex, endIndex);
 
+        console.log(`Processing chunk ${i+1}/${chunkCount}, size: ${batch.length}`);
         const startTime = performance.now();
         const encryptedBatch = await encryptBatch(batch);
         totalEncryptTime += performance.now() - startTime;
@@ -97,7 +175,7 @@ async function storeData(data) {
             throw new Error(`Failed to store chunk #${i}: ${result.error}`);
         }
     }
-    console.log(`Total encryption time: ${totalEncryptTime}`);
+    console.log(`Total encryption time: ${totalEncryptTime.toFixed(2)}ms`);
 
     // Store meta information
     const metaRecord = { chunkCount };
@@ -107,12 +185,14 @@ async function storeData(data) {
     }
 
     // Store the last updated timestamp
-    const lastUpdatedRes = await sharedStorage.storeData(STORE_NAME, "lastUpdated", Date.now(), {});
+    const timestamp = Date.now();
+    const lastUpdatedRes = await sharedStorage.storeData(STORE_NAME, "lastUpdated", timestamp, {});
     if (!lastUpdatedRes.success) {
         throw new Error(`Failed to store lastUpdated timestamp: ${lastUpdatedRes.error}`);
     }
 
     console.log(`Successfully stored ${data.length} user records in ${chunkCount} chunks.`);
+    console.log(`Last updated: ${new Date(timestamp).toISOString()}`);
 }
 
 /**
@@ -242,7 +322,82 @@ async function checkUsersInMemory(usersToCheck) {
     );
 }
 
-// Opening communication channel
+/**
+ * Wait for a listener to respond to a ping message
+ */
+async function waitForListener(maxRetries = 20, initialDelay = 100) {
+    return new Promise((resolve, reject) => {
+        let attempts = 0;
+        let delay = initialDelay;
+        let timeoutId;
+        
+        // Single listener for all retries (defined outside sendPing)
+        const listener = (event) => {
+            if (event.data.action === "pong") {
+                console.log("✅ Listener detected!");
+                channel.removeEventListener("message", listener);
+                clearTimeout(timeoutId);
+                resolve(true);
+            }
+        };
+        
+        // Add listener ONCE at the start
+        channel.addEventListener("message", listener);
+        
+        function sendPing() {
+            if (attempts >= maxRetries) {
+                console.warn("❌ No listener detected after maximum retries.");
+                channel.removeEventListener("message", listener);
+                clearTimeout(timeoutId);
+                reject(new Error("Listener not found"));
+                return;
+            }
+
+            console.log(`🔄 Sending ping attempt ${attempts + 1}/${maxRetries}...`);
+            channel.postMessage({ action: "ping" });
+
+            // Retry if no response within `delay` ms
+            timeoutId = setTimeout(() => {
+                attempts++;
+                delay *= 2; // Exponential backoff
+                sendPing();
+            }, delay);
+        }
+
+        sendPing(); // Start the first attempt
+    });
+}
+
+/**
+ * Notify other tabs that this tab has opened and request user data
+ */
+async function notifyAndRequestData() {
+    // Create a unique ID for this tab
+    const tabId = Date.now();
+    
+    // First, notify other tabs that we're here
+    console.log("Notifying other tabs that this tab has opened...");
+    channel.postMessage({
+        action: "tab_opened",
+        tabId: tabId,
+    });
+    
+    // Request users data from any existing tabs
+    channel.postMessage({
+        action: "request_users",
+        tabId: tabId,
+    });
+}
+
+/**
+ * Legacy function maintained for backward compatibility
+ */
+function notifyTabOpened() {
+    console.log("Using notifyAndRequestData for tab notification");
+    notifyAndRequestData();
+}
+
+// Set up the message listener first, so it's ready to respond to pings
 channel.onmessage = async (event) => {
     console.log("Received message:", event.data);
 
@@ -253,7 +408,7 @@ channel.onmessage = async (event) => {
     }
 
     if (event.data.action === "check_users") {
-        console.log("Received users for lookup:", event.data.users);
+        console.log("Received users for lookup:", event?.data?.users?.length || 0, "users");
         const result = await checkUsersInMemory(event.data.users);
         channel.postMessage({
             action: "response_users_check",
@@ -289,89 +444,46 @@ channel.onmessage = async (event) => {
     }
 
     if (event.data.action === "response_users") {
-        console.log("Received user data from another tab:", event.data.result);
-        if (event.data.result) {
-            // Ensure we're working with an array
-            const userData = Array.isArray(event.data.result)
-                ? event.data.result
-                : typeof event.data.result === "object" && event.data.result !== null
-                ? Array.from(event.data.result)
-                : [];
-
-            if (userData.length > 0) {
-                // Store the received data in memory
-                storedUsersSet = userData;
-                window.storedUsersSet = storedUsersSet; // Update global variable
-                console.log(
-                    "✅ User data received from another tab and loaded into memory:",
-                    storedUsersSet.length
-                );
-            } else {
-                console.warn("Received empty user data array from another tab");
-                // If we received empty data, try to load from storage
-                if (!storedUsersSet) {
-                    loadDataIntoMemory();
-                }
-            }
-        } else {
-            console.warn("Received undefined or null user data from another tab");
-            // If we received undefined data, try to load from storage
-            if (!storedUsersSet) {
-                loadDataIntoMemory();
-            }
+        console.log("Received user data from another tab.");
+        if (!storedUsersSet) {
+            storedUsersSet = event.data.result;
+            window.storedUsersSet = storedUsersSet;
+            console.log(`Loaded ${storedUsersSet.length} user records from another tab.`);
         }
     }
 };
 
-/**
- * Notify other tabs that this tab has opened and request user data
- */
-function notifyTabOpened() {
-    console.log("Notifying other tabs that this tab has opened...");
-
-    // Create a unique ID for this tab
-    const tabId = Date.now();
-
-    // First, notify other tabs that we're here
-    channel.postMessage({
-        action: "tab_opened",
-        tabId: tabId
-    });
-
-    // Then, explicitly request users data from any existing tabs
-    setTimeout(() => {
-        channel.postMessage({
-            action: "request_users",
-            tabId: tabId
-        });
-    }, 500); // Small delay to ensure other tabs have time to process the tab_opened message
-}
-
 // Main entrypoint (this is where everything starts)
 (async() => {
+    console.log("=== User Ingestion Script Starting ===");
+    
     try {
         // First, notify other tabs that we're here and request data
-        notifyTabOpened();
-
+        await notifyAndRequestData();
+        
+        // Add a small delay to ensure other tabs have time to set up their listeners
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        // Try to detect if there's another tab with the script running
+        try {
+            const listenerFound = await waitForListener();
+            console.log("Listener detection result:", listenerFound);
+        } catch (error) {
+            console.log("No other tabs detected, this is the first tab");
+        }
+        
         // Fetch and store user data
         await fetchAndStoreNumbers();
-
+        
         // Double-check that we have data in memory
         if (!storedUsersSet) {
             console.log("No data in memory after initialization, loading from storage...");
             await loadDataIntoMemory();
         }
-    } catch(e) {
-        console.error(e);
-        throw e;
+        
+        // If page has been opened for a while, we still want to make sure the user data is fresh
+        setInterval(fetchAndStoreNumbers, CHECK_INTERVAL_MS);
+    } catch (error) {
+        console.error("Error during initialization:", error);
     }
-
-    // If page has been opened for a while, we still want to make sure the user data is fresh
-    setInterval(fetchAndStoreNumbers, CHECK_INTERVAL_MS);
-
-    // Test communication
-    setTimeout(() => {
-        console.log("Sending test ping...");
-        channel.postMessage({ action: "ping" });
-    }, 2000);
 })();

@@ -1,4 +1,4 @@
 {
-    "zencoder.enableRepoIndexing": true,
+    "zencoder.enableRepoIndexing": false,
     "CodeGPT.apiKey": "CodeGPT Plus Beta"
 }

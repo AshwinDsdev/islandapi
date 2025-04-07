@@ -538,7 +538,7 @@
     </div>
     <script src="./Brand_Ingestion.js" type="module"></script>
     <script src="./User_Ingestion.js" type="module"></script>
-    <script src="filter_onshore_brands.js"></script>
+
 
     <!-- Bootstrap JS Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -548,7 +548,7 @@
 
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+    <script src="filter_onshore_brands.js"></script>
     <script>
         /**
          * Customer Statistics Dashboard
@@ -711,7 +711,7 @@
             try {
                 const brandsData = await waitForExternalData('storedNumbersSet', CONFIG.DATA_WAIT_TIMEOUT, CONFIG.DATA_POLL_INTERVAL);
                 if (brandsData) {
-                    console.log("Brands data loaded successfully");
+                    console.log("Brands data loaded successfully",brandsData);
                     return brandsData;
                 }
 

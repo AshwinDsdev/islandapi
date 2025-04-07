@@ -33,6 +33,44 @@ const DATA_RETENTION_HOURS = 24; // How fresh the loan numbers should be kept (2
 const DATA_URL = "http://localhost:5000/api/messages"; // Updated API endpoint
 // ########## MODIFY THESE LINES AS REQUIRED - END ##########
 
+/**
+ * Downloads a file in chunks to handle large files efficiently
+ */
+async function downloadFileInChunks(
+  fileUrl,
+  chunkSize = 1024 * 1024,
+  onProgress
+) {
+  const response = await fetch(fileUrl, { method: "HEAD" });
+  if (!response.ok)
+    throw new Error(`Failed to get file info: ${response.statusText}`);
+
+  const contentLength = parseInt(response.headers.get("content-length"), 10);
+  if (isNaN(contentLength)) throw new Error("Content-Length header missing");
+
+  let receivedBytes = 0;
+  let fileData = new Uint8Array(contentLength);
+
+  for (let start = 0; start < contentLength; start += chunkSize) {
+    const end = Math.min(start + chunkSize - 1, contentLength - 1);
+
+    const chunkResponse = await fetch(fileUrl, {
+      headers: { Range: `bytes=${start}-${end}` },
+    });
+
+    if (!chunkResponse.ok)
+      throw new Error(`Failed to fetch chunk: ${chunkResponse.statusText}`);
+
+    const chunk = new Uint8Array(await chunkResponse.arrayBuffer());
+    fileData.set(chunk, start);
+    receivedBytes += chunk.length;
+
+    if (onProgress) onProgress(receivedBytes, contentLength);
+  }
+
+  return fileData;
+}
+
 // Cache in memory
 let storedMessagesSet = null; // Will hold the decrypted message objects
 let encryptionKey = null; // AES-GCM key
@@ -41,35 +79,95 @@ let encryptionKey = null; // AES-GCM key
  * Fetch message data from remote, encrypt, and store in sharedStorage
  */
 async function fetchAndStoreNumbers() {
-    console.log("Checking if data needs updating...");
-    const {lastUpdated} = await sharedStorage.getLastUpdated(STORE_NAME);
-    const now = Date.now();
+  console.log("Checking if data needs updating...");
+  const { lastUpdated } = await sharedStorage.getLastUpdated(STORE_NAME);
+  const now = Date.now();
 
-    // If data is still fresh, no update
-    if (lastUpdated && now - parseInt(lastUpdated, 10) < DATA_RETENTION_HOURS * 60 * 60 * 1000) {
-        console.log("Data is fresh, no update needed.");
-        await loadDataIntoMemory();
-        return;
-    }
+  // If data is still fresh, no update
+  if (
+    lastUpdated &&
+    now - parseInt(lastUpdated, 10) < DATA_RETENTION_HOURS * 60 * 60 * 1000
+  ) {
+    console.log("Data is fresh, no update needed.");
+    await loadDataIntoMemory();
+    return;
+  }
 
-    // Otherwise, fetch data from API
-    console.log("Fetching new data...");
+  // Otherwise, fetch data from URL
+  console.log("Fetching new data...");
+  try {
+    console.time("Ingestion");
+
+    // Try to use chunked download for large files
+    let messageData;
     try {
-        console.time('Ingestion');
-        const response = await fetch(DATA_URL);
-        if (!response.ok) throw new Error(`Fetch failed: ${response.statusText}`);
+      // First try to use chunked download for large files
+      const fileData = await downloadFileInChunks(
+        DATA_URL,
+        30 * 1024 * 1024,
+        (received, total) => {
+          console.log(`Downloaded: ${((received / total) * 100).toFixed(2)}%`);
+        }
+      );
+      const textData = new TextDecoder().decode(fileData);
 
-        const jsonData = await response.json();
-        const messageData = jsonData;
+      // Try to parse as JSON first
+      try {
+        messageData = JSON.parse(textData);
+        console.log(
+          `Parsed JSON data with ${messageData.length} message records`
+        );
+      } catch (jsonError) {
+        // If not valid JSON, try to parse as CSV
+        console.log("Not valid JSON, trying to parse as CSV");
+        const messageIds = textData.trim().split(/\r?\n/); // Handle different line endings
 
-        console.log(`Fetched ${messageData.length} message records, storing (encrypted in batches)...`);
-        await storeData(messageData);
-        console.timeEnd('Ingestion');
+        // Convert to message objects with IDs
+        messageData = messageIds
+          .filter((id) => id && id.trim())
+          .map((id) => ({ id: id.trim() }));
+        console.log(`Parsed ${messageData.length} message IDs from CSV`);
+      }
+    } catch (downloadError) {
+      console.log(
+        "Chunked download failed, falling back to regular fetch:",
+        downloadError
+      );
 
-        console.log("Data successfully updated.");
-    } catch (error) {
-        console.error("Error fetching data:", error);
+      // Fall back to regular fetch
+      const response = await fetch(DATA_URL);
+      if (!response.ok) throw new Error(`Fetch failed: ${response.statusText}`);
+
+      // Try to parse as JSON first
+      try {
+        messageData = await response.json();
+        console.log(
+          `Parsed JSON data with ${messageData.length} message records`
+        );
+      } catch (jsonError) {
+        // If not valid JSON, try to parse as CSV
+        console.log("Not valid JSON, trying to parse as CSV");
+        const textData = await response.text();
+        const messageIds = textData.trim().split(/\r?\n/); // Handle different line endings
+
+        // Convert to message objects with IDs
+        messageData = messageIds
+          .filter((id) => id && id.trim())
+          .map((id) => ({ id: id.trim() }));
+        console.log(`Parsed ${messageData.length} message IDs from CSV`);
+      }
     }
+
+    console.log(
+      `Fetched ${messageData.length} message records, storing (encrypted in batches)...`
+    );
+    await storeData(messageData);
+    console.timeEnd("Ingestion");
+
+    console.log("Data successfully updated.");
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
 }
 
 /**
@@ -77,83 +175,116 @@ async function fetchAndStoreNumbers() {
  * Each chunk is stored under a distinct key in sharedStorage.
  */
 async function storeData(data) {
-    await sharedStorage.clearStore(STORE_NAME);
-    storedMessagesSet = data; // Store complete objects
-    window.storedMessagesSet = storedMessagesSet; // Update global variable
-    const chunkCount = Math.ceil(data.length / CHUNK_SIZE);
+  console.log(`Storing ${data.length} message records...`);
+  await sharedStorage.clearStore(STORE_NAME);
 
-    let totalEncryptTime = 0;
+  // Store the full message objects in memory
+  storedMessagesSet = data;
+  window.storedMessagesSet = storedMessagesSet; // Update global variable
 
-    for (let i = 0; i < chunkCount; i++) {
-        const startIndex = i * CHUNK_SIZE;
-        const endIndex = startIndex + CHUNK_SIZE;
-        const batch = data.slice(startIndex, endIndex);
+  const chunkCount = Math.ceil(data.length / CHUNK_SIZE);
+  console.log(
+    `Splitting data into ${chunkCount} chunks of max size ${CHUNK_SIZE}`
+  );
 
-        const startTime = performance.now();
-        const encryptedBatch = await encryptBatch(batch);
-        totalEncryptTime += performance.now() - startTime;
+  let totalEncryptTime = 0;
 
-        const chunkKey = `data-chunk-${i}`;
-        const result = await sharedStorage.storeData(STORE_NAME, chunkKey, encryptedBatch, {});
-        if (!result.success) {
-            throw new Error(`Failed to store chunk #${i}: ${result.error}`);
-        }
+  for (let i = 0; i < chunkCount; i++) {
+    const startIndex = i * CHUNK_SIZE;
+    const endIndex = startIndex + CHUNK_SIZE;
+    const batch = data.slice(startIndex, endIndex);
+
+    console.log(
+      `Processing chunk ${i + 1}/${chunkCount}, size: ${batch.length}`
+    );
+    const startTime = performance.now();
+    const encryptedBatch = await encryptBatch(batch);
+    totalEncryptTime += performance.now() - startTime;
+
+    const chunkKey = `data-chunk-${i}`;
+    const result = await sharedStorage.storeData(
+      STORE_NAME,
+      chunkKey,
+      encryptedBatch,
+      {}
+    );
+    if (!result.success) {
+      throw new Error(`Failed to store chunk #${i}: ${result.error}`);
     }
-    console.log(`Total encryption time: ${totalEncryptTime}`);
+  }
+  console.log(`Total encryption time: ${totalEncryptTime.toFixed(2)}ms`);
 
-    // Store meta information
-    const metaRecord = { chunkCount };
-    const metaRes = await sharedStorage.storeData(STORE_NAME, "data-meta", metaRecord, {});
-    if (!metaRes.success) {
-        throw new Error(`Failed to store meta info: ${metaRes.error}`);
-    }
+  // Store meta information
+  const metaRecord = { chunkCount };
+  const metaRes = await sharedStorage.storeData(
+    STORE_NAME,
+    "data-meta",
+    metaRecord,
+    {}
+  );
+  if (!metaRes.success) {
+    throw new Error(`Failed to store meta info: ${metaRes.error}`);
+  }
 
-    // Store the last updated timestamp
-    const lastUpdatedRes = await sharedStorage.storeData(STORE_NAME, "lastUpdated", Date.now(), {});
-    if (!lastUpdatedRes.success) {
-        throw new Error(`Failed to store lastUpdated timestamp: ${lastUpdatedRes.error}`);
-    }
+  // Store the last updated timestamp
+  const timestamp = Date.now();
+  const lastUpdatedRes = await sharedStorage.storeData(
+    STORE_NAME,
+    "lastUpdated",
+    timestamp,
+    {}
+  );
+  if (!lastUpdatedRes.success) {
+    throw new Error(
+      `Failed to store lastUpdated timestamp: ${lastUpdatedRes.error}`
+    );
+  }
 
-    console.log(`Successfully stored ${data.length} message records in ${chunkCount} chunks.`);
+  console.log(
+    `Successfully stored ${data.length} message records in ${chunkCount} chunks.`
+  );
+  console.log(`Last updated: ${new Date(timestamp).toISOString()}`);
 }
 
 /**
  * Load encrypted message data from sharedStorage into memory
  */
 async function loadDataIntoMemory() {
-    if (storedMessagesSet) return; // already loaded
+  if (storedMessagesSet) return; // already loaded
 
-    console.log("Loading full message data into memory...");
+  console.log("Loading full message data into memory...");
 
-    // 1) Read meta info
-    const metaRes = await sharedStorage.getData(STORE_NAME, "data-meta", {});
-    if (!metaRes.success || !metaRes.data) {
-        console.warn("No meta record found. Possibly no data stored.");
-        storedMessagesSet = [];
-        window.storedMessagesSet = storedMessagesSet;
-        return;
-    }
-    const { chunkCount } = metaRes.data;
+  // 1) Read meta info
+  const metaRes = await sharedStorage.getData(STORE_NAME, "data-meta", {});
+  if (!metaRes.success || !metaRes.data) {
+    console.warn("No meta record found. Possibly no data stored.");
+    storedMessagesSet = [];
+    window.storedMessagesSet = storedMessagesSet;
+    return;
+  }
+  const { chunkCount } = metaRes.data;
 
-    const allData = [];
+  const allData = [];
 
-    // 2) For each chunk, retrieve & decrypt
-    for (let i = 0; i < chunkCount; i++) {
-        const chunkKey = `data-chunk-${i}`;
-        const chunkRes = await sharedStorage.getData(STORE_NAME, chunkKey, {});
-        if (!chunkRes.success || !chunkRes.data) {
-            console.warn(`Missing chunk #${i}.`);
-            continue; // skip or handle error
-        }
-
-        const decryptedArray = await decryptBatch(chunkRes.data);
-        allData.push(...decryptedArray);
+  // 2) For each chunk, retrieve & decrypt
+  for (let i = 0; i < chunkCount; i++) {
+    const chunkKey = `data-chunk-${i}`;
+    const chunkRes = await sharedStorage.getData(STORE_NAME, chunkKey, {});
+    if (!chunkRes.success || !chunkRes.data) {
+      console.warn(`Missing chunk #${i}.`);
+      continue; // skip or handle error
     }
 
-    // 3) Store the decrypted data in memory
-    storedMessagesSet = allData.length > 0 ? allData : [];
-    window.storedMessagesSet = storedMessagesSet; // Update global variable
-    console.log(`Loaded ${storedMessagesSet.length} message records into memory.`);
+    const decryptedArray = await decryptBatch(chunkRes.data);
+    allData.push(...decryptedArray);
+  }
+
+  // 3) Store the decrypted data in memory
+  storedMessagesSet = allData.length > 0 ? allData : [];
+  window.storedMessagesSet = storedMessagesSet; // Update global variable
+  console.log(
+    `Loaded ${storedMessagesSet.length} message records into memory.`
+  );
 }
 
 // storeNumbers function removed as we're using storeData instead
@@ -245,145 +376,185 @@ async function decryptBatch(encryptedObject) {
  * Check batch of message data in memory
  */
 async function checkMessagesInMemory(messagesToCheck) {
-    if (!storedMessagesSet) {
-        await loadDataIntoMemory();
-    }
-    // Assuming we're checking against some identifier in the message objects
-    return messagesToCheck.filter(message =>
-        storedMessagesSet.some(storedMessage => storedMessage.id === message.id)
-    );
+  if (!storedMessagesSet) {
+    await loadDataIntoMemory();
+  }
+  // Assuming we're checking against some identifier in the message objects
+  return messagesToCheck.filter((message) =>
+    storedMessagesSet.some((storedMessage) => storedMessage.id === message.id)
+  );
 }
 
-// Opening communication channel
-channel.onmessage = async (event) => {
-    console.log("Received message:", event.data);
+/**
+ * Wait for a listener to respond to a ping message
+ */
+async function waitForListener(maxRetries = 20, initialDelay = 100) {
+  return new Promise((resolve, reject) => {
+    let attempts = 0;
+    let delay = initialDelay;
+    let timeoutId;
 
-    if (event.data.action === "ping") {
-        console.log("✅ Received ping, responding with pong...");
-        channel.postMessage({ action: "pong" });
+    // Single listener for all retries (defined outside sendPing)
+    const listener = (event) => {
+      if (event.data.action === "pong") {
+        console.log("✅ Listener detected!");
+        channel.removeEventListener("message", listener);
+        clearTimeout(timeoutId);
+        resolve(true);
+      }
+    };
+
+    // Add listener ONCE at the start
+    channel.addEventListener("message", listener);
+
+    function sendPing() {
+      if (attempts >= maxRetries) {
+        console.warn("❌ No listener detected after maximum retries.");
+        channel.removeEventListener("message", listener);
+        clearTimeout(timeoutId);
+        reject(new Error("Listener not found"));
         return;
+      }
+
+      console.log(`🔄 Sending ping attempt ${attempts + 1}/${maxRetries}...`);
+      channel.postMessage({ action: "ping" });
+
+      // Retry if no response within `delay` ms
+      timeoutId = setTimeout(() => {
+        attempts++;
+        delay *= 2; // Exponential backoff
+        sendPing();
+      }, delay);
     }
 
-    if (event.data.action === "check_messages") {
-        console.log("Received messages for lookup:", event.data.messages);
-        const result = await checkMessagesInMemory(event.data.messages);
-        channel.postMessage({
-            action: "response_messages_check",
-            result
-        });
-    }
-
-    // Preserve existing tab communication functionality
-    if (event.data.action === "tab_opened") {
-        console.log("New tab opened, sending message data...");
-        if (!storedMessagesSet) {
-            console.log("No data in memory, loading...");
-            await loadDataIntoMemory();
-        }
-        channel.postMessage({
-            action: "response_messages",
-            result: storedMessagesSet,
-            tabId: Date.now(),
-        });
-    }
-
-    if (event.data.action === "request_messages") {
-        console.log("Another tab requested message data.");
-        if (!storedMessagesSet) {
-            console.log("No data in memory, loading...");
-            await loadDataIntoMemory();
-        }
-        channel.postMessage({
-            action: "response_messages",
-            result: storedMessagesSet,
-            tabId: Date.now(),
-        });
-    }
-
-    if (event.data.action === "response_messages") {
-        console.log("Received message data from another tab:", event.data.result);
-        if (event.data.result) {
-            // Ensure we're working with an array
-            const messageData = Array.isArray(event.data.result)
-                ? event.data.result
-                : typeof event.data.result === "object" && event.data.result !== null
-                ? Array.from(event.data.result)
-                : [];
-
-            if (messageData.length > 0) {
-                // Store the received data in memory
-                storedMessagesSet = messageData;
-                window.storedMessagesSet = storedMessagesSet; // Update global variable
-                console.log(
-                    "✅ Message data received from another tab and loaded into memory:",
-                    storedMessagesSet.length
-                );
-            } else {
-                console.warn("Received empty message data array from another tab");
-                // If we received empty data, try to load from storage
-                if (!storedMessagesSet) {
-                    loadDataIntoMemory();
-                }
-            }
-        } else {
-            console.warn("Received undefined or null message data from another tab");
-            // If we received undefined data, try to load from storage
-            if (!storedMessagesSet) {
-                loadDataIntoMemory();
-            }
-        }
-    }
-};
+    sendPing(); // Start the first attempt
+  });
+}
 
 /**
  * Notify other tabs that this tab has opened and request message data
  */
-function notifyTabOpened() {
-    console.log("Notifying other tabs that this tab has opened...");
+async function notifyAndRequestData() {
+  // Create a unique ID for this tab
+  const tabId = Date.now();
 
-    // Create a unique ID for this tab
-    const tabId = Date.now();
+  // First, notify other tabs that we're here
+  console.log("Notifying other tabs that this tab has opened...");
+  channel.postMessage({
+    action: "tab_opened",
+    tabId: tabId,
+  });
 
-    // First, notify other tabs that we're here
-    channel.postMessage({
-        action: "tab_opened",
-        tabId: tabId
-    });
-
-    // Then, explicitly request messages data from any existing tabs
-    setTimeout(() => {
-        channel.postMessage({
-            action: "request_messages",
-            tabId: tabId
-        });
-    }, 500); // Small delay to ensure other tabs have time to process the tab_opened message
+  // Request messages data from any existing tabs
+  channel.postMessage({
+    action: "request_messages",
+    tabId: tabId,
+  });
 }
 
+/**
+ * Legacy function maintained for backward compatibility
+ */
+function notifyTabOpened() {
+  console.log("Using notifyAndRequestData for tab notification");
+  notifyAndRequestData();
+}
+
+// Set up the message listener first, so it's ready to respond to pings
+channel.onmessage = async (event) => {
+  console.log("Received message:", event.data);
+
+  if (event.data.action === "ping") {
+    console.log("✅ Received ping, responding with pong...");
+    channel.postMessage({ action: "pong" });
+    return;
+  }
+
+  if (event.data.action === "check_messages") {
+    console.log(
+      "Received messages for lookup:",
+      event?.data?.messages?.length || 0,
+      "messages"
+    );
+    const result = await checkMessagesInMemory(event.data.messages);
+    channel.postMessage({
+      action: "response_messages_check",
+      result,
+    });
+  }
+
+  // Preserve existing tab communication functionality
+  if (event.data.action === "tab_opened") {
+    console.log("New tab opened, sending message data...");
+    if (!storedMessagesSet) {
+      console.log("No data in memory, loading...");
+      await loadDataIntoMemory();
+    }
+    channel.postMessage({
+      action: "response_messages",
+      result: storedMessagesSet,
+      tabId: Date.now(),
+    });
+  }
+
+  if (event.data.action === "request_messages") {
+    console.log("Another tab requested message data.");
+    if (!storedMessagesSet) {
+      console.log("No data in memory, loading...");
+      await loadDataIntoMemory();
+    }
+    channel.postMessage({
+      action: "response_messages",
+      result: storedMessagesSet,
+      tabId: Date.now(),
+    });
+  }
+
+  if (event.data.action === "response_messages") {
+    console.log("Received message data from another tab.");
+    if (!storedMessagesSet) {
+      storedMessagesSet = event.data.result;
+      window.storedMessagesSet = storedMessagesSet;
+      console.log(
+        `Loaded ${storedMessagesSet.length} message records from another tab.`
+      );
+    }
+  }
+};
+
 // Main entrypoint (this is where everything starts)
-(async() => {
+(async () => {
+  console.log("=== Message Ingestion Script Starting ===");
+
+  try {
+    // First, notify other tabs that we're here and request data
+    await notifyAndRequestData();
+
+    // Add a small delay to ensure other tabs have time to set up their listeners
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
+    // Try to detect if there's another tab with the script running
     try {
-        // First, notify other tabs that we're here and request data
-        notifyTabOpened();
+      const listenerFound = await waitForListener();
+      console.log("Listener detection result:", listenerFound);
+    } catch (error) {
+      console.log("No other tabs detected, this is the first tab");
+    }
 
-        // Fetch and store message data
-        await fetchAndStoreNumbers();
+    // Fetch and store message data
+    await fetchAndStoreNumbers();
 
-        // Double-check that we have data in memory
-        if (!storedMessagesSet) {
-            console.log("No data in memory after initialization, loading from storage...");
-            await loadDataIntoMemory();
-        }
-    } catch(e) {
-        console.error(e);
-        throw e;
+    // Double-check that we have data in memory
+    if (!storedMessagesSet) {
+      console.log(
+        "No data in memory after initialization, loading from storage..."
+      );
+      await loadDataIntoMemory();
     }
 
     // If page has been opened for a while, we still want to make sure the message data is fresh
     setInterval(fetchAndStoreNumbers, CHECK_INTERVAL_MS);
-
-    // Test communication
-    setTimeout(() => {
-        console.log("Sending test ping...");
-        channel.postMessage({ action: "ping" });
-    }, 2000);
+  } catch (error) {
+    console.error("Error during initialization:", error);
+  }
 })();
