@@ -19,294 +19,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
 
     <!-- Custom CSS -->
-    <style>
-        :root {
-            --primary-color: #1976d2;
-            --secondary-color: #f5f5f5;
-            --accent-color: #ff4081;
-            --text-color: #333;
-            --light-text: #f5f5f5;
-            --border-color: #ddd;
-        }
-
-        body {
-            font-family: 'Roboto', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f8f9fa;
-            color: var(--text-color);
-        }
-
-        .wrapper {
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-
-        main {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            margin-top: 0;
-        }
-
-        .header2 {
-            background-color: #2c3e50;
-            color: white;
-            padding: 10px 20px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            position: relative;
-            z-index: 101;
-        }
-
-        .menu-hamburger {
-            display: flex;
-            align-items: center;
-        }
-
-        .hamburger-menu {
-            font-size: 1.5rem;
-            margin-right: 10px;
-        }
-
-        .right-icons {
-            display: flex;
-            align-items: center;
-        }
-
-        .drawer-container {
-            height: calc(100vh - 64px);
-        }
-
-        .app-drawer {
-            width: 216px;
-            background-color: #fff;
-            box-shadow: 1px 0 5px rgba(0, 0, 0, 0.1);
-        }
-
-        .drawer-list-item {
-            list-style: none;
-            padding: 0;
-        }
-
-        .drawer-item {
-            display: block;
-            padding: 12px 16px;
-            color: var(--text-color);
-            text-decoration: none;
-            transition: background-color 0.3s;
-        }
-
-        .drawer-item:hover {
-            background-color: rgba(0, 0, 0, 0.05);
-        }
-
-        .drawer-feature-item {
-            display: block;
-            padding: 8px 16px 8px 32px;
-            color: var(--text-color);
-            text-decoration: none;
-            transition: background-color 0.3s;
-        }
-
-        .active-child-menu-item {
-            background-color: rgba(25, 118, 210, 0.1);
-            color: var(--primary-color);
-        }
-
-        .indicator {
-            width: 4px;
-            height: 24px;
-            background-color: var(--primary-color);
-            position: absolute;
-            left: 0;
-            display: none;
-        }
-
-        .active-child-menu-item .indicator {
-            display: block;
-        }
-
-        .header-main-1 {
-            background-color: white;
-            padding: 12px 16px;
-            border-bottom: 1px solid var(--border-color);
-            position: relative;
-            z-index: 99;
-            margin-bottom: 0;
-        }
-
-        .header-parts-client {
-            display: flex;
-            align-items: center;
-            position: relative;
-            gap: 10px;
-            margin: 0;
-        }
-
-        .text-link {
-            color: var(--primary-color);
-            cursor: pointer;
-            text-decoration: none;
-        }
-
-        .text-link:hover {
-            text-decoration: underline;
-        }
-
-        .hero {
-            background-color: white;
-            padding: 15px 20px;
-            margin-bottom: 15px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-
-        .mat-mdc-form-field {
-            width: 100%;
-            margin-bottom: 10px;
-        }
-
-        .search-button {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .search-button:hover {
-            background-color: #1565c0;
-        }
-
-        .borrowers-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        .borrowers-table th {
-            background-color: #f5f5f5;
-            padding: 12px;
-            text-align: left;
-            font-weight: 500;
-            border-bottom: 2px solid var(--border-color);
-        }
-
-        .borrowers-table td {
-            padding: 12px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .borrowers-table tr:hover {
-            background-color: rgba(0, 0, 0, 0.02);
-        }
-
-        .status-active {
-            color: #4caf50;
-        }
-
-        .status-inactive {
-            color: #f44336;
-        }
-
-        .status-pending {
-            color: #ff9800;
-        }
-
-        .action-icon {
-            color: var(--primary-color);
-            cursor: pointer;
-            margin-right: 8px;
-        }
-
-        .pagination {
-            display: flex;
-            justify-content: flex-end;
-            margin-top: 20px;
-        }
-
-        .pagination-button {
-            background-color: white;
-            border: 1px solid var(--border-color);
-            padding: 6px 12px;
-            margin: 0 4px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .pagination-button:hover {
-            background-color: #f5f5f5;
-        }
-
-        .pagination-button.active {
-            background-color: var(--primary-color);
-            color: white;
-            border-color: var(--primary-color);
-        }
-
-        #loading-indicator {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(255, 255, 255, 0.8);
-            z-index: 9999;
-        }
-
-        /* Angular Material-like styles */
-        .mat-mdc-input-element {
-            font-family: Roboto, sans-serif;
-            font-size: 14px;
-        }
-
-        .mat-mdc-form-field {
-            display: inline-block;
-            position: relative;
-            text-align: left;
-        }
-
-        .mat-drawer-container {
-            position: relative;
-            z-index: 1;
-            box-sizing: border-box;
-            -webkit-overflow-scrolling: touch;
-            display: block;
-            overflow: hidden;
-        }
-
-        .mat-drawer {
-            position: relative;
-            z-index: 4;
-        }
-
-        .mat-drawer-content {
-            position: relative;
-            z-index: 1;
-            display: block;
-            height: 100%;
-            overflow: auto;
-        }
-
-        .grid-align-left {
-            text-align: left;
-        }
-
-        .ag-theme-alpine {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
-        }
-
-        .ag-paging-panel {
-            align-items: center;
-            display: flex;
-            justify-content: flex-end;
-        }
-    </style>
+    <link href="./Loansphere_Borrower.css" rel="stylesheet">
 </head>
 
 <body>
@@ -330,8 +43,8 @@
                             <div class="institution-name">Cenlar FSB</div>
                         </div>
                         <div class="d-inline-block ms-md-2">
-                            <select class="form-select header-main-1-formfld" name="channelSelect"
-                                id="channelSelect" aria-label="Channel select">
+                            <select class="form-select header-main-1-formfld" name="channelSelect" id="channelSelect"
+                                aria-label="Channel select">
                                 <option selected>Borrower Self-Service</option>
                                 <option value="1">Customer Service</option>
                                 <option value="2">Loan Management</option>
@@ -341,9 +54,7 @@
                             <select class="form-select header-main-1-formfld" name="brandSelect" id="brandSelect"
                                 aria-label="Brand select">
                                 <option selected>All Brands</option>
-                                <option value="1">Brand A</option>
-                                <option value="2">Brand B</option>
-                                <option value="3">Brand C</option>
+                                <!-- Brand options will be populated by JavaScript -->
                             </select>
                         </div>
                     </div>
@@ -430,7 +141,8 @@
                 </div>
 
                 <!-- Main Content -->
-                <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 mat-drawer-content" style="margin-left: 216px; padding-top: 10px; overflow-y: auto;">
+                <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 mat-drawer-content"
+                    style="margin-left: 216px; padding-top: 10px; overflow-y: auto;">
                     <div class="header-main-1">
                         <h4>Search Borrowers</h4>
                         <div class="header-parts-client py-2">
@@ -447,28 +159,28 @@
                                 <div class="row">
                                     <div class="col-6 col-lg-4 col-xl-2 pr-lg-2 mb-2">
                                         <label for="userName" class="form-label small mb-1">Username</label>
-                                        <input type="text" class="form-control form-control-sm mat-mdc-input-element" id="userName"
-                                            name="userName" maxlength="30" autocomplete="off">
+                                        <input type="text" class="form-control form-control-sm mat-mdc-input-element"
+                                            id="userName" name="userName" maxlength="30" autocomplete="off">
                                     </div>
                                     <div class="col-6 col-lg-4 col-xl-1 px-lg-2 mb-2">
                                         <label for="firstName" class="form-label small mb-1">First Name</label>
-                                        <input type="text" class="form-control form-control-sm mat-mdc-input-element" id="firstName"
-                                            name="firstName" maxlength="30" autocomplete="off">
+                                        <input type="text" class="form-control form-control-sm mat-mdc-input-element"
+                                            id="firstName" name="firstName" maxlength="30" autocomplete="off">
                                     </div>
                                     <div class="col-6 col-lg-4 col-xl-1 px-lg-2 mb-2">
                                         <label for="lastName" class="form-label small mb-1">Last Name</label>
-                                        <input type="text" class="form-control form-control-sm mat-mdc-input-element" id="lastName"
-                                            name="lastName" maxlength="30" autocomplete="off">
+                                        <input type="text" class="form-control form-control-sm mat-mdc-input-element"
+                                            id="lastName" name="lastName" maxlength="30" autocomplete="off">
                                     </div>
                                     <div class="col-6 col-lg-4 col-xl-2 px-lg-2 mb-2">
                                         <label for="email" class="form-label small mb-1">Email</label>
-                                        <input type="email" class="form-control form-control-sm mat-mdc-input-element" id="email"
-                                            name="email" autocomplete="off">
+                                        <input type="email" class="form-control form-control-sm mat-mdc-input-element"
+                                            id="email" name="email" autocomplete="off">
                                     </div>
                                     <div class="col-6 col-lg-4 col-xl-2 px-lg-2 mb-2">
                                         <label for="loanNumber" class="form-label small mb-1">Loan Number</label>
-                                        <input type="text" class="form-control form-control-sm mat-mdc-input-element" id="loanNumber"
-                                            name="loanNumber" autocomplete="off">
+                                        <input type="text" class="form-control form-control-sm mat-mdc-input-element"
+                                            id="loanNumber" name="loanNumber" autocomplete="off">
                                     </div>
                                     <div class="col-6 col-lg-4 col-xl-2 px-lg-2 mb-2">
                                         <label for="status" class="form-label small mb-1">Status</label>
@@ -480,7 +192,15 @@
                                         </select>
                                     </div>
                                     <div class="col-6 col-lg-4 col-xl-2 px-lg-2 mb-2">
-                                        <label for="registrationDate" class="form-label small mb-1">Registration Date</label>
+                                        <label for="searchBrand" class="form-label small mb-1">Brand</label>
+                                        <select class="form-select form-select-sm" id="searchBrand" name="searchBrand">
+                                            <option value="">All Brands</option>
+                                            <!-- Will be populated by JavaScript -->
+                                        </select>
+                                    </div>
+                                    <div class="col-6 col-lg-4 col-xl-2 px-lg-2 mb-2">
+                                        <label for="registrationDate" class="form-label small mb-1">Registration
+                                            Date</label>
                                         <input type="date" class="form-control form-control-sm mat-mdc-input-element"
                                             id="registrationDate" name="registrationDate" autocomplete="off">
                                     </div>
@@ -493,6 +213,62 @@
                         </div>
                     </div>
 
+                    <!-- Create New Secure Message Card -->
+                    <div class="card mt-2 mb-4">
+                        <div class="card-header bg-white">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">Create a New Secure Message</h5>
+                                <div>
+                                    <button class="btn btn-outline-primary btn-sm" id="refreshLoansBtn">
+                                        <i class="fa-solid fa-refresh me-1"></i> Refresh Loans
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <form id="secureMessageForm">
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="loanPropertySelect" class="form-label">Select Loan/Property</label>
+                                        <select class="form-select" id="loanPropertySelect" required>
+                                            <option value="">-- Select a loan --</option>
+                                            <!-- Will be populated from borrowersData -->
+                                        </select>
+                                        <small class="text-muted">Only loans you have access to will be displayed</small>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="messageCategory" class="form-label">Message Category</label>
+                                        <select class="form-select" id="messageCategory" required>
+                                            <option value="">-- Select a category --</option>
+                                            <option value="payment">Payment</option>
+                                            <option value="escrow">Escrow</option>
+                                            <option value="insurance">Insurance</option>
+                                            <option value="taxes">Taxes</option>
+                                            <option value="general">General Inquiry</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="messageSubject" class="form-label">Subject</label>
+                                    <input type="text" class="form-control" id="messageSubject" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="messageBody" class="form-label">Message</label>
+                                    <textarea class="form-control" id="messageBody" rows="5" required></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="attachments" class="form-label">Attachments (Optional)</label>
+                                    <input type="file" class="form-control" id="attachments" multiple>
+                                </div>
+                                <div class="d-flex justify-content-end">
+                                    <button type="button" class="btn btn-outline-secondary me-2" id="cancelMessageBtn">Cancel</button>
+                                    <button type="submit" class="btn btn-primary" id="sendMessageBtn">Send Message</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Borrowers List Card -->
                     <div class="card mt-2">
                         <div class="card-header bg-white">
                             <div class="d-flex justify-content-between align-items-center">
@@ -516,6 +292,7 @@
                                             <th class="grid-align-left" col-id="FullName">Name</th>
                                             <th class="grid-align-left" col-id="EmailAddress">Email</th>
                                             <th class="grid-align-left" col-id="LoanIdentifier">Loan Number</th>
+                                            <th class="grid-align-left" col-id="Brand">Brand</th>
                                             <th class="grid-align-left" col-id="RegistrationDate">Registration Date</th>
                                             <th class="grid-align-left" col-id="Status">Status</th>
                                             <th class="grid-align-left" col-id="Actions">Actions</th>
@@ -656,6 +433,68 @@
             }
         ];
 
+        // Brands data - banks or money lenders with associated loan numbers
+        const brandsData = [
+            {
+                id: 1,
+                name: 'Chase Bank',
+                code: 'CHASE',
+                loanNumbers: ['0000000976', '0000001245', '0000001470', '0000001485', '0000001499']
+            },
+            {
+                id: 2,
+                name: 'Bank of America',
+                code: 'BOA',
+                loanNumbers: ['0000000001', '0000001421', '0000001471', '0000001486', '0000001500']
+            },
+            {
+                id: 3,
+                name: 'Wells Fargo',
+                code: 'WF',
+                loanNumbers: ['0000001180', '0000001472', '0000001487', '0000001501', '0000001510']
+            },
+            {
+                id: 4,
+                name: 'Citibank',
+                code: 'CITI',
+                loanNumbers: ['0000001081', '0000001473', '0000001488', '0000001502', '0000001511']
+            },
+            {
+                id: 5,
+                name: 'US Bank',
+                code: 'USB',
+                loanNumbers: ['0000001302', '0000001474', '0000001489', '0000001503', '0000001512']
+            },
+            {
+                id: 6,
+                name: 'PNC Bank',
+                code: 'PNC',
+                loanNumbers: ['0000001356', '0000001475', '0000001490', '0000001504', '0000001513']
+            },
+            {
+                id: 7,
+                name: 'TD Bank',
+                code: 'TD',
+                loanNumbers: ['0000001489', '0000001476', '0000001491', '0000001505', '0000001514']
+            },
+            {
+                id: 8,
+                name: 'Capital One',
+                code: 'CAP1',
+                loanNumbers: ['0000001523', '0000001477', '0000001492', '0000001506', '0000001515']
+            }
+        ];
+
+        // Function to find brand by loan number
+        function findBrandByLoanNumber(loanNumber) {
+            for (const brand of brandsData) {
+                if (brand.loanNumbers.includes(loanNumber)) {
+                    return brand;
+                }
+            }
+            return null; // Return null if no brand is found for the loan number
+        }
+
         // Function to populate the borrowers table
         function populateBorrowersTable(data) {
             const tableBody = document.querySelector('#borrowersTable tbody');
@@ -685,11 +524,18 @@
                 // Ensure loan number is in the correct format (10 digits with leading zeros)
                 const loanNumber = borrower.loanNumber.padStart(10, '0');
 
+                // Find the brand associated with this loan number
+                const brand = findBrandByLoanNumber(borrower.loanNumber);
+                const brandDisplay = brand ?
+                    `${brand.name} <span class="badge bg-secondary">${brand.code}</span>` :
+                    'Not Assigned';
+
                 row.innerHTML = `
                     <td>${borrower.username}</td>
                     <td>${borrower.firstName} ${borrower.lastName}</td>
                     <td>${borrower.email}</td>
                     <td>${loanNumber}</td>
+                    <td>${brandDisplay}</td>
                     <td>${formattedDate}</td>
                     <td><span class="${statusClass}">${borrower.status.charAt(0).toUpperCase() + borrower.status.slice(1)}</span></td>
                     <td>
@@ -703,6 +549,41 @@
             });
         }
 
+        // Function to populate brand dropdowns
+        function populateBrandDropdowns() {
+            // Populate header brand dropdown
+            const brandSelect = document.getElementById('brandSelect');
+
+            // Clear existing options except the first one (All Brands)
+            while (brandSelect.options.length > 1) {
+                brandSelect.remove(1);
+            }
+
+            // Add brand options
+            brandsData.forEach(brand => {
+                const option = document.createElement('option');
+                option.value = brand.id;
+                option.textContent = `${brand.name} (${brand.code})`;
+                brandSelect.appendChild(option);
+            });
+
+            // Populate search form brand dropdown
+            const searchBrand = document.getElementById('searchBrand');
+
+            // Clear existing options except the first one (All Brands)
+            while (searchBrand.options.length > 1) {
+                searchBrand.remove(1);
+            }
+
+            // Add brand options
+            brandsData.forEach(brand => {
+                const option = document.createElement('option');
+                option.value = brand.id;
+                option.textContent = `${brand.name} (${brand.code})`;
+                searchBrand.appendChild(option);
+            });
+        }
+
         // Function to filter borrowers based on search criteria
         function filterBorrowers() {
             const username = document.getElementById('userName').value.toLowerCase();
@@ -712,8 +593,19 @@
             const loanNumber = document.getElementById('loanNumber').value.toLowerCase();
             const status = document.getElementById('status').value.toLowerCase();
             const registrationDate = document.getElementById('registrationDate').value;
+            const selectedBrand = document.getElementById('brandSelect').value;
+            const searchBrand = document.getElementById('searchBrand').value;
 
             const filteredData = borrowersData.filter(borrower => {
+                // Find the brand for this loan number
+                const brand = findBrandByLoanNumber(borrower.loanNumber);
+
+                // Check if either the header brand dropdown or search form brand dropdown is filtering
+                const headerBrandMatch = selectedBrand === 'All Brands' ||
+                    (brand && brand.id.toString() === selectedBrand);
+                const searchBrandMatch = searchBrand === '' ||
+                    (brand && brand.id.toString() === searchBrand);
+
                 return (
                     (username === '' || borrower.username.toLowerCase().includes(username)) &&
                     (firstName === '' || borrower.firstName.toLowerCase().includes(firstName)) &&
@@ -721,7 +613,8 @@
                     (email === '' || borrower.email.toLowerCase().includes(email)) &&
                     (loanNumber === '' || borrower.loanNumber.toLowerCase().includes(loanNumber)) &&
                     (status === '' || borrower.status === status) &&
-                    (registrationDate === '' || borrower.registrationDate === registrationDate)
+                    (registrationDate === '' || borrower.registrationDate === registrationDate) &&
+                    headerBrandMatch && searchBrandMatch
                 );
             });
 
@@ -750,9 +643,16 @@
                 document.getElementById('loading-indicator').style.display = 'none';
             }, 1000);
 
+            // Populate brand dropdowns
+            populateBrandDropdowns();
+
             // Populate table with initial data
             populateBorrowersTable(borrowersData);
             updatePagination(borrowersData.length);
+
+            // Add brand select change events
+            document.getElementById('brandSelect').addEventListener('change', filterBorrowers);
+            document.getElementById('searchBrand').addEventListener('change', filterBorrowers);
 
             // Search button click event
             document.getElementById('searchButton').addEventListener('click', filterBorrowers);
@@ -799,6 +699,169 @@
                         }
                     }
                 });
+            });
+
+            // Secure Message Form Functionality
+            // Populate loan dropdown from borrowersData
+            function populateLoanDropdown() {
+                const loanSelect = document.getElementById('loanPropertySelect');
+                
+                // Clear existing options except the first one
+                while (loanSelect.options.length > 1) {
+                    loanSelect.remove(1);
+                }
+                
+                // Create a Set to track unique loan numbers
+                const uniqueLoans = new Set();
+                
+                // Process each borrower
+                borrowersData.forEach(borrower => {
+                    // Skip if we've already added this loan
+                    if (uniqueLoans.has(borrower.loanNumber)) {
+                        return;
+                    }
+                    
+                    uniqueLoans.add(borrower.loanNumber);
+                    
+                    // Find the brand associated with this loan number
+                    const brand = findBrandByLoanNumber(borrower.loanNumber);
+                    
+                    // Create property info object
+                    const propertyInfo = {
+                        address: generateMockAddress(borrower.loanNumber),
+                        propertyType: generateMockPropertyType(borrower.loanNumber),
+                        loanType: generateMockLoanType(borrower.loanNumber),
+                        borrowerName: `${borrower.firstName} ${borrower.lastName}`,
+                        brand: brand ? brand.name : 'Unknown'
+                    };
+                    
+                    // Create and add the option
+                    const option = document.createElement('option');
+                    option.value = borrower.loanNumber;
+                    option.text = `${borrower.loanNumber} - ${propertyInfo.address}`;
+                    option.dataset.propertyInfo = JSON.stringify(propertyInfo);
+                    loanSelect.add(option);
+                });
+                
+                // If no loans were added, show a message
+                if (uniqueLoans.size === 0) {
+                    const noLoansOption = document.createElement('option');
+                    noLoansOption.text = 'No loans available';
+                    noLoansOption.disabled = true;
+                    loanSelect.add(noLoansOption);
+                }
+            }
+            
+            // Helper functions to generate mock property data
+            function generateMockAddress(loanNumber) {
+                // Extract last 4 digits of loan number
+                const lastDigits = loanNumber.slice(-4);
+                const num = parseInt(lastDigits) % 1000;
+                
+                const streets = ['Main St', 'Oak Ave', 'Pine Blvd', 'Maple Dr', 'Cedar Ln', 'Elm St', 'Washington Ave'];
+                const cities = ['Anytown', 'Springfield', 'Lakeside', 'Riverdale', 'Mountainview', 'Westfield', 'Oakdale'];
+                const states = ['CA', 'IL', 'TX', 'NY', 'FL', 'WA', 'MA'];
+                
+                const streetIndex = num % streets.length;
+                const cityIndex = (num + 1) % cities.length;
+                const stateIndex = (num + 2) % states.length;
+                
+                return `${100 + num} ${streets[streetIndex]}, ${cities[cityIndex]}, ${states[stateIndex]} ${10000 + num}`;
+            }
+            
+            function generateMockPropertyType(loanNumber) {
+                const types = ['Single Family', 'Condo', 'Townhouse', 'Multi-Family', 'Duplex', 'Apartment'];
+                const index = parseInt(loanNumber.slice(-1)) % types.length;
+                return types[index];
+            }
+            
+            function generateMockLoanType(loanNumber) {
+                const types = ['Conventional', 'FHA', 'VA', 'USDA', 'Jumbo', 'Fixed Rate', 'ARM'];
+                const index = parseInt(loanNumber.slice(-2, -1)) % types.length;
+                return types[index];
+            }
+            
+            // Initialize loan dropdown
+            populateLoanDropdown();
+            
+            // Handle secure message form submission
+            document.getElementById('secureMessageForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const loanSelect = document.getElementById('loanPropertySelect');
+                const messageCategory = document.getElementById('messageCategory');
+                const messageSubject = document.getElementById('messageSubject');
+                const messageBody = document.getElementById('messageBody');
+                
+                // Validate form
+                if (loanSelect.value === '' || messageCategory.value === '' || 
+                    messageSubject.value.trim() === '' || messageBody.value.trim() === '') {
+                    alert('Please fill in all required fields');
+                    return;
+                }
+                
+                // Get selected loan property info
+                let propertyInfo = {};
+                if (loanSelect.selectedIndex > 0) {
+                    try {
+                        propertyInfo = JSON.parse(loanSelect.options[loanSelect.selectedIndex].dataset.propertyInfo);
+                    } catch (e) {
+                        console.error('Error parsing property info:', e);
+                    }
+                }
+                
+                // In a real implementation, you would send this data to an API
+                const messageData = {
+                    loanNumber: loanSelect.value,
+                    propertyInfo: propertyInfo,
+                    category: messageCategory.value,
+                    subject: messageSubject.value,
+                    message: messageBody.value,
+                    attachments: Array.from(document.getElementById('attachments').files).map(file => file.name),
+                    timestamp: new Date().toISOString()
+                };
+                
+                console.log('Sending secure message:', messageData);
+                
+                // Show success message
+                alert('Your message has been sent successfully!');
+                
+                // Reset form
+                this.reset();
+            });
+            
+            // Handle cancel button
+            document.getElementById('cancelMessageBtn').addEventListener('click', function() {
+                document.getElementById('secureMessageForm').reset();
+            });
+            
+            // Handle refresh loans button - repopulates the dropdown and shows feedback
+            document.getElementById('refreshLoansBtn').addEventListener('click', function() {
+                // Repopulate the dropdown
+                populateLoanDropdown();
+                
+                // Show a feedback message to the user
+                const feedbackMsg = document.createElement('div');
+                feedbackMsg.className = 'alert alert-info mt-2 mb-2';
+                feedbackMsg.textContent = 'Loan list refreshed';
+                feedbackMsg.style.padding = '5px 10px';
+                feedbackMsg.style.fontSize = '0.9rem';
+                
+                // Insert after the dropdown
+                const loanSelectParent = document.getElementById('loanPropertySelect').parentNode;
+                
+                // Remove any existing feedback message
+                const existingMsg = loanSelectParent.querySelector('.alert-info');
+                if (existingMsg) {
+                    existingMsg.remove();
+                }
+                
+                loanSelectParent.appendChild(feedbackMsg);
+                
+                // Remove the message after 2 seconds
+                setTimeout(() => {
+                    feedbackMsg.remove();
+                }, 2000);
             });
         });
     </script>

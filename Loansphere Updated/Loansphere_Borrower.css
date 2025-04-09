@@ -1,0 +1,334 @@
+:root {
+    --primary-color: #1976d2;
+    --secondary-color: #f5f5f5;
+    --accent-color: #ff4081;
+    --text-color: #333;
+    --light-text: #f5f5f5;
+    --border-color: #ddd;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9fa;
+    color: var(--text-color);
+}
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    margin-top: 0;
+}
+
+.header2 {
+    background-color: #2c3e50;
+    color: white;
+    padding: 10px 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 101;
+}
+
+.menu-hamburger {
+    display: flex;
+    align-items: center;
+}
+
+.hamburger-menu {
+    font-size: 1.5rem;
+    margin-right: 10px;
+}
+
+.right-icons {
+    display: flex;
+    align-items: center;
+}
+
+.drawer-container {
+    height: calc(100vh - 64px);
+}
+
+.app-drawer {
+    width: 216px;
+    background-color: #fff;
+    box-shadow: 1px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.drawer-list-item {
+    list-style: none;
+    padding: 0;
+}
+
+.drawer-item {
+    display: block;
+    padding: 12px 16px;
+    color: var(--text-color);
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.drawer-item:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.drawer-feature-item {
+    display: block;
+    padding: 8px 16px 8px 32px;
+    color: var(--text-color);
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.active-child-menu-item {
+    background-color: rgba(25, 118, 210, 0.1);
+    color: var(--primary-color);
+}
+
+.indicator {
+    width: 4px;
+    height: 24px;
+    background-color: var(--primary-color);
+    position: absolute;
+    left: 0;
+    display: none;
+}
+
+.active-child-menu-item .indicator {
+    display: block;
+}
+
+.header-main-1 {
+    background-color: white;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border-color);
+    position: relative;
+    z-index: 99;
+    margin-bottom: 0;
+}
+
+.header-parts-client {
+    display: flex;
+    align-items: center;
+    position: relative;
+    gap: 10px;
+    margin: 0;
+}
+
+.text-link {
+    color: var(--primary-color);
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.text-link:hover {
+    text-decoration: underline;
+}
+
+.hero {
+    background-color: white;
+    padding: 15px 20px;
+    margin-bottom: 15px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.mat-mdc-form-field {
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.search-button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.search-button:hover {
+    background-color: #1565c0;
+}
+
+.borrowers-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.borrowers-table th {
+    background-color: #f5f5f5;
+    padding: 12px;
+    text-align: left;
+    font-weight: 500;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.borrowers-table td {
+    padding: 12px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.borrowers-table tr:hover {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+.status-active {
+    color: #4caf50;
+}
+
+.status-inactive {
+    color: #f44336;
+}
+
+.status-pending {
+    color: #ff9800;
+}
+
+.action-icon {
+    color: var(--primary-color);
+    cursor: pointer;
+    margin-right: 8px;
+}
+
+.pagination {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+.pagination-button {
+    background-color: white;
+    border: 1px solid var(--border-color);
+    padding: 6px 12px;
+    margin: 0 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.pagination-button:hover {
+    background-color: #f5f5f5;
+}
+
+.pagination-button.active {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+#loading-indicator {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.8);
+    z-index: 9999;
+}
+
+/* Angular Material-like styles */
+.mat-mdc-input-element {
+    font-family: Roboto, sans-serif;
+    font-size: 14px;
+}
+
+.mat-mdc-form-field {
+    display: inline-block;
+    position: relative;
+    text-align: left;
+}
+
+.mat-drawer-container {
+    position: relative;
+    z-index: 1;
+    box-sizing: border-box;
+    -webkit-overflow-scrolling: touch;
+    display: block;
+    overflow: hidden;
+}
+
+.mat-drawer {
+    position: relative;
+    z-index: 4;
+}
+
+.mat-drawer-content {
+    position: relative;
+    z-index: 1;
+    display: block;
+    height: 100%;
+    overflow: auto;
+}
+
+.grid-align-left {
+    text-align: left;
+}
+
+.ag-theme-alpine {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+}
+
+.ag-paging-panel {
+    align-items: center;
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* Secure Message Form Styles */
+#secureMessageForm {
+    background-color: #fff;
+    border-radius: 4px;
+}
+
+#secureMessageForm label {
+    font-weight: 500;
+    margin-bottom: 5px;
+    display: block;
+}
+
+#secureMessageForm .form-control:focus,
+#secureMessageForm .form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(25, 118, 210, 0.25);
+}
+
+#secureMessageForm .btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+#secureMessageForm .btn-primary:hover {
+    background-color: #1565c0;
+    border-color: #1565c0;
+}
+
+#secureMessageForm small.text-muted {
+    font-size: 12px;
+    display: block;
+    margin-top: 4px;
+}
+
+#loanPropertySelect option {
+    padding: 8px;
+}
+
+#refreshLoansBtn {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+#refreshLoansBtn i {
+    font-size: 14px;
+}
