@@ -1,0 +1,300 @@
+/* Global Styles */
+:root {
+    --primary-color: #0056b3;
+    --secondary-color: #6c757d;
+    --success-color: #28a745;
+    --danger-color: #dc3545;
+    --warning-color: #ffc107;
+    --info-color: #17a2b8;
+    --light-color: #f8f9fa;
+    --dark-color: #343a40;
+    --sidebar-width: 250px;
+    --header-height: 60px;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f5f5;
+    margin: 0;
+    padding: 0;
+}
+
+/* Loading Indicator */
+#loading-indicator {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    font-size: 1.5rem;
+    color: var(--primary-color);
+}
+
+/* Header Styles */
+.header {
+    background-color: var(--primary-color);
+    color: white;
+    height: var(--header-height);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    justify-content: space-between;
+    width: 100%;
+}
+
+.menu-hamburger {
+    display: flex;
+    align-items: center;
+}
+
+.hamburger-menu {
+    font-size: 1.5rem;
+    cursor: pointer;
+    margin-right: 15px;
+}
+
+.brand-name {
+    color: whitesmoke;
+    font-family: 'Suisse-SemiBold', Arial, sans-serif;
+    font-size: 1.5em;
+    padding: 1px 0px 0px 24px;
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+}
+
+.header-main {
+    background-color: var(--primary-color);
+    padding: 0 15px;
+}
+
+.header-parts-client {
+    display: flex;
+    align-items: center;
+}
+
+.institution-name {
+    color: white;
+    font-weight: bold;
+    margin-right: 20px;
+}
+
+.header-section {
+    margin-left: 15px;
+}
+
+.context-dropdown {
+    position: relative;
+    min-width: 200px;
+}
+
+.prefix-icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--primary-color);
+}
+
+.form-select {
+    padding-left: 30px;
+    background-color: white;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+}
+
+/* User Profile */
+.user-profile {
+    margin-left: auto;
+    padding-right: 15px;
+}
+
+.user-profile .dropdown-toggle {
+    color: white;
+    background: none;
+    border: none;
+}
+
+.user-profile .dropdown-toggle:focus {
+    box-shadow: none;
+}
+
+.user-profile .dropdown-menu {
+    right: 0;
+    left: auto;
+}
+
+/* Sidebar Styles */
+#sidebar {
+    background-color: var(--dark-color);
+    color: white;
+    min-height: calc(100vh - var(--header-height));
+    padding-top: 20px;
+    transition: all 0.3s;
+    width: var(--sidebar-width);
+    position: fixed;
+    left: 0;
+    top: var(--header-height);
+    z-index: 900;
+}
+
+#sidebar.collapsed {
+    margin-left: -250px;
+}
+
+#sidebar .nav-link {
+    color: rgba(255, 255, 255, 0.8);
+    padding: 10px 15px;
+    margin-bottom: 5px;
+    border-radius: 4px;
+    transition: all 0.3s;
+}
+
+#sidebar .nav-link:hover {
+    color: white;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+#sidebar .nav-link.active {
+    color: white;
+    background-color: var(--primary-color);
+}
+
+#sidebar .nav-link i {
+    margin-right: 10px;
+    width: 20px;
+    text-align: center;
+}
+
+/* Main Content */
+main {
+    margin-left: var(--sidebar-width);
+    padding: 20px;
+    transition: all 0.3s;
+}
+
+main.expanded {
+    margin-left: 0;
+}
+
+/* Form Controls */
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+/* Table Styles */
+.table {
+    background-color: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+}
+
+.table thead th {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(0, 86, 179, 0.05);
+}
+
+/* Status Badges */
+.badge {
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+.badge-new {
+    background-color: var(--info-color);
+    color: white;
+}
+
+.badge-in-progress {
+    background-color: var(--warning-color);
+    color: var(--dark-color);
+}
+
+.badge-on-hold {
+    background-color: var(--danger-color);
+    color: white;
+}
+
+.badge-completed {
+    background-color: var(--success-color);
+    color: white;
+}
+
+/* Action Buttons */
+.btn-action {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    margin-right: 5px;
+}
+
+/* Pagination */
+.pagination {
+    margin-top: 20px;
+}
+
+.page-link {
+    color: var(--primary-color);
+}
+
+.page-item.active .page-link {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    #sidebar {
+        margin-left: -250px;
+    }
+    
+    #sidebar.active {
+        margin-left: 0;
+    }
+    
+    main {
+        margin-left: 0;
+    }
+    
+    .header-content {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .header-parts-client {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .header-section {
+        margin-left: 0;
+        margin-top: 10px;
+    }
+}
+
+/* Custom Font */
+@font-face {
+    font-family: 'Suisse-SemiBold';
+    src: url('https://fonts.googleapis.com/css2?family=Inter:wght@600&display=swap');
+    font-weight: 600;
+    font-style: normal;
+}
