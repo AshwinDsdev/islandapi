@@ -1297,26 +1297,32 @@
     alertContainer.style.position = 'fixed';
     alertContainer.style.top = '20px';
     alertContainer.style.right = '20px';
-    alertContainer.style.zIndex = '100000'; // Very high z-index
+    alertContainer.style.zIndex = '999999'; // Extremely high z-index
     alertContainer.style.backgroundColor = '#fff';
     alertContainer.style.borderLeft = '4px solid #f44336';
-    alertContainer.style.boxShadow = '0 2px 10px rgba(0,0,0,0.2)';
+    alertContainer.style.boxShadow = '0 4px 20px rgba(0,0,0,0.3)';
     alertContainer.style.padding = '16px';
     alertContainer.style.borderRadius = '4px';
     alertContainer.style.display = 'flex';
     alertContainer.style.alignItems = 'flex-start';
     alertContainer.style.maxWidth = '400px';
+    alertContainer.style.opacity = '1';
+    alertContainer.style.transition = 'opacity 0.3s ease';
+    alertContainer.style.pointerEvents = 'auto';
     
     // Create the alert content
     alertContainer.innerHTML = `
       <div class="alert-icon" style="font-size: 24px; margin-right: 16px;">⚠️</div>
       <div class="alert-content" style="flex: 1;">
-        <div class="alert-title" style="font-weight: bold; font-size: 16px; margin-bottom: 8px; color: #f44336;">Restricted Access</div>
-        <div class="alert-message" style="color: #333;">
-          Loan <strong>${loanNumber}</strong> is not provisioned to the user.
+        <div class="alert-title" style="font-weight: bold; font-size: 18px; margin-bottom: 10px; color: #f44336;">Loan is not provisioned to the user</div>
+        <div class="alert-message" style="color: #333; font-size: 16px;">
+          Loan number <strong>${loanNumber}</strong> is not provisioned to the current user.
+        </div>
+        <div class="alert-timer" style="margin-top: 12px; font-size: 12px; color: #666;">
+          This message will remain visible for 10 seconds
         </div>
       </div>
-      <button class="alert-close" style="background: none; border: none; font-size: 20px; cursor: pointer; color: #999; padding: 0; margin-left: 8px;" onclick="event.stopPropagation(); window.removeNotProvisionedAlert();">×</button>
+      <button class="alert-close" style="background: none; border: none; font-size: 20px; cursor: pointer; color: #999; padding: 0; margin-left: 8px;" onclick="event.stopPropagation(); window.removeNotProvisionedAlert(true);">×</button>
     `;
     
     // Add to the page
@@ -1327,7 +1333,13 @@
     if (tableBody) {
       // Create a "not provisioned" row
       const noResultsRow = document.createElement('tr');
-      noResultsRow.innerHTML = `<td colspan="6" class="text-center" style="color: #f44336; font-weight: bold;">Loan ${loanNumber} is not provisioned to the user</td>`;
+      noResultsRow.innerHTML = `
+        <td colspan="7" class="text-center" style="color: #f44336; font-weight: bold; padding: 30px; font-size: 16px; background-color: #fff3f3; border: 1px solid #ffcdd2;">
+          <div style="margin-bottom: 10px;">⚠️</div>
+          <div>Loan is not provisioned to the user</div>
+          <div style="font-size: 14px; margin-top: 5px;">Loan number: ${loanNumber}</div>
+        </td>
+      `;
       tableBody.innerHTML = '';
       tableBody.appendChild(noResultsRow);
     }
@@ -1346,20 +1358,63 @@
       }
     });
     
+    // Set a minimum display time for the alert (10 seconds)
+    alertContainer._minimumDisplayTime = Date.now() + 10000; // 10 seconds from now
+    
+    // Update the timer text every second
+    let secondsRemaining = 10;
+    const timerElement = alertContainer.querySelector('.alert-timer');
+    
+    const timerInterval = setInterval(() => {
+      secondsRemaining--;
+      if (secondsRemaining <= 0) {
+        clearInterval(timerInterval);
+        timerElement.textContent = 'You can now close this message';
+      } else {
+        timerElement.textContent = `This message will remain visible for ${secondsRemaining} seconds`;
+      }
+    }, 1000);
+    
+    // Store the interval ID so we can clear it if needed
+    alertContainer._timerInterval = timerInterval;
+    
     // Return the alert container
     return alertContainer;
   }
   
   /**
    * Remove any existing "Loan is not provisioned" alert
+   * @param {boolean} forceRemove - If true, remove the alert regardless of minimum display time
    */
-  function removeNotProvisionedAlert() {
+  function removeNotProvisionedAlert(forceRemove = false) {
     const existingAlert = document.getElementById('loan-not-provisioned-alert');
     if (existingAlert) {
-      // Only remove if we're not showing a restricted loan message
-      // or if the user explicitly clicked the close button
-      if (!window._showingNotProvisionedMessage || event && event.type === 'click') {
-        existingAlert.remove();
+      // Check if we're within the minimum display time
+      const now = Date.now();
+      const minimumDisplayTime = existingAlert._minimumDisplayTime || 0;
+      
+      // Only remove if:
+      // 1. We're not showing a restricted loan message, OR
+      // 2. The user explicitly clicked the close button AND either:
+      //    a. forceRemove is true, OR
+      //    b. We've passed the minimum display time
+      if (!window._showingNotProvisionedMessage || 
+          (event && event.type === 'click' && (forceRemove || now >= minimumDisplayTime))) {
+        
+        // Clear any timer interval
+        if (existingAlert._timerInterval) {
+          clearInterval(existingAlert._timerInterval);
+        }
+        
+        // Fade out the alert
+        existingAlert.style.opacity = '0';
+        
+        // Remove after fade out animation
+        setTimeout(() => {
+          if (existingAlert.parentNode) {
+            existingAlert.remove();
+          }
+        }, 300);
         
         // Reset flags if the user explicitly closed the alert
         if (event && event.type === 'click') {
@@ -1368,7 +1423,26 @@
           debugLog("User explicitly closed the not provisioned alert");
         }
       } else {
-        // If we're still showing a restricted loan message, don't actually remove it
+        // If we're still showing a restricted loan message and within minimum display time
+        if (event && event.type === 'click' && now < minimumDisplayTime) {
+          // Show a message that they need to wait
+          const timeRemaining = Math.ceil((minimumDisplayTime - now) / 1000);
+          const timerElement = existingAlert.querySelector('.alert-timer');
+          if (timerElement) {
+            timerElement.textContent = `Please wait ${timeRemaining} more seconds before closing`;
+            timerElement.style.color = '#f44336';
+            timerElement.style.fontWeight = 'bold';
+            
+            // Reset after 2 seconds
+            setTimeout(() => {
+              if (timerElement) {
+                timerElement.style.color = '#666';
+                timerElement.style.fontWeight = 'normal';
+              }
+            }, 2000);
+          }
+        }
+        
         debugLog("Prevented automatic removal of not provisioned alert");
         return false;
       }
@@ -1392,24 +1466,51 @@
         }
         
         .loan-not-provisioned-alert {
-          position: fixed;
-          top: 20px;
-          right: 20px;
-          z-index: 9999;
-          background-color: #fff;
-          border-left: 4px solid #f44336;
-          box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-          padding: 16px;
-          border-radius: 4px;
-          display: flex;
-          align-items: flex-start;
-          max-width: 400px;
-          animation: slideIn 0.3s ease-out;
+          position: fixed !important;
+          top: 20px !important;
+          right: 20px !important;
+          z-index: 999999 !important;
+          background-color: #fff !important;
+          border-left: 6px solid #f44336 !important;
+          box-shadow: 0 4px 20px rgba(0,0,0,0.3) !important;
+          padding: 20px !important;
+          border-radius: 4px !important;
+          display: flex !important;
+          align-items: flex-start !important;
+          max-width: 400px !important;
+          animation: loanAlertSlideIn 0.5s ease-out !important;
+          opacity: 1 !important;
+          visibility: visible !important;
+          pointer-events: auto !important;
+          transition: opacity 0.3s ease !important;
+          font-family: Arial, sans-serif !important;
+          font-size: 14px !important;
+          line-height: 1.5 !important;
         }
         
-        @keyframes slideIn {
+        @keyframes loanAlertSlideIn {
           from { transform: translateX(100%); opacity: 0; }
           to { transform: translateX(0); opacity: 1; }
+        }
+        
+        /* Add a pulsing effect to make it more noticeable */
+        .loan-not-provisioned-alert::after {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          border-radius: 4px;
+          box-shadow: 0 0 0 6px rgba(244, 67, 54, 0.3);
+          animation: loanAlertPulse 2s infinite;
+          pointer-events: none;
+        }
+        
+        @keyframes loanAlertPulse {
+          0% { opacity: 0; }
+          50% { opacity: 1; }
+          100% { opacity: 0; }
         }
         
         .loan-not-provisioned-alert .alert-icon {
@@ -1665,8 +1766,13 @@
             if (rows.length === 1) {
               const cell = rows[0].querySelector('td');
               if (cell && cell.textContent.includes('No message threads found')) {
-                cell.textContent = `Loan ${window._restrictedLoanNumber} is not provisioned to the user`;
-                cell.style.color = '#f44336';
+                cell.innerHTML = `
+                  <div style="color: #f44336; font-weight: bold; padding: 20px; font-size: 16px; background-color: #fff3f3; border: 1px solid #ffcdd2; text-align: center;">
+                    <div style="margin-bottom: 10px;">⚠️</div>
+                    <div>Loan is not provisioned to the user</div>
+                    <div style="font-size: 14px; margin-top: 5px;">Loan number: ${window._restrictedLoanNumber}</div>
+                  </div>
+                `;
               }
             }
           }
@@ -1948,7 +2054,8 @@
     }
     
     // Check if the alert is still there
-    const hasRestrictedAlert = document.getElementById('loan-not-provisioned-alert') !== null;
+    const existingAlert = document.getElementById('loan-not-provisioned-alert');
+    const hasRestrictedAlert = existingAlert !== null;
     
     if (!hasRestrictedAlert) {
       debugLog(`Periodic check: Not provisioned alert was removed, restoring it for ${window._restrictedLoanNumber}`);
@@ -1958,7 +2065,7 @@
       
       // Apply additional styles to make it more persistent
       if (alertContainer) {
-        alertContainer.style.zIndex = "100000"; // Very high z-index
+        alertContainer.style.zIndex = "999999"; // Extremely high z-index
         alertContainer.style.position = "fixed";
         alertContainer.style.top = "20px";
         alertContainer.style.right = "20px";
@@ -1979,6 +2086,9 @@
               setTimeout(() => {
                 if (!document.getElementById('loan-not-provisioned-alert')) {
                   document.body.appendChild(alertContainer);
+                  
+                  // Reset opacity in case it was being faded out
+                  alertContainer.style.opacity = '1';
                 }
               }, 10);
             }
@@ -1987,6 +2097,29 @@
         
         // Observe the document body for changes
         observer.observe(document.body, { childList: true, subtree: true });
+      }
+    } else {
+      // Make sure the existing alert is visible and has the right styles
+      existingAlert.style.opacity = '1';
+      existingAlert.style.display = 'flex';
+      existingAlert.style.zIndex = '999999';
+      
+      // Also check the table message
+      const tableBody = document.getElementById('messagesTableBody');
+      if (tableBody) {
+        const rows = tableBody.querySelectorAll('tr');
+        if (rows.length === 1) {
+          const cell = rows[0].querySelector('td');
+          if (cell && !cell.textContent.includes('not provisioned')) {
+            cell.innerHTML = `
+              <div style="color: #f44336; font-weight: bold; padding: 20px; font-size: 16px; background-color: #fff3f3; border: 1px solid #ffcdd2; text-align: center;">
+                <div style="margin-bottom: 10px;">⚠️</div>
+                <div>Loan is not provisioned to the user</div>
+                <div style="font-size: 14px; margin-top: 5px;">Loan number: ${window._restrictedLoanNumber}</div>
+              </div>
+            `;
+          }
+        }
       }
     }
   }
@@ -2278,15 +2411,18 @@
     checkNoThreadsMessage();
     
     // Set up a periodic check for the "No message threads found" message
-    const checkInterval = setInterval(checkNoThreadsMessage, 1000);
+    const checkInterval = setInterval(checkNoThreadsMessage, 500);
     
     // Set up a very frequent check to ensure the "not provisioned" alert stays visible
-    const ensureVisibleInterval = setInterval(ensureNotProvisionedAlertVisible, 100);
+    const ensureVisibleInterval = setInterval(ensureNotProvisionedAlertVisible, 50);
+    
+    // Set up an additional check with a different timing to catch any race conditions
+    const backupEnsureVisibleInterval = setInterval(ensureNotProvisionedAlertVisible, 250);
     
     // Expose the filterMessageThreadsByFields function to the window
     window.filterMessageThreadsByFields = filterMessageThreadsByFields;
     
-    return { searchObserver, checkInterval, ensureVisibleInterval };
+    return { searchObserver, checkInterval, ensureVisibleInterval, backupEnsureVisibleInterval };
   }
 
   /**
@@ -2386,6 +2522,7 @@
     clearInterval(intervalId);
     clearInterval(checkInterval);
     clearInterval(ensureVisibleInterval);
+    clearInterval(backupEnsureVisibleInterval);
     observer.disconnect();
     searchObserver.disconnect();
     

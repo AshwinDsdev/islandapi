@@ -20,6 +20,115 @@ document.addEventListener('DOMContentLoaded', function() {
     // Show loading indicator initially
     showLoading();
     
+    // Enhance dropdown functionality
+    function enhanceDropdowns() {
+        // Find all mat-select elements
+        const selectElements = document.querySelectorAll('mat-select');
+        
+        selectElements.forEach(select => {
+            // Add aria-label for accessibility
+            if (select.getAttribute('name') === 'channelSelect') {
+                select.setAttribute('aria-label', 'Select Channel');
+                // Add a visible label
+                const formField = select.closest('mat-form-field');
+                if (formField) {
+                    formField.setAttribute('data-label', 'Channel');
+                }
+            } else if (select.getAttribute('name') === 'brandSelect') {
+                select.setAttribute('aria-label', 'Select Brand');
+                // Add a visible label
+                const formField = select.closest('mat-form-field');
+                if (formField) {
+                    formField.setAttribute('data-label', 'Brand');
+                }
+                
+                // Add click event for brand select to filter loan numbers
+                select.addEventListener('click', function() {
+                    // The actual selection will be handled by the dropdown items
+                    console.log('Brand select clicked');
+                });
+                
+                // Monitor for changes to the brand select
+                const observer = new MutationObserver(function(mutations) {
+                    mutations.forEach(function(mutation) {
+                        if (mutation.type === 'childList' || mutation.type === 'characterData') {
+                            // Get the selected brand text
+                            const valueText = select.querySelector('.mat-mdc-select-min-line');
+                            if (valueText) {
+                                const selectedBrand = valueText.textContent.trim();
+                                console.log(`Brand selection changed to: ${selectedBrand}`);
+                                
+                                // Find the brand code
+                                let brandCode = 'ALL';
+                                if (selectedBrand !== 'All Brands') {
+                                    const brand = window.brandsData ? window.brandsData.find(b => 
+                                        b.name === selectedBrand || 
+                                        `${b.name} (${b.code})` === selectedBrand
+                                    ) : null;
+                                    
+                                    if (brand) {
+                                        brandCode = brand.code;
+                                    }
+                                }
+                                
+                                // Update loan number filter
+                                updateLoanNumberFilterByBrand(brandCode, selectedBrand);
+                                
+                                // Update the visual state of the trigger
+                                const trigger = select.querySelector('.mat-mdc-select-trigger');
+                                if (trigger) {
+                                    if (selectedBrand !== 'All Brands') {
+                                        trigger.classList.add('active-filter');
+                                    } else {
+                                        trigger.classList.remove('active-filter');
+                                    }
+                                }
+                            }
+                        }
+                    });
+                });
+                
+                // Start observing the select element
+                observer.observe(select, { 
+                    childList: true, 
+                    subtree: true,
+                    characterData: true
+                });
+            }
+            
+            // Improve keyboard navigation
+            select.addEventListener('keydown', function(event) {
+                if (event.key === 'Enter' || event.key === ' ') {
+                    // Simulate click to open dropdown
+                    event.preventDefault();
+                    select.click();
+                }
+            });
+        });
+    }
+    
+    // Call enhanceDropdowns after a short delay to ensure Angular components are loaded
+    setTimeout(enhanceDropdowns, 500);
+    
+    // Add a mutation observer to handle dynamically loaded components
+    const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            if (mutation.addedNodes && mutation.addedNodes.length > 0) {
+                // Check if any mat-select elements were added
+                const hasNewSelects = Array.from(mutation.addedNodes).some(node => {
+                    return node.querySelectorAll && node.querySelectorAll('mat-select').length > 0;
+                });
+                
+                if (hasNewSelects) {
+                    enhanceDropdowns();
+                }
+            }
+        });
+    });
+    
+    // Start observing the document with the configured parameters
+    observer.observe(document.body, { childList: true, subtree: true });
+    
     // Make brandsData globally accessible if it's not already
     if (typeof brandsData !== 'undefined' && !window.brandsData) {
         window.brandsData = brandsData;
@@ -547,43 +656,64 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Filter by brand if selected
         if (selectedBrand) {
-            filteredThreads = filteredThreads.filter(thread => {
-                // If thread doesn't have brand info, try to find it from brandsData
-                if (!thread.brand && thread.loanNumber && window.brandsData) {
-                    const brand = window.brandsData.find(b => 
-                        b.loanNumbers && b.loanNumbers.includes(thread.loanNumber)
-                    );
-                    if (brand) {
-                        thread.brand = brand.name || brand.code;
+            console.log(`Filtering threads by brand: ${selectedBrand}`);
+            
+            // Find the brand in brandsData by name or code
+            const brandData = window.brandsData ? window.brandsData.find(b => 
+                b.name === selectedBrand || 
+                b.code === selectedBrandCode || 
+                `${b.name} (${b.code})` === selectedBrand
+            ) : null;
+            
+            if (brandData) {
+                console.log(`Found brand data: ${brandData.name} (${brandData.code})`);
+                
+                // Filter threads by loan numbers associated with this brand
+                filteredThreads = filteredThreads.filter(thread => {
+                    return brandData.loanNumbers && brandData.loanNumbers.includes(thread.loanNumber);
+                });
+            } else {
+                // Fallback to the old filtering method if brand data is not found
+                filteredThreads = filteredThreads.filter(thread => {
+                    // If thread doesn't have brand info, try to find it from brandsData
+                    if (!thread.brand && thread.loanNumber && window.brandsData) {
+                        const brand = window.brandsData.find(b => 
+                            b.loanNumbers && b.loanNumbers.includes(thread.loanNumber)
+                        );
+                        if (brand) {
+                            thread.brand = brand.name || brand.code;
+                        }
                     }
-                }
-                
-                // If we still don't have brand info, we can't filter by it
-                if (!thread.brand) return true;
-                
-                // Try exact match first
-                if (thread.brand === selectedBrand) {
-                    return true;
-                }
-                
-                // If we have a brand code, check if it matches
-                if (selectedBrandCode) {
-                    // Extract brand code from thread brand if possible
-                    const threadBrandMatch = thread.brand.match(/\(([A-Z0-9]{2,4})\)$/);
-                    const threadBrandCode = threadBrandMatch ? threadBrandMatch[1] : null;
                     
-                    if (threadBrandCode && threadBrandCode === selectedBrandCode) {
+                    // If we still don't have brand info, we can't filter by it
+                    if (!thread.brand) return false;
+                    
+                    // Try exact match first
+                    if (thread.brand === selectedBrand) {
                         return true;
                     }
-                }
-                
-                // Check if the thread brand contains the selected brand or vice versa
-                if (thread.brand.includes(selectedBrand) || selectedBrand.includes(thread.brand)) {
-                    return true;
-                }
-                
-                return false;
-            });
+                    
+                    // If we have a brand code, check if it matches
+                    if (selectedBrandCode) {
+                        // Extract brand code from thread brand if possible
+                        const threadBrandMatch = thread.brand.match(/\(([A-Z0-9]{2,4})\)$/);
+                        const threadBrandCode = threadBrandMatch ? threadBrandMatch[1] : null;
+                        
+                        if (threadBrandCode && threadBrandCode === selectedBrandCode) {
+                            return true;
+                        }
+                    }
+                    
+                    // Check if the thread brand contains the selected brand or vice versa
+                    if (thread.brand.includes(selectedBrand) || selectedBrand.includes(thread.brand)) {
+                        return true;
+                    }
+                    
+                    return false;
+                });
+            }
+            
+            console.log(`Filtered to ${filteredThreads.length} threads after brand filtering`);
         }
         
         // Filter by status
@@ -620,7 +750,19 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Reset filters
     function resetFilters() {
-        document.getElementById('loanNumberFilter').value = '';
+        const loanNumberInput = document.getElementById('loanNumberFilter');
+        if (loanNumberInput) {
+            loanNumberInput.value = '';
+            loanNumberInput.removeAttribute('list');
+            loanNumberInput.setAttribute('placeholder', 'Enter Loan Number');
+            
+            // Remove any datalist
+            const existingDatalist = document.getElementById('loanNumberOptions');
+            if (existingDatalist) {
+                existingDatalist.remove();
+            }
+        }
+        
         document.getElementById('statusFilter').value = 'ALL';
         document.getElementById('dateFromFilter').value = '';
         document.getElementById('dateToFilter').value = '';
@@ -649,8 +791,18 @@ document.addEventListener('DOMContentLoaded', function() {
             if (allBrandsOption) {
                 // Simulate a click on the "All Brands" option
                 allBrandsOption.click();
+            } else {
+                // If we can't find the option, at least update the display text
+                const valueText = matBrandSelect.querySelector('.mat-mdc-select-min-line');
+                if (valueText) {
+                    valueText.textContent = 'All Brands';
+                }
             }
         }
+        
+        // Reset any brand-specific filtering
+        window._selectedBrandCode = null;
+        window._selectedBrandName = null;
         
         // Repopulate with all threads
         populateMessageThreads();
@@ -735,6 +887,12 @@ document.addEventListener('DOMContentLoaded', function() {
                         if (valueText) {
                             valueText.textContent = text;
                         }
+                        
+                        // Filter loan numbers based on selected brand
+                        updateLoanNumberFilterByBrand(value, text);
+                        
+                        // Apply filters to update the message threads
+                        applyFilters();
                         
                         // Close the dropdown
                         dropdown.remove();
@@ -889,6 +1047,57 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
         });
+    }
+    
+    // Function to update loan number filter based on selected brand
+    function updateLoanNumberFilterByBrand(brandCode, brandName) {
+        // Get the loan number input field
+        const loanNumberInput = document.getElementById('loanNumberFilter');
+        if (!loanNumberInput) return;
+        
+        // If "All Brands" is selected, don't filter loan numbers
+        if (brandCode === 'ALL' || brandName === 'All Brands') {
+            // Clear any existing datalist
+            const existingDatalist = document.getElementById('loanNumberOptions');
+            if (existingDatalist) {
+                existingDatalist.remove();
+            }
+            
+            // Remove the list attribute from the input
+            loanNumberInput.removeAttribute('list');
+            return;
+        }
+        
+        // Find the brand in brandsData
+        const selectedBrand = window.brandsData ? window.brandsData.find(b => b.code === brandCode) : null;
+        
+        if (selectedBrand && selectedBrand.loanNumbers && selectedBrand.loanNumbers.length > 0) {
+            console.log(`Filtering loan numbers for brand: ${brandName} (${brandCode})`);
+            
+            // Create or get the datalist element
+            let datalist = document.getElementById('loanNumberOptions');
+            if (!datalist) {
+                datalist = document.createElement('datalist');
+                datalist.id = 'loanNumberOptions';
+                document.body.appendChild(datalist);
+            }
+            
+            // Clear existing options
+            datalist.innerHTML = '';
+            
+            // Add options for each loan number
+            selectedBrand.loanNumbers.forEach(loanNumber => {
+                const option = document.createElement('option');
+                option.value = loanNumber;
+                datalist.appendChild(option);
+            });
+            
+            // Set the list attribute on the input
+            loanNumberInput.setAttribute('list', 'loanNumberOptions');
+            
+            // Add a tooltip or hint
+            loanNumberInput.setAttribute('placeholder', `Enter loan number for ${brandName}`);
+        }
     }
     
     // Initialize tooltips

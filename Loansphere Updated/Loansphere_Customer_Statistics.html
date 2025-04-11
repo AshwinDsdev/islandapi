@@ -1,0 +1,1576 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loansphere - Customer Statistics</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+    <!-- Chart.js -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.css">
+
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            --primary-color: #1976d2;
+            --primary-dark: #135ba1;
+            --secondary-color: #f5f5f5;
+            --accent-color: #ff4081;
+            --accent-hover: #f50057;
+            --text-color: #333;
+            --light-text: #f5f5f5;
+            --border-color: #ddd;
+            --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --hover-bg: rgba(25, 118, 210, 0.08);
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --header-bg: #2c3e50;
+            --header-dark: #1a2530;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .wrapper {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            margin-top: 0;
+        }
+
+        /* Header Styles */
+        .header2 {
+            background-color: var(--header-bg);
+            color: white;
+            padding: 10px 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            position: relative;
+            z-index: 101;
+        }
+
+        .menu-hamburger {
+            display: flex;
+            align-items: center;
+        }
+
+        .hamburger-menu {
+            font-size: 1.5rem;
+            margin-right: 10px;
+            transition: transform 0.2s;
+        }
+
+        .hamburger-menu:hover {
+            transform: scale(1.1);
+            color: var(--accent-color);
+        }
+
+        .right-icons {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .right-icons i {
+            transition: color 0.2s, transform 0.2s;
+        }
+
+        .right-icons i:hover {
+            color: var(--accent-color) !important;
+            transform: scale(1.1);
+        }
+
+        /* Header Form Fields */
+        .header-main-1 {
+            margin-bottom: 20px;
+        }
+
+        .header-main-1-formfld {
+            font-size: 0.9rem;
+            padding: 0.4rem 0.75rem;
+            height: auto;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--text-color);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            white-space: nowrap;
+        }
+
+        .header-main-1-formfld:hover, 
+        .header-main-1-formfld:focus {
+            background-color: rgba(255, 255, 255, 1);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .dropdown-menu {
+            border-radius: 4px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            padding: 0.5rem 0;
+        }
+
+        .dropdown-item {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            color: var(--text-color);
+            transition: background-color 0.2s;
+        }
+
+        .dropdown-item:hover, 
+        .dropdown-item:focus {
+            background-color: rgba(25, 118, 210, 0.08);
+            color: var(--primary-color);
+        }
+
+        .dropdown-item .brand-badge {
+            margin-left: 5px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .mat-mdc-form-field {
+            margin: 0 8px;
+        }
+
+        .header-main-new {
+            display: flex;
+            align-items: center;
+        }
+
+        .header-parts-client {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .institution-name {
+            font-weight: 600;
+            margin-right: 15px;
+            color: white;
+            letter-spacing: 0.5px;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            background-color: #fff;
+            border-right: 1px solid var(--border-color);
+            padding-top: 20px;
+            transition: all 0.3s;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .drawer-list-item {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .drawer-item {
+            display: block;
+            padding: 12px 15px;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+
+        .drawer-item:hover {
+            background-color: var(--hover-bg);
+            border-left-color: var(--primary-color);
+        }
+
+        .drawer-feature-item {
+            display: block;
+            padding: 10px 15px 10px 30px;
+            color: var(--text-color);
+            text-decoration: none;
+            transition: all 0.2s;
+            position: relative;
+            border-left: 3px solid transparent;
+        }
+
+        .drawer-feature-item:hover {
+            background-color: var(--hover-bg);
+            border-left-color: var(--primary-color);
+        }
+
+        .active-child-menu-item {
+            background-color: var(--hover-bg);
+            color: var(--primary-color);
+            font-weight: 500;
+            border-left: 3px solid var(--primary-color);
+        }
+
+        .indicator {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            display: none;
+        }
+
+        .active-child-menu-item .indicator {
+            display: block;
+        }
+
+        .caret-style {
+            float: right;
+            margin-top: 5px;
+            transition: transform 0.3s;
+        }
+
+        .mat-drawer-content {
+            position: relative;
+            z-index: 1;
+            display: block;
+            height: 100%;
+            overflow: auto;
+            background-color: #f8f9fa;
+            padding: 20px 0;
+        }
+
+        /* Form Controls */
+        .form-select, .form-control {
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            padding: 0.375rem 0.75rem;
+            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        }
+
+        .form-select:focus, .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(25, 118, 210, 0.25);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            border-color: var(--primary-dark);
+        }
+
+        .btn-outline-primary {
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-outline-primary:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        /* Loading Indicator */
+        #loading-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        /* Stats Cards */
+        .stats-card {
+            border-radius: 10px;
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s;
+            height: 100%;
+            border: none;
+            overflow: hidden;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .stats-icon {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            opacity: 0.8;
+            transition: transform 0.3s;
+        }
+
+        .stats-card:hover .stats-icon {
+            transform: scale(1.1);
+        }
+
+        .stats-number {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+
+        .stats-label {
+            font-size: 1rem;
+            color: #6c757d;
+            font-weight: 500;
+        }
+
+        /* Charts */
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+            padding: 10px;
+        }
+
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            font-weight: 600;
+        }
+
+        /* Tables */
+        .table-container {
+            overflow-x: auto;
+        }
+
+        .table {
+            width: 100%;
+            margin-bottom: 1rem;
+            color: var(--text-color);
+            vertical-align: middle;
+            border-color: var(--border-color);
+        }
+
+        .table thead th {
+            vertical-align: bottom;
+            border-bottom: 2px solid var(--border-color);
+            font-weight: 600;
+            color: #495057;
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+
+        .table tbody tr:hover {
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+
+        /* Status Indicators */
+        .status-active {
+            color: var(--success-color);
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .status-active:before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--success-color);
+            margin-right: 6px;
+        }
+
+        .status-inactive {
+            color: var(--danger-color);
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .status-inactive:before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--danger-color);
+            margin-right: 6px;
+        }
+
+        .status-pending {
+            color: var(--warning-color);
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .status-pending:before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--warning-color);
+            margin-right: 6px;
+        }
+
+        /* Filters */
+        .date-filter {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filter-label {
+            font-weight: 600;
+            margin-bottom: 0;
+            color: #495057;
+        }
+
+        .filter-select {
+            width: auto;
+            min-width: 150px;
+        }
+
+        .export-btn {
+            margin-left: auto;
+        }
+
+        /* Badges */
+        .brand-badge {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            margin-left: 5px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        /* Pagination */
+        .pagination {
+            margin-bottom: 0;
+        }
+
+        .page-link {
+            color: var(--primary-color);
+            border: 1px solid var(--border-color);
+        }
+
+        .page-item.active .page-link {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .date-filter {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .export-btn {
+                margin-left: 0;
+                margin-top: 10px;
+            }
+            
+            .stats-number {
+                font-size: 1.8rem;
+            }
+        }
+
+        /* Fix for Angular Material Components */
+        .mat-mdc-form-field-subscript-wrapper {
+            height: 0 !important;
+        }
+
+        .mat-mdc-text-field-wrapper {
+            background-color: transparent !important;
+            padding: 0 !important;
+        }
+
+        .mdc-notched-outline {
+            display: none !important;
+        }
+
+        .mat-mdc-select-arrow svg {
+            fill: var(--text-color) !important;
+        }
+    </style>
+</head>
+
+<body style="">
+    <div id="loading-indicator" style="padding: 40px; display: none;">
+        Loading...
+    </div>
+    <app-root _nghost-ng-c1992328644="" ng-version="18.2.13">
+        <div _ngcontent-ng-c1992328644="" class="wrapper">
+            <main _ngcontent-ng-c1992328644=""><router-outlet
+                    _ngcontent-ng-c1992328644=""></router-outlet><lsdadmin-home _nghost-ng-c1816347493=""
+                    class="ng-star-inserted">
+                    <div _ngcontent-ng-c1816347493=""
+                        class="header2 d-flex flex-column flex-md-row align-items-center px-3 py-2"
+                        style="justify-content: space-between;">
+                        <div _ngcontent-ng-c1816347493="" class="menu-hamburger"><i _ngcontent-ng-c1816347493=""
+                                class="fa-sharp fa-solid fa-bars hamburger-menu" style="cursor: pointer;"></i><span
+                                _ngcontent-ng-c1816347493=""
+                                style="color: whitesmoke; font-family: 'Suisse-SemiBold'; font-size: 1.5em; padding: 1px 0px 0px 24px;">
+                                One Admin </span></div>
+                        <div _ngcontent-ng-c1816347493="" style="left: 210px; position: fixed;"><lsdadmin-header-bar
+                                _ngcontent-ng-c1816347493="" _nghost-ng-c2667574091="">
+                                <div _ngcontent-ng-c2667574091="" class="header-main-1 header-main-new">
+                                    <div _ngcontent-ng-c2667574091="" class="header-parts-client py-2 d-flex align-items-center">
+                                        <div _ngcontent-ng-c2667574091="" class="me-3">
+                                            <div _ngcontent-ng-c2667574091="" class="institution-name ng-star-inserted">
+                                                Cenlar FSB </div>
+                                        </div>
+                                        <div _ngcontent-ng-c2667574091="" class="d-flex align-items-center me-3">
+                                            <div class="dropdown">
+                                                <button class="btn dropdown-toggle header-main-1-formfld" type="button" id="channelDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    <i class="fa-sharp fa-light fa-circle-info me-2"></i>
+                                                    Borrower Self-Service
+                                                </button>
+                                                <ul class="dropdown-menu" aria-labelledby="channelDropdown">
+                                                    <li><a class="dropdown-item" href="#">Borrower Self-Service</a></li>
+                                                    <li><a class="dropdown-item" href="#">Customer Service</a></li>
+                                                    <li><a class="dropdown-item" href="#">Admin Portal</a></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div _ngcontent-ng-c2667574091="" class="d-flex align-items-center">
+                                            <div class="dropdown">
+                                                <button class="btn dropdown-toggle header-main-1-formfld" type="button" id="brandDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    All Brands
+                                                </button>
+                                                <ul class="dropdown-menu" id="brandDropdownMenu" aria-labelledby="brandDropdown">
+                                                    <li><a class="dropdown-item" href="#" data-brand-id="all">All Brands</a></li>
+                                                    <!-- Brand items will be populated by JavaScript -->
+                                                </ul>
+                                            </div>
+                                        </div>
+                                                        <!---->
+                                                        <div class="mat-mdc-form-field-hint-wrapper ng-tns-c508571215-80 ng-trigger ng-trigger-transitionMessages ng-star-inserted"
+                                                            style="opacity: 1; transform: translateY(0%);"><!---->
+                                                            <div
+                                                                class="mat-mdc-form-field-hint-spacer ng-tns-c508571215-80">
+                                                            </div>
+                                                        </div><!---->
+                                                    </div>
+                                                </mat-form-field></div>
+                                        </div><!----><!----><!---->
+                                    </div>
+                                </div>
+                            </lsdadmin-header-bar></div>
+                        <div _ngcontent-ng-c1816347493="" class="right-icons" style="color: whitesmoke;"><i
+                                _ngcontent-ng-c1816347493="" mattooltip="Help Center"
+                                class="mat-mdc-tooltip-trigger fa-sharp fa-regular fa-question-circle"
+                                style="color: whitesmoke; padding: 0px 8px; cursor: pointer;"
+                                aria-describedby="cdk-describedby-message-ng-1-23"
+                                cdk-describedby-host="ng-1"></i><!----><button _ngcontent-ng-c1816347493=""
+                                mat-button="" aria-label="User profile"
+                                class="mat-mdc-menu-trigger d-inline-block loan-dropdown-menu px-0 mdc-button mat-mdc-button mat-unthemed mat-mdc-button-base"
+                                mat-ripple-loader-uninitialized="" mat-ripple-loader-class-name="mat-mdc-button-ripple"
+                                aria-haspopup="menu" aria-expanded="false"><span
+                                    class="mat-mdc-button-persistent-ripple mdc-button__ripple"></span><span
+                                    class="mdc-button__label">
+                                    <div _ngcontent-ng-c1816347493="" class="mat-mdc-menu-trigger" aria-haspopup="menu"
+                                        aria-expanded="false"><span _ngcontent-ng-c1816347493=""><i
+                                                _ngcontent-ng-c1816347493="" mattooltip="User Profile Menu"
+                                                class="mat-mdc-tooltip-trigger fa-sharp fa-regular fa-circle-user"
+                                                style="color: whitesmoke;"
+                                                aria-describedby="cdk-describedby-message-ng-1-24"
+                                                cdk-describedby-host="ng-1"></i><!----></span><mat-icon
+                                            _ngcontent-ng-c1816347493="" role="img" tabindex="0" aria-hidden="false"
+                                            aria-label="lower caret icon"
+                                            class="mat-icon notranslate align-middle material-icons mat-ligature-font mat-icon-no-color"
+                                            style="color: whitesmoke;" data-mat-icon-type="font"> arrow_drop_down
+                                        </mat-icon></div><!---->
+                                </span><span class="mat-mdc-focus-indicator"></span><span
+                                    class="mat-mdc-button-touch-target"></span></button><!----><mat-menu
+                                _ngcontent-ng-c1816347493="" tabindex="0" id="adminUserMenuId" aria-expanded="false"
+                                class="ng-tns-c1923052698-76 ng-star-inserted"><!----></mat-menu></div>
+                    </div><mat-drawer-container _ngcontent-ng-c1816347493=""
+                        class="mat-drawer-container drawer-container"><!---->
+                        <div class="cdk-visually-hidden cdk-focus-trap-anchor" aria-hidden="true"></div><mat-drawer
+                            _ngcontent-ng-c1816347493="" tabindex="-1"
+                            class="mat-drawer app-drawer ng-tns-c197257872-77 ng-trigger ng-trigger-transform mat-drawer-side mat-drawer-opened ng-star-inserted"
+                            style="transform: none; visibility: visible;">
+                            <div cdkscrollable="" class="mat-drawer-inner-container ng-tns-c197257872-77">
+                                <ul _ngcontent-ng-c1816347493="" class="ng-tns-c197257872-77">
+                                    <li _ngcontent-ng-c1816347493="" class="drawer-list-item"><a
+                                            _ngcontent-ng-c1816347493="" class="drawer-item" href="/admin/dashboard">
+                                            Dashboard </a></li><!----><!----><!----><!----><!---->
+                                    <ul _ngcontent-ng-c1816347493=""><a _ngcontent-ng-c1816347493=""
+                                            href="javascript:void(0)" class="drawer-item"> Servicing Digital <!----><i
+                                                _ngcontent-ng-c1816347493=""
+                                                class="fa-sharp fa-solid fa-caret-up caret-style ng-star-inserted"
+                                                style=""></i><!----></a>
+                                        <div _ngcontent-ng-c1816347493="" class="ng-star-inserted" style="">
+                                            <li _ngcontent-ng-c1816347493="" class="drawer-list-item ng-star-inserted">
+                                                <a _ngcontent-ng-c1816347493="" class="drawer-feature-item"
+                                                    href="/admin/borrower-admin">
+                                                    <div _ngcontent-ng-c1816347493="" class="indicator"></div><span
+                                                        _ngcontent-ng-c1816347493=""
+                                                        class="drawer-feature-item-span">Borrowers</span>
+                                                </a></li><!----><!---->
+                                            <li _ngcontent-ng-c1816347493="" class="drawer-list-item ng-star-inserted">
+                                                <a _ngcontent-ng-c1816347493="" class="drawer-feature-item"
+                                                    href="/admin/messaging2">
+                                                    <div _ngcontent-ng-c1816347493="" class="indicator"></div><span
+                                                        _ngcontent-ng-c1816347493=""
+                                                        class="drawer-feature-item-span">Messages</span>
+                                                </a></li><!---->
+                                            <li _ngcontent-ng-c1816347493="" class="drawer-list-item ng-star-inserted">
+                                                <a _ngcontent-ng-c1816347493="" class="drawer-feature-item"
+                                                    href="/admin/queues">
+                                                    <div _ngcontent-ng-c1816347493="" class="indicator"></div><span
+                                                        _ngcontent-ng-c1816347493=""
+                                                        class="drawer-feature-item-span">Queues</span>
+                                                </a></li><!----><!----><!----><!----><!---->
+                                            <li _ngcontent-ng-c1816347493="" class="drawer-list-item ng-star-inserted">
+                                                <a _ngcontent-ng-c1816347493=""
+                                                    class="drawer-feature-item active-child-menu-item"
+                                                    href="/admin/statistics">
+                                                    <div _ngcontent-ng-c1816347493="" class="indicator"></div><span
+                                                        _ngcontent-ng-c1816347493=""
+                                                        class="drawer-feature-item-span">Customer Statistics</span>
+                                                </a></li><!---->
+                                        </div><!---->
+                                    </ul>
+                                    <ul _ngcontent-ng-c1816347493="" style="display: none;"><a
+                                            _ngcontent-ng-c1816347493="" href="javascript:void(0)" class="drawer-item">
+                                            Customer Service <i _ngcontent-ng-c1816347493=""
+                                                class="fa-sharp fa-solid fa-caret-down caret-style ng-star-inserted"
+                                                style=""></i><!----><!----></a><!----></ul>
+                                    <!----><!----><!----><!----><!----><!----><!---->
+                                </ul>
+                            </div>
+                        </mat-drawer>
+                        <div class="cdk-visually-hidden cdk-focus-trap-anchor" aria-hidden="true"></div>
+                        <mat-drawer-content _ngcontent-ng-c1816347493="" class="mat-drawer-content"
+                            style="margin-left: 216px;"><router-outlet
+                                _ngcontent-ng-c1816347493=""></router-outlet><lsdadmin-customer-stats
+                                _nghost-ng-c1792275222="" class="ng-star-inserted">
+                                
+                                <!-- Statistics Header -->
+                                <div class="header-main-1">
+                                    <h4>Customer Statistics Dashboard</h4>
+                                    <div class="header-parts-client py-2 d-flex justify-content-between">
+                                        <div class="date-filter">
+                                            <label for="dateRange" class="filter-label">Date Range:</label>
+                                            <select class="form-select form-select-sm filter-select" id="dateRange">
+                                                <option value="7">Last 7 Days</option>
+                                                <option value="30" selected>Last 30 Days</option>
+                                                <option value="90">Last 90 Days</option>
+                                                <option value="180">Last 180 Days</option>
+                                                <option value="365">Last Year</option>
+                                                <option value="custom">Custom Range</option>
+                                            </select>
+                                            <div id="customDateContainer" style="display: none;" class="d-flex align-items-center gap-2 mt-2">
+                                                <input type="date" class="form-control form-control-sm" id="startDate">
+                                                <span class="text-muted">to</span>
+                                                <input type="date" class="form-control form-control-sm" id="endDate">
+                                            </div>
+                                            <button class="btn btn-sm btn-primary" id="applyDateFilter">Apply</button>
+                                        </div>
+                                        <div>
+                                            <button class="btn btn-outline-primary btn-sm export-btn" id="exportDataBtn">
+                                                <i class="fa-solid fa-download me-1"></i> Export Data
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Statistics Cards -->
+                                <div class="row mb-4">
+                                    <div class="col-md-6 col-lg-3 mb-3">
+                                        <div class="card stats-card">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <div>
+                                                        <div class="stats-number" id="totalUsers">0</div>
+                                                        <div class="stats-label">Total Users</div>
+                                                    </div>
+                                                    <div class="stats-icon">
+                                                        <i class="fa-solid fa-users"></i>
+                                                    </div>
+                                                </div>
+                                                <div class="mt-3">
+                                                    <span class="text-success">
+                                                        <i class="fa-solid fa-arrow-up"></i> 12.5%
+                                                    </span>
+                                                    <span class="text-muted ms-2">vs last period</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-lg-3 mb-3">
+                                        <div class="card stats-card">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <div>
+                                                        <div class="stats-number" id="activeUsers">0</div>
+                                                        <div class="stats-label">Active Users</div>
+                                                    </div>
+                                                    <div class="stats-icon">
+                                                        <i class="fa-solid fa-user-check"></i>
+                                                    </div>
+                                                </div>
+                                                <div class="mt-3">
+                                                    <span class="text-success">
+                                                        <i class="fa-solid fa-arrow-up"></i> 8.3%
+                                                    </span>
+                                                    <span class="text-muted ms-2">vs last period</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-lg-3 mb-3">
+                                        <div class="card stats-card">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <div>
+                                                        <div class="stats-number" id="newRegistrations">0</div>
+                                                        <div class="stats-label">New Registrations</div>
+                                                    </div>
+                                                    <div class="stats-icon">
+                                                        <i class="fa-solid fa-user-plus"></i>
+                                                    </div>
+                                                </div>
+                                                <div class="mt-3">
+                                                    <span class="text-success">
+                                                        <i class="fa-solid fa-arrow-up"></i> 15.2%
+                                                    </span>
+                                                    <span class="text-muted ms-2">vs last period</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-lg-3 mb-3">
+                                        <div class="card stats-card">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <div>
+                                                        <div class="stats-number" id="pendingUsers">0</div>
+                                                        <div class="stats-label">Pending Approvals</div>
+                                                    </div>
+                                                    <div class="stats-icon">
+                                                        <i class="fa-solid fa-user-clock"></i>
+                                                    </div>
+                                                </div>
+                                                <div class="mt-3">
+                                                    <span class="text-danger">
+                                                        <i class="fa-solid fa-arrow-down"></i> 5.1%
+                                                    </span>
+                                                    <span class="text-muted ms-2">vs last period</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Charts Row -->
+                                <div class="row mb-4">
+                                    <div class="col-md-6 mb-3">
+                                        <div class="card">
+                                            <div class="card-header bg-white">
+                                                <h5 class="mb-0">User Registration Trend</h5>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="chart-container">
+                                                    <canvas id="registrationChart"></canvas>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <div class="card">
+                                            <div class="card-header bg-white">
+                                                <h5 class="mb-0">User Status Distribution</h5>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="chart-container">
+                                                    <canvas id="statusChart"></canvas>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Brand Distribution Chart -->
+                                <div class="row mb-4">
+                                    <div class="col-md-12">
+                                        <div class="card">
+                                            <div class="card-header bg-white">
+                                                <h5 class="mb-0">User Distribution by Brand</h5>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="chart-container">
+                                                    <canvas id="brandChart"></canvas>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Recent Registrations Table -->
+                                <div class="row mb-4">
+                                    <div class="col-md-12">
+                                        <div class="card">
+                                            <div class="card-header bg-white">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <h5 class="mb-0">Recent User Registrations</h5>
+                                                    <div>
+                                                        <button class="btn btn-outline-primary btn-sm" id="refreshTableBtn">
+                                                            <i class="fa-solid fa-refresh me-1"></i> Refresh
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="table-container">
+                                                    <table class="table table-hover" id="recentRegistrationsTable">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Username</th>
+                                                                <th>Name</th>
+                                                                <th>Email</th>
+                                                                <th>Loan Number</th>
+                                                                <th>Brand</th>
+                                                                <th>Registration Date</th>
+                                                                <th>Status</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <!-- Table rows will be populated by JavaScript -->
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                                    <div>
+                                                        Showing <span id="startRecord">1</span> to <span id="endRecord">10</span> of <span id="totalRecords">0</span> entries
+                                                    </div>
+                                                    <nav aria-label="Table navigation">
+                                                        <ul class="pagination pagination-sm mb-0">
+                                                            <li class="page-item disabled">
+                                                                <a class="page-link" href="#" aria-label="Previous">
+                                                                    <span aria-hidden="true">&laquo;</span>
+                                                                </a>
+                                                            </li>
+                                                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                                            <li class="page-item">
+                                                                <a class="page-link" href="#" aria-label="Next">
+                                                                    <span aria-hidden="true">&raquo;</span>
+                                                                </a>
+                                                            </li>
+                                                        </ul>
+                                                    </nav>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            </lsdadmin-customer-stats><!----></mat-drawer-content><!---->
+                    </mat-drawer-container>
+                </lsdadmin-home><!----></main>
+        </div>
+    </app-root>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    
+    <!-- Data Source -->
+    <script src="./dataSource.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script>
+        // Function to calculate statistics from borrowers data
+        function calculateStatistics(borrowersData) {
+            const totalUsers = borrowersData.length;
+            const activeUsers = borrowersData.filter(user => user.status === 'active').length;
+            const pendingUsers = borrowersData.filter(user => user.status === 'pending').length;
+            
+            // Calculate new registrations (last 30 days)
+            const thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+            
+            const newRegistrations = borrowersData.filter(user => {
+                const regDate = new Date(user.registrationDate);
+                return regDate >= thirtyDaysAgo;
+            }).length;
+            
+            return {
+                totalUsers,
+                activeUsers,
+                pendingUsers,
+                newRegistrations
+            };
+        }
+        
+        // Function to update statistics cards
+        function updateStatisticsCards(stats) {
+            document.getElementById('totalUsers').textContent = stats.totalUsers;
+            document.getElementById('activeUsers').textContent = stats.activeUsers;
+            document.getElementById('newRegistrations').textContent = stats.newRegistrations;
+            document.getElementById('pendingUsers').textContent = stats.pendingUsers;
+        }
+        
+        // Function to populate brand dropdown
+        function populateBrandDropdown(brandsData) {
+            const brandDropdownMenu = document.getElementById('brandDropdownMenu');
+            
+            // Clear existing items except "All Brands"
+            const allBrandsItem = brandDropdownMenu.querySelector('[data-brand-id="all"]').parentNode;
+            brandDropdownMenu.innerHTML = '';
+            brandDropdownMenu.appendChild(allBrandsItem);
+            
+            // Add brands from data
+            brandsData.forEach(brand => {
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                a.className = 'dropdown-item';
+                a.href = '#';
+                a.setAttribute('data-brand-id', brand.id);
+                a.innerHTML = `${brand.name} <span class="badge bg-secondary brand-badge">${brand.code}</span>`;
+                
+                // Add click event
+                a.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Update dropdown button text
+                    document.getElementById('brandDropdown').innerHTML = this.innerHTML;
+                    
+                    // Show loading indicator
+                    document.getElementById('loading-indicator').style.display = 'flex';
+                    
+                    // Simulate filtering data
+                    setTimeout(() => {
+                        document.getElementById('loading-indicator').style.display = 'none';
+                        
+                        // If "All Brands" is selected
+                        if (this.getAttribute('data-brand-id') === 'all') {
+                            populateRecentRegistrationsTable(window.borrowersData);
+                        } else {
+                            // Filter borrowers by brand
+                            const brandId = parseInt(this.getAttribute('data-brand-id'));
+                            const selectedBrand = window.brandsData.find(b => b.id === brandId);
+                            
+                            if (selectedBrand) {
+                                const filteredBorrowers = window.borrowersData.filter(borrower => 
+                                    selectedBrand.loanNumbers.includes(borrower.loanNumber)
+                                );
+                                populateRecentRegistrationsTable(filteredBorrowers);
+                            }
+                        }
+                    }, 500);
+                });
+                
+                li.appendChild(a);
+                brandDropdownMenu.appendChild(li);
+            });
+        }
+        
+        // Function to create registration trend chart
+        function createRegistrationTrendChart(borrowersData) {
+            // Sort borrowers by registration date
+            const sortedBorrowers = [...borrowersData].sort((a, b) => 
+                new Date(a.registrationDate) - new Date(b.registrationDate)
+            );
+            
+            // Group registrations by month
+            const registrationsByMonth = {};
+            
+            sortedBorrowers.forEach(borrower => {
+                const date = new Date(borrower.registrationDate);
+                const monthYear = `${date.toLocaleString('default', { month: 'short' })} ${date.getFullYear()}`;
+                
+                if (!registrationsByMonth[monthYear]) {
+                    registrationsByMonth[monthYear] = 0;
+                }
+                
+                registrationsByMonth[monthYear]++;
+            });
+            
+            // Prepare data for chart
+            const labels = Object.keys(registrationsByMonth);
+            const data = Object.values(registrationsByMonth);
+            
+            // Create chart
+            const ctx = document.getElementById('registrationChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'New Registrations',
+                        data: data,
+                        backgroundColor: 'rgba(25, 118, 210, 0.2)',
+                        borderColor: 'rgba(25, 118, 210, 1)',
+                        borderWidth: 2,
+                        tension: 0.3,
+                        fill: true,
+                        pointBackgroundColor: 'rgba(25, 118, 210, 1)',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                font: {
+                                    family: "'Roboto', sans-serif",
+                                    weight: '500'
+                                },
+                                padding: 15
+                            }
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                            titleFont: {
+                                family: "'Roboto', sans-serif",
+                                size: 14,
+                                weight: '600'
+                            },
+                            bodyFont: {
+                                family: "'Roboto', sans-serif",
+                                size: 13
+                            },
+                            padding: 12,
+                            cornerRadius: 6
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                precision: 0,
+                                font: {
+                                    family: "'Roboto', sans-serif"
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                font: {
+                                    family: "'Roboto', sans-serif"
+                                }
+                            },
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Function to create status distribution chart
+        function createStatusDistributionChart(borrowersData) {
+            // Count users by status
+            const statusCounts = {
+                active: 0,
+                inactive: 0,
+                pending: 0
+            };
+            
+            borrowersData.forEach(borrower => {
+                statusCounts[borrower.status]++;
+            });
+            
+            // Create chart
+            const ctx = document.getElementById('statusChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Active', 'Inactive', 'Pending'],
+                    datasets: [{
+                        data: [statusCounts.active, statusCounts.inactive, statusCounts.pending],
+                        backgroundColor: [
+                            'rgba(40, 167, 69, 0.8)',
+                            'rgba(220, 53, 69, 0.8)',
+                            'rgba(255, 193, 7, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgba(40, 167, 69, 1)',
+                            'rgba(220, 53, 69, 1)',
+                            'rgba(255, 193, 7, 1)'
+                        ],
+                        borderWidth: 2,
+                        hoverOffset: 10
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '65%',
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                font: {
+                                    family: "'Roboto', sans-serif",
+                                    size: 13,
+                                    weight: '500'
+                                },
+                                padding: 15,
+                                usePointStyle: true,
+                                pointStyle: 'circle'
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                            titleFont: {
+                                family: "'Roboto', sans-serif",
+                                size: 14,
+                                weight: '600'
+                            },
+                            bodyFont: {
+                                family: "'Roboto', sans-serif",
+                                size: 13
+                            },
+                            padding: 12,
+                            cornerRadius: 6,
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.raw || 0;
+                                    const total = context.dataset.data.reduce((acc, val) => acc + val, 0);
+                                    const percentage = Math.round((value / total) * 100);
+                                    return `${label}: ${value} (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Function to create brand distribution chart
+        function createBrandDistributionChart(borrowersData, brandsData) {
+            // Count users by brand
+            const brandCounts = {};
+            const brandColors = [
+                'rgba(25, 118, 210, 0.8)',
+                'rgba(76, 175, 80, 0.8)',
+                'rgba(255, 152, 0, 0.8)',
+                'rgba(156, 39, 176, 0.8)',
+                'rgba(3, 169, 244, 0.8)',
+                'rgba(233, 30, 99, 0.8)',
+                'rgba(0, 150, 136, 0.8)',
+                'rgba(121, 85, 72, 0.8)'
+            ];
+            
+            // Initialize brand counts
+            brandsData.forEach(brand => {
+                brandCounts[brand.name] = 0;
+            });
+            
+            // Count borrowers by brand
+            borrowersData.forEach(borrower => {
+                const brand = findBrandByLoanNumber(borrower.loanNumber);
+                if (brand) {
+                    brandCounts[brand.name]++;
+                }
+            });
+            
+            // Prepare data for chart
+            const labels = Object.keys(brandCounts);
+            const data = Object.values(brandCounts);
+            
+            // Create chart
+            const ctx = document.getElementById('brandChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Users by Brand',
+                        data: data,
+                        backgroundColor: brandColors.slice(0, labels.length),
+                        borderColor: brandColors.slice(0, labels.length).map(color => color.replace('0.8', '1')),
+                        borderWidth: 1,
+                        borderRadius: 4,
+                        maxBarThickness: 50
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                            titleFont: {
+                                family: "'Roboto', sans-serif",
+                                size: 14,
+                                weight: '600'
+                            },
+                            bodyFont: {
+                                family: "'Roboto', sans-serif",
+                                size: 13
+                            },
+                            padding: 12,
+                            cornerRadius: 6
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                precision: 0,
+                                font: {
+                                    family: "'Roboto', sans-serif"
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                font: {
+                                    family: "'Roboto', sans-serif"
+                                }
+                            },
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Function to populate recent registrations table
+        function populateRecentRegistrationsTable(borrowersData) {
+            const tableBody = document.querySelector('#recentRegistrationsTable tbody');
+            tableBody.innerHTML = '';
+            
+            // Sort borrowers by registration date (newest first)
+            const sortedBorrowers = [...borrowersData].sort((a, b) => 
+                new Date(b.registrationDate) - new Date(a.registrationDate)
+            );
+            
+            // Take the first 10 records
+            const recentBorrowers = sortedBorrowers.slice(0, 10);
+            
+            recentBorrowers.forEach(borrower => {
+                const row = document.createElement('tr');
+                
+                // Status class based on borrower status
+                let statusClass = '';
+                if (borrower.status === 'active') {
+                    statusClass = 'status-active';
+                } else if (borrower.status === 'inactive') {
+                    statusClass = 'status-inactive';
+                } else if (borrower.status === 'pending') {
+                    statusClass = 'status-pending';
+                }
+                
+                // Format date
+                const registrationDate = new Date(borrower.registrationDate);
+                const formattedDate = registrationDate.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                });
+                
+                // Find the brand associated with this loan number
+                const brand = findBrandByLoanNumber(borrower.loanNumber);
+                const brandDisplay = brand ?
+                    `${brand.name} <span class="badge bg-secondary brand-badge">${brand.code}</span>` :
+                    'Not Assigned';
+                
+                row.innerHTML = `
+                    <td>${borrower.username}</td>
+                    <td>${borrower.firstName} ${borrower.lastName}</td>
+                    <td>${borrower.email}</td>
+                    <td>${borrower.loanNumber}</td>
+                    <td>${brandDisplay}</td>
+                    <td>${formattedDate}</td>
+                    <td><span class="${statusClass}">${borrower.status.charAt(0).toUpperCase() + borrower.status.slice(1)}</span></td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+            
+            // Update pagination info
+            document.getElementById('totalRecords').textContent = borrowersData.length;
+            document.getElementById('endRecord').textContent = Math.min(10, borrowersData.length);
+        }
+        
+        // Helper function to find brand by loan number
+        function findBrandByLoanNumber(loanNumber) {
+            return window.brandsData.find(brand => 
+                brand.loanNumbers.includes(loanNumber)
+            );
+        }
+        
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Show loading indicator for a moment to simulate Angular loading
+            document.getElementById('loading-indicator').style.display = 'flex';
+            
+            setTimeout(() => {
+                document.getElementById('loading-indicator').style.display = 'none';
+                
+                // Populate brand dropdown
+                populateBrandDropdown(window.brandsData);
+                
+                // Calculate and display statistics
+                const stats = calculateStatistics(window.borrowersData);
+                updateStatisticsCards(stats);
+                
+                // Create charts
+                createRegistrationTrendChart(window.borrowersData);
+                createStatusDistributionChart(window.borrowersData);
+                createBrandDistributionChart(window.borrowersData, window.brandsData);
+                
+                // Populate recent registrations table
+                populateRecentRegistrationsTable(window.borrowersData);
+                
+                // Initialize Bootstrap dropdowns
+                const dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'));
+                dropdownElementList.map(function (dropdownToggleEl) {
+                    return new bootstrap.Dropdown(dropdownToggleEl);
+                });
+            }, 1000);
+            
+            // Channel dropdown event
+            document.querySelectorAll('#channelDropdown + .dropdown-menu .dropdown-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    document.getElementById('channelDropdown').textContent = this.textContent;
+                });
+            });
+            
+            // Date range filter event
+            document.getElementById('dateRange').addEventListener('change', function() {
+                const customDateContainer = document.getElementById('customDateContainer');
+                if (this.value === 'custom') {
+                    customDateContainer.style.display = 'flex';
+                } else {
+                    customDateContainer.style.display = 'none';
+                }
+            });
+            
+            // Apply date filter button
+            document.getElementById('applyDateFilter').addEventListener('click', function() {
+                // Show loading indicator
+                document.getElementById('loading-indicator').style.display = 'flex';
+                
+                // Simulate API call delay
+                setTimeout(() => {
+                    document.getElementById('loading-indicator').style.display = 'none';
+                    alert('Date filter applied! In a real implementation, this would refresh the data based on the selected date range.');
+                }, 800);
+            });
+            
+            // Export data button
+            document.getElementById('exportDataBtn').addEventListener('click', function() {
+                // Show loading indicator
+                document.getElementById('loading-indicator').style.display = 'flex';
+                
+                // Simulate API call delay
+                setTimeout(() => {
+                    document.getElementById('loading-indicator').style.display = 'none';
+                    alert('Data export initiated! In a real implementation, this would generate a CSV or Excel file with the statistics data.');
+                }, 800);
+            });
+            
+            // Refresh table button
+            document.getElementById('refreshTableBtn').addEventListener('click', function() {
+                // Show loading indicator
+                document.getElementById('loading-indicator').style.display = 'flex';
+                
+                // Simulate API call delay
+                setTimeout(() => {
+                    // Hide loading indicator
+                    document.getElementById('loading-indicator').style.display = 'none';
+                    
+                    // Refresh table data
+                    populateRecentRegistrationsTable(window.borrowersData);
+                    
+                    // Show feedback message
+                    const feedbackMsg = document.createElement('div');
+                    feedbackMsg.className = 'alert alert-success mt-2 mb-2';
+                    feedbackMsg.textContent = 'Table data refreshed successfully!';
+                    feedbackMsg.style.padding = '5px 10px';
+                    feedbackMsg.style.fontSize = '0.9rem';
+                    
+                    // Insert after the table
+                    const tableContainer = document.querySelector('.table-container');
+                    tableContainer.parentNode.insertBefore(feedbackMsg, tableContainer.nextSibling);
+                    
+                    // Remove the message after 3 seconds
+                    setTimeout(() => {
+                        feedbackMsg.remove();
+                    }, 3000);
+                }, 800);
+            });
+            
+            // Toggle sidebar menu items
+            document.querySelector('.hamburger-menu').addEventListener('click', function() {
+                const sidebar = document.querySelector('.sidebar');
+                sidebar.classList.toggle('show');
+                
+                // If on mobile, adjust main content margin
+                if (window.innerWidth < 768) {
+                    const mainContent = document.querySelector('.mat-drawer-content');
+                    if (sidebar.classList.contains('show')) {
+                        mainContent.style.marginLeft = '216px';
+                    } else {
+                        mainContent.style.marginLeft = '0';
+                    }
+                }
+            });
+            
+            // Add click event to drawer items
+            document.querySelectorAll('.drawer-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    if (this.nextElementSibling && this.nextElementSibling.tagName === 'DIV') {
+                        e.preventDefault();
+                        const submenu = this.nextElementSibling;
+                        const caret = this.querySelector('.caret-style');
+                        
+                        if (submenu.style.display === 'none') {
+                            submenu.style.display = 'block';
+                            if (caret) {
+                                caret.classList.remove('fa-caret-down');
+                                caret.classList.add('fa-caret-up');
+                            }
+                        } else {
+                            submenu.style.display = 'none';
+                            if (caret) {
+                                caret.classList.remove('fa-caret-up');
+                                caret.classList.add('fa-caret-down');
+                            }
+                        }
+                    }
+                });
+            });
+            
+            // Add click events to pagination
+            document.querySelectorAll('.pagination .page-link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Remove active class from all page items
+                    document.querySelectorAll('.pagination .page-item').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    
+                    // Add active class to clicked page item
+                    if (this.textContent.trim() !== '«' && this.textContent.trim() !== '»') {
+                        this.parentElement.classList.add('active');
+                    }
+                    
+                    // Show loading indicator
+                    document.getElementById('loading-indicator').style.display = 'flex';
+                    
+                    // Simulate API call delay
+                    setTimeout(() => {
+                        document.getElementById('loading-indicator').style.display = 'none';
+                        
+                        // In a real implementation, this would load the appropriate page of data
+                        // For now, we'll just show a message
+                        alert('In a real implementation, this would load page ' + this.textContent.trim() + ' of the data.');
+                    }, 800);
+                });
+            });
+        });
+    </script>
+
+    <link rel="modulepreload" href="chunk-S735BLLZ.js">
+    <link rel="modulepreload" href="chunk-X6OGZ2XM.js">
+    <link rel="modulepreload" href="chunk-UFDSLR2R.js">
+    <link rel="modulepreload" href="chunk-SB5BZARG.js">
+    <link rel="modulepreload" href="chunk-6E4CRX44.js">
+    <link rel="modulepreload" href="chunk-MPYADVNX.js">
+    <link rel="modulepreload" href="chunk-GRV5ZUSL.js">
+    <link rel="modulepreload" href="chunk-AQPD4LOG.js">
+    <link rel="modulepreload" href="chunk-2T5GH5PT.js">
+    <link rel="modulepreload" href="chunk-PBQTADCT.js">
+    <script src="polyfills-CRUMOBOH.js" type="module"></script>
+    <script src="scripts-K3V24XRE.js" defer=""></script>
+    <script src="main-IFZO33RI.js" type="module"></script>
+
+    <div class="cdk-live-announcer-element cdk-visually-hidden" aria-atomic="true" aria-live="polite"
+        id="cdk-live-announcer-0"></div>
+    <div class="cdk-overlay-container"></div>
+    <div class="cdk-describedby-message-container cdk-visually-hidden" style="visibility: hidden;">
+        <div id="cdk-describedby-message-ng-1-10" role="tooltip">Show Message Threads in selected Queue(s)</div>
+        <div id="cdk-describedby-message-ng-1-11" role="tooltip">Show Message Threads in selected Category</div>
+        <div id="cdk-describedby-message-ng-1-12" role="tooltip">Show Message Threads from Borrower(s) with specified
+            First Name</div>
+        <div id="cdk-describedby-message-ng-1-13" role="tooltip">Show Message Threads from Borrower(s) with specified
+            Last Name</div>
+        <div id="cdk-describedby-message-ng-1-14" role="tooltip">Show Message Threads from Borrower(s) with specified
+            Loan Number</div>
+        <div id="cdk-describedby-message-ng-1-15" role="tooltip">Show Message Threads with selected Status</div>
+        <div id="cdk-describedby-message-ng-1-16" role="tooltip">Show Message Threads that Borrowers have Deleted</div>
+        <div id="cdk-describedby-message-ng-1-17" role="tooltip">Show Message Threads with Borrower Message Date on or
+            after selected date</div>
+        <div id="cdk-describedby-message-ng-1-18" role="tooltip">Show Message Threads with Borrower Message Date on or
+            before selected date</div>
+        <div id="cdk-describedby-message-ng-1-19" role="tooltip">Filtering applies to all message threads and search
+            results are sorted by Borrower Message Date.</div>
+        <div id="cdk-describedby-message-ng-1-20" role="tooltip">Sorting/filtering applies only to the current search
+            results page.</div>
+        <div id="cdk-describedby-message-ng-1-23" role="tooltip">Help Center</div>
+        <div id="cdk-describedby-message-ng-1-24" role="tooltip">User Profile Menu</div>
+    </div>
+</body>
