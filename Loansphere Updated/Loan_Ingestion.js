@@ -4,6 +4,7 @@
 const STORE_NAME = "LoanNumbers"; // Name of the object store in sharedStorage
 const CHECK_INTERVAL_MS = 10 * 60 * 1000; // 10 minutes
 const CHUNK_SIZE = 10000; // Batch size for encryption
+const DOWNLOAD_CHUNK_SIZE = 30 * 1024 * 1024; // 30MB
 const SALT = "static_salt_value";
 const channel = new BroadcastChannel("island_channel");
 const sharedStorage = {
@@ -28,15 +29,86 @@ const sharedStorage = {
     const store = tx.objectStore(storeName);
     store.clear();
     await tx.complete;
+    return { success: true };
   },
   async getLastUpdated(storeName) {
     const db = await openDatabase(storeName);
     const tx = db.transaction(storeName, "readonly");
     const store = tx.objectStore(storeName);
     const lastUpdated = await store.get("lastUpdated");
-    return lastUpdated ? { lastUpdated } : { lastUpdated: null };
+    return lastUpdated ? { success: true, lastUpdated } : { success: true, lastUpdated: null };
+  },
+  async deleteData(storeName, key) {
+    try {
+      const db = await openDatabase(storeName);
+      const tx = db.transaction(storeName, "readwrite");
+      const store = tx.objectStore(storeName);
+      store.delete(key);
+      await tx.complete;
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
   },
 };
+
+async function waitForListener(maxRetries = 20, initialDelay = 100) {
+  testChannel = channel;
+  return new Promise((resolve, reject) => {
+    let attempts = 0;
+    let delay = initialDelay;
+    let timeoutId;
+    let listener = (event) => {
+      if (event.data.action === "pong") {
+        console.log("✅ Listener detected!");
+        testChannel.removeEventListener("message", listener);
+        clearTimeout(timeoutId);
+        resolve(true);
+      }
+    };
+
+    function sendPing() {
+      if (attempts >= maxRetries) {
+        console.warn("❌ No listener detected after maximum retries.");
+        testChannel.removeEventListener("message", listener);
+        clearTimeout(timeoutId);
+        reject(new Error("Listener not found"));
+        return;
+      }
+
+      console.log(`🔄 Sending ping attempt ${attempts + 1}/${maxRetries}...`);
+      testChannel.postMessage({ action: "ping" });
+
+      testChannel.addEventListener("message", listener);
+
+      // Retry if no response within `delay` ms
+      timeoutId = setTimeout(() => {
+        attempts++;
+        delay *= 2; // Exponential backoff (100ms → 200ms → 400ms...)
+        sendPing();
+      }, delay);
+    }
+
+    sendPing(); // Start the first attempt
+  });
+}
+
+/**
+ * Request a batch of numbers from the storage script
+ */
+async function checkNumbersBatch(numbers) {
+  return new Promise((resolve) => {
+    const listener = (event) => {
+      if (event.data.action === "response_numbers") {
+        resolve(event.data.result);
+        channel.removeEventListener("message", listener);
+      }
+    };
+
+    channel.addEventListener("message", listener);
+    channel.postMessage({ action: "check_numbers", numbers });
+  });
+}
 
 async function openDatabase(storeName) {
   return new Promise((resolve, reject) => {
@@ -57,6 +129,7 @@ async function openDatabase(storeName) {
 
 async function downloadFileInChunks(
   fileUrl,
+  oldEtag,
   chunkSize = 1024 * 1024,
   onProgress
 ) {
@@ -66,7 +139,16 @@ async function downloadFileInChunks(
     throw new Error(`Failed to get file info: ${response.statusText}`);
 
   const contentLength = parseInt(response.headers.get("content-length"), 10);
+  const etag = response.headers.get("etag");
   console.log(contentLength, " Content-Length header value");
+
+  if (etag !== oldEtag) {
+    console.log("File has changed, re-downloading...");
+  } else {
+    console.log("File is unchanged, no need to download.");
+    return { data: null, etag, downloaded: false };
+  }
+
   if (isNaN(contentLength)) throw new Error("Content-Length header missing");
 
   let receivedBytes = 0;
@@ -89,7 +171,7 @@ async function downloadFileInChunks(
     if (onProgress) onProgress(receivedBytes, contentLength);
   }
 
-  return fileData;
+  return { data: fileData, etag, downloaded: true };
 }
 
 // ########## MODIFY THESE LINES AS REQUIRED ##########
@@ -177,10 +259,33 @@ async function decryptBatch(encryptedObject) {
 }
 
 /**
+ * Gets the meta-data record from sharedStorage.
+ */
+async function getMeta() {
+  const metaRes = await sharedStorage.getData(STORE_NAME, "numbers-meta", {});
+  if (metaRes?.success && metaRes?.data) {
+    return metaRes.data;
+  }
+  return null;
+}
+
+
+/**
  * Store numbers (encrypted) in multiple chunks to avoid large message errors.
  * Each chunk is stored under a distinct key in sharedStorage.
  */
-async function storeNumbers(numbers) {
+async function storeNumbers(numbers, etag) {
+  const meta = await getMeta();
+  const oldEtag = meta?.etag;
+  const inProgress = meta?.inProgress;
+
+  if (etag === oldEtag) {
+    console.log("Data is unchanged, no need to store.");
+    return;
+  } else if (inProgress) {
+    console.warn("Data is already in progress, overwriting.");
+  }
+
   await sharedStorage.clearStore(STORE_NAME);
 
   storedNumbersSet = new Set(numbers);
@@ -188,6 +293,19 @@ async function storeNumbers(numbers) {
   window.storedNumbersSet = storedNumbersSet;
   console.log(storedNumbersSet, "Stored Numbers Set");
   const chunkCount = Math.ceil(numbers.length / CHUNK_SIZE);
+
+  // Store a small "meta" record with total chunk info
+  // This helps you know how many chunks to retrieve later
+  const metaRecord = { chunkCount, inProgress: true, etag };
+  let metaRes = await sharedStorage.storeData(
+    STORE_NAME,
+    "numbers-meta",
+    metaRecord,
+    {}
+  );
+  if (!metaRes.success) {
+    throw new Error(`Failed to store meta info: ${metaRes.error}`);
+  }
 
   for (let i = 0; i < chunkCount; i++) {
     const startIndex = i * CHUNK_SIZE;
@@ -208,15 +326,9 @@ async function storeNumbers(numbers) {
     }
   }
 
-  // Finally, store a small "meta" record with total chunk info
-  // This helps you know how many chunks to retrieve later
-  const metaRecord = { chunkCount };
-  const metaRes = await sharedStorage.storeData(
-    STORE_NAME,
-    "numbers-meta",
-    metaRecord,
-    {}
-  );
+  // Update inProgress key to false
+  metaRecord.inProgress = false;
+  await sharedStorage.storeData(STORE_NAME, "numbers-meta", metaRecord, {});
   if (!metaRes.success) {
     throw new Error(`Failed to store meta info: ${metaRes.error}`);
   }
@@ -227,37 +339,70 @@ async function storeNumbers(numbers) {
 }
 
 /**
+ * Wait for the in-progress operation to complete or to timeout (default 1 minute).
+ */
+function awaitForInProgress(timeout = 60 * 1000) {
+  return new Promise((resolve) => {
+    let meta;
+    const checkInterval = setInterval(async () => {
+      meta = await getMeta();
+      if (!meta?.inProgress) {
+        clearInterval(checkInterval);
+        resolve(meta);
+      }
+    }, 1000);
+
+    setTimeout(() => {
+      console.warn("Timeout reached while waiting for in-progress operation.");
+      clearInterval(checkInterval);
+      resolve(meta); // Do not reject, just return the last known state
+    }, timeout);
+  });
+}
+
+/**
  * Fetch numbers from remote, encrypt, and store in sharedStorage
  */
 async function fetchAndStoreNumbers() {
   console.log("Checking if data needs updating...");
+  const meta = await awaitForInProgress();
+  const etag = meta?.etag;
+
+  // For backward compatibility with the old implementation
   const { lastUpdated } = await sharedStorage.getLastUpdated(STORE_NAME);
   const now = Date.now();
 
-  // If data is still fresh, no update
+  // If data is still fresh based on time (old method), no update
   if (
     lastUpdated &&
-    now - parseInt(lastUpdated, 10) < DATA_RETENTION_HOURS * 60 * 60 * 1000
+    now - parseInt(lastUpdated, 10) < DATA_RETENTION_HOURS * 60 * 60 * 1000 &&
+    !etag // Only use time-based check if we don't have etag yet
   ) {
-    console.log("Data is fresh, no update needed.");
+    console.log("Data is fresh (time-based), no update needed.");
     return loadNumbersIntoMemory();
   }
 
-  // Otherwise, fetch data from url
-  console.log("Fetching new data...");
   try {
-    // const response = await fetch(DATA_URL);
-    // if (!response.ok) throw new Error(`Fetch failed: ${response.statusText}`);
-    const fileData = await downloadFileInChunks(
+    // Fetch data from url
+    console.log("Fetching new data...");
+    const file = await downloadFileInChunks(
       DATA_URL,
-      30 * 1024 * 1024,
+      etag,
+      DOWNLOAD_CHUNK_SIZE,
       (received, total) => {
         console.log(`Downloaded: ${((received / total) * 100).toFixed(2)}%`);
       }
     );
 
+    if (!file.downloaded) {
+      // If data is still fresh, no update needed
+      return loadNumbersIntoMemory();
+    }
+
+    const fileData = file.data;
     const textData = new TextDecoder().decode(fileData);
-    // const textData = await response.text();
+
+    // Process the text data to extract loan numbers
     const numbers = textData
       .trim()
       .split(/\r?\n/)
@@ -267,7 +412,7 @@ async function fetchAndStoreNumbers() {
     console.log(
       `Fetched ${numbers.length} numbers, storing (encrypted in batches)...`
     );
-    await storeNumbers(numbers);
+    await storeNumbers(numbers, file.etag);
 
     console.log("Data successfully updated.");
   } catch (error) {
@@ -333,7 +478,7 @@ async function checkNumbersInMemory(numbersToCheck) {
   await fetchAndStoreNumbers();
 
   // If page has been opened for a while, we still want to make sure the loan numbers are fresh
-  setInterval(fetchAndStoreNumbers, CHECK_INTERVAL_MS);
+  setInterval(() => fetchAndStoreNumbers(), CHECK_INTERVAL_MS);
 
   // Opening communication channel
   channel.onmessage = async (event) => {

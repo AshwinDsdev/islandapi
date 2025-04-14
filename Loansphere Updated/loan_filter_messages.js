@@ -1288,97 +1288,79 @@
     // Remove any existing alert
     removeNotProvisionedAlert();
     
+    // Set flags to indicate we're showing a not provisioned message
+    window._showingNotProvisionedMessage = true;
+    window._restrictedLoanNumber = loanNumber;
+    
     // Create the alert container
     const alertContainer = document.createElement('div');
     alertContainer.id = 'loan-not-provisioned-alert';
-    alertContainer.className = 'loan-not-provisioned-alert';
-    
-    // Apply additional styles directly to make it more persistent
-    alertContainer.style.position = 'fixed';
-    alertContainer.style.top = '20px';
-    alertContainer.style.right = '20px';
-    alertContainer.style.zIndex = '999999'; // Extremely high z-index
-    alertContainer.style.backgroundColor = '#fff';
-    alertContainer.style.borderLeft = '4px solid #f44336';
-    alertContainer.style.boxShadow = '0 4px 20px rgba(0,0,0,0.3)';
-    alertContainer.style.padding = '16px';
-    alertContainer.style.borderRadius = '4px';
-    alertContainer.style.display = 'flex';
-    alertContainer.style.alignItems = 'flex-start';
-    alertContainer.style.maxWidth = '400px';
-    alertContainer.style.opacity = '1';
-    alertContainer.style.transition = 'opacity 0.3s ease';
-    alertContainer.style.pointerEvents = 'auto';
+    alertContainer.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 999999;
+      background-color: #fff;
+      border-left: 4px solid #f44336;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      padding: 16px;
+      border-radius: 4px;
+      display: flex;
+      align-items: flex-start;
+      max-width: 400px;
+      font-family: Arial, sans-serif;
+    `;
     
     // Create the alert content
     alertContainer.innerHTML = `
-      <div class="alert-icon" style="font-size: 24px; margin-right: 16px;">⚠️</div>
-      <div class="alert-content" style="flex: 1;">
-        <div class="alert-title" style="font-weight: bold; font-size: 18px; margin-bottom: 10px; color: #f44336;">Loan is not provisioned to the user</div>
-        <div class="alert-message" style="color: #333; font-size: 16px;">
+      <div style="font-size: 24px; margin-right: 16px;">⚠️</div>
+      <div style="flex: 1;">
+        <div style="font-weight: bold; font-size: 16px; margin-bottom: 8px; color: #f44336;">
+          Loan is not provisioned to the user
+        </div>
+        <div style="color: #333; margin-bottom: 8px;">
           Loan number <strong>${loanNumber}</strong> is not provisioned to the current user.
         </div>
-        <div class="alert-timer" style="margin-top: 12px; font-size: 12px; color: #666;">
-          This message will remain visible for 10 seconds
-        </div>
       </div>
-      <button class="alert-close" style="background: none; border: none; font-size: 20px; cursor: pointer; color: #999; padding: 0; margin-left: 8px;" onclick="event.stopPropagation(); window.removeNotProvisionedAlert(true);">×</button>
+      <button onclick="removeNotProvisionedAlert(true)" style="background: none; border: none; font-size: 20px; cursor: pointer; color: #999; padding: 0; margin-left: 8px;">×</button>
     `;
     
     // Add to the page
     document.body.appendChild(alertContainer);
     
-    // Also clear the table body to show "Loan is not provisioned" message
+    // Also update the table message if it exists
     const tableBody = document.getElementById('messagesTableBody');
     if (tableBody) {
-      // Create a "not provisioned" row
-      const noResultsRow = document.createElement('tr');
-      noResultsRow.innerHTML = `
-        <td colspan="7" class="text-center" style="color: #f44336; font-weight: bold; padding: 30px; font-size: 16px; background-color: #fff3f3; border: 1px solid #ffcdd2;">
-          <div style="margin-bottom: 10px;">⚠️</div>
-          <div>Loan is not provisioned to the user</div>
-          <div style="font-size: 14px; margin-top: 5px;">Loan number: ${loanNumber}</div>
-        </td>
+      tableBody.innerHTML = `
+        <tr>
+          <td colspan="7" style="text-align: center; padding: 30px;">
+            <div style="color: #f44336; font-weight: bold; font-size: 16px;">
+              <div style="margin-bottom: 10px;">⚠️</div>
+              <div>Loan is not provisioned to the user</div>
+              <div style="font-size: 14px; margin-top: 5px;">Loan number: ${loanNumber}</div>
+            </div>
+          </td>
+        </tr>
       `;
-      tableBody.innerHTML = '';
-      tableBody.appendChild(noResultsRow);
     }
     
-    // Set flags to indicate we're showing a not provisioned message
-    window._showingNotProvisionedMessage = true;
-    window._restrictedLoanNumber = loanNumber;
-    
-    // Make the removeNotProvisionedAlert function available globally
-    window.removeNotProvisionedAlert = removeNotProvisionedAlert;
-    
-    // Add a click handler to prevent the alert from being closed accidentally
-    alertContainer.addEventListener('click', (e) => {
-      if (!e.target.classList.contains('alert-close')) {
-        e.stopPropagation();
+    // Keep checking and re-showing the alert if it gets removed
+    const checkInterval = setInterval(() => {
+      if (!document.getElementById('loan-not-provisioned-alert') && 
+          window._showingNotProvisionedMessage && 
+          window._restrictedLoanNumber === loanNumber) {
+        document.body.appendChild(alertContainer.cloneNode(true));
       }
-    });
+    }, 100);
     
-    // Set a minimum display time for the alert (10 seconds)
-    alertContainer._minimumDisplayTime = Date.now() + 10000; // 10 seconds from now
+    // Store the interval ID on the alert container
+    alertContainer._checkInterval = checkInterval;
     
-    // Update the timer text every second
-    let secondsRemaining = 10;
-    const timerElement = alertContainer.querySelector('.alert-timer');
-    
-    const timerInterval = setInterval(() => {
-      secondsRemaining--;
-      if (secondsRemaining <= 0) {
-        clearInterval(timerInterval);
-        timerElement.textContent = 'You can now close this message';
-      } else {
-        timerElement.textContent = `This message will remain visible for ${secondsRemaining} seconds`;
-      }
-    }, 1000);
-    
-    // Store the interval ID so we can clear it if needed
-    alertContainer._timerInterval = timerInterval;
-    
-    // Return the alert container
+    // Clear the interval after 30 seconds
+    setTimeout(() => {
+      clearInterval(checkInterval);
+    }, 30000);
+    updateTableMessage(loanNumber);
     return alertContainer;
   }
   
@@ -1389,67 +1371,60 @@
   function removeNotProvisionedAlert(forceRemove = false) {
     const existingAlert = document.getElementById('loan-not-provisioned-alert');
     if (existingAlert) {
-      // Check if we're within the minimum display time
-      const now = Date.now();
-      const minimumDisplayTime = existingAlert._minimumDisplayTime || 0;
-      
-      // Only remove if:
-      // 1. We're not showing a restricted loan message, OR
-      // 2. The user explicitly clicked the close button AND either:
-      //    a. forceRemove is true, OR
-      //    b. We've passed the minimum display time
-      if (!window._showingNotProvisionedMessage || 
-          (event && event.type === 'click' && (forceRemove || now >= minimumDisplayTime))) {
-        
-        // Clear any timer interval
-        if (existingAlert._timerInterval) {
-          clearInterval(existingAlert._timerInterval);
+      // Only remove if force remove is true or we're not showing a restricted message
+      if (forceRemove || !window._showingNotProvisionedMessage) {
+        // Clear the check interval if it exists
+        if (existingAlert._checkInterval) {
+          clearInterval(existingAlert._checkInterval);
         }
         
-        // Fade out the alert
-        existingAlert.style.opacity = '0';
-        
-        // Remove after fade out animation
-        setTimeout(() => {
-          if (existingAlert.parentNode) {
-            existingAlert.remove();
-          }
-        }, 300);
-        
-        // Reset flags if the user explicitly closed the alert
-        if (event && event.type === 'click') {
+        // Reset flags if force removing
+        if (forceRemove) {
           window._showingNotProvisionedMessage = false;
           window._restrictedLoanNumber = null;
-          debugLog("User explicitly closed the not provisioned alert");
-        }
-      } else {
-        // If we're still showing a restricted loan message and within minimum display time
-        if (event && event.type === 'click' && now < minimumDisplayTime) {
-          // Show a message that they need to wait
-          const timeRemaining = Math.ceil((minimumDisplayTime - now) / 1000);
-          const timerElement = existingAlert.querySelector('.alert-timer');
-          if (timerElement) {
-            timerElement.textContent = `Please wait ${timeRemaining} more seconds before closing`;
-            timerElement.style.color = '#f44336';
-            timerElement.style.fontWeight = 'bold';
-            
-            // Reset after 2 seconds
-            setTimeout(() => {
-              if (timerElement) {
-                timerElement.style.color = '#666';
-                timerElement.style.fontWeight = 'normal';
-              }
-            }, 2000);
-          }
         }
         
-        debugLog("Prevented automatic removal of not provisioned alert");
-        return false;
+        existingAlert.remove();
       }
     }
-    return true;
   }
   
+  function updateTableMessage(loanNumber) {
+    const tableBody = document.getElementById('messagesTableBody');
+    if (!tableBody) return;
+
+    tableBody.innerHTML = `
+      <tr>
+        <td colspan="7" style="text-align: center; padding: 30px;">
+          <div style="color: #f44336; font-weight: bold; font-size: 16px; background-color: #fff3f3; border: 1px solid #ffcdd2; padding: 20px; border-radius: 4px;">
+            <div style="margin-bottom: 10px;">⚠️</div>
+            <div>Loan is not provisioned to the user</div>
+            <div style="font-size: 14px; margin-top: 5px;">Loan number: ${loanNumber}</div>
+          </div>
+        </td>
+      </tr>
+    `;
+
+    // Add observer to prevent message from being overwritten
+    if (!tableBody._notProvisionedObserver) {
+      const observer = new MutationObserver((mutations) => {
+        if (window._showingNotProvisionedMessage && 
+            window._restrictedLoanNumber === loanNumber &&
+            (!tableBody.innerHTML.includes('Loan is not provisioned') ||
+             !tableBody.innerHTML.includes(loanNumber))) {
+          updateTableMessage(loanNumber);
+        }
+      });
+
+      observer.observe(tableBody, {
+        childList: true,
+        subtree: true,
+        characterData: true
+      });
+
+      tableBody._notProvisionedObserver = observer;
+    }
+  }
   /**
    * Add custom styles for restricted status and alert
    */
