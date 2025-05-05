@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loan Filter Script Documentation</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #2c3e50;
+            border-bottom: 1px solid #bdc3c7;
+            padding-bottom: 5px;
+            margin-top: 30px;
+        }
+        h3 {
+            color: #3498db;
+            margin-top: 25px;
+        }
+        h4 {
+            color: #16a085;
+            margin-top: 20px;
+        }
+        code {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #f7f7f7;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+        ul, ol {
+            padding-left: 25px;
+        }
+        .purpose, .necessity, .works {
+            margin-left: 20px;
+        }
+        .purpose strong, .necessity strong, .works strong {
+            color: #e74c3c;
+        }
+        .process-step {
+            background-color: #f8f9fa;
+            border-left: 4px solid #3498db;
+            padding: 10px 15px;
+            margin: 15px 0;
+        }
+        .conclusion {
+            background-color: #e8f4f8;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Loan Filter Script Documentation</h1>
+    
+    <p>This document explains the purpose and functionality of each component in the loan_filter_updated.js script, along with the step-by-step process flow.</p>
+    
+    <h2>Overview</h2>
+    
+    <p>The loan filter script is designed to filter loan information based on user permissions. It connects to a Chrome extension to verify which loans a user has access to, then hides any loan information the user is not authorized to see.</p>
+    
+    <h2>Core Components and Process Flow</h2>
+    
+    <h3>1. Initialization and Extension Connection</h3>
+    
+    <h4><code>waitForListener(maxRetries, initialDelay)</code></h4>
+    <div class="purpose"><strong>Purpose:</strong> Establishes connection with the Chrome extension.</div>
+    <div class="necessity"><strong>Why it's necessary:</strong> This is the primary step that must succeed before any other functionality can work. Without this connection, the script cannot verify loan access permissions.</div>
+    <div class="works">
+        <strong>How it works:</strong>
+        <ol>
+            <li>Checks if Chrome extension API is available</li>
+            <li>Sends a "ping" message to the extension</li>
+            <li>Retries with exponential backoff if no response</li>
+            <li>Resolves with true if connection is successful, false otherwise</li>
+            <li>Rejects with an error if maximum retries are reached</li>
+        </ol>
+    </div>
+    
+    <h4><code>initialize()</code></h4>
+    <div class="purpose"><strong>Purpose:</strong> Orchestrates the initialization process.</div>
+    <div class="necessity"><strong>Why it's necessary:</strong> Ensures all components are initialized in the correct order and only if the extension connection is established.</div>
+    <div class="works">
+        <strong>How it works:</strong>
+        <ol>
+            <li>Calls <code>waitForListener()</code> to establish extension connection</li>
+            <li>If connection is successful:
+                <ul>
+                    <li>Runs initial page processing</li>
+                    <li>Sets up periodic processing</li>
+                    <li>Sets up mutation observers</li>
+                    <li>Returns success status and resources for cleanup</li>
+                </ul>
+            </li>
+            <li>If connection fails, returns failure status</li>
+        </ol>
+    </div>
+    
+    <h3>2. Loan Access Verification</h3>
+    
+    <h4><code>checkNumbersBatch(numbers)</code></h4>
+    <div class="purpose"><strong>Purpose:</strong> Queries the extension to check if the user has access to specific loan numbers.</div>
+    <div class="necessity"><strong>Why it's necessary:</strong> This is the core function that determines which loans should be visible to the user.</div>
+    <div class="works">
+        <strong>How it works:</strong>
+        <ol>
+            <li>Sends a "queryLoans" message to the extension with an array of loan IDs</li>
+            <li>Receives a response with a mapping of loan IDs to boolean access values</li>
+            <li>Returns an array of loan IDs that the user has access to</li>
+        </ol>
+    </div>
+    
+    <h4><code>allowedLoansCache</code></h4>
+    <div class="purpose"><strong>Purpose:</strong> Caches loan access information to reduce extension calls.</div>
+    <div class="necessity"><strong>Why it's necessary:</strong> Improves performance by avoiding redundant extension queries.</div>
+    <div class="works">
+        <strong>How it works:</strong>
+        <ol>
+            <li>Stores allowed loan numbers in a Set</li>
+            <li>Tracks when the cache was last updated</li>
+            <li>Provides methods to check, add, and clear cached loan information</li>
+            <li>Automatically invalidates cache after a timeout period</li>
+        </ol>
+    </div>
+    
+    <h4><code>isLoanNumberAllowed(loanNumber)</code></h4>
+    <div class="purpose"><strong>Purpose:</strong> Determines if a user has access to a specific loan number.</div>
+    <div class="necessity"><strong>Why it's necessary:</strong> Provides a simple interface for checking loan access that handles caching.</div>
+    <div class="works">
+        <strong>How it works:</strong>
+        <ol>
+            <li>Checks if the loan number is in the cache</li>
+            <li>If not in cache or cache is invalid, calls <code>checkNumbersBatch()</code></li>
+            <li>Updates cache with the result</li>
+            <li>Returns true if the user has access, false otherwise</li>
+        </ol>
+    </div>
+    
+    <h3>3. Content Processing and Filtering</h3>
+    
+    <h4><code>processPage()</code></h4>
+    <div class="purpose"><strong>Purpose:</strong> Main function that processes the entire page to filter loan information.</div>
+    <div class="necessity"><strong>Why it's necessary:</strong> Coordinates the filtering of different types of elements on the page.</div>
+    <div class="works">
+        <strong>How it works:</strong>
+        <ol>
+            <li>Calls <code>processTableRows()</code> to filter table rows</li>
+            <li>Calls <code>processGenericElements()</code> to filter other elements</li>
+            <li>Calls <code>processBrandElements()</code> to filter brand-related elements</li>
+            <li>Calls <code>handleSingleRestrictedLoanSearch()</code> to handle search results</li>
+        </ol>
+    </div>
+    
+    <h4><code>processTableRows()</code></h4>
+    <div class="purpose"><strong>Purpose:</strong> Filters table rows containing loan information.</div>
+    <div class="necessity"><strong>Why it's necessary:</strong> Tables are a common way to display loan information.</div>
+    <div class="works">
+        <strong>How it works:</strong>
+        <ol>
+            <li>Selects all table rows in the document</li>
+            <li>For each unprocessed row, checks if it contains loan numbers</li>
+            <li>If it contains loan numbers, checks if the user has access</li>
+            <li>Hides rows containing loan numbers the user doesn't have access to</li>
+        </ol>
+    </div>
+    
+    <h4><code>processGenericElements()</code></h4>
+    <div class="purpose"><strong>Purpose:</strong> Filters non-table elements containing loan information.</div>
+    <div class="necessity"><strong>Why it's necessary:</strong> Loan information may appear in various UI elements.</div>
+    <div class="works">
+        <strong>How it works:</strong>
+        <ol>
+            <li>Selects elements with classes or attributes related to loans</li>
+            <li>For each unprocessed element, checks if it contains loan numbers</li>
+            <li>If it contains loan numbers, checks if the user has access</li>
+            <li>Hides elements containing loan numbers the user doesn't have access to</li>
+        </ol>
+    </div>
+    
+    <h4><code>processBrandElements()</code></h4>
+    <div class="purpose"><strong>Purpose:</strong> Filters brand-related elements based on loan access.</div>
+    <div class="necessity"><strong>Why it's necessary:</strong> Brand information is often associated with loans.</div>
+    <div class="works">
+        <strong>How it works:</strong>
+        <ol>
+            <li>Extracts brand data from the page</li>
+            <li>Filters brand dropdowns to hide options for brands with no accessible loans</li>
+            <li>Filters brand elements in tables</li>
+            <li>Filters other brand containers</li>
+        </ol>
+    </div>
+    
+    <h4><code>shouldHideElement(element)</code></h4>
+    <div class="purpose"><strong>Purpose:</strong> Determines if an element should be hidden based on loan access.</div>
+    <div class="necessity"><strong>Why it's necessary:</strong> Provides a consistent way to check if elements should be hidden.</div>
+    <div class="works">
+        <strong>How it works:</strong>
+        <ol>
+            <li>Skips certain element types (script, style, etc.)</li>
+            <li>Checks if the element contains text that looks like loan numbers</li>
+            <li>Extracts potential loan numbers from the element's text</li>
+            <li>Checks if the user has access to any of the loan numbers</li>
+            <li>Returns true if the element should be hidden, false otherwise</li>
+        </ol>
+    </div>
+    
+    <h3>4. Dynamic Content Handling</h3>
+    
+    <h4><code>initMutationObserver()</code></h4>
+    <div class="purpose"><strong>Purpose:</strong> Sets up an observer to detect and process dynamically added content.</div>
+    <div class="necessity"><strong>Why it's necessary:</strong> Web applications often load content dynamically after the initial page load.</div>
+    <div class="works">
+        <strong>How it works:</strong>
+        <ol>
+            <li>Creates a MutationObserver to watch for DOM changes</li>
+            <li>When changes are detected, determines if they're relevant to loan filtering</li>
+            <li>Debounces processing to avoid excessive CPU usage</li>
+            <li>Calls appropriate processing functions based on the type of change</li>
+        </ol>
+    </div>
+    
+    <h4><code>onValueChange(evalFunction, callback, options)</code></h4>
+    <div class="purpose"><strong>Purpose:</strong> Monitors a value for changes and executes a callback when it changes.</div>
+    <div class="necessity"><strong>Why it's necessary:</strong> Allows the script to react to changes in the application state.</div>
+    <div class="works">
+        <strong>How it works:</strong>
+        <ol>
+            <li>Periodically evaluates the provided function</li>
+            <li>When the value changes, calls the callback with the new and old values</li>
+            <li>Supports options for maximum monitoring time</li>
+        </ol>
+    </div>
+    
+    <h4><code>monitorLoanDropdown()</code></h4>
+    <div class="purpose"><strong>Purpose:</strong> Specifically monitors and processes loan dropdown elements.</div>
+    <div class="necessity"><strong>Why it's necessary:</strong> Loan dropdowns are a common UI element that needs special handling.</div>
+    <div class="works">
+        <strong>How it works:</strong>
+        <ol>
+            <li>Finds the loan dropdown element</li>
+            <li>Processes it immediately if it has options</li>
+            <li>Sets up a mutation observer to detect changes to the dropdown</li>
+            <li>Processes the dropdown when changes are detected</li>
+        </ol>
+    </div>
+    
+    <h3>5. Special Case Handling</h3>
+    
+    <h4><code>handleSingleRestrictedLoanSearch()</code></h4>
+    <div class="purpose"><strong>Purpose:</strong> Handles the case where a search returns a single restricted loan.</div>
+    <div class="necessity"><strong>Why it's necessary:</strong> Provides a better user experience when searches return restricted results.</div>
+    <div class="works">
+        <strong>How it works:</strong>
+        <ol>
+            <li>Checks if the page contains a search form and a single result</li>
+            <li>Extracts the loan number from the result</li>
+            <li>Checks if the user has access to the loan</li>
+            <li>If not, hides the result and displays a message</li>
+        </ol>
+    </div>
+    
+    <h4><code>ViewElement</code> class and related functions</h4>
+    <div class="purpose"><strong>Purpose:</strong> Manages the view element for loan details.</div>
+    <div class="necessity"><strong>Why it's necessary:</strong> Provides a way to show or hide loan details based on access.</div>
+    <div class="works">
+        <strong>How it works:</strong>
+        <ol>
+            <li><code>ViewElement</code> class encapsulates the loan detail view</li>
+            <li><code>getLoanNumber()</code> extracts the loan number from the view</li>
+            <li><code>waitForLoanNumber()</code> waits for a loan number to appear in the view</li>
+            <li>When a loan number is detected, checks access and shows/hides accordingly</li>
+        </ol>
+    </div>
+    
+    <h3>6. Utility Functions</h3>
+    
+    <h4><code>extractLoanNumbers(text)</code></h4>
+    <div class="purpose"><strong>Purpose:</strong> Extracts potential loan numbers from text.</div>
+    <div class="necessity"><strong>Why it's necessary:</strong> Loan numbers may appear in various formats.</div>
+    <div class="works">
+        <strong>How it works:</strong>
+        <ol>
+            <li>Uses regular expressions to find digit sequences and alphanumeric sequences</li>
+            <li>Returns a unique set of potential loan numbers</li>
+        </ol>
+    </div>
+    
+    <h4><code>containsLoanNumber(text)</code></h4>
+    <div class="purpose"><strong>Purpose:</strong> Quickly checks if text contains something that looks like a loan number.</div>
+    <div class="necessity"><strong>Why it's necessary:</strong> Provides a fast way to filter out elements that don't need processing.</div>
+    <div class="works"><strong>How it works:</strong> Uses regular expressions to check for digit sequences or alphanumeric sequences</div>
+    
+    <h4><code>extractBrandsData()</code></h4>
+    <div class="purpose"><strong>Purpose:</strong> Extracts brand information from the page.</div>
+    <div class="necessity"><strong>Why it's necessary:</strong> Brand information is used for filtering.</div>
+    <div class="works">
+        <strong>How it works:</strong>
+        <ol>
+            <li>Looks for brand select elements and extracts options</li>
+            <li>Extracts brand codes and names</li>
+            <li>Associates loan numbers with brands</li>
+            <li>Caches the result for future use</li>
+        </ol>
+    </div>
+    
+    <h4><code>logThrottle</code></h4>
+    <div class="purpose"><strong>Purpose:</strong> Prevents excessive logging.</div>
+    <div class="necessity"><strong>Why it's necessary:</strong> Improves performance and reduces console clutter.</div>
+    <div class="works"><strong>How it works:</strong> Only logs messages for a given key if a certain time has passed since the last log</div>
+    
+    <h3>7. Cleanup</h3>
+    
+    <h4><code>__cleanupLoanFilter()</code></h4>
+    <div class="purpose"><strong>Purpose:</strong> Cleans up resources when the script is unloaded.</div>
+    <div class="necessity"><strong>Why it's necessary:</strong> Prevents memory leaks and ensures proper cleanup.</div>
+    <div class="works">
+        <strong>How it works:</strong>
+        <ol>
+            <li>Clears all intervals and timeouts</li>
+            <li>Disconnects mutation observers</li>
+            <li>Logs cleanup completion</li>
+        </ol>
+    </div>
+    
+    <h2>Complete Process Flow</h2>
+    
+    <div class="process-step">
+        <h3>1. Initialization</h3>
+        <ul>
+            <li>Script is loaded and immediately invokes the main function</li>
+            <li><code>initialize()</code> is called to establish connection with the extension</li>
+            <li>If connection is successful, initial processing begins</li>
+        </ul>
+    </div>
+    
+    <div class="process-step">
+        <h3>2. Initial Processing</h3>
+        <ul>
+            <li><code>processPage()</code> is called to filter the initial page content</li>
+            <li>Mutation observers are set up to handle dynamic content</li>
+            <li>Interval timers are set up for periodic processing</li>
+        </ul>
+    </div>
+    
+    <div class="process-step">
+        <h3>3. Ongoing Monitoring</h3>
+        <ul>
+            <li>Mutation observers detect changes to the DOM</li>
+            <li>When changes are detected, relevant processing functions are called</li>
+            <li>Periodic processing runs at regular intervals</li>
+            <li>URL changes are monitored for specific pages</li>
+        </ul>
+    </div>
+    
+    <div class="process-step">
+        <h3>4. User Interactions</h3>
+        <ul>
+            <li>When users search for loans, results are filtered</li>
+            <li>When users navigate to loan details, access is checked</li>
+            <li>Dropdowns and other UI elements are filtered based on access</li>
+        </ul>
+    </div>
+    
+    <div class="process-step">
+        <h3>5. Cleanup</h3>
+        <ul>
+            <li>When the script is unloaded, <code>__cleanupLoanFilter()</code> is called</li>
+            <li>All resources are properly cleaned up</li>
+        </ul>
+    </div>
+    
+    <div class="conclusion">
+        <h2>Conclusion</h2>
+        <p>The loan filter script provides a comprehensive solution for filtering loan information based on user permissions. It handles various UI elements, dynamic content, and special cases to ensure that users only see loan information they have access to.</p>
+    </div>
+</body>
+</html>
