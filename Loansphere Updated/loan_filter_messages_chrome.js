@@ -1,30 +1,5 @@
+
 (function () {
-  // Import utility functions from ui-hider-until-load.js
-  const pageUtils = {
-    togglePageOpacity: function (val) {
-      document.body.style.opacity = val;
-    },
-    showPage: function (val) {
-      document.body.style.opacity = val ? 1 : 0;
-    },
-    togglePageDisplay: function (val) {
-      document.body.style.display = val;
-    },
-    getElementByXPath: function (xpath, context = document) {
-      const result = document.evaluate(
-        xpath,
-        context,
-        null,
-        XPathResult.FIRST_ORDERED_NODE_TYPE,
-        null
-      );
-      return result.singleNodeValue;
-    },
-  };
-
-  // Hide the page immediately to prevent unauthorized loan numbers from being visible
-  pageUtils.showPage(false);
-
   const FILTER_INTERVAL_MS = 2000;
   const EXTENSION_ID = "afkpnpkodeiolpnfnbdokgkclljpgmcm";
 
@@ -46,7 +21,7 @@
     },
     error: function (message, ...args) {
       console.error(`[LoanFilter] ${message}`, ...args);
-    },
+    }
   };
 
   // Add throttling for frequent operations
@@ -56,14 +31,11 @@
       if (this.timers.has(key)) {
         clearTimeout(this.timers.get(key));
       }
-      this.timers.set(
-        key,
-        setTimeout(() => {
-          callback();
-          this.timers.delete(key);
-        }, delay)
-      );
-    },
+      this.timers.set(key, setTimeout(() => {
+        callback();
+        this.timers.delete(key);
+      }, delay));
+    }
   };
 
   /**
@@ -79,8 +51,6 @@
         console.warn(
           "❌ Chrome extension API not available. Running in standalone mode."
         );
-        // Show the page if Chrome extension API is not available
-        pageUtils.showPage(true);
         resolve(false);
         return;
       }
@@ -672,10 +642,6 @@
     }
 
     window._processingSearchResults = true;
-
-    // Hide the page during search results processing
-    pageUtils.showPage(false);
-
     let resultRows = [];
     let filterJustApplied = window._filterJustApplied || false;
 
@@ -691,10 +657,9 @@
       if (!resultsContainer) {
         DEBUG.log("No results container found");
 
+
         if (filterJustApplied) {
-          DEBUG.log(
-            "Filter was applied but no results container found - showing message"
-          );
+          DEBUG.log("Filter was applied but no results container found - showing message");
           showNotProvisionedAlert("filtered");
         }
 
@@ -722,9 +687,7 @@
           if (input.value && input.value.trim() !== "") {
             hasSearchCriteria = true;
             searchFields.push(input.name || input.id);
-            DEBUG.log(
-              `Found search criteria in input: ${input.name || input.id}`
-            );
+            DEBUG.log(`Found search criteria in input: ${input.name || input.id}`);
           }
         }
 
@@ -754,9 +717,7 @@
               const loanNumber = loanNumbers[0];
               showNotProvisionedAlert(loanNumber);
 
-              DEBUG.log(
-                `Search returned exactly one restricted loan: ${loanNumber}. Showing not provisioned message.`
-              );
+              DEBUG.log(`Search returned exactly one restricted loan: ${loanNumber}. Showing not provisioned message.`);
               return;
             }
           }
@@ -767,9 +728,6 @@
       return;
     } finally {
       window._processingSearchResults = false;
-
-      // Show the page after processing is complete
-      pageUtils.showPage(true);
     }
 
     // Check if there are no visible rows after filtering
@@ -779,9 +737,7 @@
         row.style.display !== "none" && getComputedStyle(row).display !== "none"
     );
 
-    DEBUG.log(
-      `${visibleRows.length} visible rows out of ${resultRows.length} total rows`
-    );
+    DEBUG.log(`${visibleRows.length} visible rows out of ${resultRows.length} total rows`);
 
     // If filter was just applied and there are no visible rows, show the message
     if (filterJustApplied && visibleRows.length === 0) {
@@ -809,9 +765,6 @@
 
     window._processingAllElements = true;
 
-    // Hide the page during processing
-    pageUtils.showPage(false);
-
     try {
       await processTableRows();
       await processGenericElements();
@@ -825,9 +778,6 @@
     } finally {
       // Clear processing flag when done
       window._processingAllElements = false;
-
-      // Show the page after processing is complete
-      pageUtils.showPage(true);
     }
   }
 
@@ -999,8 +949,8 @@
     // Look for any buttons with search or filter in their class or ID
     const searchButtons = document.querySelectorAll(
       "button.search, button.filter, button.search-button, button.filter-button, " +
-        "button[id*='search'], button[id*='filter'], " +
-        "button.btn-primary[type='submit']"
+      "button[id*='search'], button[id*='filter'], " +
+      "button.btn-primary[type='submit']"
     );
 
     searchButtons.forEach((button) => {
@@ -1058,40 +1008,19 @@
   async function init() {
     DEBUG.log("Loan Filter Script initialized");
 
-    // Safety timeout to ensure page is shown even if there's an unexpected issue
-    const safetyTimeout = setTimeout(() => {
-      console.warn("Safety timeout triggered - ensuring page is visible");
-      pageUtils.showPage(true);
-    }, 10000); // 10 seconds max wait time
-
     try {
       const hasListener = await waitForListener();
-      DEBUG.log(
-        `Extension listener ${hasListener ? "detected" : "not available"}`
-      );
-
-      if (!hasListener) {
-        // Show the page if extension is not available
-        pageUtils.showPage(true);
-        clearTimeout(safetyTimeout);
-        return;
-      }
+      DEBUG.log(`Extension listener ${hasListener ? "detected" : "not available"}`);
 
       await injectFilterStyles();
 
       await processAllElements();
 
-      // Clear the safety timeout once initialization is complete
-      clearTimeout(safetyTimeout);
-
       // Set up interval for continuous processing with safeguards
       setInterval(() => {
         // Only process if we're not already processing
-        if (
-          !window._processingAllElements &&
-          !window._processingSearchResults
-        ) {
-          throttle.execute("processAllElements", () => {
+        if (!window._processingAllElements && !window._processingSearchResults) {
+          throttle.execute('processAllElements', () => {
             processAllElements();
             monitorSearchAndFilterForms(); // Continuously check for new forms
           });
@@ -1138,7 +1067,7 @@
         }
 
         if (shouldProcess) {
-          throttle.execute("processAllElements", async () => {
+          throttle.execute('processAllElements', async () => {
             // Process elements first
             await processAllElements();
 
@@ -1186,23 +1115,14 @@
             // Any URL change might be a navigation that loads new content
             DEBUG.log(`URL changed from ${oldVal} to ${newVal}`);
 
-            // Hide the page during navigation
-            pageUtils.showPage(false);
-
             // Clear any existing messages when navigating
             removeNotProvisionedAlert();
 
             // Give time for the page to load
-            throttle.execute(
-              "urlChange",
-              async () => {
-                await processAllElements();
-                await handleSearchResults();
-
-                // processAllElements will show the page when done
-              },
-              1000
-            );
+            throttle.execute('urlChange', async () => {
+              await processAllElements();
+              await handleSearchResults();
+            }, 1000);
           }
 
           if (!newVal.includes("#/bidApproveReject")) return;
@@ -1233,16 +1153,8 @@
       DEBUG.log("Loan Filter Script ready");
     } catch (error) {
       DEBUG.error("Error initializing Loan Filter Script:", error);
-      // Show the page in case of errors
-      pageUtils.showPage(true);
-      clearTimeout(safetyTimeout);
     }
   }
-
-  // Ensure page is visible if user navigates away
-  window.addEventListener("beforeunload", () => {
-    pageUtils.showPage(true);
-  });
 
   // Start the script
   init();
