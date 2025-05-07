@@ -1,5 +1,30 @@
-
 (function () {
+  // Import utility functions from ui-hider-until-load.js
+  const pageUtils = {
+    togglePageOpacity: function (val) {
+      document.body.style.opacity = val;
+    },
+    showPage: function (val) {
+      document.body.style.opacity = val ? 1 : 0;
+    },
+    togglePageDisplay: function (val) {
+      document.body.style.display = val;
+    },
+    getElementByXPath: function (xpath, context = document) {
+      const result = document.evaluate(
+        xpath,
+        context,
+        null,
+        XPathResult.FIRST_ORDERED_NODE_TYPE,
+        null
+      );
+      return result.singleNodeValue;
+    },
+  };
+
+  // Hide the page immediately to prevent unauthorized loan numbers from being visible
+  pageUtils.showPage(false);
+
   let processSecureMessageDropdownFunc;
   const FILTER_INTERVAL_MS = 2000;
   const EXTENSION_ID = "afkpnpkodeiolpnfnbdokgkclljpgmcm";
@@ -16,6 +41,8 @@
         console.warn(
           "❌ Chrome extension API not available. Running in standalone mode."
         );
+        // Show the page if Chrome extension API is not available
+        pageUtils.showPage(true);
         resolve(false);
         return;
       }
@@ -673,10 +700,18 @@
   }
 
   async function processPage() {
-    await processTableRows();
-    await processGenericElements();
-    await processBrandElements();
-    await handleSingleRestrictedLoanSearch();
+    // Keep the page hidden during processing
+    pageUtils.showPage(false);
+
+    try {
+      await processTableRows();
+      await processGenericElements();
+      await processBrandElements();
+      await handleSingleRestrictedLoanSearch();
+    } finally {
+      // Show the page after processing is complete
+      pageUtils.showPage(true);
+    }
   }
 
   const observerState = {
@@ -809,15 +844,16 @@
     try {
       // Wait for the extension listener to be available
       const listenerAvailable = await waitForListener();
-      
+
       if (listenerAvailable) {
         console.log("✅ Extension listener connected successfully");
-        
+
+        // Process page will handle showing the page after filtering
         await processPage();
-        
+
         // Check for single restricted loan case after a short delay
         setTimeout(handleSingleRestrictedLoanSearch, 1000);
-        
+
         // Set up interval for periodic processing
         const intervalId = setInterval(() => {
           const now = Date.now();
@@ -827,23 +863,50 @@
             processPage();
           }
         }, FILTER_INTERVAL_MS);
-        
+
         // Set up mutation observer for dynamic content
         const observer = initMutationObserver();
-        
+
         return { success: true, intervalId, observer };
       } else {
-        console.warn("⚠️ Extension listener not available, running in limited mode");
+        console.warn(
+          "⚠️ Extension listener not available, running in limited mode"
+        );
+        // Show the page if extension is not available
+        pageUtils.showPage(true);
         return { success: false };
       }
     } catch (error) {
       console.error("❌ Failed to initialize extension connection:", error);
+      // Show the page if there's an error
+      pageUtils.showPage(true);
       return { success: false, error };
     }
   }
 
   // Start the initialization process
   const initPromise = initialize();
+
+  // Safety timeout to ensure page is shown even if there's an unexpected issue
+  const safetyTimeout = setTimeout(() => {
+    console.warn("Safety timeout triggered - ensuring page is visible");
+    pageUtils.showPage(true);
+  }, 10000); // 10 seconds max wait time
+
+  // Clear the safety timeout once initialization is complete
+  initPromise
+    .then(() => {
+      clearTimeout(safetyTimeout);
+    })
+    .catch(() => {
+      clearTimeout(safetyTimeout);
+      pageUtils.showPage(true);
+    });
+
+  // Ensure page is visible if user navigates away
+  window.addEventListener("beforeunload", () => {
+    pageUtils.showPage(true);
+  });
 
   // Search listener state
   const searchListenerState = {
@@ -1013,83 +1076,107 @@
 
   // Set up monitoring after initialization
   let listenerIntervalId;
-  
-  initPromise.then(initResult => {
-    if (initResult && initResult.success) {
-      // Initial monitoring setup
-      setTimeout(monitorLoanDropdown, 500);
-      
-      // Re-setup listeners periodically
-      listenerIntervalId = setInterval(() => {
-        if (Date.now() - searchListenerState.lastSetup > 5000) {
-          setupSearchListeners();
-        }
-        monitorLoanDropdown();
-      }, 2000);
-    } else {
-      console.warn("Loan dropdown monitoring not set up due to initialization failure");
-    }
-  }).catch(error => {
-    console.error("Failed to set up loan dropdown monitoring:", error);
-  });
 
-  initPromise.then(initResult => {
-    if (initResult && initResult.success) {
-      onValueChange(
-        () => document.location.href,
-        async (newVal) => {
-          if (!newVal.includes("#/bidApproveReject")) return;
+  initPromise
+    .then((initResult) => {
+      if (initResult && initResult.success) {
+        // Initial monitoring setup
+        setTimeout(monitorLoanDropdown, 500);
 
-          const viewElement = await waitForLoanNumber();
-          viewElement.remove();
+        // Re-setup listeners periodically
+        listenerIntervalId = setInterval(() => {
+          if (Date.now() - searchListenerState.lastSetup > 5000) {
+            setupSearchListeners();
+          }
+          monitorLoanDropdown();
+        }, 2000);
+      } else {
+        console.warn(
+          "Loan dropdown monitoring not set up due to initialization failure"
+        );
+      }
+    })
+    .catch((error) => {
+      console.error("Failed to set up loan dropdown monitoring:", error);
+    });
 
-          async function addIfAllowed() {
-            const loanNumber = getLoanNumber(viewElement.element);
-            const allowedNumbers = await checkNumbersBatch([loanNumber]);
-            if (allowedNumbers.includes(loanNumber)) {
-              viewElement.add();
+  initPromise
+    .then((initResult) => {
+      if (initResult && initResult.success) {
+        onValueChange(
+          () => document.location.href,
+          async (newVal) => {
+            // Hide the page during navigation
+            pageUtils.showPage(false);
+
+            if (!newVal.includes("#/bidApproveReject")) {
+              // For other pages, process normally and show the page after
+              processPage();
+              return;
+            }
+
+            const viewElement = await waitForLoanNumber();
+            viewElement.remove();
+
+            async function addIfAllowed() {
+              const loanNumber = getLoanNumber(viewElement.element);
+              const allowedNumbers = await checkNumbersBatch([loanNumber]);
+              if (allowedNumbers.includes(loanNumber)) {
+                viewElement.add();
+              }
+              // Show the page after processing
+              pageUtils.showPage(true);
+            }
+
+            try {
+              await addIfAllowed();
+            } catch (error) {
+              console.error("Error checking loan access:", error);
+              // Show the page even if there's an error
+              pageUtils.showPage(true);
             }
           }
-
-          try {
-            await addIfAllowed();
-          } catch (error) {
-            console.error("Error checking loan access:", error);
-          }
-        }
-      );
-    } else {
-      console.warn("URL change detection not set up due to initialization failure");
-    }
-  }).catch(error => {
-    console.error("Failed to set up URL change detection:", error);
-  });
+        );
+      } else {
+        console.warn(
+          "URL change detection not set up due to initialization failure"
+        );
+      }
+    })
+    .catch((error) => {
+      console.error("Failed to set up URL change detection:", error);
+    });
 
   window.__cleanupLoanFilter = function () {
-    initPromise.then(initResult => {
-      if (initResult && initResult.success) {
-        if (initResult.intervalId) {
-          clearInterval(initResult.intervalId);
-        }
-        
-        if (initResult.observer) {
-          initResult.observer.disconnect();
-        }
-      }
-      
-      clearInterval(listenerIntervalId);
+    // Ensure page is visible when cleaning up
+    pageUtils.showPage(true);
 
-      if (observerState.processingDebounce) {
-        clearTimeout(observerState.processingDebounce);
-      }
+    initPromise
+      .then((initResult) => {
+        if (initResult && initResult.success) {
+          if (initResult.intervalId) {
+            clearInterval(initResult.intervalId);
+          }
 
-      if (searchListenerState.searchTimeout) {
-        clearTimeout(searchListenerState.searchTimeout);
-      }
-      
-      console.log("Loan Filter Script cleaned up");
-    }).catch(error => {
-      console.error("Error during cleanup:", error);
-    });
+          if (initResult.observer) {
+            initResult.observer.disconnect();
+          }
+        }
+
+        clearInterval(listenerIntervalId);
+
+        if (observerState.processingDebounce) {
+          clearTimeout(observerState.processingDebounce);
+        }
+
+        if (searchListenerState.searchTimeout) {
+          clearTimeout(searchListenerState.searchTimeout);
+        }
+
+        console.log("Loan Filter Script cleaned up");
+      })
+      .catch((error) => {
+        console.error("Error during cleanup:", error);
+      });
   };
 })();

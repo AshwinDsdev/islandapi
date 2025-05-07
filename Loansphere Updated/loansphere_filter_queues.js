@@ -1,24 +1,30 @@
-/**
- * Loansphere Queues Filter Script
- *
- * This script filters loan numbers that are not in window.storedNumbersSet
- * It can be injected into the developer console to filter data in Loansphere_Queues.html
- *
- * Usage:
- * 1. Open Loansphere_Queues.html in a browser
- * 2. Open developer console (F12 or right-click > Inspect > Console)
- * 3. Copy and paste this entire script into the console
- * 4. Press Enter to execute
- *
- * Features:
- * - Filters out loans not in storedNumbersSet
- * - Hides queues that only contain restricted loans
- * - Maintains default sort order of queues
- * - Shows accurate count of available queues
- * - Filters results by selected brand in top navigation
- */
-
 (function () {
+  // Import utility functions from ui-hider-until-load.js
+  const pageUtils = {
+    togglePageOpacity: function (val) {
+      document.body.style.opacity = val;
+    },
+    showPage: function (val) {
+      document.body.style.opacity = val ? 1 : 0;
+    },
+    togglePageDisplay: function (val) {
+      document.body.style.display = val;
+    },
+    getElementByXPath: function (xpath, context = document) {
+      const result = document.evaluate(
+        xpath,
+        context,
+        null,
+        XPathResult.FIRST_ORDERED_NODE_TYPE,
+        null
+      );
+      return result.singleNodeValue;
+    },
+  };
+
+  // Hide the page immediately to prevent unauthorized loan numbers from being visible
+  pageUtils.showPage(false);
+
   // Configuration
   const config = {
     debug: true,
@@ -28,7 +34,9 @@
     isOffshoreUser: true, // Set to true for offshore users who should have restricted access
   };
 
-  // State tracking
+  // Extension ID for communication
+  const EXTENSION_ID = "afkpnpkodeiolpnfnbdokgkclljpgmcm";
+
   // State tracking
   const state = {
     processedElements: new Set(),
@@ -45,7 +53,7 @@
     lastFilterTime: 0,
     originalQueueCount: 0,
     visibleQueueCount: 0,
-    brandProcessing: false, // Add this line
+    brandProcessing: false,
   };
 
   // Logging with throttling to prevent console spam
@@ -63,44 +71,154 @@
   };
 
   /**
-   * Check if storedNumbersSet is available
-   * @returns {boolean} - True if storedNumbersSet is available
+   * Wait for the extension listener to be available
    */
-  function isStoredNumbersSetAvailable() {
-    logThrottle.log(
-      "storedNumbersSet",
-      "Current storedNumbersSet available:",
-      !!window.storedNumbersSet
-    );
-    return (
-      window.storedNumbersSet !== null && window.storedNumbersSet !== undefined
-    );
+  async function waitForListener(maxRetries = 20, initialDelay = 100) {
+    return new Promise((resolve, reject) => {
+      if (
+        typeof chrome === "undefined" ||
+        !chrome.runtime ||
+        !chrome.runtime.sendMessage
+      ) {
+        console.warn(
+          "❌ Chrome extension API not available. Running in standalone mode."
+        );
+        // Show the page if Chrome extension API is not available
+        pageUtils.showPage(true);
+        resolve(false);
+        return;
+      }
+
+      let attempts = 0;
+      let delay = initialDelay;
+      let timeoutId;
+
+      function sendPing() {
+        if (attempts >= maxRetries) {
+          console.warn("❌ No listener detected after maximum retries.");
+          clearTimeout(timeoutId);
+          reject(new Error("Listener not found"));
+          return;
+        }
+
+        try {
+          chrome.runtime.sendMessage(
+            EXTENSION_ID,
+            { type: "ping" },
+            (response) => {
+              if (chrome.runtime.lastError) {
+                console.warn(
+                  "Chrome extension error:",
+                  chrome.runtime.lastError
+                );
+                attempts++;
+                if (attempts >= maxRetries) {
+                  reject(new Error("Chrome extension error"));
+                  return;
+                }
+                timeoutId = setTimeout(sendPing, delay);
+                return;
+              }
+
+              if (response?.result === "pong") {
+                clearTimeout(timeoutId);
+                resolve(true);
+              } else {
+                timeoutId = setTimeout(() => {
+                  attempts++;
+                  delay *= 2;
+                  sendPing();
+                }, delay);
+              }
+            }
+          );
+        } catch (error) {
+          console.error("Error sending message to extension:", error);
+          resolve(false);
+        }
+      }
+
+      sendPing();
+    });
   }
 
   /**
-   * Check if a loan number is allowed (exists in storedNumbersSet)
-   * @param {string} loanNumber - The loan number to check
-   * @returns {boolean} - True if the loan number is in the storedNumbersSet
+   * Check if a loan number is allowed via the extension
    */
-  function isLoanNumberAllowed(loanNumber) {
-    if (!isStoredNumbersSetAvailable()) {
-      return true; // If we can't verify, assume it's allowed
+  const LoanNums = [
+    "0000000000",
+    "0000000001",
+    "0000000372",
+    "0000000612",
+    "0000000687",
+    "0000000711",
+    "0000000786",
+    "0000000927",
+    "0000000976",
+    "0000001081",
+    "0000001180",
+    "0000001230",
+    "0000001255",
+    "0000001453",
+    "0000001537",
+    "0000001594",
+    "0000001669",
+    "0000001677",
+    "0000001719",
+    "0000001792",
+    "0000001834",
+    "0000001891",
+    "0000002063",
+    "0000002261",
+    "0000002352",
+    "0000002410",
+    "0000002436",
+    "0000002477",
+    "0000002485",
+    "0000002493",
+    "0000002535",
+    "0000002550",
+    "0000002600",
+    "0000002642",
+    "0000002667",
+    "0000002691",
+  ];
+
+  async function checkNumbersBatch(numbers) {
+    return new Promise((resolve, reject) => {
+      chrome.runtime.sendMessage(
+        EXTENSION_ID,
+        {
+          type: "queryLoans",
+          loanIds: numbers,
+        },
+        (response) => {
+          if (chrome.runtime.lastError) {
+            return reject(chrome.runtime.lastError.message);
+          } else if (response.error) {
+            return reject(response.error);
+          }
+
+          const available = Object.keys(response.result).filter(
+            (key) => response.result[key]
+          );
+          resolve(available);
+        }
+      );
+    });
+  }
+
+  /**
+   * Check if a loan number is allowed
+   */
+  async function isLoanNumberAllowed(loanNumber) {
+    try {
+      const allowedNumbers = await checkNumbersBatch([loanNumber]);
+      return allowedNumbers.includes(loanNumber);
+    } catch (error) {
+      console.warn("Failed to check loan access, assuming not allowed");
+      return false;
     }
-
-    let isAllowed = false;
-
-    if (window.storedNumbersSet instanceof Set) {
-      isAllowed = window.storedNumbersSet.has(loanNumber);
-    } else if (Array.isArray(window.storedNumbersSet)) {
-      isAllowed = window.storedNumbersSet.includes(loanNumber);
-    } else if (
-      window.storedNumbersSet &&
-      typeof window.storedNumbersSet === "object"
-    ) {
-      isAllowed = Object.values(window.storedNumbersSet).includes(loanNumber);
-    }
-
-    return isAllowed;
   }
 
   /**
@@ -226,18 +344,16 @@
 
   /**
    * Check if a queue has at least one allowed loan
-   * @param {string} queueName - The name of the queue to check
-   * @returns {boolean} - True if the queue has at least one allowed loan
    */
-  function queueHasAllowedLoans(queueName) {
-    if (!isStoredNumbersSetAvailable() || !state.queueLoanMap.has(queueName)) {
+  async function queueHasAllowedLoans(queueName) {
+    if (!state.queueLoanMap.has(queueName)) {
       return true; // If we can't verify, assume it's allowed
     }
 
     const loanNumbers = state.queueLoanMap.get(queueName);
 
     for (const loanNumber of loanNumbers) {
-      if (isLoanNumberAllowed(loanNumber)) {
+      if (await isLoanNumberAllowed(loanNumber)) {
         return true; // Queue has at least one allowed loan
       }
     }
@@ -247,11 +363,9 @@
 
   /**
    * Check if all loans in a queue belong to brands with only restricted loans
-   * @param {string} queueName - The name of the queue to check
-   * @returns {boolean} - True if all loans in the queue belong to restricted brands
    */
-  function queueHasOnlyRestrictedBrands(queueName) {
-    if (!isStoredNumbersSetAvailable() || !state.queueLoanMap.has(queueName)) {
+  async function queueHasOnlyRestrictedBrands(queueName) {
+    if (!state.queueLoanMap.has(queueName)) {
       return false; // If we can't verify, assume it's not restricted
     }
 
@@ -277,7 +391,7 @@
       if (!brand) continue;
 
       // Check if this brand has any allowed loans
-      if (brandHasAllowedLoans(brand.loanNumbers)) {
+      if (await brandHasAllowedLoans(brand.loanNumbers)) {
         return false; // Found a brand with allowed loans
       }
     }
@@ -311,8 +425,8 @@
   /**
    * Determine if an element should be hidden based on loan numbers it contains
    */
-  function shouldHideElement(element) {
-    if (!isStoredNumbersSetAvailable()) return false;
+  async function shouldHideElement(element) {
+    if (!state.queueLoanMap.size) return false;
 
     if (
       element.tagName === "SCRIPT" ||
@@ -334,7 +448,7 @@
     let hasAllowedLoan = false;
 
     for (const loanNumber of potentialLoanNumbers) {
-      const isAllowed = isLoanNumberAllowed(loanNumber);
+      const isAllowed = await isLoanNumberAllowed(loanNumber);
 
       if (isAllowed) {
         hasAllowedLoan = true;
@@ -357,9 +471,9 @@
   /**
    * Process table rows to hide those with restricted loan numbers
    */
-  function processTableRows() {
-    if (!isStoredNumbersSetAvailable()) {
-      console.warn("storedNumbersSet is not available yet. Waiting...");
+  async function processTableRows() {
+    if (!state.queueLoanMap.size) {
+      console.warn("queueLoanMap is not available yet. Waiting...");
       return;
     }
 
@@ -379,17 +493,17 @@
       );
     }
 
-    rows.forEach((row) => {
-      if (state.processedElements.has(row)) return;
+    for (const row of rows) {
+      if (state.processedElements.has(row)) continue;
 
       state.processedElements.add(row);
 
       // Get loan number from the row (2nd column)
       const loanNumberCell = row.cells[1];
-      if (!loanNumberCell) return;
+      if (!loanNumberCell) continue;
 
       const loanNumber = loanNumberCell.textContent.trim();
-      if (!loanNumber) return;
+      if (!loanNumber) continue;
 
       // Get brand from the row (4th column)
       const brandCell = row.cells[3];
@@ -406,10 +520,10 @@
           "hiddenRowBrand",
           `Hiding row with brand ${brand} (selected: ${selectedBrand})`
         );
-        return;
+        continue;
       }
 
-      const isAllowed = isLoanNumberAllowed(loanNumber);
+      const isAllowed = await isLoanNumberAllowed(loanNumber);
       if (!isAllowed) {
         row.style.display = "none";
         logThrottle.log(
@@ -417,14 +531,14 @@
           `Hiding row with loan number: ${loanNumber}`
         );
       }
-    });
+    }
   }
 
   /**
    * Process generic elements that might contain loan numbers
    */
-  function processGenericElements() {
-    if (!isStoredNumbersSetAvailable()) {
+  async function processGenericElements() {
+    if (!state.queueLoanMap.size) {
       return;
     }
 
@@ -432,28 +546,22 @@
       '.loan-item, .card, .list-item, div[class*="loan"]'
     );
 
-    potentialContainers.forEach((container) => {
-      if (state.processedElements.has(container)) return;
-
+    for (const container of potentialContainers) {
+      if (state.processedElements.has(container)) continue;
       state.processedElements.add(container);
 
-      if (shouldHideElement(container)) {
+      if (await shouldHideElement(container)) {
         container.style.display = "none";
       }
-    });
+    }
   }
 
   /**
    * Process queue elements to hide those that only contain restricted loans
    */
-  function processQueueElements() {
-    if (!isStoredNumbersSetAvailable() || !config.isOffshoreUser) {
+  async function processQueueElements() {
+    if (!state.queueLoanMap.size) {
       return;
-    }
-
-    // Extract queue data if not already done
-    if (state.queueLoanMap.size === 0) {
-      extractQueueData();
     }
 
     // Process queue dropdown
@@ -470,13 +578,13 @@
       let visibleQueueCount = 0;
 
       // Process each option in the dropdown
-      Array.from(queueFilter.options).forEach((option) => {
-        if (!option.value || option.value === "All Queues") return; // Skip "All Queues" option
+      for (const option of Array.from(queueFilter.options)) {
+        if (!option.value || option.value === "All Queues") continue; // Skip "All Queues" option
 
         const queueName = option.textContent.trim();
 
         // Check if this queue has only restricted brands
-        if (queueHasOnlyRestrictedBrands(queueName)) {
+        if (await queueHasOnlyRestrictedBrands(queueName)) {
           option.style.display = "none";
           state.queueVisibility.set(queueName, false);
           logThrottle.log(
@@ -487,7 +595,7 @@
           visibleQueueCount++;
           state.queueVisibility.set(queueName, true);
         }
-      });
+      }
 
       // Update visible queue count
       state.visibleQueueCount = visibleQueueCount;
@@ -500,12 +608,12 @@
     const queueCells = document.querySelectorAll(
       "#loansTableBody tr td:nth-child(5)"
     ); // Queue is the 5th column
-    queueCells.forEach((cell) => {
-      if (state.processedQueues.has(cell)) return;
+    for (const cell of queueCells) {
+      if (state.processedQueues.has(cell)) continue;
       state.processedQueues.add(cell);
 
       const queueName = cell.textContent.trim();
-      if (!queueName) return;
+      if (!queueName) continue;
 
       // If this queue should be hidden, hide the entire row
       if (
@@ -521,7 +629,7 @@
           );
         }
       }
-    });
+    }
   }
 
   /**
@@ -551,34 +659,26 @@
 
   /**
    * Check if a brand has at least one allowed loan
-   * @param {Array} brandLoanNumbers - Array of loan numbers for a brand
-   * @returns {boolean} - True if at least one loan number is in storedNumbersSet
    */
-  function brandHasAllowedLoans(brandLoanNumbers) {
-    if (
-      !isStoredNumbersSetAvailable() ||
-      !brandLoanNumbers ||
-      !Array.isArray(brandLoanNumbers)
-    ) {
-      return true; // If we can't verify, don't hide
+  async function brandHasAllowedLoans(brandLoanNumbers) {
+    if (!brandLoanNumbers || !Array.isArray(brandLoanNumbers)) {
+      return true;
     }
 
     for (const loanNumber of brandLoanNumbers) {
-      const isAllowed = isLoanNumberAllowed(loanNumber);
-
-      if (isAllowed) {
-        return true; // Brand has at least one allowed loan
+      if (await isLoanNumberAllowed(loanNumber)) {
+        return true;
       }
     }
 
-    return false; // No allowed loans found for this brand
+    return false;
   }
 
   /**
    * Process brand elements in the page and hide those without allowed loans
    */
-  function processBrandElements() {
-    if (!isStoredNumbersSetAvailable()) {
+  async function processBrandElements() {
+    if (!state.queueLoanMap.size) {
       return;
     }
 
@@ -601,48 +701,48 @@
 
     // Filter brand dropdowns
     const brandDropdowns = document.querySelectorAll("select#brandSelect");
-    brandDropdowns.forEach((dropdown) => {
-      if (state.processedBrands.has(dropdown)) return;
+    for (const dropdown of brandDropdowns) {
+      if (state.processedBrands.has(dropdown)) continue;
       state.processedBrands.add(dropdown);
 
       // Process each option in the dropdown
-      Array.from(dropdown.options).forEach((option) => {
+      for (const option of Array.from(dropdown.options)) {
         if (
           !option.value ||
           option.value === "" ||
           isNaN(parseInt(option.value))
         )
-          return; // Skip "All Brands" option
+          continue;
 
         // Find the brand data for this option
         const brandId = parseInt(option.value);
         const brand = brandsData.find((b) => b.id === brandId);
 
-        if (brand && !brandHasAllowedLoans(brand.loanNumbers)) {
+        if (brand && !(await brandHasAllowedLoans(brand.loanNumbers))) {
           option.style.display = "none"; // Hide brands without allowed loans
           logThrottle.log(
             "hiddenBrand",
             `Filtering out brand: ${brand.name} (${brand.code})`
           );
         }
-      });
-    });
+      }
+    }
 
     // Filter brand cells in the table
     const brandCells = document.querySelectorAll(
       "#loansTableBody tr td:nth-child(4)"
     ); // Brand is the 4th column
-    brandCells.forEach((cell) => {
-      if (state.processedBrands.has(cell)) return;
+    for (const cell of brandCells) {
+      if (state.processedBrands.has(cell)) continue;
       state.processedBrands.add(cell);
 
       // Get brand name from the cell
       const brandName = cell.textContent.trim();
-      if (!brandName) return;
+      if (!brandName) continue;
 
       const brand = brandsData.find((b) => b.name === brandName);
 
-      if (brand && !brandHasAllowedLoans(brand.loanNumbers)) {
+      if (brand && !(await brandHasAllowedLoans(brand.loanNumbers))) {
         // Find the parent row and hide it
         const row = cell.closest("tr");
         if (row) {
@@ -653,17 +753,15 @@
           );
         }
       }
-    });
+    }
   }
 
   /**
    * Process the entire page to filter loans, brands, and queues
    */
-  function processPage() {
-    if (!isStoredNumbersSetAvailable()) {
-      console.warn("storedNumbersSet is not available yet. Waiting...");
-      return;
-    }
+  async function processPage() {
+    // Extract queue data first to build the queue-loan mapping
+    extractQueueData();
 
     // Prevent processing if we're already processing a brand change
     if (state.brandProcessing && Date.now() - state.lastFilterTime < 1000) {
@@ -676,59 +774,156 @@
     }
     state.lastFilterTime = now;
 
+    // Hide the page during processing
+    pageUtils.showPage(false);
+
     logThrottle.log("processPage", "Processing page for loan filtering...");
 
-    // Extract queue data first to build the queue-loan mapping
-    extractQueueData();
+    try {
+      // Process elements in order
+      await processTableRows();
+      await processGenericElements();
+      await processBrandElements();
+      await processQueueElements();
 
-    // Process elements in order
-    processTableRows();
-    processGenericElements();
-    processBrandElements();
-    processQueueElements();
+      // Always process search input to ensure filtering is applied
+      await processSearchInput();
 
-    // Always process search input to ensure filtering is applied
-    processSearchInput();
+      // Update queue count display
+      updateQueueCountDisplay();
 
-    // Update queue count display
-    updateQueueCountDisplay();
-
-    // Final check to ensure all unauthorized loans are hidden
-    ensureUnauthorizedLoansHidden();
+      // Final check to ensure all unauthorized loans are hidden
+      await ensureUnauthorizedLoansHidden();
+    } finally {
+      // Show the page after processing is complete
+      pageUtils.showPage(true);
+    }
   }
 
   /**
    * Final check to ensure all unauthorized loans are hidden
-   * This is a safety measure to catch any loans that might have slipped through
    */
-  function ensureUnauthorizedLoansHidden() {
-    if (!isStoredNumbersSetAvailable()) return;
+  async function ensureUnauthorizedLoansHidden() {
+    if (!state.queueLoanMap.size) return;
 
+    // Hide the page during this final check
+    pageUtils.showPage(false);
+
+    try {
+      const rows = document.querySelectorAll("#loansTableBody tr");
+      let hiddenCount = 0;
+
+      for (const row of rows) {
+        // Skip already hidden rows
+        if (row.style.display === "none") continue;
+
+        const loanNumberCell = row.cells[1];
+        if (!loanNumberCell) continue;
+
+        const loanNumber = loanNumberCell.textContent.trim();
+        if (!loanNumber) continue;
+
+        // Check if this loan is allowed
+        if (!(await isLoanNumberAllowed(loanNumber))) {
+          row.style.display = "none";
+          hiddenCount++;
+        }
+      }
+
+      if (hiddenCount > 0) {
+        logThrottle.log(
+          "finalCheck",
+          `Final check hid ${hiddenCount} unauthorized loans that slipped through`
+        );
+      }
+    } finally {
+      // Show the page after processing is complete
+      pageUtils.showPage(true);
+    }
+  }
+
+  /**
+   * Process search input to filter out unauthorized loans
+   */
+  async function processSearchInput() {
+    const searchInput = document.getElementById("searchInput");
+    if (!searchInput) return;
+
+    // Get the current search text
+    const searchText = searchInput.value.trim().toLowerCase();
+
+    // Always apply our base filtering to ensure only authorized loans are shown
     const rows = document.querySelectorAll("#loansTableBody tr");
-    let hiddenCount = 0;
 
-    rows.forEach((row) => {
-      // Skip already hidden rows
-      if (row.style.display === "none") return;
-
+    for (const row of rows) {
       const loanNumberCell = row.cells[1];
-      if (!loanNumberCell) return;
+      if (!loanNumberCell) continue;
 
       const loanNumber = loanNumberCell.textContent.trim();
-      if (!loanNumber) return;
+      if (!loanNumber) continue;
 
-      // Check if this loan is allowed
-      if (!isLoanNumberAllowed(loanNumber)) {
+      // First check if this loan is allowed at all
+      const isAllowed = await isLoanNumberAllowed(loanNumber);
+
+      if (!isAllowed) {
+        // Always hide unauthorized loans regardless of search
         row.style.display = "none";
-        hiddenCount++;
+        logThrottle.log(
+          "hiddenSearchRow",
+          `Hiding unauthorized loan: ${loanNumber}`
+        );
+        continue;
       }
-    });
 
-    if (hiddenCount > 0) {
-      logThrottle.log(
-        "finalCheck",
-        `Final check hid ${hiddenCount} unauthorized loans that slipped through`
-      );
+      // If there's a search term, apply additional filtering
+      if (searchText) {
+        logThrottle.log(
+          "searchInput",
+          `Processing search input: "${searchText}"`
+        );
+
+        // Check if the row matches the search term
+        const rowText = row.textContent.toLowerCase();
+        const matchesSearch = rowText.includes(searchText);
+
+        // If the search contains a loan number pattern, do additional checks
+        if (containsLoanNumber(searchText)) {
+          const potentialLoanNumbers = extractLoanNumbers(searchText);
+
+          // If searching for specific loan numbers, ensure they're authorized
+          if (potentialLoanNumbers.length > 0) {
+            let searchingForAllowedLoan = false;
+
+            for (const searchLoanNumber of potentialLoanNumbers) {
+              if (await isLoanNumberAllowed(searchLoanNumber)) {
+                searchingForAllowedLoan = true;
+                logThrottle.log(
+                  "searchAllowedLoan",
+                  `Search contains allowed loan: ${searchLoanNumber}`
+                );
+                break;
+              }
+            }
+
+            // If searching for unauthorized loans, hide all results
+            if (!searchingForAllowedLoan) {
+              logThrottle.log(
+                "searchUnauthorized",
+                `Search for unauthorized loan(s): ${potentialLoanNumbers.join(
+                  ", "
+                )}`
+              );
+              row.style.display = "none";
+              continue;
+            }
+          }
+        }
+
+        // Show or hide based on search match (only for authorized loans)
+        if (!matchesSearch) {
+          row.style.display = "none";
+        }
+      }
     }
   }
 
@@ -879,7 +1074,6 @@
 
   /**
    * Set up interval to periodically reprocess the page
-   * This catches any elements that might have been missed
    */
   function setupProcessingInterval() {
     if (state.processingInterval) {
@@ -887,7 +1081,10 @@
     }
 
     state.processingInterval = setInterval(() => {
-      if (isStoredNumbersSetAvailable()) {
+      // Extract queue data first
+      extractQueueData();
+
+      if (state.queueLoanMap.size > 0) {
         logThrottle.log("interval", "Reprocessing page from interval");
         processPage();
       }
@@ -897,161 +1094,15 @@
   }
 
   /**
-   * Process search input to filter out unauthorized loans
-   */
-  function processSearchInput() {
-    const searchInput = document.getElementById("searchInput");
-    if (!searchInput) return;
-
-    // Get the current search text
-    const searchText = searchInput.value.trim().toLowerCase();
-
-    // Always apply our base filtering to ensure only authorized loans are shown
-    const rows = document.querySelectorAll("#loansTableBody tr");
-
-    rows.forEach((row) => {
-      const loanNumberCell = row.cells[1];
-      if (!loanNumberCell) return;
-
-      const loanNumber = loanNumberCell.textContent.trim();
-      if (!loanNumber) return;
-
-      // First check if this loan is allowed at all
-      const isAllowed = isLoanNumberAllowed(loanNumber);
-
-      if (!isAllowed) {
-        // Always hide unauthorized loans regardless of search
-        row.style.display = "none";
-        logThrottle.log(
-          "hiddenSearchRow",
-          `Hiding unauthorized loan: ${loanNumber}`
-        );
-        return;
-      }
-
-      // If there's a search term, apply additional filtering
-      if (searchText) {
-        logThrottle.log(
-          "searchInput",
-          `Processing search input: "${searchText}"`
-        );
-
-        // Check if the row matches the search term
-        const rowText = row.textContent.toLowerCase();
-        const matchesSearch = rowText.includes(searchText);
-
-        // If the search contains a loan number pattern, do additional checks
-        if (containsLoanNumber(searchText)) {
-          const potentialLoanNumbers = extractLoanNumbers(searchText);
-
-          // If searching for specific loan numbers, ensure they're authorized
-          if (potentialLoanNumbers.length > 0) {
-            let searchingForAllowedLoan = false;
-
-            for (const searchLoanNumber of potentialLoanNumbers) {
-              if (isLoanNumberAllowed(searchLoanNumber)) {
-                searchingForAllowedLoan = true;
-                logThrottle.log(
-                  "searchAllowedLoan",
-                  `Search contains allowed loan: ${searchLoanNumber}`
-                );
-                break;
-              }
-            }
-
-            // If searching for unauthorized loans, hide all results
-            if (!searchingForAllowedLoan) {
-              logThrottle.log(
-                "searchUnauthorized",
-                `Search for unauthorized loan(s): ${potentialLoanNumbers.join(
-                  ", "
-                )}`
-              );
-              row.style.display = "none";
-              return;
-            }
-          }
-        }
-
-        // Show or hide based on search match (only for authorized loans)
-        if (!matchesSearch) {
-          row.style.display = "none";
-        }
-      }
-    });
-  }
-
-  /**
-   * Override the default filterLoans function to ensure our filtering is applied
-   */
-  function overrideFilterLoans() {
-    // Store the original filterLoans function if it exists
-    if (window.originalFilterLoans === undefined && window.filterLoans) {
-      window.originalFilterLoans = window.filterLoans;
-
-      // Override with our version that applies additional filtering
-      window.filterLoans = function () {
-        // First, make all rows visible to ensure the original function works correctly
-        const rows = document.querySelectorAll("#loansTableBody tr");
-        rows.forEach((row) => {
-          const loanNumberCell = row.cells[1];
-          if (!loanNumberCell) return;
-
-          const loanNumber = loanNumberCell.textContent.trim();
-          if (!loanNumber) return;
-
-          // Only make authorized loans visible for the original function to filter
-          if (isLoanNumberAllowed(loanNumber)) {
-            // Temporarily make this row visible for the original filter
-            if (row.style.display === "none") {
-              row.dataset.wasHidden = "true";
-              row.style.display = "";
-            }
-          } else {
-            // Keep unauthorized loans hidden
-            row.style.display = "none";
-          }
-        });
-
-        // Call the original function to apply its filtering
-        window.originalFilterLoans.apply(this, arguments);
-
-        // Then apply our additional filtering to hide unauthorized loans
-        setTimeout(() => {
-          // Reset processed elements to force reprocessing
-          state.processedElements.clear();
-
-          // Process search input specifically
-          processSearchInput();
-
-          // Restore any rows that were temporarily made visible
-          rows.forEach((row) => {
-            if (row.dataset.wasHidden === "true") {
-              delete row.dataset.wasHidden;
-              // Only hide if the original filter didn't already hide it
-              if (row.style.display === "") {
-                row.style.display = "none";
-              }
-            }
-          });
-        }, 50);
-      };
-
-      logThrottle.log("override", "Successfully overrode filterLoans function");
-    }
-  }
-
-  /**
    * Add event listeners for brand and queue selection changes
    */
-  // Listen for brand selection changes
   function addEventListeners() {
     // Listen for brand selection changes
     const brandSelect = document.getElementById("brandSelect");
     if (brandSelect) {
       let processingTimeout = null;
 
-      brandSelect.addEventListener("change", () => {
+      brandSelect.addEventListener("change", async () => {
         // Clear any pending timeouts
         if (processingTimeout) {
           clearTimeout(processingTimeout);
@@ -1070,17 +1121,17 @@
         state.queueLoanMap.clear();
         state.brandProcessing = true;
 
-        processingTimeout = setTimeout(() => {
+        processingTimeout = setTimeout(async () => {
           try {
             // Show loading state
             const rows = document.querySelectorAll("#loansTableBody tr");
             rows.forEach((row) => (row.style.display = ""));
 
             // Process the page with new brand filter
-            processPage();
+            await processPage();
 
             // Re-filter rows based on selected brand
-            rows.forEach((row) => {
+            for (const row of rows) {
               const brandCell = row.cells[3];
               const loanNumberCell = row.cells[1];
 
@@ -1090,11 +1141,11 @@
 
                 if (selectedBrand !== "All Brands" && brand !== selectedBrand) {
                   row.style.display = "none";
-                } else if (!isLoanNumberAllowed(loanNumber)) {
+                } else if (!(await isLoanNumberAllowed(loanNumber))) {
                   row.style.display = "none";
                 }
               }
-            });
+            }
           } finally {
             // Reset processing state
             state.brandProcessing = false;
@@ -1180,56 +1231,77 @@
   /**
    * Initialize the filter
    */
-  function initFilter() {
+  async function initFilter() {
     console.log("[LoanFilter] Initializing Loansphere Queues filter...");
 
-    // Create storedNumbersSet if it doesn't exist (for testing)
-    if (!window.storedNumbersSet) {
-      console.warn(
-        "[LoanFilter] No storedNumbersSet found, creating a test set"
-      );
-      // This is just for testing - in production, storedNumbersSet should be provided
-      window.storedNumbersSet = new Set([
-        "0000000976",
-        "0000001245",
-        "0000001180",
-        "0000001081",
-      ]);
+    // Safety timeout to ensure page is shown even if there's an unexpected issue
+    const safetyTimeout = setTimeout(() => {
+      console.warn("Safety timeout triggered - ensuring page is visible");
+      pageUtils.showPage(true);
+    }, 10000); // 10 seconds max wait time
+
+    try {
+      // Extract queue data first
+      extractQueueData();
+
+      // Wait for the extension listener to be available
+      const listenerAvailable = await waitForListener();
+
+      if (listenerAvailable) {
+        console.log("✅ Extension listener connected successfully");
+
+        // Initial processing
+        await processPage();
+
+        // Process search input if there's already a search term
+        await processSearchInput();
+
+        // Add event listeners for interactive elements
+        addEventListeners();
+
+        // Set up observers and intervals
+        const observer = initMutationObserver();
+        const interval = setupProcessingInterval();
+
+        // Clear the safety timeout once initialization is complete
+        clearTimeout(safetyTimeout);
+
+        // Add to window for debugging
+        window.loanFilterState = {
+          observer,
+          interval,
+          state,
+          processPage,
+          isLoanNumberAllowed,
+          queueHasAllowedLoans,
+          queueHasOnlyRestrictedBrands,
+          updateQueueCountDisplay,
+          processSearchInput,
+        };
+
+        console.log(
+          "[LoanFilter] Filter initialized successfully with queue filtering for offshore users"
+        );
+      } else {
+        console.warn(
+          "⚠️ Extension listener not available, running in limited mode"
+        );
+        // Show the page if extension is not available
+        pageUtils.showPage(true);
+        clearTimeout(safetyTimeout);
+      }
+    } catch (error) {
+      console.error("❌ Failed to initialize filter:", error);
+      // Show the page in case of errors
+      pageUtils.showPage(true);
+      clearTimeout(safetyTimeout);
     }
-
-    // Override the default filterLoans function
-    overrideFilterLoans();
-
-    // Initial processing
-    processPage();
-
-    // Process search input if there's already a search term
-    processSearchInput();
-
-    // Add event listeners for interactive elements
-    addEventListeners();
-
-    // Set up observers and intervals
-    const observer = initMutationObserver();
-    const interval = setupProcessingInterval();
-
-    // Add to window for debugging
-    window.loanFilterState = {
-      observer,
-      interval,
-      state,
-      processPage,
-      isLoanNumberAllowed,
-      queueHasAllowedLoans,
-      queueHasOnlyRestrictedBrands,
-      updateQueueCountDisplay,
-      processSearchInput,
-    };
-
-    console.log(
-      "[LoanFilter] Filter initialized successfully with queue filtering for offshore users"
-    );
   }
+
+  // Ensure page is visible if user navigates away
+  window.addEventListener("beforeunload", () => {
+    pageUtils.showPage(true);
+  });
 
   // Start the filter
   if (document.readyState === "loading") {

@@ -1,160 +1,445 @@
 /**
  * Brand Filter Injection Script
- * 
- * This script can be injected via browser console to filter the brands dropdown
- * to only show brands that have at least one loan number in the storedNumbersSet.
- * 
- * Usage:
- * 1. Copy this entire script
- * 2. Open browser console (F12 or Ctrl+Shift+I)
- * 3. Paste and press Enter
+ *
+ * This script filters the brands dropdown to only show brands that have at least one loan number
+ * that is allowed via Chrome extension communication.
  */
 
-(function() {
-    console.log("Brand Filter Injection Script initialized");
+(function () {
+  // Import utility functions from ui-hider-until-load.js
+  const pageUtils = {
+    togglePageOpacity: function (val) {
+      document.body.style.opacity = val;
+    },
+    showPage: function (val) {
+      document.body.style.opacity = val ? 1 : 0;
+    },
+    togglePageDisplay: function (val) {
+      document.body.style.display = val;
+    },
+    getElementByXPath: function (xpath, context = document) {
+      const result = document.evaluate(
+        xpath,
+        context,
+        null,
+        XPathResult.FIRST_ORDERED_NODE_TYPE,
+        null
+      );
+      return result.singleNodeValue;
+    },
+  };
 
-    // Check if storedNumbersSet is available
-    function isStoredNumbersSetAvailable() {
-        const available = window.storedNumbersSet !== null && window.storedNumbersSet !== undefined;
-        console.log("storedNumbersSet available:", available);
-        return available;
-    }
+  // Hide the page immediately to prevent unauthorized loan numbers from being visible
+  pageUtils.showPage(false);
 
-    // Check if a loan number is in the storedNumbersSet
-    function isLoanNumberAllowed(loanNumber) {
-        if (!isStoredNumbersSetAvailable()) {
-            return true; // If we can't verify, assume it's allowed
+  // Configuration
+  const config = {
+    debug: true,
+    filterDelay: 300,
+    observerDelay: 500,
+    reprocessInterval: 2000,
+    isOffshoreUser: true,
+  };
+
+  // Extension ID for communication
+  const EXTENSION_ID = "afkpnpkodeiolpnfnbdokgkclljpgmcm";
+
+  // State tracking
+  const state = {
+    processedBrands: new Set(),
+    brandVisibility: new Map(),
+    observerState: {
+      ignoreNextMutations: false,
+      processingDebounce: null,
+      lastProcessed: 0,
+    },
+    processingInterval: null,
+    lastFilterTime: 0,
+  };
+
+  // Logging with throttling to prevent console spam
+  const logThrottle = {
+    lastLogs: {},
+    log: function (key, ...args) {
+      if (!config.debug) return;
+
+      const now = Date.now();
+      if (!this.lastLogs[key] || now - this.lastLogs[key] > 2000) {
+        console.log(`[BrandFilter] ${args[0]}`, ...args.slice(1));
+        this.lastLogs[key] = now;
+      }
+    },
+  };
+
+  /**
+   * Wait for the extension listener to be available
+   */
+  async function waitForListener(maxRetries = 20, initialDelay = 100) {
+    return new Promise((resolve, reject) => {
+      if (
+        typeof chrome === "undefined" ||
+        !chrome.runtime ||
+        !chrome.runtime.sendMessage
+      ) {
+        console.warn(
+          "❌ Chrome extension API not available. Running in standalone mode."
+        );
+        // Show the page if Chrome extension API is not available
+        pageUtils.showPage(true);
+        resolve(false);
+        return;
+      }
+
+      let attempts = 0;
+      let delay = initialDelay;
+      let timeoutId;
+
+      function sendPing() {
+        if (attempts >= maxRetries) {
+          console.warn("❌ No listener detected after maximum retries.");
+          clearTimeout(timeoutId);
+          reject(new Error("Listener not found"));
+          return;
         }
-        
-        let isAllowed = false;
-        
-        if (window.storedNumbersSet instanceof Set) {
-            isAllowed = window.storedNumbersSet.has(loanNumber);
-        } else if (Array.isArray(window.storedNumbersSet)) {
-            isAllowed = window.storedNumbersSet.includes(loanNumber);
-        } else if (window.storedNumbersSet && typeof window.storedNumbersSet === "object") {
-            isAllowed = Object.values(window.storedNumbersSet).includes(loanNumber);
-        }
-        
-        return isAllowed;
-    }
 
-    // Check if a brand has any loan numbers in the storedNumbersSet
-    function brandHasAllowedLoans(brandLoanNumbers) {
-        if (!isStoredNumbersSetAvailable() || !brandLoanNumbers || !Array.isArray(brandLoanNumbers)) {
-            return true; // If we can't verify, don't hide
-        }
-
-        for (const loanNumber of brandLoanNumbers) {
-            if (isLoanNumberAllowed(loanNumber)) {
-                return true; // Brand has at least one allowed loan
-            }
-        }
-
-        return false; // No allowed loans found for this brand
-    }
-
-    // Filter the brands dropdown
-    function filterBrandsDropdown() {
-        if (!isStoredNumbersSetAvailable()) {
-            console.warn("storedNumbersSet is not available. Please define it first.");
-            console.info("Example: window.storedNumbersSet = new Set(['0000000976', '0000001245'])");
-            return;
-        }
-
-        // Get the brands data
-        if (!window.brandsData || !Array.isArray(window.brandsData)) {
-            console.error("brandsData is not available. Make sure dataSource.js is loaded.");
-            return;
-        }
-
-        console.log("Filtering brands dropdown based on storedNumbersSet...");
-        
-        // Get the dropdown options container
-        const dropdownOptions = document.getElementById('brandDropdownOptions');
-        if (!dropdownOptions) {
-            console.error("Brand dropdown options container not found.");
-            return;
-        }
-
-        // Get all brand options
-        const options = dropdownOptions.querySelectorAll('.option');
-        if (!options || options.length === 0) {
-            console.error("No brand options found in the dropdown.");
-            return;
-        }
-
-        // Keep track of allowed brands
-        const allowedBrands = [];
-        const filteredBrands = [];
-
-        // Check each brand
-        window.brandsData.forEach(brand => {
-            const hasAllowedLoans = brandHasAllowedLoans(brand.loanNumbers);
-            
-            if (hasAllowedLoans) {
-                allowedBrands.push(brand.name);
-            } else {
-                filteredBrands.push(brand.name);
-            }
-        });
-
-        console.log("Allowed brands:", allowedBrands);
-        console.log("Filtered brands:", filteredBrands);
-
-        // Filter the dropdown options
-        options.forEach(option => {
-            const brandName = option.getAttribute('data-value');
-            const brandId = option.getAttribute('data-id');
-            
-            // Always keep "All Brands" option
-            if (brandId === 'all' || brandName === 'All Brands') {
+        try {
+          chrome.runtime.sendMessage(
+            EXTENSION_ID,
+            { type: "ping" },
+            (response) => {
+              if (chrome.runtime.lastError) {
+                console.warn(
+                  "Chrome extension error:",
+                  chrome.runtime.lastError
+                );
+                attempts++;
+                if (attempts >= maxRetries) {
+                  reject(new Error("Chrome extension error"));
+                  return;
+                }
+                timeoutId = setTimeout(sendPing, delay);
                 return;
-            }
-            
-            // Check if this brand has any allowed loans
-            const brand = window.brandsData.find(b => b.name === brandName);
-            
-            if (brand && !brandHasAllowedLoans(brand.loanNumbers)) {
-                // Hide this brand option
-                option.style.display = 'none';
-                console.log(`Filtered out brand: ${brandName}`);
-            }
-        });
+              }
 
-        console.log("Brand dropdown filtering complete.");
-    }
-
-    // Create a demo storedNumbersSet if none exists
-    function createDemoStoredNumbersSet() {
-        if (!window.storedNumbersSet) {
-            // Create a demo set with some loan numbers from Chase Bank and Bank of America
-            window.storedNumbersSet = new Set([
-                '0000000976', '0000001245', // Chase Bank
-                '0000000001'                // Bank of America
-            ]);
-            console.log("Created demo storedNumbersSet with loan numbers for Chase Bank and Bank of America");
+              if (response?.result === "pong") {
+                clearTimeout(timeoutId);
+                resolve(true);
+              } else {
+                timeoutId = setTimeout(() => {
+                  attempts++;
+                  delay *= 2;
+                  sendPing();
+                }, delay);
+              }
+            }
+          );
+        } catch (error) {
+          console.error("Error sending message to extension:", error);
+          resolve(false);
         }
+      }
+
+      sendPing();
+    });
+  }
+
+  /**
+   * Check if a loan number is allowed via the extension
+   */
+  async function checkNumbersBatch(numbers) {
+    return new Promise((resolve, reject) => {
+      chrome.runtime.sendMessage(
+        EXTENSION_ID,
+        {
+          type: "queryLoans",
+          loanIds: numbers,
+        },
+        (response) => {
+          if (chrome.runtime.lastError) {
+            return reject(chrome.runtime.lastError.message);
+          } else if (response.error) {
+            return reject(response.error);
+          }
+
+          const available = Object.keys(response.result).filter(
+            (key) => response.result[key]
+          );
+          resolve(available);
+        }
+      );
+    });
+  }
+
+  /**
+   * Check if a loan number is allowed
+   */
+  async function isLoanNumberAllowed(loanNumber) {
+    try {
+      const allowedNumbers = await checkNumbersBatch([loanNumber]);
+      return allowedNumbers.includes(loanNumber);
+    } catch (error) {
+      console.warn("Failed to check loan access, assuming not allowed");
+      return false;
+    }
+  }
+
+  /**
+   * Check if a brand has any allowed loan numbers
+   */
+  async function brandHasAllowedLoans(brandLoanNumbers) {
+    if (!brandLoanNumbers || !Array.isArray(brandLoanNumbers)) {
+      return true;
     }
 
-    // Initialize the filter
-    function init() {
-        console.log("Initializing brand filter...");
-        
-        // Create a demo storedNumbersSet if none exists
-        createDemoStoredNumbersSet();
-        
-        // Filter the brands dropdown
-        filterBrandsDropdown();
-        
-        console.log("Brand filter initialization complete.");
+    for (const loanNumber of brandLoanNumbers) {
+      if (await isLoanNumberAllowed(loanNumber)) {
+        return true;
+      }
     }
 
-    // Run the initialization
-    init();
+    return false;
+  }
 
-    // Expose the filter function globally for manual re-filtering
-    window.filterBrandsDropdown = filterBrandsDropdown;
-    
-    console.log("Brand Filter Injection Script completed. You can manually re-filter by calling window.filterBrandsDropdown()");
+  /**
+   * Process brand elements in the page and hide those without allowed loans
+   */
+  async function processBrandElements() {
+    // Get brands data
+    if (!window.brandsData || !Array.isArray(window.brandsData)) {
+      logThrottle.log(
+        "noBrands",
+        "No brands data available for brand filtering"
+      );
+      return;
+    }
+
+    // Hide the page during processing
+    pageUtils.showPage(false);
+
+    try {
+      logThrottle.log(
+        "processBrands",
+        "Processing brands for filtering...",
+        window.brandsData
+      );
+
+      // Filter brand dropdowns
+      const brandDropdowns = document.querySelectorAll("select#brandSelect");
+      for (const dropdown of brandDropdowns) {
+        if (state.processedBrands.has(dropdown)) continue;
+        state.processedBrands.add(dropdown);
+
+        // Process each option in the dropdown
+        for (const option of Array.from(dropdown.options)) {
+          if (
+            !option.value ||
+            option.value === "" ||
+            isNaN(parseInt(option.value))
+          )
+            continue;
+
+          // Find the brand data for this option
+          const brandId = parseInt(option.value);
+          const brand = window.brandsData.find((b) => b.id === brandId);
+
+          if (brand && !(await brandHasAllowedLoans(brand.loanNumbers))) {
+            option.style.display = "none";
+            state.brandVisibility.set(brandId, false);
+            logThrottle.log(
+              "hiddenBrand",
+              `Filtering out brand: ${brand.name} (${brand.code})`
+            );
+          } else {
+            state.brandVisibility.set(brandId, true);
+          }
+        }
+      }
+
+      // Filter brand cells in the table
+      const brandCells = document.querySelectorAll(
+        "#loansTableBody tr td:nth-child(4)"
+      );
+      for (const cell of brandCells) {
+        if (state.processedBrands.has(cell)) continue;
+        state.processedBrands.add(cell);
+
+        const brandName = cell.textContent.trim();
+        if (!brandName) continue;
+
+        const brand = window.brandsData.find((b) => b.name === brandName);
+
+        if (brand && !(await brandHasAllowedLoans(brand.loanNumbers))) {
+          const row = cell.closest("tr");
+          if (row) {
+            row.style.display = "none";
+            logThrottle.log(
+              "hiddenBrandRow",
+              `Filtering out row with brand: ${brand.name}`
+            );
+          }
+        }
+      }
+    } finally {
+      // Show the page after processing is complete
+      pageUtils.showPage(true);
+    }
+  }
+
+  /**
+   * Initialize mutation observer to detect DOM changes
+   */
+  function initMutationObserver() {
+    const observer = new MutationObserver((mutations) => {
+      if (state.observerState.ignoreNextMutations) {
+        state.observerState.ignoreNextMutations = false;
+        return;
+      }
+
+      if (state.observerState.processingDebounce) {
+        clearTimeout(state.observerState.processingDebounce);
+      }
+
+      const now = Date.now();
+      if (now - state.observerState.lastProcessed < config.observerDelay) {
+        return;
+      }
+
+      let shouldProcess = false;
+      let brandChanged = false;
+
+      for (const mutation of mutations) {
+        if (mutation.addedNodes.length > 0) {
+          let hasElementNodes = false;
+          for (const node of mutation.addedNodes) {
+            if (node.nodeType === 1) {
+              hasElementNodes = true;
+              break;
+            }
+          }
+
+          if (hasElementNodes) {
+            shouldProcess = true;
+          }
+        }
+
+        if (
+          mutation.type === "attributes" &&
+          mutation.target.id === "brandSelect"
+        ) {
+          brandChanged = true;
+        }
+      }
+
+      state.observerState.processingDebounce = setTimeout(() => {
+        state.observerState.lastProcessed = Date.now();
+        state.observerState.ignoreNextMutations = true;
+
+        if (brandChanged) {
+          state.processedBrands.clear();
+          logThrottle.log(
+            "brandChanged",
+            "Brand selection changed, reprocessing all elements"
+          );
+        }
+
+        if (shouldProcess || brandChanged) {
+          logThrottle.log("observer", "Processing page due to DOM changes");
+          processBrandElements();
+        }
+      }, config.filterDelay);
+    });
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ["value", "style", "class", "display", "selected"],
+    });
+
+    return observer;
+  }
+
+  /**
+   * Set up interval to periodically reprocess the page
+   */
+  function setupProcessingInterval() {
+    if (state.processingInterval) {
+      clearInterval(state.processingInterval);
+    }
+
+    state.processingInterval = setInterval(() => {
+      logThrottle.log("interval", "Reprocessing page from interval");
+      processBrandElements();
+    }, config.reprocessInterval);
+
+    return state.processingInterval;
+  }
+
+  /**
+   * Initialize the filter
+   */
+  async function initFilter() {
+    console.log("[BrandFilter] Initializing brand filter...");
+
+    // Safety timeout to ensure page is shown even if there's an unexpected issue
+    const safetyTimeout = setTimeout(() => {
+      console.warn("Safety timeout triggered - ensuring page is visible");
+      pageUtils.showPage(true);
+    }, 10000); // 10 seconds max wait time
+
+    try {
+      // Wait for the extension listener to be available
+      const listenerAvailable = await waitForListener();
+
+      if (listenerAvailable) {
+        console.log("✅ Extension listener connected successfully");
+
+        // Initial processing
+        await processBrandElements();
+
+        // Set up observers and intervals
+        const observer = initMutationObserver();
+        const interval = setupProcessingInterval();
+
+        // Clear the safety timeout once initialization is complete
+        clearTimeout(safetyTimeout);
+
+        // Add to window for debugging
+        window.brandFilterState = {
+          observer,
+          interval,
+          state,
+          processBrandElements,
+          isLoanNumberAllowed,
+          brandHasAllowedLoans,
+        };
+
+        console.log("[BrandFilter] Filter initialized successfully");
+      } else {
+        console.warn(
+          "⚠️ Extension listener not available, running in limited mode"
+        );
+        // Show the page if extension is not available
+        pageUtils.showPage(true);
+        clearTimeout(safetyTimeout);
+      }
+    } catch (error) {
+      console.error("❌ Failed to initialize filter:", error);
+      // Show the page in case of errors
+      pageUtils.showPage(true);
+      clearTimeout(safetyTimeout);
+    }
+  }
+
+  // Ensure page is visible if user navigates away
+  window.addEventListener("beforeunload", () => {
+    pageUtils.showPage(true);
+  });
+
+  // Start the filter
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initFilter);
+  } else {
+    initFilter();
+  }
 })();
