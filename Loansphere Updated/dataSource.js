@@ -16,7 +16,7 @@ window.brandsData = [
         id: 3,
         name: 'Wells Fargo',
         code: 'WF',
-        loanNumbers: ['0000001180', '0000001472', '0000001487', '0000001501', '0000001510']
+        loanNumbers: ['0194737052', '0000001472', '0000001487', '0000001501', '0000001510']
     },
     {
         id: 4,
@@ -34,7 +34,7 @@ window.brandsData = [
         id: 6,
         name: 'PNC Bank',
         code: 'PNC',
-        loanNumbers: ['0000001356', '0000001475', '0000001490', '0000001504', '0000001513']
+        loanNumbers: ['0180995748', '0000001475', '0000001490', '0000001504', '0000001513']
     },
     {
         id: 7,
@@ -46,7 +46,7 @@ window.brandsData = [
         id: 8,
         name: 'Capital One',
         code: 'CAP1',
-        loanNumbers: ['0000001523', '0000001477', '0000001492', '0000001506', '0000001515']
+        loanNumbers: ['0151410206', '0000001477', '0000001492', '0000001506', '0000001515']
     }
 ];
 
@@ -57,7 +57,7 @@ window.borrowersData = [
         firstName: 'John',
         lastName: 'Smith',
         email: 'john.smith@example.com',
-        loanNumber: '0000000976',
+        loanNumber: '0194737052',
         registrationDate: '2023-01-15',
         status: 'active'
     },
@@ -66,7 +66,7 @@ window.borrowersData = [
         firstName: 'Mary',
         lastName: 'Johnson',
         email: 'mary.johnson@example.com',
-        loanNumber: '0000000001',
+        loanNumber: '0151410206',
         registrationDate: '2023-02-20',
         status: 'active'
     },
@@ -75,7 +75,7 @@ window.borrowersData = [
         firstName: 'Robert',
         lastName: 'Williams',
         email: 'robert.williams@example.com',
-        loanNumber: '0000001180',
+        loanNumber: '0180995748',
         registrationDate: '2023-03-05',
         status: 'inactive'
     },
