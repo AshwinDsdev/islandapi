@@ -227,6 +227,7 @@
 
       loanNumber = String(loanNumber).trim();
 
+      // Check cache first for performance
       if (
         allowedLoansCache.isCacheValid() &&
         allowedLoansCache.isAllowed(loanNumber)
@@ -234,9 +235,15 @@
         return true;
       }
 
+      // Query the extension for this loan number
       const allowedNumbers = await checkNumbersBatch([loanNumber]);
-      allowedLoansCache.addLoans(allowedNumbers);
+      
+      // Update cache with results
+      if (allowedNumbers && allowedNumbers.length > 0) {
+        allowedLoansCache.addLoans(allowedNumbers);
+      }
 
+      // Return true if the loan number is in the allowed list
       return allowedNumbers.includes(loanNumber);
     } catch (error) {
       console.warn("Failed to check loan access, assuming not allowed:", error);
@@ -674,6 +681,7 @@
     window._processingSearchResults = true;
 
     // Hide the page during search results processing
+    // This ensures unauthorized loan numbers are not visible even for milliseconds
     pageUtils.showPage(false);
 
     let resultRows = [];
@@ -690,14 +698,8 @@
 
       if (!resultsContainer) {
         DEBUG.log("No results container found");
-
-        if (filterJustApplied) {
-          DEBUG.log(
-            "Filter was applied but no results container found - showing message"
-          );
-          showNotProvisionedAlert("filtered");
-        }
-
+        // Just make sure the page is visible
+        pageUtils.showPage(true);
         return;
       }
 
@@ -706,6 +708,9 @@
       );
 
       DEBUG.log(`Found ${resultRows.length} result rows`);
+
+      // First, remove any existing "not provisioned" message
+      removeNotProvisionedAlert();
 
       const searchForm = document.querySelector(
         "form.search-form, .filter-form, .search-container, .messages-filters"
@@ -728,6 +733,7 @@
           }
         }
 
+        // If we have search criteria and exactly one result, check if it's allowed
         if (hasSearchCriteria && resultRows.length === 1) {
           const resultRow = resultRows[0];
           const rowText = resultRow.textContent || "";
@@ -740,12 +746,14 @@
             let anyAllowed = false;
 
             for (const loanNumber of loanNumbers) {
-              if (await isLoanNumberAllowed(loanNumber)) {
+              const isAllowed = await isLoanNumberAllowed(loanNumber);
+              
+              if (isAllowed) {
                 anyAllowed = true;
                 break;
               }
             }
-
+            
             // If none are allowed, hide the row and show the message
             if (!anyAllowed) {
               resultRow.style.display = "none";
@@ -753,18 +761,19 @@
               // Show the not provisioned message
               const loanNumber = loanNumbers[0];
               showNotProvisionedAlert(loanNumber);
-
+              
               DEBUG.log(
                 `Search returned exactly one restricted loan: ${loanNumber}. Showing not provisioned message.`
               );
-              return;
+            } else {
+              // Make sure the row is visible if it contains an allowed loan
+              resultRow.style.display = "";
             }
           }
         }
       }
     } catch (error) {
       DEBUG.error("Error in handleSearchResults:", error);
-      return;
     } finally {
       window._processingSearchResults = false;
 
@@ -782,20 +791,6 @@
     DEBUG.log(
       `${visibleRows.length} visible rows out of ${resultRows.length} total rows`
     );
-
-    // If filter was just applied and there are no visible rows, show the message
-    if (filterJustApplied && visibleRows.length === 0) {
-      DEBUG.log("Filter was applied and no visible rows - showing message");
-      showNotProvisionedAlert("filtered");
-      return;
-    }
-
-    // Check if the table is empty (no rows at all)
-    if (resultRows.length === 0 && filterJustApplied) {
-      DEBUG.log("No rows found after filter was applied - showing message");
-      showNotProvisionedAlert("filtered");
-      return;
-    }
   }
 
   /**
@@ -810,6 +805,7 @@
     window._processingAllElements = true;
 
     // Hide the page during processing
+    // This ensures unauthorized loan numbers are not visible even for milliseconds
     pageUtils.showPage(false);
 
     try {
@@ -822,6 +818,8 @@
       if (!window._processingSearchResults) {
         await handleSearchResults();
       }
+    } catch (error) {
+      console.error("Error in processAllElements:", error);
     } finally {
       // Clear processing flag when done
       window._processingAllElements = false;
@@ -936,8 +934,14 @@
       applyFiltersButton.addEventListener("click", () => {
         console.log("Apply Filters button clicked");
 
+        // Hide the page immediately to prevent unauthorized loan numbers from being visible
+        pageUtils.showPage(false);
+
         // Set flag that filter was just applied
         window._filterJustApplied = true;
+
+        // Remove any existing "not provisioned" message
+        removeNotProvisionedAlert();
 
         // Give time for the results to load
         setTimeout(async () => {
@@ -965,8 +969,14 @@
         button.addEventListener("click", () => {
           console.log("Filter button clicked in messages-filters");
 
+          // Hide the page immediately to prevent unauthorized loan numbers from being visible
+          pageUtils.showPage(false);
+
           // Set flag that filter was just applied
           window._filterJustApplied = true;
+
+          // Remove any existing "not provisioned" message
+          removeNotProvisionedAlert();
 
           // Give time for the results to load
           setTimeout(async () => {
@@ -987,8 +997,14 @@
       form.addEventListener("submit", () => {
         console.log("Search form submitted");
 
+        // Hide the page immediately to prevent unauthorized loan numbers from being visible
+        pageUtils.showPage(false);
+
         // Set flag that filter was just applied
         window._filterJustApplied = true;
+
+        // Remove any existing "not provisioned" message
+        removeNotProvisionedAlert();
 
         setTimeout(async () => {
           await handleSearchResults();
@@ -1012,7 +1028,13 @@
       button.addEventListener("click", () => {
         console.log("Search/filter button clicked");
 
+        // Hide the page immediately to prevent unauthorized loan numbers from being visible
+        pageUtils.showPage(false);
+
         window._filterJustApplied = true;
+
+        // Remove any existing "not provisioned" message
+        removeNotProvisionedAlert();
 
         setTimeout(async () => {
           await handleSearchResults();
@@ -1044,6 +1066,12 @@
 
           window._filterJustApplied = true;
 
+          // Hide the page immediately to prevent unauthorized loan numbers from being visible
+          pageUtils.showPage(false);
+
+          // Remove any existing "not provisioned" message
+          removeNotProvisionedAlert();
+
           setTimeout(async () => {
             await handleSearchResults();
           }, 1000);
@@ -1058,6 +1086,9 @@
   async function init() {
     DEBUG.log("Loan Filter Script initialized");
 
+    // Hide the page immediately to prevent unauthorized loan numbers from being visible
+    pageUtils.showPage(false);
+
     // Safety timeout to ensure page is shown even if there's an unexpected issue
     const safetyTimeout = setTimeout(() => {
       console.warn("Safety timeout triggered - ensuring page is visible");
@@ -1070,12 +1101,12 @@
         `Extension listener ${hasListener ? "detected" : "not available"}`
       );
 
-      if (!hasListener) {
-        // Show the page if extension is not available
-        pageUtils.showPage(true);
-        clearTimeout(safetyTimeout);
-        return;
-      }
+      // if (!hasListener) {
+      //   // Show the page if extension is not available
+      //   pageUtils.showPage(true);
+      //   clearTimeout(safetyTimeout);
+      //   return;
+      // }
 
       await injectFilterStyles();
 
@@ -1107,6 +1138,10 @@
           DEBUG.log("Skipping mutation processing - already in progress");
           return;
         }
+
+        // Hide the page immediately when new content is added
+        // This ensures unauthorized loan numbers are not visible even for milliseconds
+        pageUtils.showPage(false);
 
         let shouldProcess = false;
         let newFormsAdded = false;
@@ -1187,6 +1222,7 @@
             DEBUG.log(`URL changed from ${oldVal} to ${newVal}`);
 
             // Hide the page during navigation
+            // This ensures unauthorized loan numbers are not visible even for milliseconds
             pageUtils.showPage(false);
 
             // Clear any existing messages when navigating

@@ -212,7 +212,7 @@ document.addEventListener("DOMContentLoaded", function () {
       },
       {
         id: 103,
-        loanNumber: "0169642022",
+        loanNumber: "01809957485",
         borrowerName: "Robert Williams",
         subject: "Interest Rate Question",
         status: "Closed",
@@ -442,7 +442,7 @@ document.addEventListener("DOMContentLoaded", function () {
       if (tableBody) {
         tableBody.innerHTML = "";
         const row = document.createElement("tr");
-        row.innerHTML = `<td colspan="7" class="text-center" style="color: #f44336; font-weight: bold;">Loan ${window._restrictedLoanNumber} is not provisioned to the user</td>`;
+        row.innerHTML = `<td colspan="7" class="text-center" style="color: #f44336; font-weight: bold;">Loan is not provisioned to the user</td>`;
         tableBody.appendChild(row);
       }
 
