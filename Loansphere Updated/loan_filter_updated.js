@@ -1,15 +1,57 @@
+/**
+ * @fileoverview Loan Filter Script for Loansphere
+ * @description This script filters loan information based on user permissions.
+ * It hides unauthorized loan numbers and provides a secure browsing experience.
+ * @author Loansphere Team
+ * @version 1.0.0
+ */
+
 (function () {
   // Import utility functions from ui-hider-until-load.js
   const pageUtils = {
+    /**
+     * @function togglePageOpacity
+     * @description Sets the page opacity. It can be used to show and hide the page content.
+     * @param {number} val - The value in-between 0 and 1.
+     * @example
+     * // Example usage of the function
+     * togglePageOpacity(0.5);
+     */
     togglePageOpacity: function (val) {
       document.body.style.opacity = val;
     },
+    
+    /**
+     * @function showPage
+     * @description Shows or hides the page.
+     * @param {boolean} val - The value can be true or false.
+     * @example
+     * // Example usage of the function
+     * showPage(false);
+     */
     showPage: function (val) {
       document.body.style.opacity = val ? 1 : 0;
     },
+    
+    /**
+     * @function togglePageDisplay
+     * @description Sets the page display. It can be used to show and hide the page content.
+     * @param {string} val - The value can be 'block' or 'none'.
+     * @example
+     * // Example usage of the function
+     * togglePageDisplay('none');
+     */
     togglePageDisplay: function (val) {
       document.body.style.display = val;
     },
+    
+    /**
+     * @function getElementByXPath
+     * @description Get an element by its XPath.
+     * @param {string} xpath - The XPath of the element.
+     * @param {Document} [context=document] - The context in which to search for the XPath.
+     * @returns {Element|null} The first element matching the XPath, or null if no match is found.
+     */
     getElementByXPath: function (xpath, context = document) {
       const result = document.evaluate(
         xpath,
@@ -25,12 +67,48 @@
   // Hide the page immediately to prevent unauthorized loan numbers from being visible
   pageUtils.showPage(false);
 
+  /**
+   * @function processSecureMessageDropdownFunc
+   * @description Function to process secure message dropdown, will be defined later
+   */
   let processSecureMessageDropdownFunc;
+  
+  /**
+   * @constant {number} FILTER_INTERVAL_MS
+   * @description Interval in milliseconds for periodic filtering
+   */
   const FILTER_INTERVAL_MS = 2000;
+  
+  /**
+   * @constant {string} EXTENSION_ID
+   * @description Chrome extension ID for communication
+   */
   const EXTENSION_ID = "afkpnpkodeiolpnfnbdokgkclljpgmcm";
+  
+  /**
+   * @constant {WeakSet} processedElements
+   * @description Set to track elements that have already been processed
+   */
   const processedElements = new WeakSet();
+  
+  /**
+   * @constant {WeakSet} processedBrands
+   * @description Set to track brand elements that have already been processed
+   */
   const processedBrands = new WeakSet();
 
+  /**
+   * @async
+   * @function waitForListener
+   * @description Waits for the Chrome extension listener to be available
+   * @param {number} [maxRetries=20] - Maximum number of retry attempts
+   * @param {number} [initialDelay=100] - Initial delay in milliseconds between retries
+   * @returns {Promise<boolean>} Promise that resolves to true if listener is available, false otherwise
+   * @throws {Error} If listener is not found after maximum retries
+   * @example
+   * // Example usage of the function
+   * const listenerAvailable = await waitForListener();
+   */
   async function waitForListener(maxRetries = 20, initialDelay = 100) {
     return new Promise((resolve, reject) => {
       if (
@@ -51,6 +129,11 @@
       let delay = initialDelay;
       let timeoutId;
 
+      /**
+       * @function sendPing
+       * @description Sends a ping message to the extension and handles the response
+       * @private
+       */
       function sendPing() {
         if (attempts >= maxRetries) {
           console.warn("❌ No listener detected after maximum retries.");
@@ -100,6 +183,17 @@
     });
   }
 
+  /**
+   * @async
+   * @function checkNumbersBatch
+   * @description Checks if the user has access to a batch of loan numbers
+   * @param {string[]} numbers - Array of loan numbers to check
+   * @returns {Promise<string[]>} Promise that resolves to an array of allowed loan numbers
+   * @throws {Error} If there's an error communicating with the extension
+   * @example
+   * // Example usage of the function
+   * const allowedNumbers = await checkNumbersBatch(['12345', '67890']);
+   */
   async function checkNumbersBatch(numbers) {
     return new Promise((resolve, reject) => {
       chrome.runtime.sendMessage(
@@ -124,6 +218,21 @@
     });
   }
 
+  /**
+   * @function onValueChange
+   * @description Sets up an interval to monitor changes to a value and triggers a callback when changes are detected
+   * @param {Function} evalFunction - Function that returns the value to monitor
+   * @param {Function} callback - Function to call when the value changes
+   * @param {Object} [options={}] - Options for the monitoring
+   * @param {number} [options.maxTime] - Maximum time in milliseconds to monitor for changes
+   * @returns {number} Interval ID that can be used to clear the interval
+   * @example
+   * // Example usage of the function
+   * const intervalId = onValueChange(
+   *   () => document.location.href,
+   *   (newVal) => console.log('URL changed to:', newVal)
+   * );
+   */
   function onValueChange(evalFunction, callback, options = {}) {
     let lastValue = undefined;
     const startTime = Date.now();
@@ -145,6 +254,11 @@
     return intervalId;
   }
 
+  /**
+   * @function createUnallowedElement
+   * @description Creates a DOM element to display when a loan is not provisioned to the user
+   * @returns {HTMLElement} The created element
+   */
   function createUnallowedElement() {
     const unallowed = document.createElement("span");
     unallowed.appendChild(
@@ -163,7 +277,15 @@
     return unallowed;
   }
 
+  /**
+   * @class ViewElement
+   * @description Class to manage the visibility of loan information elements
+   */
   class ViewElement {
+    /**
+     * @constructor
+     * @description Creates a new ViewElement instance
+     */
     constructor() {
       this.element = document.querySelector(".col-md-12 .body");
       this.parent = this.element && this.element.parentElement;
@@ -171,6 +293,10 @@
       this.unallowedParent = document.querySelector("nav");
     }
 
+    /**
+     * @method remove
+     * @description Removes the loan element and shows the unallowed message
+     */
     remove() {
       if (this.element) {
         this.element.remove();
@@ -178,6 +304,10 @@
       }
     }
 
+    /**
+     * @method add
+     * @description Adds the loan element back and removes the unallowed message
+     */
     add() {
       if (this.parent) {
         this.unallowed.remove();
@@ -186,6 +316,12 @@
     }
   }
 
+  /**
+   * @function getLoanNumber
+   * @description Extracts the loan number from a view element
+   * @param {HTMLElement} viewElement - The element containing the loan number
+   * @returns {string|null} The loan number if found, null otherwise
+   */
   function getLoanNumber(viewElement) {
     const loanNumberCell = viewElement.querySelector(
       "table tr td a.bright-green.ng-binding"
@@ -193,6 +329,15 @@
     return loanNumberCell && loanNumberCell.textContent.trim();
   }
 
+  /**
+   * @async
+   * @function waitForLoanNumber
+   * @description Waits for a loan number to appear in the DOM
+   * @returns {Promise<ViewElement>} Promise that resolves to a ViewElement when a loan number is found
+   * @example
+   * // Example usage of the function
+   * const viewElement = await waitForLoanNumber();
+   */
   function waitForLoanNumber() {
     return new Promise((resolve) => {
       const observer = new MutationObserver((mutationsList, observer) => {
@@ -213,20 +358,54 @@
     });
   }
 
+  /**
+   * @constant {Object} allowedLoansCache
+   * @description Cache for storing allowed loan numbers to reduce API calls
+   */
   const allowedLoansCache = {
+    /**
+     * @property {Set} loans
+     * @description Set of allowed loan numbers
+     */
     loans: new Set(),
+    
+    /**
+     * @property {number} lastUpdated
+     * @description Timestamp of the last cache update
+     */
     lastUpdated: 0,
+    
+    /**
+     * @property {number} cacheTimeout
+     * @description Cache timeout in milliseconds (5 minutes)
+     */
     cacheTimeout: 5 * 60 * 1000,
 
+    /**
+     * @method isAllowed
+     * @description Checks if a loan number is in the cache
+     * @param {string} loanNumber - The loan number to check
+     * @returns {boolean} True if the loan number is allowed, false otherwise
+     */
     isAllowed(loanNumber) {
       return this.loans.has(loanNumber);
     },
 
+    /**
+     * @method addLoans
+     * @description Adds loan numbers to the cache
+     * @param {string[]} loanNumbers - Array of loan numbers to add
+     */
     addLoans(loanNumbers) {
       loanNumbers.forEach((loan) => this.loans.add(loan));
       this.lastUpdated = Date.now();
     },
 
+    /**
+     * @method isCacheValid
+     * @description Checks if the cache is still valid
+     * @returns {boolean} True if the cache is valid, false otherwise
+     */
     isCacheValid() {
       return (
         this.lastUpdated > 0 &&
@@ -234,12 +413,26 @@
       );
     },
 
+    /**
+     * @method clear
+     * @description Clears the cache
+     */
     clear() {
       this.loans.clear();
       this.lastUpdated = 0;
     },
   };
 
+  /**
+   * @async
+   * @function isLoanNumberAllowed
+   * @description Checks if a loan number is allowed for the current user
+   * @param {string} loanNumber - The loan number to check
+   * @returns {Promise<boolean>} Promise that resolves to true if the loan number is allowed, false otherwise
+   * @example
+   * // Example usage of the function
+   * const isAllowed = await isLoanNumberAllowed('12345');
+   */
   async function isLoanNumberAllowed(loanNumber) {
     try {
       if (
@@ -259,6 +452,14 @@
     }
   }
 
+  /**
+   * @function extractBrandsData
+   * @description Extracts brand information from dropdown menus and tables in the UI
+   * @returns {Array<Object>} Array of brand objects with their associated loan numbers
+   * @example
+   * // Example usage of the function
+   * const brandsData = extractBrandsData();
+   */
   function extractBrandsData() {
     if (window.brandsData && Array.isArray(window.brandsData)) {
       return window.brandsData;
@@ -332,10 +533,28 @@
     return brandsData;
   }
 
+  /**
+   * @function containsLoanNumber
+   * @description Checks if a text contains a potential loan number
+   * @param {string} text - The text to check
+   * @returns {boolean} True if the text contains a potential loan number, false otherwise
+   * @example
+   * // Example usage of the function
+   * const hasLoanNumber = containsLoanNumber('Customer with loan 12345');
+   */
   function containsLoanNumber(text) {
     return /\b\d{5,}\b/.test(text) || /\b[A-Z0-9]{5,}\b/.test(text);
   }
 
+  /**
+   * @function extractLoanNumbers
+   * @description Extracts potential loan numbers from text
+   * @param {string} text - The text to extract loan numbers from
+   * @returns {string[]} Array of unique potential loan numbers
+   * @example
+   * // Example usage of the function
+   * const loanNumbers = extractLoanNumbers('Loans: 12345, 67890, AB123');
+   */
   function extractLoanNumbers(text) {
     const matches = [];
     const digitMatches = text.match(/\b\d{5,}\b/g);
@@ -347,6 +566,13 @@
     return [...new Set(matches)];
   }
 
+  /**
+   * @async
+   * @function shouldHideElement
+   * @description Determines if an element should be hidden based on the loan numbers it contains
+   * @param {HTMLElement} element - The element to check
+   * @returns {Promise<boolean>} Promise that resolves to true if the element should be hidden, false otherwise
+   */
   async function shouldHideElement(element) {
     if (
       element.tagName === "SCRIPT" ||
@@ -372,6 +598,11 @@
     return true;
   }
 
+  /**
+   * @async
+   * @function processTableRows
+   * @description Processes all table rows in the document and hides those containing unauthorized loan numbers
+   */
   async function processTableRows() {
     const rows = document.querySelectorAll("tr");
 
@@ -385,6 +616,11 @@
     }
   }
 
+  /**
+   * @async
+   * @function processGenericElements
+   * @description Processes generic elements that might contain loan information and hides those with unauthorized loan numbers
+   */
   async function processGenericElements() {
     const potentialContainers = document.querySelectorAll(
       '.borrower-row, .loan-item, .card, .list-item, div[class*="loan"], div[class*="borrower"]'
@@ -400,6 +636,13 @@
     }
   }
 
+  /**
+   * @async
+   * @function brandHasAllowedLoans
+   * @description Checks if a brand has any loans that the user is allowed to access
+   * @param {string[]} brandLoanNumbers - Array of loan numbers associated with the brand
+   * @returns {Promise<boolean>} Promise that resolves to true if the brand has allowed loans, false otherwise
+   */
   async function brandHasAllowedLoans(brandLoanNumbers) {
     if (!brandLoanNumbers || !Array.isArray(brandLoanNumbers)) {
       return true;

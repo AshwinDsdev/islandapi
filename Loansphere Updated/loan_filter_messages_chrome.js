@@ -1,15 +1,56 @@
 (function () {
-  // Import utility functions from ui-hider-until-load.js
+  /**
+   * @namespace pageUtils
+   * @description Utility functions for page manipulation and element selection.
+   * Originally imported from ui-hider-until-load.js
+   */
   const pageUtils = {
+    /**
+     * @function togglePageOpacity
+     * @description Sets the page opacity. It can be used to show and hide the page content.
+     * @param {number} val - The opacity value between 0 and 1.
+     * @example
+     * // Example usage of the function
+     * togglePageOpacity(0.5);
+     */
     togglePageOpacity: function (val) {
       document.body.style.opacity = val;
     },
+
+    /**
+     * @function showPage
+     * @description Shows or hides the page by setting opacity to 1 or 0.
+     * @param {boolean} val - If true, shows the page; if false, hides it.
+     * @example
+     * // Example usage of the function
+     * showPage(false);
+     */
     showPage: function (val) {
       document.body.style.opacity = val ? 1 : 0;
     },
+
+    /**
+     * @function togglePageDisplay
+     * @description Sets the page display property. It can be used to show and hide the page content.
+     * @param {string} val - The display value (e.g., 'block', 'none').
+     * @example
+     * // Example usage of the function
+     * togglePageDisplay('none');
+     */
     togglePageDisplay: function (val) {
       document.body.style.display = val;
     },
+
+    /**
+     * @function getElementByXPath
+     * @description Get an element by its XPath.
+     * @param {string} xpath - The XPath of the element.
+     * @param {Document} [context=document] - The context in which to search for the XPath.
+     * @returns {Element|null} The first element matching the XPath, or null if no match is found.
+     * @example
+     * // Example usage of the function
+     * const element = getElementByXPath('//div[@class="example"]');
+     */
     getElementByXPath: function (xpath, context = document) {
       const result = document.evaluate(
         xpath,
@@ -25,33 +66,103 @@
   // Hide the page immediately to prevent unauthorized loan numbers from being visible
   pageUtils.showPage(false);
 
+  /**
+   * @constant {number} FILTER_INTERVAL_MS
+   * @description The interval in milliseconds for filtering operations.
+   */
   const FILTER_INTERVAL_MS = 2000;
+
+  /**
+   * @constant {string} EXTENSION_ID
+   * @description The Chrome extension ID used for communication.
+   */
   const EXTENSION_ID = "afkpnpkodeiolpnfnbdokgkclljpgmcm";
 
+  /**
+   * @constant {WeakSet} processedElements
+   * @description Tracks DOM elements that have already been processed to avoid redundant operations.
+   */
   const processedElements = new WeakSet();
+
+  /**
+   * @constant {WeakSet} processedBrands
+   * @description Tracks brand elements that have already been processed.
+   */
   const processedBrands = new WeakSet();
+
+  /**
+   * @constant {WeakSet} processedLoanDropdowns
+   * @description Tracks loan dropdown elements that have already been processed.
+   */
   const processedLoanDropdowns = new WeakSet();
 
+  /**
+   * @namespace DEBUG
+   * @description Debug utility for logging, warnings, and errors with controlled output.
+   */
   const DEBUG = {
+    /**
+     * @property {boolean} enabled
+     * @description Controls whether debug logs and warnings are displayed.
+     */
     enabled: false,
+
+    /**
+     * @function log
+     * @description Logs a debug message if debugging is enabled.
+     * @param {string} message - The message to log.
+     * @param {...any} args - Additional arguments to log.
+     */
     log: function (message, ...args) {
       if (this.enabled) {
         console.log(`[LoanFilter] ${message}`, ...args);
       }
     },
+
+    /**
+     * @function warn
+     * @description Logs a warning message if debugging is enabled.
+     * @param {string} message - The warning message.
+     * @param {...any} args - Additional arguments to log.
+     */
     warn: function (message, ...args) {
       if (this.enabled) {
         console.warn(`[LoanFilter] ${message}`, ...args);
       }
     },
+
+    /**
+     * @function error
+     * @description Logs an error message regardless of debug setting.
+     * @param {string} message - The error message.
+     * @param {...any} args - Additional arguments to log.
+     */
     error: function (message, ...args) {
       console.error(`[LoanFilter] ${message}`, ...args);
     },
   };
 
-  // Add throttling for frequent operations
+  /**
+   * @namespace throttle
+   * @description Utility for throttling frequent operations to improve performance.
+   */
   const throttle = {
+    /**
+     * @property {Map} timers
+     * @description Stores active timers for throttled operations.
+     */
     timers: new Map(),
+
+    /**
+     * @function execute
+     * @description Executes a callback function with throttling.
+     * @param {string} key - Unique identifier for the throttled operation.
+     * @param {Function} callback - The function to execute after the delay.
+     * @param {number} [delay=1000] - The delay in milliseconds.
+     * @example
+     * // Example usage of the function
+     * throttle.execute('updateUI', () => updateUserInterface(), 500);
+     */
     execute: function (key, callback, delay = 1000) {
       if (this.timers.has(key)) {
         clearTimeout(this.timers.get(key));
@@ -67,10 +178,21 @@
   };
 
   /**
-   * Wait for the extension listener to be available
+   * @function waitForListener
+   * @description Waits for the Chrome extension listener to be available.
+   * @param {number} [maxRetries=20] - Maximum number of retry attempts.
+   * @param {number} [initialDelay=100] - Initial delay in milliseconds between retries.
+   * @returns {Promise<boolean>} A promise that resolves to true if the listener is available, false otherwise.
+   * @example
+   * // Example usage of the function
+   * const listenerAvailable = await waitForListener(30, 200);
+   * if (listenerAvailable) {
+   *   // Proceed with operations that require the extension
+   * }
    */
   async function waitForListener(maxRetries = 20, initialDelay = 100) {
     return new Promise((resolve, reject) => {
+      // Check if Chrome extension API is available
       if (
         typeof chrome === "undefined" ||
         !chrome.runtime ||
@@ -89,7 +211,13 @@
       let delay = initialDelay;
       let timeoutId;
 
+      /**
+       * @function sendPing
+       * @description Sends a ping message to the extension and handles the response.
+       * @private
+       */
       function sendPing() {
+        // Check if maximum retries reached
         if (attempts >= maxRetries) {
           console.warn("❌ No listener detected after maximum retries.");
           clearTimeout(timeoutId);
@@ -98,10 +226,12 @@
         }
 
         try {
+          // Send ping message to extension
           chrome.runtime.sendMessage(
             EXTENSION_ID,
             { type: "ping" },
             (response) => {
+              // Handle runtime errors
               if (chrome.runtime.lastError) {
                 console.warn(
                   "Chrome extension error:",
@@ -116,13 +246,15 @@
                 return;
               }
 
+              // Check for successful response
               if (response?.result === "pong") {
                 clearTimeout(timeoutId);
                 resolve(true);
               } else {
+                // Retry with exponential backoff
                 timeoutId = setTimeout(() => {
                   attempts++;
-                  delay *= 2;
+                  delay *= 2; // Exponential backoff
                   sendPing();
                 }, delay);
               }
@@ -134,11 +266,24 @@
         }
       }
 
+      // Start the ping process
       sendPing();
     });
   }
   /**
-   * Check a batch of loan numbers against the extension
+   * @function checkNumbersBatch
+   * @description Checks a batch of loan numbers against the extension to determine which ones are allowed.
+   * @param {string[]} numbers - Array of loan numbers to check.
+   * @returns {Promise<string[]>} A promise that resolves to an array of allowed loan numbers.
+   * @throws {Error} If there's an error communicating with the extension.
+   * @example
+   * // Example usage of the function
+   * try {
+   *   const allowedLoans = await checkNumbersBatch(['12345', '67890']);
+   *   console.log('Allowed loans:', allowedLoans);
+   * } catch (error) {
+   *   console.error('Failed to check loans:', error);
+   * }
    */
   async function checkNumbersBatch(numbers) {
     return new Promise((resolve, reject) => {
@@ -149,12 +294,16 @@
           loanIds: numbers,
         },
         (response) => {
+          // Handle Chrome runtime errors
           if (chrome.runtime.lastError) {
             return reject(chrome.runtime.lastError.message);
-          } else if (response.error) {
+          }
+          // Handle application-level errors
+          else if (response.error) {
             return reject(response.error);
           }
 
+          // Filter out only the allowed loan numbers
           const available = Object.keys(response.result).filter(
             (key) => response.result[key]
           );
@@ -165,46 +314,111 @@
   }
 
   /**
-   * Utility function to watch for value changes
+   * @function onValueChange
+   * @description Utility function to watch for value changes and trigger a callback when changes occur.
+   * @param {Function} evalFunction - Function that returns the value to monitor.
+   * @param {Function} callback - Function to call when the value changes, receives (newValue, oldValue).
+   * @param {Object} [options={}] - Configuration options.
+   * @param {number} [options.maxTime] - Maximum time in milliseconds to watch for changes.
+   * @returns {number} The interval ID that can be used to clear the interval.
+   * @example
+   * // Example usage of the function
+   * const intervalId = onValueChange(
+   *   () => document.querySelector('#loanNumber').value,
+   *   (newValue, oldValue) => console.log(`Loan number changed from ${oldValue} to ${newValue}`),
+   *   { maxTime: 60000 } // Stop watching after 1 minute
+   * );
+   *
+   * // To stop watching:
+   * clearInterval(intervalId);
    */
   function onValueChange(evalFunction, callback, options = {}) {
     let lastValue = undefined;
     const startTime = Date.now();
     const endTime = options.maxTime ? startTime + options.maxTime : null;
+
+    // Set up interval to check for value changes
     const intervalId = setInterval(async () => {
+      // Check if maximum time has elapsed
       const currentTime = Date.now();
       if (endTime && currentTime > endTime) {
         clearInterval(intervalId);
         return;
       }
+
+      // Get the current value
       let newValue = await evalFunction();
       if (newValue === "") newValue = null;
 
+      // Only trigger callback if the value has changed
       if (lastValue === newValue) return;
+
+      // Update the last value and call the callback
+      const oldValue = lastValue;
       lastValue = newValue;
 
-      await callback(newValue, lastValue);
-    }, 500);
+      await callback(newValue, oldValue);
+    }, 500); // Check every 500ms
+
     return intervalId;
   }
 
   /**
-   * Cache for allowed loans to improve performance
+   * @namespace allowedLoansCache
+   * @description Cache for allowed loans to improve performance and reduce API calls.
    */
   const allowedLoansCache = {
+    /**
+     * @property {Set} loans
+     * @description Set containing all allowed loan numbers.
+     */
     loans: new Set(),
+
+    /**
+     * @property {number} lastUpdated
+     * @description Timestamp when the cache was last updated.
+     */
     lastUpdated: 0,
+
+    /**
+     * @property {number} cacheTimeout
+     * @description Time in milliseconds after which the cache is considered stale (5 minutes).
+     */
     cacheTimeout: 5 * 60 * 1000, // 5 minutes
 
+    /**
+     * @function isAllowed
+     * @description Checks if a loan number is in the allowed loans cache.
+     * @param {string} loanNumber - The loan number to check.
+     * @returns {boolean} True if the loan number is allowed, false otherwise.
+     * @example
+     * // Example usage of the function
+     * if (allowedLoansCache.isAllowed('12345')) {
+     *   // Loan is allowed
+     * }
+     */
     isAllowed(loanNumber) {
       return this.loans.has(loanNumber);
     },
 
+    /**
+     * @function addLoans
+     * @description Adds loan numbers to the cache and updates the timestamp.
+     * @param {string[]} loanNumbers - Array of loan numbers to add to the cache.
+     * @example
+     * // Example usage of the function
+     * allowedLoansCache.addLoans(['12345', '67890']);
+     */
     addLoans(loanNumbers) {
       loanNumbers.forEach((loan) => this.loans.add(loan));
       this.lastUpdated = Date.now();
     },
 
+    /**
+     * @function isCacheValid
+     * @description Checks if the cache is still valid based on the timeout.
+     * @returns {boolean} True if the cache is valid, false if it's stale or empty.
+     */
     isCacheValid() {
       return (
         this.lastUpdated > 0 &&
@@ -212,6 +426,13 @@
       );
     },
 
+    /**
+     * @function clear
+     * @description Clears the cache and resets the timestamp.
+     * @example
+     * // Example usage of the function
+     * allowedLoansCache.clear();
+     */
     clear() {
       this.loans.clear();
       this.lastUpdated = 0;
@@ -219,15 +440,28 @@
   };
 
   /**
-   * Checks if a loan number is allowed for the current user
+   * @function isLoanNumberAllowed
+   * @description Checks if a loan number is allowed for the current user.
+   * @param {string|number} loanNumber - The loan number to check.
+   * @returns {Promise<boolean>} A promise that resolves to true if the loan is allowed, false otherwise.
+   * @example
+   * // Example usage of the function
+   * const isAllowed = await isLoanNumberAllowed('12345');
+   * if (isAllowed) {
+   *   // Show loan details
+   * } else {
+   *   // Show access denied message
+   * }
    */
   async function isLoanNumberAllowed(loanNumber) {
     try {
+      // Handle empty or undefined loan numbers
       if (!loanNumber) return false;
 
+      // Normalize the loan number to a string and trim whitespace
       loanNumber = String(loanNumber).trim();
 
-      // Check cache first for performance
+      // Check cache first for performance optimization
       if (
         allowedLoansCache.isCacheValid() &&
         allowedLoansCache.isAllowed(loanNumber)
@@ -235,10 +469,10 @@
         return true;
       }
 
-      // Query the extension for this loan number
+      // If not in cache or cache is invalid, query the extension
       const allowedNumbers = await checkNumbersBatch([loanNumber]);
-      
-      // Update cache with results
+
+      // Update cache with results for future queries
       if (allowedNumbers && allowedNumbers.length > 0) {
         allowedLoansCache.addLoans(allowedNumbers);
       }
@@ -246,20 +480,34 @@
       // Return true if the loan number is in the allowed list
       return allowedNumbers.includes(loanNumber);
     } catch (error) {
+      // Log the error and default to not allowed for security
       console.warn("Failed to check loan access, assuming not allowed:", error);
       return false;
     }
   }
 
   /**
-   * Creates the "Loan is not provisioned" message element
+   * @function createNotProvisionedElement
+   * @description Creates a DOM element displaying "Loan is not provisioned to the user" message.
+   * @returns {HTMLElement} A styled span element with the not provisioned message.
+   * @example
+   * // Example usage of the function
+   * const messageElement = createNotProvisionedElement();
+   * document.body.appendChild(messageElement);
    */
   function createNotProvisionedElement() {
+    // Create the base span element
     const element = document.createElement("span");
+
+    // Add the message text
     element.appendChild(
       document.createTextNode("Loan is not provisioned to the user")
     );
+
+    // Set the class name
     element.className = "body";
+
+    // Apply styling to the element
     element.style.display = "flex";
     element.style.justifyContent = "center";
     element.style.alignItems = "center";
@@ -269,20 +517,53 @@
     element.style.color = "black";
     element.style.position = "relative";
     element.style.zIndex = "-1";
+
     return element;
   }
 
   /**
-   * Handles the loan detail view element
+   * @class ViewElement
+   * @description Handles the loan detail view element, providing methods to show/hide content based on permissions.
    */
   class ViewElement {
+    /**
+     * @constructor
+     * @description Creates a new ViewElement instance and initializes its properties.
+     */
     constructor() {
+      /**
+       * @property {HTMLElement} element
+       * @description The main content element containing loan details.
+       */
       this.element = document.querySelector(".col-md-12 .body");
+
+      /**
+       * @property {HTMLElement} parent
+       * @description The parent element of the main content element.
+       */
       this.parent = this.element && this.element.parentElement;
+
+      /**
+       * @property {HTMLElement} unallowed
+       * @description The element to display when a loan is not provisioned.
+       */
       this.unallowed = createNotProvisionedElement();
+
+      /**
+       * @property {HTMLElement} unallowedParent
+       * @description The parent element where the unallowed message will be appended.
+       */
       this.unallowedParent = document.querySelector("nav");
     }
 
+    /**
+     * @method remove
+     * @description Removes the loan detail element and shows the "not provisioned" message.
+     * @example
+     * // Example usage of the method
+     * const view = new ViewElement();
+     * view.remove();
+     */
     remove() {
       if (this.element) {
         this.element.remove();
@@ -290,6 +571,14 @@
       }
     }
 
+    /**
+     * @method add
+     * @description Adds the loan detail element back and removes the "not provisioned" message.
+     * @example
+     * // Example usage of the method
+     * const view = new ViewElement();
+     * view.add();
+     */
     add() {
       if (this.parent) {
         this.unallowed.remove();
@@ -299,68 +588,125 @@
   }
 
   /**
-   * Extracts loan number from view element
+   * @function getLoanNumber
+   * @description Extracts loan number from a view element by finding the specific cell.
+   * @param {HTMLElement} viewElement - The DOM element containing loan information.
+   * @returns {string|null} The loan number if found, null otherwise.
+   * @example
+   * // Example usage of the function
+   * const loanElement = document.querySelector('.loan-details');
+   * const loanNumber = getLoanNumber(loanElement);
    */
   function getLoanNumber(viewElement) {
+    // Find the cell containing the loan number
     const loanNumberCell = viewElement.querySelector(
       "table tr td a.bright-green.ng-binding"
     );
+    // Return the trimmed text content if found, otherwise null
     return loanNumberCell && loanNumberCell.textContent.trim();
   }
 
   /**
-   * Waits for loan number to appear in the DOM
+   * @function waitForLoanNumber
+   * @description Waits for a loan number to appear in the DOM using MutationObserver.
+   * @returns {Promise<ViewElement>} A promise that resolves with the ViewElement when a loan number is found.
+   * @example
+   * // Example usage of the function
+   * waitForLoanNumber().then(viewElement => {
+   *   console.log('Loan number found in:', viewElement);
+   * });
    */
   function waitForLoanNumber() {
     return new Promise((resolve) => {
+      // Create a mutation observer to watch for DOM changes
       const observer = new MutationObserver((mutationsList, observer) => {
+        // Create a view element to check for loan number
         const viewElement = new ViewElement();
         if (viewElement.element) {
+          // Try to extract the loan number
           const loanNumber = getLoanNumber(viewElement.element);
           if (loanNumber) {
+            // If found, disconnect the observer and resolve the promise
             observer.disconnect();
             resolve(viewElement);
           }
         }
       });
 
+      // Start observing the document body for all changes
       observer.observe(document.body, {
-        childList: true,
-        subtree: true,
+        childList: true, // Watch for changes to the direct children
+        subtree: true, // Watch for changes to the entire subtree
       });
     });
   }
 
   /**
-   * Extracts loan numbers from text content
+   * @function extractLoanNumbers
+   * @description Extracts potential loan numbers from text content using regex patterns.
+   * @param {string} text - The text to extract loan numbers from.
+   * @returns {string[]} Array of unique potential loan numbers found in the text.
+   * @example
+   * // Example usage of the function
+   * const text = "Customer has loans: 12345 and ABC123";
+   * const loanNumbers = extractLoanNumbers(text);
+   * // Returns: ['12345', 'ABC123']
    */
   function extractLoanNumbers(text) {
+    // Handle empty or null text
     if (!text) return [];
 
+    // Convert to string and trim whitespace
     text = String(text).trim();
 
     const matches = [];
+
+    // Find numeric loan numbers (5 or more digits)
     const digitMatches = text.match(/\b\d{5,}\b/g);
+
+    // Find alphanumeric loan numbers (5 or more characters, uppercase)
     const alphaNumMatches = text.match(/\b[A-Z0-9]{5,}\b/g);
 
+    // Combine matches
     if (digitMatches) matches.push(...digitMatches);
     if (alphaNumMatches) matches.push(...alphaNumMatches);
 
+    // Return unique matches using Set
     return [...new Set(matches)];
   }
 
   /**
-   * Quick check if text contains a potential loan number
+   * @function containsLoanNumber
+   * @description Quick check if text contains a potential loan number pattern.
+   * @param {string} text - The text to check.
+   * @returns {boolean} True if the text contains a potential loan number, false otherwise.
+   * @example
+   * // Example usage of the function
+   * if (containsLoanNumber("Customer ID: 12345")) {
+   *   // Text contains a potential loan number
+   * }
    */
   function containsLoanNumber(text) {
+    // Check for numeric loan numbers (5 or more digits)
+    // or alphanumeric loan numbers (5 or more characters, uppercase)
     return /\b\d{5,}\b/.test(text) || /\b[A-Z0-9]{5,}\b/.test(text);
   }
 
   /**
-   * Determines if an element should be hidden based on loan numbers
+   * @function shouldHideElement
+   * @description Determines if an element should be hidden based on loan numbers it contains.
+   * @param {HTMLElement} element - The DOM element to check.
+   * @returns {Promise<boolean>} A promise that resolves to true if the element should be hidden, false otherwise.
+   * @example
+   * // Example usage of the function
+   * const element = document.querySelector('.loan-row');
+   * const shouldHide = await shouldHideElement(element);
+   * if (shouldHide) {
+   *   element.style.display = 'none';
+   * }
    */
   async function shouldHideElement(element) {
-    // Skip certain element types
+    // Skip non-content elements that won't contain loan numbers
     if (
       element.tagName === "SCRIPT" ||
       element.tagName === "STYLE" ||
@@ -370,31 +716,49 @@
       return false;
     }
 
+    // Get the text content of the element
     const text = element.innerText || element.textContent || "";
+
+    // Quick check if the text might contain a loan number
     if (!containsLoanNumber(text)) return false;
 
+    // Extract potential loan numbers from the text
     const potentialLoanNumbers = extractLoanNumbers(text);
     if (potentialLoanNumbers.length === 0) return false;
 
+    // Check if any of the potential loan numbers are allowed
     for (const loanNumber of potentialLoanNumbers) {
+      // If at least one loan number is allowed, don't hide the element
       if (await isLoanNumberAllowed(loanNumber)) {
         return false;
       }
     }
 
+    // If no loan numbers are allowed, hide the element
     return true;
   }
 
   /**
-   * Process table rows to hide those with restricted loan numbers
+   * @function processTableRows
+   * @description Processes all table rows in the document to hide those with restricted loan numbers.
+   * @returns {Promise<void>} A promise that resolves when processing is complete.
+   * @example
+   * // Example usage of the function
+   * await processTableRows();
    */
   async function processTableRows() {
+    // Select all table rows in the document
     const rows = document.querySelectorAll("tr");
 
+    // Process each row
     for (const row of rows) {
+      // Skip already processed rows to avoid redundant work
       if (processedElements.has(row)) continue;
+
+      // Mark this row as processed
       processedElements.add(row);
 
+      // Check if the row should be hidden
       if (await shouldHideElement(row)) {
         row.style.display = "none";
       }
@@ -402,17 +766,28 @@
   }
 
   /**
-   * Process generic elements that might contain loan numbers
+   * @function processGenericElements
+   * @description Processes generic elements that might contain loan numbers to hide restricted content.
+   * @returns {Promise<void>} A promise that resolves when processing is complete.
+   * @example
+   * // Example usage of the function
+   * await processGenericElements();
    */
   async function processGenericElements() {
+    // Select elements that are likely to contain loan information
     const potentialContainers = document.querySelectorAll(
       '.borrower-row, .loan-item, .card, .list-item, div[class*="loan"], div[class*="borrower"]'
     );
 
+    // Process each container
     for (const container of potentialContainers) {
+      // Skip already processed containers
       if (processedElements.has(container)) continue;
+
+      // Mark this container as processed
       processedElements.add(container);
 
+      // Check if the container should be hidden
       if (await shouldHideElement(container)) {
         container.style.display = "none";
       }
@@ -420,23 +795,38 @@
   }
 
   /**
-   * Extracts brand code from text content
+   * @function extractBrandCode
+   * @description Extracts brand code from text content using regex patterns.
+   * @param {string} text - The text to extract brand code from.
+   * @returns {string|null} The extracted brand code or null if not found.
+   * @example
+   * // Example usage of the function
+   * const brandName = "Acme Financial (ACME)";
+   * const brandCode = extractBrandCode(brandName);
+   * // Returns: 'ACME'
    */
   function extractBrandCode(text) {
+    // Handle empty or null text
     if (!text) return null;
 
+    // Convert to string and trim whitespace
     text = String(text).trim();
 
+    // First try to match brand code in parentheses at the end of text
+    // Example: "Acme Financial (ACME)" -> "ACME"
     const parenthesesMatch = text.match(/\(([A-Z0-9]{2,4})\)$/);
     if (parenthesesMatch) {
       return parenthesesMatch[1];
     }
 
+    // If not found in parentheses, try to match standalone brand code
+    // Example: "ACME Financial" -> "ACME"
     const standaloneMatch = text.match(/\b([A-Z0-9]{2,4})\b/);
     if (standaloneMatch) {
       return standaloneMatch[1];
     }
 
+    // No brand code found
     return null;
   }
 
@@ -747,13 +1137,13 @@
 
             for (const loanNumber of loanNumbers) {
               const isAllowed = await isLoanNumberAllowed(loanNumber);
-              
+
               if (isAllowed) {
                 anyAllowed = true;
                 break;
               }
             }
-            
+
             // If none are allowed, hide the row and show the message
             if (!anyAllowed) {
               resultRow.style.display = "none";
@@ -761,7 +1151,7 @@
               // Show the not provisioned message
               const loanNumber = loanNumbers[0];
               showNotProvisionedAlert(loanNumber);
-              
+
               DEBUG.log(
                 `Search returned exactly one restricted loan: ${loanNumber}. Showing not provisioned message.`
               );
