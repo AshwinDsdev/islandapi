@@ -223,93 +223,7 @@
    * @param {number} [maxRetries=20] - Maximum number of retry attempts.
    * @param {number} [initialDelay=100] - Initial delay in milliseconds between retries.
    * @returns {Promise<boolean>} A promise that resolves to true if the listener is available, false otherwise.
-   * @example
-   * // Example usage of the function
-   * const listenerAvailable = await waitForListener(30, 200);
-   * if (listenerAvailable) {
-   *   // Proceed with operations that require the extension
-   * }
    */
-  async function waitForListener(maxRetries = 20, initialDelay = 100) {
-    return new Promise((resolve, reject) => {
-      // Check if Chrome extension API is available
-      if (
-        typeof chrome === "undefined" ||
-        !chrome.runtime ||
-        !chrome.runtime.sendMessage
-      ) {
-        console.warn(
-          "❌ Chrome extension API not available. Running in standalone mode."
-        );
-        // Show the page if Chrome extension API is not available
-        pageUtils.showPage(true);
-        resolve(false);
-        return;
-      }
-
-      let attempts = 0;
-      let delay = initialDelay;
-      let timeoutId;
-
-      /**
-       * @function sendPing
-       * @description Sends a ping message to the extension and handles the response.
-       * @private
-       */
-      function sendPing() {
-        // Check if maximum retries reached
-        if (attempts >= maxRetries) {
-          console.warn("❌ No listener detected after maximum retries.");
-          clearTimeout(timeoutId);
-          reject(new Error("Listener not found"));
-          return;
-        }
-
-        try {
-          // Send ping message to extension
-          chrome.runtime.sendMessage(
-            EXTENSION_ID,
-            { type: "ping" },
-            (response) => {
-              // Handle runtime errors
-              if (chrome.runtime.lastError) {
-                console.warn(
-                  "Chrome extension error:",
-                  chrome.runtime.lastError
-                );
-                attempts++;
-                if (attempts >= maxRetries) {
-                  reject(new Error("Chrome extension error"));
-                  return;
-                }
-                timeoutId = setTimeout(sendPing, delay);
-                return;
-              }
-
-              // Check for successful response
-              if (response?.result === "pong") {
-                clearTimeout(timeoutId);
-                resolve(true);
-              } else {
-                // Retry with exponential backoff
-                timeoutId = setTimeout(() => {
-                  attempts++;
-                  delay *= 2; // Exponential backoff
-                  sendPing();
-                }, delay);
-              }
-            }
-          );
-        } catch (error) {
-          console.error("Error sending message to extension:", error);
-          resolve(false);
-        }
-      }
-
-      // Start the ping process
-      sendPing();
-    });
-  }
   /**
    * @function checkNumbersBatch
    * @description Checks a batch of loan numbers against the extension to determine which ones are allowed.
@@ -317,33 +231,33 @@
    * @returns {Promise<string[]>} A promise that resolves to an array of allowed loan numbers.
    * @throws {Error} If there's an error communicating with the extension.
    * */
-  // async function checkNumbersBatch(numbers) {
-  //   return new Promise((resolve, reject) => {
-  //     chrome.runtime.sendMessage(
-  //       EXTENSION_ID,
-  //       {
-  //         type: "queryLoans",
-  //         loanIds: numbers,
-  //       },
-  //       (response) => {
-  //         // Handle Chrome runtime errors
-  //         if (chrome.runtime.lastError) {
-  //           return reject(chrome.runtime.lastError.message);
-  //         }
-  //         // Handle application-level errors
-  //         else if (response.error) {
-  //           return reject(response.error);
-  //         }
+  async function checkNumbersBatch(numbers) {
+    return new Promise((resolve, reject) => {
+      chrome.runtime.sendMessage(
+        EXTENSION_ID,
+        {
+          type: "queryLoans",
+          loanIds: numbers,
+        },
+        (response) => {
+          // Handle Chrome runtime errors
+          if (chrome.runtime.lastError) {
+            return reject(chrome.runtime.lastError.message);
+          }
+          // Handle application-level errors
+          else if (response.error) {
+            return reject(response.error);
+          }
 
-  //         // Filter out only the allowed loan numbers
-  //         const available = Object.keys(response.result).filter(
-  //           (key) => response.result[key]
-  //         );
-  //         resolve(available);
-  //       }
-  //     );
-  //   });
-  // }
+          // Filter out only the allowed loan numbers
+          const available = Object.keys(response.result).filter(
+            (key) => response.result[key]
+          );
+          resolve(available);
+        }
+      );
+    });
+  }
 
   /**
    * @function onValueChange
@@ -353,61 +267,7 @@
    * @param {Object} [options={}] - Configuration options.
    * @param {number} [options.maxTime] - Maximum time in milliseconds to watch for changes.
    * @returns {number} The interval ID that can be used to clear the interval.
-   * @example
-   * // Example usage of the function
-   * const intervalId = onValueChange(
-   *   () => document.querySelector('#loanNumber').value,
-   *   (newValue, oldValue) => console.log(`Loan number changed from ${oldValue} to ${newValue}`),
-   *   { maxTime: 60000 } // Stop watching after 1 minute
-   * );
-   *
-   * // To stop watching:
-   * clearInterval(intervalId);
    */
-
-  const LoanNums = [
-    "0194737052",
-    "0151410206",
-    "0180995748",
-    "0000000612",
-    "0000000687",
-    "0000000711",
-    "0000000786",
-    "0000000927",
-    "0000000976",
-    "0194737052",
-    "0000001180",
-    "0000001230",
-    "0151410206",
-    "0000001453",
-    "0000001537",
-    "0000001594",
-    "0000001669",
-    "0000001677",
-    "0000001719",
-    "0000001792",
-    "0000001834",
-    "0000001891",
-    "0000002063",
-    "0180995748",
-    "0000002352",
-    "0000002410",
-    "0000002436",
-    "0000002477",
-    "0000002485",
-    "0000002493",
-    "0000002535",
-    "0000002550",
-    "0000002600",
-    "0000002642",
-    "0000002667",
-    "0000002691",
-  ];
-
-  const checkNumbersBatch = async (numbers) => {
-    const available = numbers.filter((num) => LoanNums.includes(num));
-    return available;
-  };
 
   function onValueChange(evalFunction, callback, options = {}) {
     let lastValue = undefined;
@@ -1570,17 +1430,17 @@
     }, 5000); // 5 seconds max wait time
 
     try {
-      // const hasListener = await waitForListener();
-      // DEBUG.log(
-      //   `Extension listener ${hasListener ? "detected" : "not available"}`
-      // );
+      const hasListener = await waitForListener();
+      DEBUG.log(
+        `Extension listener ${hasListener ? "detected" : "not available"}`
+      );
 
-      // if (!hasListener) {
-      //   // Show the page if extension is not available
-      //   pageUtils.showPage(true);
-      //   clearTimeout(safetyTimeout);
-      //   return;
-      // }
+      if (!hasListener) {
+        // Show the page if extension is not available
+        pageUtils.showPage(true);
+        clearTimeout(safetyTimeout);
+        return;
+      }
 
       await injectFilterStyles();
 
