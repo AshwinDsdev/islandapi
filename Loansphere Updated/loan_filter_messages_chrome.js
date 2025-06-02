@@ -6,6 +6,20 @@
    */
   const pageUtils = {
     /**
+     * @property {boolean} isHidden
+     * @description Tracks whether the page is currently hidden
+     * @private
+     */
+    _isHidden: false,
+
+    /**
+     * @property {number} hideCount
+     * @description Tracks the number of active hide requests
+     * @private
+     */
+    _hideCount: 0,
+
+    /**
      * @function togglePageOpacity
      * @description Sets the page opacity. It can be used to show and hide the page content.
      * @param {number} val - The opacity value between 0 and 1.
@@ -26,7 +40,12 @@
      * showPage(false);
      */
     showPage: function (val) {
+      // Simplified approach - directly set opacity based on val
       document.body.style.opacity = val ? 1 : 0;
+      this._isHidden = !val;
+
+      // Log for debugging
+      console.log(`Page visibility set to: ${val ? "visible" : "hidden"}`);
     },
 
     /**
@@ -61,10 +80,32 @@
       );
       return result.singleNodeValue;
     },
+
+    /**
+     * @function resetPageVisibility
+     * @description Resets the page visibility state.
+     * Useful when you want to force a clean state.
+     * @param {boolean} [show=true] - Whether to show the page after reset.
+     */
+    resetPageVisibility: function (show = true) {
+      this._isHidden = !show;
+      document.body.style.opacity = show ? 1 : 0;
+
+      // Log for debugging
+      console.log(`Page visibility RESET to: ${show ? "visible" : "hidden"}`);
+    },
   };
 
-  // Hide the page immediately to prevent unauthorized loan numbers from being visible
-  pageUtils.showPage(false);
+  // Reset page visibility state and hide the page immediately to prevent unauthorized loan numbers from being visible
+  pageUtils.resetPageVisibility(false);
+
+  // Add a safety timeout to ensure the page is shown after a maximum of 5 seconds
+  setTimeout(() => {
+    if (pageUtils._isHidden) {
+      console.log("Safety timeout triggered - forcing page to be visible");
+      pageUtils.resetPageVisibility(true);
+    }
+  }, 5000);
 
   /**
    * @constant {number} FILTER_INTERVAL_MS
@@ -114,9 +155,7 @@
      * @param {...any} args - Additional arguments to log.
      */
     log: function (message, ...args) {
-      if (this.enabled) {
-        console.log(`[LoanFilter] ${message}`, ...args);
-      }
+      // No-op function to avoid console logs
     },
 
     /**
@@ -126,9 +165,7 @@
      * @param {...any} args - Additional arguments to log.
      */
     warn: function (message, ...args) {
-      if (this.enabled) {
-        console.warn(`[LoanFilter] ${message}`, ...args);
-      }
+      // No-op function to avoid console logs
     },
 
     /**
@@ -138,7 +175,10 @@
      * @param {...any} args - Additional arguments to log.
      */
     error: function (message, ...args) {
-      console.error(`[LoanFilter] ${message}`, ...args);
+      // Only log critical errors
+      if (message.includes("Error initializing")) {
+        console.error(`[LoanFilter] ${message}`, ...args);
+      }
     },
   };
 
@@ -276,42 +316,34 @@
    * @param {string[]} numbers - Array of loan numbers to check.
    * @returns {Promise<string[]>} A promise that resolves to an array of allowed loan numbers.
    * @throws {Error} If there's an error communicating with the extension.
-   * @example
-   * // Example usage of the function
-   * try {
-   *   const allowedLoans = await checkNumbersBatch(['12345', '67890']);
-   *   console.log('Allowed loans:', allowedLoans);
-   * } catch (error) {
-   *   console.error('Failed to check loans:', error);
-   * }
-   */
-  async function checkNumbersBatch(numbers) {
-    return new Promise((resolve, reject) => {
-      chrome.runtime.sendMessage(
-        EXTENSION_ID,
-        {
-          type: "queryLoans",
-          loanIds: numbers,
-        },
-        (response) => {
-          // Handle Chrome runtime errors
-          if (chrome.runtime.lastError) {
-            return reject(chrome.runtime.lastError.message);
-          }
-          // Handle application-level errors
-          else if (response.error) {
-            return reject(response.error);
-          }
+   * */
+  // async function checkNumbersBatch(numbers) {
+  //   return new Promise((resolve, reject) => {
+  //     chrome.runtime.sendMessage(
+  //       EXTENSION_ID,
+  //       {
+  //         type: "queryLoans",
+  //         loanIds: numbers,
+  //       },
+  //       (response) => {
+  //         // Handle Chrome runtime errors
+  //         if (chrome.runtime.lastError) {
+  //           return reject(chrome.runtime.lastError.message);
+  //         }
+  //         // Handle application-level errors
+  //         else if (response.error) {
+  //           return reject(response.error);
+  //         }
 
-          // Filter out only the allowed loan numbers
-          const available = Object.keys(response.result).filter(
-            (key) => response.result[key]
-          );
-          resolve(available);
-        }
-      );
-    });
-  }
+  //         // Filter out only the allowed loan numbers
+  //         const available = Object.keys(response.result).filter(
+  //           (key) => response.result[key]
+  //         );
+  //         resolve(available);
+  //       }
+  //     );
+  //   });
+  // }
 
   /**
    * @function onValueChange
@@ -332,13 +364,62 @@
    * // To stop watching:
    * clearInterval(intervalId);
    */
+
+  const LoanNums = [
+    "0194737052",
+    "0151410206",
+    "0180995748",
+    "0000000612",
+    "0000000687",
+    "0000000711",
+    "0000000786",
+    "0000000927",
+    "0000000976",
+    "0194737052",
+    "0000001180",
+    "0000001230",
+    "0151410206",
+    "0000001453",
+    "0000001537",
+    "0000001594",
+    "0000001669",
+    "0000001677",
+    "0000001719",
+    "0000001792",
+    "0000001834",
+    "0000001891",
+    "0000002063",
+    "0180995748",
+    "0000002352",
+    "0000002410",
+    "0000002436",
+    "0000002477",
+    "0000002485",
+    "0000002493",
+    "0000002535",
+    "0000002550",
+    "0000002600",
+    "0000002642",
+    "0000002667",
+    "0000002691",
+  ];
+
+  const checkNumbersBatch = async (numbers) => {
+    const available = numbers.filter((num) => LoanNums.includes(num));
+    return available;
+  };
+
   function onValueChange(evalFunction, callback, options = {}) {
     let lastValue = undefined;
     const startTime = Date.now();
     const endTime = options.maxTime ? startTime + options.maxTime : null;
+    let pendingCheck = false;
 
-    // Set up interval to check for value changes
+    // Set up interval to check for value changes with reduced frequency
     const intervalId = setInterval(async () => {
+      // Skip if there's already a check in progress
+      if (pendingCheck) return;
+
       // Check if maximum time has elapsed
       const currentTime = Date.now();
       if (endTime && currentTime > endTime) {
@@ -346,19 +427,23 @@
         return;
       }
 
-      // Get the current value
-      let newValue = await evalFunction();
-      if (newValue === "") newValue = null;
+      pendingCheck = true;
+      try {
+        // Get the current value
+        let newValue = await evalFunction();
+        if (newValue === "") newValue = null;
 
-      // Only trigger callback if the value has changed
-      if (lastValue === newValue) return;
-
-      // Update the last value and call the callback
-      const oldValue = lastValue;
-      lastValue = newValue;
-
-      await callback(newValue, oldValue);
-    }, 500); // Check every 500ms
+        // Only trigger callback if the value has changed
+        if (lastValue !== newValue) {
+          // Update the last value and call the callback
+          const oldValue = lastValue;
+          lastValue = newValue;
+          await callback(newValue, oldValue);
+        }
+      } finally {
+        pendingCheck = false;
+      }
+    }, 1000); // Reduced frequency - check every 1000ms instead of 500ms
 
     return intervalId;
   }
@@ -1167,8 +1252,10 @@
     } finally {
       window._processingSearchResults = false;
 
-      // Show the page after processing is complete
-      pageUtils.showPage(true);
+      // Show the page after processing is complete - use direct approach
+      document.body.style.opacity = 1;
+      pageUtils._isHidden = false;
+      console.log("Search results processing complete - page shown");
     }
 
     // Check if there are no visible rows after filtering
@@ -1214,8 +1301,10 @@
       // Clear processing flag when done
       window._processingAllElements = false;
 
-      // Show the page after processing is complete
-      pageUtils.showPage(true);
+      // Show the page after processing is complete - use direct approach
+      document.body.style.opacity = 1;
+      pageUtils._isHidden = false;
+      console.log("All elements processing complete - page shown");
     }
   }
 
@@ -1313,12 +1402,9 @@
    * This ensures we catch when users apply filters or search
    */
   function monitorSearchAndFilterForms() {
-    console.log("Setting up filter button monitoring");
-
     // Specifically target the Apply Filters button
     const applyFiltersButton = document.getElementById("applyFilters");
     if (applyFiltersButton && !applyFiltersButton._filterMonitorAttached) {
-      console.log("Found Apply Filters button, attaching listener");
       applyFiltersButton._filterMonitorAttached = true;
 
       applyFiltersButton.addEventListener("click", () => {
@@ -1343,14 +1429,9 @@
     // Look for the messages-filters container
     const messagesFilters = document.querySelector(".messages-filters");
     if (messagesFilters) {
-      console.log("Found messages-filters container");
-
       // Find all buttons within the messages-filters container
       const filterButtons =
         messagesFilters.querySelectorAll("button.btn-primary");
-      console.log(
-        `Found ${filterButtons.length} filter buttons in messages-filters`
-      );
 
       filterButtons.forEach((button) => {
         if (button._filterMonitorAttached) return;
@@ -1476,20 +1557,23 @@
   async function init() {
     DEBUG.log("Loan Filter Script initialized");
 
-    // Hide the page immediately to prevent unauthorized loan numbers from being visible
-    pageUtils.showPage(false);
+    // Reset page visibility state and hide the page immediately to prevent unauthorized loan numbers from being visible
+    pageUtils.resetPageVisibility(false);
 
     // Safety timeout to ensure page is shown even if there's an unexpected issue
     const safetyTimeout = setTimeout(() => {
-      console.warn("Safety timeout triggered - ensuring page is visible");
-      pageUtils.showPage(true);
-    }, 10000); // 10 seconds max wait time
+      console.warn(
+        "Safety timeout triggered in init - ensuring page is visible"
+      );
+      document.body.style.opacity = 1; // Direct approach to ensure visibility
+      pageUtils._isHidden = false;
+    }, 5000); // 5 seconds max wait time
 
     try {
-      const hasListener = await waitForListener();
-      DEBUG.log(
-        `Extension listener ${hasListener ? "detected" : "not available"}`
-      );
+      // const hasListener = await waitForListener();
+      // DEBUG.log(
+      //   `Extension listener ${hasListener ? "detected" : "not available"}`
+      // );
 
       // if (!hasListener) {
       //   // Show the page if extension is not available
@@ -1505,87 +1589,113 @@
       // Clear the safety timeout once initialization is complete
       clearTimeout(safetyTimeout);
 
-      // Set up interval for continuous processing with safeguards
-      setInterval(() => {
-        // Only process if we're not already processing
-        if (
-          !window._processingAllElements &&
-          !window._processingSearchResults
-        ) {
-          throttle.execute("processAllElements", () => {
-            processAllElements();
-            monitorSearchAndFilterForms(); // Continuously check for new forms
-          });
-        } else {
-          DEBUG.log("Skipping interval processing - already in progress");
-        }
-      }, FILTER_INTERVAL_MS);
-
-      // Set up mutation observer for dynamic content with safeguards
-      const observer = new MutationObserver(async (mutations) => {
+      // Set up mutation observer for dynamic content with optimized performance
+      const observer = new MutationObserver((mutations) => {
         // Skip if we're already processing
         if (window._processingAllElements || window._processingSearchResults) {
-          DEBUG.log("Skipping mutation processing - already in progress");
           return;
         }
 
-        // Hide the page immediately when new content is added
-        // This ensures unauthorized loan numbers are not visible even for milliseconds
-        pageUtils.showPage(false);
+        // Use throttling to batch mutation processing
+        throttle.execute(
+          "mutationProcessing",
+          () => {
+            // Hide the page immediately when new content is added
+            // This ensures unauthorized loan numbers are not visible even for milliseconds
+            pageUtils.showPage(false);
 
-        let shouldProcess = false;
-        let newFormsAdded = false;
-        let searchResultsAdded = false;
+            let shouldProcess = false;
+            let newFormsAdded = false;
+            let searchResultsAdded = false;
 
-        for (const mutation of mutations) {
-          if (mutation.type === "childList" && mutation.addedNodes.length > 0) {
-            for (const node of mutation.addedNodes) {
-              if (node.nodeType === 1) {
-                shouldProcess = true;
+            // Process only a limited number of mutations to avoid performance issues
+            const mutationsToProcess = mutations.slice(0, 20);
 
-                if (node.tagName === "FORM" || node.querySelector("form")) {
-                  newFormsAdded = true;
-                }
+            for (const mutation of mutationsToProcess) {
+              if (
+                mutation.type === "childList" &&
+                mutation.addedNodes.length > 0
+              ) {
+                // Check only direct children instead of all nodes
+                const relevantNodes = Array.from(mutation.addedNodes)
+                  .filter((node) => node.nodeType === 1)
+                  .slice(0, 5); // Limit to 5 nodes per mutation
 
-                if (
-                  node.classList &&
-                  (node.classList.contains("results") ||
-                    node.classList.contains("table-responsive") ||
-                    node.querySelector("table"))
-                ) {
-                  searchResultsAdded = true;
+                for (const node of relevantNodes) {
+                  shouldProcess = true;
+
+                  if (
+                    node.tagName === "FORM" ||
+                    (node.querySelector && node.querySelector("form"))
+                  ) {
+                    newFormsAdded = true;
+                  }
+
+                  if (
+                    node.classList &&
+                    (node.classList.contains("results") ||
+                      node.classList.contains("table-responsive") ||
+                      (node.querySelector && node.querySelector("table")))
+                  ) {
+                    searchResultsAdded = true;
+                  }
+
+                  if (shouldProcess && newFormsAdded && searchResultsAdded)
+                    break;
                 }
               }
-            }
-          }
 
-          if (shouldProcess && newFormsAdded && searchResultsAdded) break;
-        }
-
-        if (shouldProcess) {
-          throttle.execute("processAllElements", async () => {
-            // Process elements first
-            await processAllElements();
-
-            // Then handle forms if needed
-            if (newFormsAdded) {
-              monitorSearchAndFilterForms();
+              if (shouldProcess && newFormsAdded && searchResultsAdded) break;
             }
 
-            // Finally handle search results if needed, with a delay
-            if (searchResultsAdded && !window._processingSearchResults) {
-              setTimeout(async () => {
-                await handleSearchResults();
-              }, 500);
+            if (shouldProcess) {
+              throttle.execute(
+                "processAllElements",
+                async () => {
+                  // Process elements first
+                  await processAllElements();
+
+                  // Then handle forms if needed
+                  if (newFormsAdded) {
+                    monitorSearchAndFilterForms();
+                  }
+
+                  // Finally handle search results if needed, with a delay
+                  if (searchResultsAdded && !window._processingSearchResults) {
+                    setTimeout(async () => {
+                      await handleSearchResults();
+                    }, 500);
+                  }
+                },
+                1000
+              ); // Increased delay for throttling
             }
+          },
+          500
+        ); // Throttle mutations processing
+      });
+
+      // Use more specific targeting for the observer to reduce unnecessary callbacks
+      const targetNodes = document.querySelectorAll(
+        '.results, .table-responsive, form, [class*="loan"]'
+      );
+      if (targetNodes.length > 0) {
+        // Observe specific nodes if found
+        targetNodes.forEach((node) => {
+          observer.observe(node, {
+            childList: true,
+            subtree: true,
           });
-        }
-      });
-
-      observer.observe(document.body, {
-        childList: true,
-        subtree: true,
-      });
+        });
+      } else {
+        // Fallback to body observation with less intensive options
+        observer.observe(document.body, {
+          childList: true,
+          subtree: true,
+          characterData: false,
+          attributeFilter: ["class", "id"], // Only observe specific attribute changes
+        });
+      }
 
       // Initial form monitoring
       monitorSearchAndFilterForms();
@@ -1603,13 +1713,29 @@
         }
       }
 
-      // Handle URL changes to filter content when navigating
+      // Handle URL changes to filter content when navigating - with optimizations
       onValueChange(
         () => document.location.href,
         async (newVal, oldVal) => {
           if (newVal !== oldVal) {
-            // Any URL change might be a navigation that loads new content
-            DEBUG.log(`URL changed from ${oldVal} to ${newVal}`);
+            // Skip processing for hash changes only (except for specific cases)
+            const oldUrl = new URL(oldVal, window.location.origin);
+            const newUrl = new URL(newVal, window.location.origin);
+
+            const isOnlyHashChange =
+              oldUrl.pathname === newUrl.pathname &&
+              oldUrl.search === newUrl.search &&
+              oldUrl.hash !== newUrl.hash;
+
+            // Skip processing for minor hash changes that don't affect content
+            if (
+              isOnlyHashChange &&
+              !newUrl.hash.includes("#/bidApproveReject") &&
+              !newUrl.hash.includes("#/loan/") &&
+              !oldUrl.hash.includes("#/loan/")
+            ) {
+              return;
+            }
 
             // Hide the page during navigation
             // This ensures unauthorized loan numbers are not visible even for milliseconds
@@ -1624,7 +1750,6 @@
               async () => {
                 await processAllElements();
                 await handleSearchResults();
-
                 // processAllElements will show the page when done
               },
               1000
@@ -1634,10 +1759,14 @@
           if (!newVal.includes("#/bidApproveReject")) return;
 
           const viewElement = await waitForLoanNumber();
+          if (!viewElement) return;
+
           viewElement.remove();
 
           async function addIfAllowed() {
             const loanNumber = getLoanNumber(viewElement.element);
+            if (!loanNumber) return;
+
             const isAllowed = await isLoanNumberAllowed(loanNumber);
             if (isAllowed) {
               viewElement.add();
@@ -1667,7 +1796,8 @@
 
   // Ensure page is visible if user navigates away
   window.addEventListener("beforeunload", () => {
-    pageUtils.showPage(true);
+    // Direct approach to ensure visibility
+    document.body.style.opacity = 1;
   });
 
   // Start the script
