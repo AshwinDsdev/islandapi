@@ -224,6 +224,80 @@
    * @param {number} [initialDelay=100] - Initial delay in milliseconds between retries.
    * @returns {Promise<boolean>} A promise that resolves to true if the listener is available, false otherwise.
    */
+
+  async function waitForListener(maxRetries = 20, initialDelay = 100) {
+    return new Promise((resolve, reject) => {
+      if (
+        typeof chrome === "undefined" ||
+        !chrome.runtime ||
+        !chrome.runtime.sendMessage
+      ) {
+        console.warn(
+          "❌ Chrome extension API not available. Running in standalone mode."
+        );
+        // Show the page if Chrome extension API is not available
+        pageUtils.showPage(true);
+        resolve(false);
+        return;
+      }
+
+      let attempts = 0;
+      let delay = initialDelay;
+      let timeoutId;
+
+      /**
+       * @function sendPing
+       * @description Sends a ping message to the extension and handles the response
+       * @private
+       */
+      function sendPing() {
+        if (attempts >= maxRetries) {
+          console.warn("❌ No listener detected after maximum retries.");
+          clearTimeout(timeoutId);
+          reject(new Error("Listener not found"));
+          return;
+        }
+
+        try {
+          chrome.runtime.sendMessage(
+            EXTENSION_ID,
+            { type: "ping" },
+            (response) => {
+              if (chrome.runtime.lastError) {
+                console.warn(
+                  "Chrome extension error:",
+                  chrome.runtime.lastError
+                );
+                attempts++;
+                if (attempts >= maxRetries) {
+                  reject(new Error("Chrome extension error"));
+                  return;
+                }
+                timeoutId = setTimeout(sendPing, delay);
+                return;
+              }
+
+              if (response?.result === "pong") {
+                clearTimeout(timeoutId);
+                resolve(true);
+              } else {
+                timeoutId = setTimeout(() => {
+                  attempts++;
+                  delay *= 2;
+                  sendPing();
+                }, delay);
+              }
+            }
+          );
+        } catch (error) {
+          console.error("Error sending message to extension:", error);
+          resolve(false);
+        }
+      }
+
+      sendPing();
+    });
+  }
   /**
    * @function checkNumbersBatch
    * @description Checks a batch of loan numbers against the extension to determine which ones are allowed.
