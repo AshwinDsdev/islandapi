@@ -1344,9 +1344,6 @@
       applyFiltersButton.addEventListener("click", () => {
         console.log("Apply Filters button clicked");
 
-        // Hide the page immediately to prevent unauthorized loan numbers from being visible
-        pageUtils.showPage(false);
-
         // Set flag that filter was just applied
         window._filterJustApplied = true;
 
@@ -1373,9 +1370,6 @@
 
         button.addEventListener("click", () => {
           console.log("Filter button clicked in messages-filters");
-
-          // Hide the page immediately to prevent unauthorized loan numbers from being visible
-          pageUtils.showPage(false);
 
           // Set flag that filter was just applied
           window._filterJustApplied = true;
@@ -1670,10 +1664,6 @@
             ) {
               return;
             }
-
-            // Hide the page during navigation
-            // This ensures unauthorized loan numbers are not visible even for milliseconds
-            pageUtils.showPage(false);
 
             // Clear any existing messages when navigating
             removeNotProvisionedAlert();
