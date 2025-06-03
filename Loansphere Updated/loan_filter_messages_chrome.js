@@ -97,6 +97,7 @@
   };
 
   // Reset page visibility state and hide the page immediately to prevent unauthorized loan numbers from being visible
+  // This is the only place we should hide the page initially
   pageUtils.resetPageVisibility(false);
 
   // Add a safety timeout to ensure the page is shown after a maximum of 5 seconds
@@ -1089,9 +1090,11 @@
 
     window._processingSearchResults = true;
 
-    // Hide the page during search results processing
-    // This ensures unauthorized loan numbers are not visible even for milliseconds
-    // pageUtils.showPage(false);
+    // Only hide the page if a filter was just applied
+    // This ensures unauthorized loan numbers are not visible during filtering
+    if (window._filterJustApplied) {
+      pageUtils.showPage(false);
+    }
 
     let resultRows = [];
     let filterJustApplied = window._filterJustApplied || false;
@@ -1215,9 +1218,12 @@
 
     window._processingAllElements = true;
 
-    // Hide the page during processing
-    // This ensures unauthorized loan numbers are not visible even for milliseconds
-    // pageUtils.showPage(false);
+    // Only hide the page during initial load or when a filter was just applied
+    // This ensures unauthorized loan numbers are not visible during filtering
+    const isInitialLoad = !window._initialLoadComplete;
+    if (isInitialLoad || window._filterJustApplied) {
+      pageUtils.showPage(false);
+    }
 
     try {
       await processTableRows();
@@ -1229,6 +1235,9 @@
       if (!window._processingSearchResults) {
         await handleSearchResults();
       }
+      
+      // Mark initial load as complete
+      window._initialLoadComplete = true;
     } catch (error) {
       console.error("Error in processAllElements:", error);
     } finally {
@@ -1397,7 +1406,7 @@
         console.log("Search form submitted");
 
         // Hide the page immediately to prevent unauthorized loan numbers from being visible
-        // pageUtils.showPage(false);
+        pageUtils.showPage(false);
 
         // Set flag that filter was just applied
         window._filterJustApplied = true;
@@ -1428,7 +1437,7 @@
         console.log("Search/filter button clicked");
 
         // Hide the page immediately to prevent unauthorized loan numbers from being visible
-        // pageUtils.showPage(false);
+        pageUtils.showPage(false);
 
         window._filterJustApplied = true;
 
@@ -1466,7 +1475,7 @@
           window._filterJustApplied = true;
 
           // Hide the page immediately to prevent unauthorized loan numbers from being visible
-          // pageUtils.showPage(false);
+          pageUtils.showPage(false);
 
           // Remove any existing "not provisioned" message
           removeNotProvisionedAlert();
@@ -1485,8 +1494,9 @@
   async function init() {
     DEBUG.log("Loan Filter Script initialized");
 
-    // Reset page visibility state and hide the page immediately to prevent unauthorized loan numbers from being visible
-    pageUtils.resetPageVisibility(false);
+    // We already hid the page at the beginning of the script, no need to hide it again
+    // Just track that we're in the initial load phase
+    window._initialLoadComplete = false;
 
     // Safety timeout to ensure page is shown even if there's an unexpected issue
     const safetyTimeout = setTimeout(() => {
@@ -1513,6 +1523,9 @@
       await injectFilterStyles();
 
       await processAllElements();
+      
+      // Ensure the page is visible after initial processing
+      pageUtils.showPage(true);
 
       // Clear the safety timeout once initialization is complete
       clearTimeout(safetyTimeout);
@@ -1528,10 +1541,9 @@
         throttle.execute(
           "mutationProcessing",
           () => {
-            // Hide the page immediately when new content is added
-            // This ensures unauthorized loan numbers are not visible even for milliseconds
-            // pageUtils.showPage(false);
-
+            // Only hide the page when search results are added
+            // This ensures unauthorized loan numbers are not visible during filtering
+            
             let shouldProcess = false;
             let newFormsAdded = false;
             let searchResultsAdded = false;
@@ -1590,8 +1602,15 @@
 
                   // Finally handle search results if needed, with a delay
                   if (searchResultsAdded && !window._processingSearchResults) {
+                    // Hide the page only when search results are added
+                    if (!window._processingAllElements) {
+                      pageUtils.showPage(false);
+                    }
+                    
                     setTimeout(async () => {
                       await handleSearchResults();
+                      // Ensure page is shown after processing
+                      pageUtils.showPage(true);
                     }, 500);
                   }
                 },
