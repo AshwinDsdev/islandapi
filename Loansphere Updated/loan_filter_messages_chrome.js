@@ -1091,7 +1091,7 @@
 
     // Hide the page during search results processing
     // This ensures unauthorized loan numbers are not visible even for milliseconds
-    pageUtils.showPage(false);
+    // pageUtils.showPage(false);
 
     let resultRows = [];
     let filterJustApplied = window._filterJustApplied || false;
@@ -1217,7 +1217,7 @@
 
     // Hide the page during processing
     // This ensures unauthorized loan numbers are not visible even for milliseconds
-    pageUtils.showPage(false);
+    // pageUtils.showPage(false);
 
     try {
       await processTableRows();
@@ -1397,7 +1397,7 @@
         console.log("Search form submitted");
 
         // Hide the page immediately to prevent unauthorized loan numbers from being visible
-        pageUtils.showPage(false);
+        // pageUtils.showPage(false);
 
         // Set flag that filter was just applied
         window._filterJustApplied = true;
@@ -1428,7 +1428,7 @@
         console.log("Search/filter button clicked");
 
         // Hide the page immediately to prevent unauthorized loan numbers from being visible
-        pageUtils.showPage(false);
+        // pageUtils.showPage(false);
 
         window._filterJustApplied = true;
 
@@ -1466,7 +1466,7 @@
           window._filterJustApplied = true;
 
           // Hide the page immediately to prevent unauthorized loan numbers from being visible
-          pageUtils.showPage(false);
+          // pageUtils.showPage(false);
 
           // Remove any existing "not provisioned" message
           removeNotProvisionedAlert();
@@ -1530,7 +1530,7 @@
           () => {
             // Hide the page immediately when new content is added
             // This ensures unauthorized loan numbers are not visible even for milliseconds
-            pageUtils.showPage(false);
+            // pageUtils.showPage(false);
 
             let shouldProcess = false;
             let newFormsAdded = false;
