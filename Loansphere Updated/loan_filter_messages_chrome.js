@@ -333,7 +333,40 @@
       );
     });
   }
-
+  
+  /**
+   * Extracts loan numbers from text content
+   * @param {string} text - The text to extract loan numbers from
+   * @returns {string[]} Array of extracted loan numbers
+   */
+  function extractLoanNumbers(text) {
+    console.log("[DEBUG] extractLoanNumbers called with text:", text);
+    
+    if (!text) {
+      console.log("[DEBUG] No text provided, returning empty array");
+      return [];
+    }
+    
+    // Try to find loan numbers in the format of 10 digits
+    const loanNumberRegex = /\b\d{10}\b/g;
+    const matches = text.match(loanNumberRegex) || [];
+    
+    console.log("[DEBUG] Extracted loan numbers:", matches);
+    
+    // If no matches found, try a more lenient approach
+    if (matches.length === 0) {
+      console.log("[DEBUG] No matches found with strict regex, trying more lenient approach");
+      
+      // Look for any sequence of 7-10 digits that might be a loan number
+      const lenientRegex = /\b\d{7,10}\b/g;
+      const lenientMatches = text.match(lenientRegex) || [];
+      
+      console.log("[DEBUG] Extracted loan numbers with lenient regex:", lenientMatches);
+      return lenientMatches;
+    }
+    
+    return matches;
+  }
   /**
    * @function onValueChange
    * @description Utility function to watch for value changes and trigger a callback when changes occur.
@@ -474,34 +507,46 @@
    * }
    */
   async function isLoanNumberAllowed(loanNumber) {
+    console.log("[DEBUG] isLoanNumberAllowed called with:", loanNumber);
+    
     try {
       // Handle empty or undefined loan numbers
-      if (!loanNumber) return false;
+      if (!loanNumber) {
+        console.log("[DEBUG] Empty loan number, returning false");
+        return false;
+      }
 
       // Normalize the loan number to a string and trim whitespace
       loanNumber = String(loanNumber).trim();
+      console.log("[DEBUG] Normalized loan number:", loanNumber);
 
       // Check cache first for performance optimization
       if (
         allowedLoansCache.isCacheValid() &&
         allowedLoansCache.isAllowed(loanNumber)
       ) {
+        console.log("[DEBUG] Loan found in cache, returning true");
         return true;
       }
 
       // If not in cache or cache is invalid, query the extension
+      console.log("[DEBUG] Checking loan number against allowed list");
       const allowedNumbers = await checkNumbersBatch([loanNumber]);
+      console.log("[DEBUG] Allowed numbers returned:", allowedNumbers);
 
       // Update cache with results for future queries
       if (allowedNumbers && allowedNumbers.length > 0) {
+        console.log("[DEBUG] Adding allowed numbers to cache");
         allowedLoansCache.addLoans(allowedNumbers);
       }
 
       // Return true if the loan number is in the allowed list
-      return allowedNumbers.includes(loanNumber);
+      const isAllowed = allowedNumbers.includes(loanNumber);
+      console.log("[DEBUG] Loan number allowed:", isAllowed);
+      return isAllowed;
     } catch (error) {
       // Log the error and default to not allowed for security
-      console.warn("Failed to check loan access, assuming not allowed:", error);
+      console.warn("[DEBUG] Failed to check loan access, assuming not allowed:", error);
       return false;
     }
   }
@@ -1083,53 +1128,83 @@
    * Specifically handles the case when search returns exactly one restricted loan
    */
   async function handleSearchResults() {
+    console.log("[DEBUG] handleSearchResults called");
+    
     if (window._processingSearchResults) {
-      DEBUG.log("Already processing search results, skipping");
+      console.log("[DEBUG] Already processing search results, skipping");
       return;
     }
 
     window._processingSearchResults = true;
+    console.log("[DEBUG] Set _processingSearchResults flag to true");
 
     // Only hide the page if a filter was just applied
     // This ensures unauthorized loan numbers are not visible during filtering
     if (window._filterJustApplied) {
+      console.log("[DEBUG] Filter just applied, hiding page");
       pageUtils.showPage(false);
     }
 
     let resultRows = [];
     let filterJustApplied = window._filterJustApplied || false;
+    console.log("[DEBUG] filterJustApplied:", filterJustApplied);
 
     try {
-      DEBUG.log("Handling search results");
+      console.log("[DEBUG] Handling search results");
 
       window._filterJustApplied = false;
+      console.log("[DEBUG] Reset _filterJustApplied flag to false");
 
+      // Check for Loansphere_Messages.html specific elements first
+      const messagesTable = document.querySelector(".messages-table");
+      console.log("[DEBUG] messagesTable found:", !!messagesTable);
+      
+      const messagesTableBody = document.getElementById("messagesTableBody");
+      console.log("[DEBUG] messagesTableBody found:", !!messagesTableBody);
+      
+      // Try to find the results container
       const resultsContainer = document.querySelector(
-        ".table-responsive, .results-container, .message-list, table"
+        ".table-responsive, .results-container, .message-list, table, .messages-table"
       );
+      console.log("[DEBUG] resultsContainer found:", !!resultsContainer);
 
       if (!resultsContainer) {
-        DEBUG.log("No results container found");
+        console.log("[DEBUG] No results container found");
         // Just make sure the page is visible
         pageUtils.showPage(true);
         return;
       }
 
-      resultRows = resultsContainer.querySelectorAll(
-        "tbody tr:not(.header-row):not(.mat-header-row)"
-      );
+      // Try to get rows from messagesTableBody first, then fall back to resultsContainer
+      if (messagesTableBody) {
+        resultRows = messagesTableBody.querySelectorAll("tr");
+      } else {
+        resultRows = resultsContainer.querySelectorAll(
+          "tbody tr:not(.header-row):not(.mat-header-row)"
+        );
+      }
 
-      DEBUG.log(`Found ${resultRows.length} result rows`);
+      console.log("[DEBUG] Found", resultRows.length, "result rows");
 
       // First, remove any existing "not provisioned" message
       removeNotProvisionedAlert();
+      console.log("[DEBUG] Removed any existing not provisioned alert");
 
+      // Try to find the search form
       const searchForm = document.querySelector(
         "form.search-form, .filter-form, .search-container, .messages-filters"
       );
+      console.log("[DEBUG] searchForm found:", !!searchForm);
 
       if (searchForm) {
-        DEBUG.log("Found search/filter form");
+        console.log("[DEBUG] Found search/filter form");
+
+        // Get the loan number input directly
+        const loanNumberInput = document.getElementById("loanNumberFilter");
+        console.log("[DEBUG] loanNumberInput found:", !!loanNumberInput);
+        
+        const loanNumber = loanNumberInput ? loanNumberInput.value.trim() : "";
+        console.log("[DEBUG] Loan number from input:", loanNumber);
 
         const inputs = searchForm.querySelectorAll("input, select");
         let hasSearchCriteria = false;
@@ -1139,26 +1214,41 @@
           if (input.value && input.value.trim() !== "") {
             hasSearchCriteria = true;
             searchFields.push(input.name || input.id);
-            DEBUG.log(
-              `Found search criteria in input: ${input.name || input.id}`
+            console.log(
+              `[DEBUG] Found search criteria in input: ${input.name || input.id} = ${input.value}`
             );
           }
         }
 
+        console.log("[DEBUG] hasSearchCriteria:", hasSearchCriteria);
+        console.log("[DEBUG] resultRows.length:", resultRows.length);
+
         // If we have search criteria and exactly one result, check if it's allowed
         if (hasSearchCriteria && resultRows.length === 1) {
+          console.log("[DEBUG] Found exactly one row with search criteria");
+          
           const resultRow = resultRows[0];
           const rowText = resultRow.textContent || "";
+          console.log("[DEBUG] Row text:", rowText);
+          
+          // Try to extract loan numbers from the row text
           const loanNumbers = extractLoanNumbers(rowText);
+          console.log("[DEBUG] Extracted loan numbers:", loanNumbers);
+          
+          // If we couldn't extract loan numbers but have a loan number from input, use that
+          const numbersToCheck = loanNumbers.length > 0 ? loanNumbers : (loanNumber ? [loanNumber] : []);
+          console.log("[DEBUG] Numbers to check:", numbersToCheck);
 
-          if (loanNumbers.length > 0) {
-            DEBUG.log(`Found loan numbers in row: ${loanNumbers.join(", ")}`);
+          if (numbersToCheck.length > 0) {
+            console.log(`[DEBUG] Found loan numbers to check: ${numbersToCheck.join(", ")}`);
 
             // Check if any of these loan numbers are allowed
             let anyAllowed = false;
 
-            for (const loanNumber of loanNumbers) {
-              const isAllowed = await isLoanNumberAllowed(loanNumber);
+            for (const num of numbersToCheck) {
+              console.log("[DEBUG] Checking if loan number is allowed:", num);
+              const isAllowed = await isLoanNumberAllowed(num);
+              console.log("[DEBUG] Loan number allowed:", isAllowed);
 
               if (isAllowed) {
                 anyAllowed = true;
@@ -1166,33 +1256,61 @@
               }
             }
 
-            // If none are allowed, hide the row and show the message
+            // If none are allowed, hide the table and show the message
             if (!anyAllowed) {
-              resultRow.style.display = "none";
+              console.log("[DEBUG] No allowed loan numbers found, hiding table");
+              
+              // Try multiple approaches to hide the table
+              const elementsToHide = [
+                messagesTable,
+                document.querySelector(".messages-list"),
+                resultsContainer,
+                resultRow.closest("table")
+              ];
+              
+              console.log("[DEBUG] Elements to hide found:", elementsToHide.filter(el => el).length);
+              
+              // Hide all found elements
+              elementsToHide.forEach(element => {
+                if (element) {
+                  console.log("[DEBUG] Hiding element:", element.tagName, element.className);
+                  element.style.display = "none";
+                }
+              });
 
-              // Show the not provisioned message
-              const loanNumber = loanNumbers[0];
-              showNotProvisionedAlert(loanNumber);
+              // Show the not provisioned message - only if not already showing
+              if (!window._showingNotProvisionedMessage) {
+                console.log("[DEBUG] Showing not provisioned alert");
+                showNotProvisionedAlert("Loan is not provisioned to the user");
+              } else {
+                console.log("[DEBUG] Not provisioned message already showing, skipping");
+              }
 
-              DEBUG.log(
-                `Search returned exactly one restricted loan: ${loanNumber}. Showing not provisioned message.`
+              console.log(
+                `[DEBUG] Search returned exactly one restricted loan. Hiding table and showing not provisioned message.`
               );
             } else {
               // Make sure the row is visible if it contains an allowed loan
+              console.log("[DEBUG] At least one loan number is allowed, ensuring visibility");
               resultRow.style.display = "";
+              // Make sure the table is visible
+              if (resultsContainer) {
+                resultsContainer.style.display = "";
+              }
             }
           }
         }
       }
     } catch (error) {
-      DEBUG.error("Error in handleSearchResults:", error);
+      console.error("[DEBUG] Error in handleSearchResults:", error);
     } finally {
       window._processingSearchResults = false;
+      console.log("[DEBUG] Reset _processingSearchResults flag to false");
 
       // Show the page after processing is complete - use direct approach
       document.body.style.opacity = 1;
       pageUtils._isHidden = false;
-      console.log("Search results processing complete - page shown");
+      console.log("[DEBUG] Search results processing complete - page shown");
     }
 
     // Check if there are no visible rows after filtering
@@ -1202,8 +1320,8 @@
         row.style.display !== "none" && getComputedStyle(row).display !== "none"
     );
 
-    DEBUG.log(
-      `${visibleRows.length} visible rows out of ${resultRows.length} total rows`
+    console.log(
+      `[DEBUG] ${visibleRows.length} visible rows out of ${resultRows.length} total rows`
     );
   }
 
@@ -1235,7 +1353,7 @@
       if (!window._processingSearchResults) {
         await handleSearchResults();
       }
-      
+
       // Mark initial load as complete
       window._initialLoadComplete = true;
     } catch (error) {
@@ -1283,61 +1401,186 @@
 
   /**
    * Shows "Loan is not provisioned" alert for restricted loans
+   * @param {string} loanNumber - The loan number or a direct message to display
    */
   function showNotProvisionedAlert(loanNumber) {
+    console.log("[DEBUG] showNotProvisionedAlert called with:", loanNumber);
+    
+    // Remove any existing alerts first
     removeNotProvisionedAlert();
+    console.log("[DEBUG] Removed any existing alerts");
 
     const alertDiv = document.createElement("div");
     alertDiv.className = "not-provisioned-alert";
     alertDiv.id = "not-provisioned-alert";
+    
+    // Make the alert more visible with inline styles
+    alertDiv.style.backgroundColor = "#f8d7da";
+    alertDiv.style.color = "#721c24";
+    alertDiv.style.padding = "15px";
+    alertDiv.style.margin = "15px 0";
+    alertDiv.style.border = "1px solid #f5c6cb";
+    alertDiv.style.borderRadius = "4px";
+    alertDiv.style.textAlign = "center";
+    alertDiv.style.fontSize = "16px";
+    alertDiv.style.fontWeight = "bold";
+    alertDiv.style.zIndex = "9999"; // Ensure it's on top
 
     // If loanNumber is "filtered", it means we're showing a generic message
     // for search results where all loans were filtered out
     if (loanNumber === "filtered") {
       alertDiv.textContent = "Loan is not provisioned to the user";
+      console.log("[DEBUG] Using 'filtered' message");
+    } else if (loanNumber === "Loan is not provisioned to the user") {
+      // If the parameter is already the exact message we want, use it directly
+      alertDiv.textContent = loanNumber;
+      console.log("[DEBUG] Using exact message");
+    } else if (loanNumber.startsWith && loanNumber.startsWith("Loan is not")) {
+      // If the parameter is already a complete message, use it directly
+      alertDiv.textContent = loanNumber;
+      console.log("[DEBUG] Using message that starts with 'Loan is not'");
     } else {
       alertDiv.textContent = `Loan ${loanNumber} is not provisioned to the user`;
+      console.log("[DEBUG] Using loan number specific message");
     }
 
-    // Try to find the results container first to place the message in context
-    const resultsContainer = document.querySelector(
-      ".table-responsive, .results-container, .message-list, table"
-    );
+    console.log("[DEBUG] Alert message set to:", alertDiv.textContent);
 
-    if (resultsContainer && resultsContainer.parentNode) {
-      // Insert before the results container for better visibility
-      resultsContainer.parentNode.insertBefore(alertDiv, resultsContainer);
-    } else {
-      // Fall back to general container insertion
+    // Try multiple insertion points to ensure the alert is visible
+    let inserted = false;
+    
+    // First try: message-threads-container (specific to Loansphere_Messages.html)
+    const messagesContainer = document.querySelector(".message-threads-container");
+    if (messagesContainer) {
+      console.log("[DEBUG] Found message-threads-container, inserting at top");
+      messagesContainer.insertBefore(alertDiv, messagesContainer.firstChild);
+      inserted = true;
+    }
+    
+    // Second try: messages-list container
+    if (!inserted) {
+      const messagesList = document.querySelector(".messages-list");
+      if (messagesList) {
+        console.log("[DEBUG] Found messages-list, inserting at top");
+        messagesList.insertBefore(alertDiv, messagesList.firstChild);
+        inserted = true;
+      }
+    }
+    
+    // Third try: results container
+    if (!inserted) {
+      const resultsContainer = document.querySelector(
+        ".table-responsive, .results-container, .message-list, table"
+      );
+
+      if (resultsContainer && resultsContainer.parentNode) {
+        console.log("[DEBUG] Found results container, inserting before it");
+        resultsContainer.parentNode.insertBefore(alertDiv, resultsContainer);
+        inserted = true;
+      }
+    }
+    
+    // Fourth try: general container
+    if (!inserted) {
+      console.log("[DEBUG] Trying general container insertion");
       const container = document.querySelector(
-        ".container, .container-fluid, main, body"
+        ".container, .container-fluid, main, .wrapper, body"
       );
       if (container) {
         if (container.firstChild) {
+          console.log("[DEBUG] Inserting before first child of container");
           container.insertBefore(alertDiv, container.firstChild);
         } else {
+          console.log("[DEBUG] Appending to container");
           container.appendChild(alertDiv);
         }
-      } else {
-        document.body.insertBefore(alertDiv, document.body.firstChild);
+        inserted = true;
       }
+    }
+    
+    // Last resort: body
+    if (!inserted) {
+      console.log("[DEBUG] Last resort: inserting at top of body");
+      document.body.insertBefore(alertDiv, document.body.firstChild);
+      inserted = true;
     }
 
     window._showingNotProvisionedMessage = true;
     window._restrictedLoanNumber = loanNumber;
+    console.log("[DEBUG] Alert added to DOM, flags set");
+    
+    // Only add a fallback message if the primary alert wasn't inserted successfully
+    if (!inserted) {
+      console.log("[DEBUG] Primary alert insertion failed, adding fallback message");
+      const fallbackMessage = document.createElement("div");
+      fallbackMessage.className = "not-provisioned-alert-fallback";
+      fallbackMessage.style.backgroundColor = "#f8d7da";
+      fallbackMessage.style.color = "#721c24";
+      fallbackMessage.style.padding = "15px";
+      fallbackMessage.style.margin = "15px 0";
+      fallbackMessage.style.border = "1px solid #f5c6cb";
+      fallbackMessage.style.borderRadius = "4px";
+      fallbackMessage.style.textAlign = "center";
+      fallbackMessage.style.fontSize = "16px";
+      fallbackMessage.style.fontWeight = "bold";
+      fallbackMessage.style.zIndex = "9999";
+      fallbackMessage.textContent = "Loan is not provisioned to the user";
+      
+      // Try to insert at multiple locations
+      const insertPoints = [
+        document.querySelector(".message-threads-container"),
+        document.querySelector(".messages-header"),
+        document.querySelector(".messages-filters"),
+        document.querySelector("main"),
+        document.querySelector(".wrapper"),
+        document.body
+      ];
+      
+      for (const point of insertPoints) {
+        if (point) {
+          console.log("[DEBUG] Inserting fallback message at:", point.tagName, point.className);
+          point.insertBefore(fallbackMessage, point.firstChild);
+          break;
+        }
+      }
+    }
   }
 
   /**
    * Removes the "Loan is not provisioned" alert
    */
   function removeNotProvisionedAlert() {
+    console.log("[DEBUG] removeNotProvisionedAlert called");
+    
     const alert = document.getElementById("not-provisioned-alert");
+    console.log("[DEBUG] Alert element found by ID:", !!alert);
+    
     if (alert) {
+      console.log("[DEBUG] Removing alert from DOM");
       alert.remove();
     }
 
+    // Also check for any elements with the not-provisioned-alert class
+    const alertsByClass = document.querySelectorAll(".not-provisioned-alert");
+    console.log("[DEBUG] Found", alertsByClass.length, "alerts by class");
+    
+    alertsByClass.forEach(element => {
+      console.log("[DEBUG] Removing additional alert by class");
+      element.remove();
+    });
+    
+    // Also remove any fallback alerts
+    const fallbackAlerts = document.querySelectorAll(".not-provisioned-alert-fallback");
+    console.log("[DEBUG] Found", fallbackAlerts.length, "fallback alerts");
+    
+    fallbackAlerts.forEach(element => {
+      console.log("[DEBUG] Removing fallback alert");
+      element.remove();
+    });
+
     window._showingNotProvisionedMessage = false;
     window._restrictedLoanNumber = null;
+    console.log("[DEBUG] Reset alert flags");
   }
 
   /**
@@ -1345,25 +1588,108 @@
    * This ensures we catch when users apply filters or search
    */
   function monitorSearchAndFilterForms() {
+    console.log("[DEBUG] monitorSearchAndFilterForms called");
+    
+    // Check if we're on the Loansphere_Messages.html page
+    const isLoansphereMessagesPage = window.location.href.includes("Loansphere_Messages.html");
+    console.log("[DEBUG] Is Loansphere_Messages page:", isLoansphereMessagesPage);
+    
+    // Log all important elements on the page for debugging
+    console.log("[DEBUG] messagesTableBody exists:", !!document.getElementById("messagesTableBody"));
+    console.log("[DEBUG] messages-table exists:", !!document.querySelector(".messages-table"));
+    console.log("[DEBUG] loanNumberFilter exists:", !!document.getElementById("loanNumberFilter"));
+    console.log("[DEBUG] applyFilters button exists:", !!document.getElementById("applyFilters"));
+    
     // Specifically target the Apply Filters button
     const applyFiltersButton = document.getElementById("applyFilters");
     if (applyFiltersButton && !applyFiltersButton._filterMonitorAttached) {
+      console.log("[DEBUG] Attaching event listener to Apply Filters button");
       applyFiltersButton._filterMonitorAttached = true;
 
       applyFiltersButton.addEventListener("click", () => {
-        console.log("Apply Filters button clicked");
+        console.log("[DEBUG] Apply Filters button clicked");
 
         // Set flag that filter was just applied
         window._filterJustApplied = true;
+        console.log("[DEBUG] Set _filterJustApplied flag to true");
 
         // Remove any existing "not provisioned" message
         removeNotProvisionedAlert();
+        console.log("[DEBUG] Removed any existing not provisioned alert");
 
-        // Give time for the results to load
+        // Give time for the results to load - use a longer timeout to ensure DOM is updated
+        console.log("[DEBUG] Setting timeout to process filter results");
         setTimeout(async () => {
+          console.log("[DEBUG] Timeout callback executing");
+          
+          // Get the loan number from the input field
+          const loanNumberInput = document.getElementById("loanNumberFilter");
+          console.log("[DEBUG] loanNumberInput found:", !!loanNumberInput);
+          
+          const loanNumber = loanNumberInput ? loanNumberInput.value.trim() : "";
+          console.log("[DEBUG] Loan number from input:", loanNumber);
+
+          // Get the table body and check if there's only one row
+          const tableBody = document.getElementById("messagesTableBody");
+          console.log("[DEBUG] tableBody found:", !!tableBody);
+          
+          if (tableBody) {
+            const rows = tableBody.querySelectorAll("tr");
+            console.log("[DEBUG] Number of rows found:", rows.length);
+
+            // If there's exactly one row and a loan number was entered
+            if (rows.length === 1 && loanNumber) {
+              console.log("[DEBUG] Found exactly one row with loan number:", loanNumber);
+              
+              // Check if the loan number is allowed
+              console.log("[DEBUG] Checking if loan number is allowed");
+              const isAllowed = await isLoanNumberAllowed(loanNumber);
+              console.log("[DEBUG] Loan number allowed:", isAllowed);
+
+              if (!isAllowed) {
+                console.log("[DEBUG] Loan number is not allowed, hiding table");
+                
+                // Try multiple approaches to hide the table
+                const elementsToHide = [
+                  document.querySelector(".messages-table"),
+                  document.querySelector(".messages-list"),
+                  document.querySelector("table"),
+                  tableBody.closest("table")
+                ];
+                
+                console.log("[DEBUG] Elements to hide found:", elementsToHide.filter(el => el).length);
+                
+                // Hide all found elements
+                elementsToHide.forEach(element => {
+                  if (element) {
+                    console.log("[DEBUG] Hiding element:", element.tagName, element.className);
+                    element.style.display = "none";
+                  }
+                });
+
+                // Show the not provisioned message - only if not already showing
+                if (!window._showingNotProvisionedMessage) {
+                  console.log("[DEBUG] Showing not provisioned alert");
+                  showNotProvisionedAlert("Loan is not provisioned to the user");
+                } else {
+                  console.log("[DEBUG] Not provisioned message already showing, skipping");
+                }
+
+                console.log(
+                  `[DEBUG] Filter returned exactly one restricted loan: ${loanNumber}. Hiding table and showing not provisioned message.`
+                );
+                return;
+              }
+            }
+          }
+
+          console.log("[DEBUG] Calling handleSearchResults");
           await handleSearchResults();
-        }, 1000);
+        }, 1500); // Increased timeout to 1.5 seconds
       });
+    } else {
+      console.log("[DEBUG] Apply Filters button already has event listener or not found:", 
+                 applyFiltersButton ? "has listener" : "not found");
     }
 
     // Look for the messages-filters container
@@ -1523,7 +1849,7 @@
       await injectFilterStyles();
 
       await processAllElements();
-      
+
       // Ensure the page is visible after initial processing
       pageUtils.showPage(true);
 
@@ -1543,7 +1869,7 @@
           () => {
             // Only hide the page when search results are added
             // This ensures unauthorized loan numbers are not visible during filtering
-            
+
             let shouldProcess = false;
             let newFormsAdded = false;
             let searchResultsAdded = false;
@@ -1606,7 +1932,7 @@
                     if (!window._processingAllElements) {
                       pageUtils.showPage(false);
                     }
-                    
+
                     setTimeout(async () => {
                       await handleSearchResults();
                       // Ensure page is shown after processing

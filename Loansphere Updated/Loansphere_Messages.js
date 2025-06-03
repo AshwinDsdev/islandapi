@@ -79,8 +79,8 @@ document.addEventListener("DOMContentLoaded", function () {
                   }
                 }
 
-                // Update loan number filter
-                updateLoanNumberFilterByBrand(brandCode, selectedBrand);
+                // No loan number filtering needed
+                console.log(`Brand selection changed to: ${selectedBrand}`);
 
                 // Update the visual state of the trigger
                 const trigger = select.querySelector(".mat-mdc-select-trigger");
@@ -431,77 +431,18 @@ document.addEventListener("DOMContentLoaded", function () {
   function populateMessageThreads(filteredThreads = null) {
     console.log("populateMessageThreads called");
 
-    // Check if we're already showing a not provisioned alert
-    if (window._showingNotProvisionedMessage && window._restrictedLoanNumber) {
-      console.log(
-        `Already showing not provisioned alert for ${window._restrictedLoanNumber}`
-      );
-
-      // Make sure the table shows the "not provisioned" message
-      const tableBody = document.getElementById("messagesTableBody");
-      if (tableBody) {
-        tableBody.innerHTML = "";
-        const row = document.createElement("tr");
-        row.innerHTML = `<td colspan="7" class="text-center" style="color: #f44336; font-weight: bold;">Loan is not provisioned to the user</td>`;
-        tableBody.appendChild(row);
-      }
-
-      return; // Don't override the not provisioned alert
-    }
-
-    // Get the loan number from the input field
+    // Get the loan number from the input field (for logging only)
     const loanNumberInput = document.getElementById("loanNumberFilter");
     const loanNumber = loanNumberInput ? loanNumberInput.value.trim() : "";
 
-    console.log(`Populating message threads with loan number: ${loanNumber}`);
+    console.log(`Populating message threads with ${filteredThreads ? filteredThreads.length : 'all'} threads`);
 
-    // Check if loan number is not allowed before proceeding
-    if (loanNumber) {
-      // First check if the isLoanNumberAllowed function is available
-      if (
-        window.isLoanNumberAllowed &&
-        typeof window.isLoanNumberAllowed === "function"
-      ) {
-        const isAllowed = window.isLoanNumberAllowed(loanNumber);
-        console.log(`Checking if loan ${loanNumber} is allowed: ${isAllowed}`);
-
-        if (!isAllowed) {
-          console.log(
-            `Loan ${loanNumber} is not provisioned to the user, showing alert in populateMessageThreads`
-          );
-
-          // Show the not provisioned alert if the function is available
-          if (
-            window.showNotProvisionedAlert &&
-            typeof window.showNotProvisionedAlert === "function"
-          ) {
-            window.showNotProvisionedAlert(loanNumber);
-          } else {
-            // Fallback if the function isn't available
-            const tableBody = document.getElementById("messagesTableBody");
-            if (tableBody) {
-              tableBody.innerHTML = "";
-              const row = document.createElement("tr");
-              row.innerHTML = `<td colspan="6" class="text-center" style="color: #f44336; font-weight: bold;">Loan ${loanNumber} is not provisioned to the user</td>`;
-              tableBody.appendChild(row);
-
-              // Set flags to indicate we're showing a not provisioned message
-              window._showingNotProvisionedMessage = true;
-              window._restrictedLoanNumber = loanNumber;
-            }
-          }
-
-          return; // Exit early
-        }
-      } else {
-        console.warn("isLoanNumberAllowed function is not available");
-      }
-    }
-
+    // Use filtered threads if provided, otherwise use all message threads
     const threads = filteredThreads || window.messageThreadsData;
     const tableBody = document.getElementById("messagesTableBody");
 
     if (tableBody) {
+      // Clear the table body
       tableBody.innerHTML = "";
 
       if (threads.length === 0) {
@@ -516,7 +457,7 @@ document.addEventListener("DOMContentLoaded", function () {
           if (!isAllowed) {
             console.log(`No threads found for restricted loan: ${loanNumber}`);
 
-            // Show "Loan is not provisioned" message instead of "No message threads found"
+            // Show "Loan is not provisioned" message
             const emptyRow = document.createElement("tr");
             emptyRow.innerHTML = `<td colspan="7" class="text-center" style="color: #f44336; font-weight: bold;">Loan ${loanNumber} is not provisioned to the user</td>`;
             tableBody.appendChild(emptyRow);
@@ -536,9 +477,19 @@ document.addEventListener("DOMContentLoaded", function () {
             return; // Exit early
           }
         }
+
+        
       } else {
-        threads.forEach((thread) => {
+        // Sort threads by last message date (newest first)
+        const sortedThreads = [...threads].sort((a, b) => {
+          return new Date(b.lastMessageDate) - new Date(a.lastMessageDate);
+        });
+        
+        // Create a row for each thread
+        sortedThreads.forEach((thread) => {
           const row = document.createElement("tr");
+          
+          // Format the date
           const date = new Date(thread.lastMessageDate);
           const formattedDate = `${date.toLocaleDateString()} ${date.toLocaleTimeString(
             [],
@@ -564,10 +515,19 @@ document.addEventListener("DOMContentLoaded", function () {
             }
           }
 
+          // Check if there are unread messages
+          const hasUnreadMessages = thread.messages && 
+                                   thread.messages.some(message => message.isRead === false);
+          
+          // Add a class to highlight rows with unread messages
+          if (hasUnreadMessages) {
+            row.classList.add('has-unread');
+          }
+
           row.innerHTML = `
                         <td>${thread.loanNumber}</td>
                         <td>${thread.borrowerName}</td>
-                        <td>${thread.subject}</td>
+                        <td>${thread.subject}${hasUnreadMessages ? ' <span class="unread-badge">New</span>' : ''}</td>
                         <td><span class="status-badge status-${thread.status.toLowerCase()}">${
             thread.status
           }</span></td>
@@ -590,7 +550,11 @@ document.addEventListener("DOMContentLoaded", function () {
             viewMessageThread(parseInt(threadId));
           });
         });
+        
+        console.log(`Displayed ${sortedThreads.length} message threads`);
       }
+    } else {
+      console.error("Table body element not found");
     }
   }
 
@@ -647,6 +611,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Apply filters to message threads
   function applyFilters() {
+    // Show loading indicator while filtering
+    showLoading();
+    
+    // Get filter values
     const loanNumber = document.getElementById("loanNumberFilter").value.trim();
     const status = document.getElementById("statusFilter").value;
     const dateFrom = document.getElementById("dateFromFilter").value;
@@ -688,61 +656,21 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     console.log(
-      `Applying filters with loan number: ${loanNumber}, brand: ${
+      `Applying filters with loan number: ${loanNumber}, status: ${status}, dateFrom: ${dateFrom}, dateTo: ${dateTo}, brand: ${
         selectedBrand || "All Brands"
       }`
     );
 
-    // Check if loan number is not allowed before proceeding with filtering
-    if (loanNumber) {
-      // First check if the isLoanNumberAllowed function is available
-      if (
-        window.isLoanNumberAllowed &&
-        typeof window.isLoanNumberAllowed === "function"
-      ) {
-        const isAllowed = window.isLoanNumberAllowed(loanNumber);
-        console.log(`Checking if loan ${loanNumber} is allowed: ${isAllowed}`);
-
-        if (!isAllowed) {
-          console.log(
-            `Loan ${loanNumber} is not provisioned to the user, showing alert`
-          );
-
-          // Show the not provisioned alert if the function is available
-          if (
-            window.showNotProvisionedAlert &&
-            typeof window.showNotProvisionedAlert === "function"
-          ) {
-            window.showNotProvisionedAlert(loanNumber);
-          } else {
-            // Fallback if the function isn't available
-            const tableBody = document.getElementById("messagesTableBody");
-            if (tableBody) {
-              tableBody.innerHTML = "";
-              const row = document.createElement("tr");
-              row.innerHTML = `<td colspan="6" class="text-center" style="color: #f44336; font-weight: bold;">Loan ${loanNumber} is not provisioned to the user</td>`;
-              tableBody.appendChild(row);
-
-              // Set flags to indicate we're showing a not provisioned message
-              window._showingNotProvisionedMessage = true;
-              window._restrictedLoanNumber = loanNumber;
-            }
-          }
-
-          return; // Stop further processing
-        }
-      } else {
-        console.warn("isLoanNumberAllowed function is not available");
-      }
-    }
-
+    // Start with all message threads
     let filteredThreads = window.messageThreadsData;
 
-    // Filter by loan number
+    // Filter by loan number (case-insensitive)
     if (loanNumber) {
+      const loanNumberLower = loanNumber.toLowerCase();
       filteredThreads = filteredThreads.filter((thread) =>
-        thread.loanNumber.includes(loanNumber)
+        thread.loanNumber.toLowerCase().includes(loanNumberLower)
       );
+      console.log(`After loan number filter: ${filteredThreads.length} threads`);
     }
 
     // Filter by brand if selected
@@ -762,62 +690,34 @@ document.addEventListener("DOMContentLoaded", function () {
       if (brandData) {
         console.log(`Found brand data: ${brandData.name} (${brandData.code})`);
 
-        // Filter threads by loan numbers associated with this brand
+        // Filter threads by brand
         filteredThreads = filteredThreads.filter((thread) => {
-          return (
-            brandData.loanNumbers &&
-            brandData.loanNumbers.includes(thread.loanNumber)
+          // If we have loan numbers for this brand, use them
+          if (brandData.loanNumbers && brandData.loanNumbers.includes(thread.loanNumber)) {
+            return true;
+          }
+          
+          // Otherwise check if the thread's brand matches
+          return thread.brand && (
+            thread.brand === brandData.name || 
+            thread.brand === brandData.code || 
+            thread.brand.includes(brandData.code)
           );
         });
       } else {
-        // Fallback to the old filtering method if brand data is not found
+        // Fallback to simple brand name matching
         filteredThreads = filteredThreads.filter((thread) => {
-          // If thread doesn't have brand info, try to find it from brandsData
-          if (!thread.brand && thread.loanNumber && window.brandsData) {
-            const brand = window.brandsData.find(
-              (b) => b.loanNumbers && b.loanNumbers.includes(thread.loanNumber)
-            );
-            if (brand) {
-              thread.brand = brand.name || brand.code;
-            }
-          }
-
-          // If we still don't have brand info, we can't filter by it
           if (!thread.brand) return false;
-
-          // Try exact match first
-          if (thread.brand === selectedBrand) {
-            return true;
-          }
-
-          // If we have a brand code, check if it matches
-          if (selectedBrandCode) {
-            // Extract brand code from thread brand if possible
-            const threadBrandMatch = thread.brand.match(/\(([A-Z0-9]{2,4})\)$/);
-            const threadBrandCode = threadBrandMatch
-              ? threadBrandMatch[1]
-              : null;
-
-            if (threadBrandCode && threadBrandCode === selectedBrandCode) {
-              return true;
-            }
-          }
-
-          // Check if the thread brand contains the selected brand or vice versa
-          if (
-            thread.brand.includes(selectedBrand) ||
-            selectedBrand.includes(thread.brand)
-          ) {
-            return true;
-          }
-
-          return false;
+          
+          const threadBrandLower = thread.brand.toLowerCase();
+          const selectedBrandLower = selectedBrand.toLowerCase();
+          
+          return threadBrandLower.includes(selectedBrandLower) || 
+                 selectedBrandLower.includes(threadBrandLower);
         });
       }
 
-      console.log(
-        `Filtered to ${filteredThreads.length} threads after brand filtering`
-      );
+      console.log(`After brand filter: ${filteredThreads.length} threads`);
     }
 
     // Filter by status
@@ -825,14 +725,17 @@ document.addEventListener("DOMContentLoaded", function () {
       filteredThreads = filteredThreads.filter(
         (thread) => thread.status.toUpperCase() === status
       );
+      console.log(`After status filter: ${filteredThreads.length} threads`);
     }
 
     // Filter by date from
     if (dateFrom) {
       const fromDate = new Date(dateFrom);
+      fromDate.setHours(0, 0, 0, 0); // Start of the day
       filteredThreads = filteredThreads.filter(
         (thread) => new Date(thread.lastMessageDate) >= fromDate
       );
+      console.log(`After date from filter: ${filteredThreads.length} threads`);
     }
 
     // Filter by date to
@@ -842,6 +745,7 @@ document.addEventListener("DOMContentLoaded", function () {
       filteredThreads = filteredThreads.filter(
         (thread) => new Date(thread.lastMessageDate) <= toDate
       );
+      console.log(`After date to filter: ${filteredThreads.length} threads`);
     }
 
     // Reset not provisioned flags
@@ -850,10 +754,27 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Update the table with filtered results
     populateMessageThreads(filteredThreads);
+    
+    // Hide loading indicator
+    hideLoading();
+    
+    // Show a message if no results found
+    const tableBody = document.getElementById("messagesTableBody");
+    if (tableBody && filteredThreads.length === 0) {
+      const emptyRow = document.createElement("tr");
+      emptyRow.innerHTML = `<td colspan="7" class="text-center">No message threads found matching the filters</td>`;
+      tableBody.appendChild(emptyRow);
+    }
   }
 
   // Reset filters
   function resetFilters() {
+    // Show loading indicator
+    showLoading();
+    
+    console.log("Resetting all filters");
+    
+    // Reset loan number input
     const loanNumberInput = document.getElementById("loanNumberFilter");
     if (loanNumberInput) {
       loanNumberInput.value = "";
@@ -867,9 +788,22 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     }
 
-    document.getElementById("statusFilter").value = "ALL";
-    document.getElementById("dateFromFilter").value = "";
-    document.getElementById("dateToFilter").value = "";
+    // Reset status filter
+    const statusFilter = document.getElementById("statusFilter");
+    if (statusFilter) {
+      statusFilter.value = "ALL";
+    }
+    
+    // Reset date filters
+    const dateFromFilter = document.getElementById("dateFromFilter");
+    if (dateFromFilter) {
+      dateFromFilter.value = "";
+    }
+    
+    const dateToFilter = document.getElementById("dateToFilter");
+    if (dateToFilter) {
+      dateToFilter.value = "";
+    }
 
     // Try to reset brand dropdown if it exists
     const brandDropdown = document.querySelector(".brand-dropdown");
@@ -906,6 +840,12 @@ document.addEventListener("DOMContentLoaded", function () {
         if (valueText) {
           valueText.textContent = "All Brands";
         }
+        
+        // Remove active filter class from trigger if it exists
+        const trigger = matBrandSelect.querySelector(".mat-mdc-select-trigger");
+        if (trigger) {
+          trigger.classList.remove("active-filter");
+        }
       }
     }
 
@@ -913,8 +853,22 @@ document.addEventListener("DOMContentLoaded", function () {
     window._selectedBrandCode = null;
     window._selectedBrandName = null;
 
+    // Clear any existing messages about no results
+    const tableBody = document.getElementById("messagesTableBody");
+    if (tableBody) {
+      const noResultsRow = tableBody.querySelector("tr td[colspan='7']");
+      if (noResultsRow) {
+        noResultsRow.parentElement.remove();
+      }
+    }
+
     // Repopulate with all threads
-    populateMessageThreads();
+    populateMessageThreads(window.messageThreadsData);
+    
+    console.log("Filters reset, showing all message threads");
+    
+    // Hide loading indicator
+    hideLoading();
   }
 
   // Send reply to a message thread
@@ -1001,8 +955,8 @@ document.addEventListener("DOMContentLoaded", function () {
               valueText.textContent = text;
             }
 
-            // Filter loan numbers based on selected brand
-            updateLoanNumberFilterByBrand(value, text);
+            // No loan number filtering needed
+            console.log(`Brand selected: ${text}`);
 
             // Apply filters to update the message threads
             applyFilters();
