@@ -456,12 +456,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
           if (!isAllowed) {
             console.log(`No threads found for restricted loan: ${loanNumber}`);
-
-            // Show "Loan is not provisioned" message
-            const emptyRow = document.createElement("tr");
-            emptyRow.innerHTML = `<td colspan="7" class="text-center" style="color: #f44336; font-weight: bold;">Loan ${loanNumber} is not provisioned to the user</td>`;
-            tableBody.appendChild(emptyRow);
-
             // Also show the alert if available
             if (
               window.showNotProvisionedAlert &&
