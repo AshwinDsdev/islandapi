@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Loansphere Queues</title>
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  
+  <!-- Material Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  
+  <!-- AG Grid Styles -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community@30.0.6/styles/ag-grid.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community@30.0.6/styles/ag-theme-alpine.css">
+  
+  <style>
+    /* General Styles */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f5f5;
+    }
+    
+    /* Header Styles */
+    .header2 {
+      background-color: #2c3e50;
+      color: white;
+    }
+    
+    .menu-hamburger {
+      display: flex;
+      align-items: center;
+    }
+    
+    .hamburger-menu {
+      font-size: 1.5em;
+    }
+    
+    .right-icons {
+      display: flex;
+      align-items: center;
+    }
+    
+    /* Drawer Styles */
+    .drawer-container {
+      display: flex;
+      height: calc(100vh - 60px);
+    }
+    
+    .app-drawer {
+      width: 216px;
+      background-color: #f8f9fa;
+      box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+      overflow-y: auto;
+    }
+    
+    .drawer-list-item {
+      list-style-type: none;
+      padding: 5px 0;
+    }
+    
+    .drawer-item {
+      display: block;
+      padding: 10px 15px;
+      color: #333;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    
+    .drawer-feature-item {
+      display: flex;
+      align-items: center;
+      padding: 8px 15px 8px 30px;
+      color: #333;
+      text-decoration: none;
+    }
+    
+    .active-child-menu-item {
+      background-color: #e9ecef;
+      color: #007bff;
+      font-weight: bold;
+    }
+    
+    .indicator {
+      width: 5px;
+      height: 5px;
+      background-color: #007bff;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+    
+    .caret-style {
+      margin-left: 10px;
+    }
+    
+    /* Content Styles */
+    .mat-drawer-content {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+    }
+    
+    .header-main-1 {
+      border-bottom: 1px solid #dee2e6;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+    }
+    
+    .header-parts-client {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .text-link {
+      color: #007bff;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    
+    .hero {
+      background-color: white;
+      border-radius: 5px;
+      padding: 20px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    
+    /* Form Styles */
+    .mat-mdc-form-field {
+      width: 100%;
+      margin-bottom: 15px;
+    }
+    
+    .container-margin {
+      margin: 0 -10px;
+    }
+    
+    /* Custom Styles for Angular Material Components */
+    .mat-mdc-form-field-appearance-fill .mat-mdc-text-field-wrapper {
+      background-color: #f5f5f5;
+      border-radius: 4px;
+    }
+    
+    .mat-mdc-form-field-infix {
+      padding: 10px 0;
+    }
+    
+    .institution-name {
+      font-weight: bold;
+      font-size: 1.1em;
+    }
+    
+    /* AG Grid Styles */
+    .ag-theme-alpine {
+      --ag-header-background-color: #f8f9fa;
+      --ag-odd-row-background-color: #f9f9f9;
+    }
+    
+    /* Loading Indicator */
+    #loading-indicator {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: rgba(255, 255, 255, 0.9);
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+      z-index: 9999;
+    }
+    
+    /* Custom Styles for Angular Components */
+    .wrapper {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    
+    main {
+      flex: 1;
+    }
+    
+    /* Header Bar Styles */
+    .header-main-new {
+      display: flex;
+      align-items: center;
+    }
+    
+    .context-dropdown-adjust {
+      min-width: 200px;
+    }
+    
+    .header-main-1-formfld {
+      font-size: 0.9em;
+    }
+    
+    /* Utility Classes */
+    .d-flex {
+      display: flex;
+    }
+    
+    .align-items-center {
+      align-items: center;
+    }
+    
+    .justify-content-between {
+      justify-content: space-between;
+    }
+  </style>
+</head>
+<body style="">
+  <div id="loading-indicator" style="padding: 40px; display: none;">
+    Loading...
+  </div>
+  <app-root _nghost-ng-c1992328644="" ng-version="18.2.13"><div _ngcontent-ng-c1992328644="" class="wrapper"><main _ngcontent-ng-c1992328644=""><router-outlet _ngcontent-ng-c1992328644=""></router-outlet><lsdadmin-home _nghost-ng-c1816347493="" class="ng-star-inserted"><div _ngcontent-ng-c1816347493="" class="header2 d-flex flex-column flex-md-row align-items-center px-3 py-2" style="justify-content: space-between;"><div _ngcontent-ng-c1816347493="" class="menu-hamburger"><i _ngcontent-ng-c1816347493="" class="fa-sharp fa-solid fa-bars hamburger-menu" style="cursor: pointer;"></i><span _ngcontent-ng-c1816347493="" style="color: whitesmoke; font-family: 'Suisse-SemiBold'; font-size: 1.5em; padding: 1px 0px 0px 24px;"> One Admin </span></div><div _ngcontent-ng-c1816347493="" style="left: 210px; position: fixed;"><lsdadmin-header-bar _ngcontent-ng-c1816347493="" _nghost-ng-c2667574091=""><div _ngcontent-ng-c2667574091="" class="header-main-1 header-main-new"><div _ngcontent-ng-c2667574091="" class="header-parts-client py-2"><!----><div _ngcontent-ng-c2667574091=""><div _ngcontent-ng-c2667574091="" class="institution-name ng-star-inserted"> Cenlar FSB </div><!----></div><div _ngcontent-ng-c2667574091="" class="d-inline-block ml-md-2 header-main-2"><div _ngcontent-ng-c2667574091="" class="header-parts-client py-2"><mat-form-field _ngcontent-ng-c2667574091="" appearance="outline" class="mat-mdc-form-field context-dropdown-adjust ng-tns-c508571215-56 mat-mdc-form-field-type-mat-select mat-mdc-form-field-has-icon-prefix mat-form-field-appearance-outline mat-primary ng-star-inserted"><!----><div class="mat-mdc-text-field-wrapper mdc-text-field ng-tns-c508571215-56 mdc-text-field--outlined mdc-text-field--no-label"><!----><div class="mat-mdc-form-field-flex ng-tns-c508571215-56"><div matformfieldnotchedoutline="" class="mdc-notched-outline ng-tns-c508571215-56 mdc-notched-outline--no-label ng-star-inserted"><div class="mat-mdc-notch-piece mdc-notched-outline__leading"></div><div class="mat-mdc-notch-piece mdc-notched-outline__notch"><!----><!----><!----></div><div class="mat-mdc-notch-piece mdc-notched-outline__trailing"></div></div><!----><div class="mat-mdc-form-field-icon-prefix ng-tns-c508571215-56 ng-star-inserted"><i _ngcontent-ng-c2667574091="" matprefix="" class="fa-sharp fa-light fa-circle-info pr-2 ng-tns-c508571215-56"></i></div><!----><!----><div class="mat-mdc-form-field-infix ng-tns-c508571215-56"><!----><mat-select _ngcontent-ng-c2667574091="" role="combobox" aria-haspopup="listbox" panelclass="header-panel-adjust" name="channelSelect" class="mat-mdc-select header-main-1-formfld ng-tns-c1711764913-57 ng-tns-c508571215-56 ng-star-inserted" aria-labelledby="mat-select-value-31" id="mat-select-30" tabindex="0" aria-expanded="false" aria-required="false" aria-disabled="false" aria-invalid="false"><div cdk-overlay-origin="" class="mat-mdc-select-trigger ng-tns-c1711764913-57"><div class="mat-mdc-select-value ng-tns-c1711764913-57" id="mat-select-value-31"><!----><span class="mat-mdc-select-value-text ng-tns-c1711764913-57 ng-star-inserted"><!----><span class="mat-mdc-select-min-line ng-tns-c1711764913-57 ng-star-inserted">Borrower Self-Service</span><!----></span><!----></div><div class="mat-mdc-select-arrow-wrapper ng-tns-c1711764913-57"><div class="mat-mdc-select-arrow ng-tns-c1711764913-57"><svg viewBox="0 0 24 24" width="24px" height="24px" focusable="false" aria-hidden="true" class="ng-tns-c1711764913-57"><path d="M7 10l5 5 5-5z" class="ng-tns-c1711764913-57"></path></svg></div></div></div><!----></mat-select></div><!----><!----></div><!----></div><div class="mat-mdc-form-field-subscript-wrapper mat-mdc-form-field-bottom-align ng-tns-c508571215-56"><!----><div class="mat-mdc-form-field-hint-wrapper ng-tns-c508571215-56 ng-trigger ng-trigger-transitionMessages ng-star-inserted" style="opacity: 1; transform: translateY(0%);"><!----><div class="mat-mdc-form-field-hint-spacer ng-tns-c508571215-56"></div></div><!----></div></mat-form-field><!----><!----></div></div><!----><!----><div _ngcontent-ng-c2667574091="" class="d-inline-block ml-md-2 header-main-2 ng-star-inserted"><div _ngcontent-ng-c2667574091="" style="display: inline-block;"><!----><mat-form-field _ngcontent-ng-c2667574091="" appearance="outline" class="mat-mdc-form-field context-dropdown-adjust ng-tns-c508571215-58 mat-mdc-form-field-type-mat-select mat-form-field-appearance-outline mat-primary ng-star-inserted"><!----><div class="mat-mdc-text-field-wrapper mdc-text-field ng-tns-c508571215-58 mdc-text-field--outlined mdc-text-field--no-label"><!----><div class="mat-mdc-form-field-flex ng-tns-c508571215-58"><div matformfieldnotchedoutline="" class="mdc-notched-outline ng-tns-c508571215-58 mdc-notched-outline--no-label ng-star-inserted"><div class="mat-mdc-notch-piece mdc-notched-outline__leading"></div><div class="mat-mdc-notch-piece mdc-notched-outline__notch"><!----><!----><!----></div><div class="mat-mdc-notch-piece mdc-notched-outline__trailing"></div></div><!----><!----><!----><div class="mat-mdc-form-field-infix ng-tns-c508571215-58"><!----><mat-select _ngcontent-ng-c2667574091="" role="combobox" aria-haspopup="listbox" name="brandSelect" panelclass="header-panel-adjust" class="mat-mdc-select header-main-1-formfld ng-tns-c1711764913-59 ng-tns-c508571215-58 ng-star-inserted" aria-labelledby="mat-select-value-33" id="mat-select-32" tabindex="0" aria-expanded="false" aria-required="false" aria-disabled="false" aria-invalid="false"><div cdk-overlay-origin="" class="mat-mdc-select-trigger ng-tns-c1711764913-59"><div class="mat-mdc-select-value ng-tns-c1711764913-59" id="mat-select-value-33"><!----><span class="mat-mdc-select-value-text ng-tns-c1711764913-59 ng-star-inserted"><!----><span class="mat-mdc-select-min-line ng-tns-c1711764913-59 ng-star-inserted">All Brands</span><!----></span><!----></div><div class="mat-mdc-select-arrow-wrapper ng-tns-c1711764913-59"><div class="mat-mdc-select-arrow ng-tns-c1711764913-59"><svg viewBox="0 0 24 24" width="24px" height="24px" focusable="false" aria-hidden="true" class="ng-tns-c1711764913-59"><path d="M7 10l5 5 5-5z" class="ng-tns-c1711764913-59"></path></svg></div></div></div><!----></mat-select></div><!----><!----></div><!----></div><div class="mat-mdc-form-field-subscript-wrapper mat-mdc-form-field-bottom-align ng-tns-c508571215-58"><!----><div class="mat-mdc-form-field-hint-wrapper ng-tns-c508571215-58 ng-trigger ng-trigger-transitionMessages ng-star-inserted" style="opacity: 1; transform: translateY(0%);"><!----><div class="mat-mdc-form-field-hint-spacer ng-tns-c508571215-58"></div></div><!----></div></mat-form-field></div></div><!----><!----><!----></div></div></lsdadmin-header-bar></div><div _ngcontent-ng-c1816347493="" class="right-icons" style="color: whitesmoke;"><i _ngcontent-ng-c1816347493="" mattooltip="Help Center" class="mat-mdc-tooltip-trigger fa-sharp fa-regular fa-question-circle" style="color: whitesmoke; padding: 0px 8px; cursor: pointer;" aria-describedby="cdk-describedby-message-ng-1-21" cdk-describedby-host="ng-1"></i><!----><button _ngcontent-ng-c1816347493="" mat-button="" aria-label="User profile" class="mat-mdc-menu-trigger d-inline-block loan-dropdown-menu px-0 mdc-button mat-mdc-button mat-unthemed mat-mdc-button-base" mat-ripple-loader-class-name="mat-mdc-button-ripple" aria-haspopup="menu" aria-expanded="false"><span class="mat-mdc-button-persistent-ripple mdc-button__ripple"></span><span class="mdc-button__label"><div _ngcontent-ng-c1816347493="" class="mat-mdc-menu-trigger" aria-haspopup="menu" aria-expanded="false"><span _ngcontent-ng-c1816347493=""><i _ngcontent-ng-c1816347493="" mattooltip="User Profile Menu" class="mat-mdc-tooltip-trigger fa-sharp fa-regular fa-circle-user" style="color: whitesmoke;" aria-describedby="cdk-describedby-message-ng-1-22" cdk-describedby-host="ng-1"></i><!----></span><mat-icon _ngcontent-ng-c1816347493="" role="img" tabindex="0" aria-hidden="false" aria-label="lower caret icon" class="mat-icon notranslate align-middle material-icons mat-ligature-font mat-icon-no-color" style="color: whitesmoke;" data-mat-icon-type="font"> arrow_drop_down </mat-icon></div><!----></span><span class="mat-mdc-focus-indicator"></span><span class="mat-mdc-button-touch-target"></span><span class="mat-ripple mat-mdc-button-ripple"></span></button><!----><mat-menu _ngcontent-ng-c1816347493="" tabindex="0" id="adminUserMenuId" aria-expanded="false" class="ng-tns-c1923052698-45 ng-star-inserted"><!----></mat-menu></div></div><mat-drawer-container _ngcontent-ng-c1816347493="" class="mat-drawer-container drawer-container"><!----><div class="cdk-visually-hidden cdk-focus-trap-anchor" aria-hidden="true"></div><mat-drawer _ngcontent-ng-c1816347493="" tabindex="-1" class="mat-drawer app-drawer ng-tns-c197257872-46 ng-trigger ng-trigger-transform mat-drawer-side mat-drawer-opened ng-star-inserted" style="transform: none; visibility: visible;"><div cdkscrollable="" class="mat-drawer-inner-container ng-tns-c197257872-46"><ul _ngcontent-ng-c1816347493="" class="ng-tns-c197257872-46"><li _ngcontent-ng-c1816347493="" class="drawer-list-item"><a _ngcontent-ng-c1816347493="" class="drawer-item" href="/admin/dashboard"> Dashboard </a></li><!----><!----><!----><!----><!----><ul _ngcontent-ng-c1816347493=""><a _ngcontent-ng-c1816347493="" href="javascript:void(0)" class="drawer-item"> Servicing Digital <!----><i _ngcontent-ng-c1816347493="" class="fa-sharp fa-solid fa-caret-up caret-style ng-star-inserted" style=""></i><!----></a><div _ngcontent-ng-c1816347493="" class="ng-star-inserted" style=""><li _ngcontent-ng-c1816347493="" class="drawer-list-item ng-star-inserted"><a _ngcontent-ng-c1816347493="" class="drawer-feature-item" href="/admin/borrower-admin"><div _ngcontent-ng-c1816347493="" class="indicator"></div><span _ngcontent-ng-c1816347493="" class="drawer-feature-item-span">Borrowers</span></a></li><!----><!----><li _ngcontent-ng-c1816347493="" class="drawer-list-item ng-star-inserted"><a _ngcontent-ng-c1816347493="" class="drawer-feature-item" href="/admin/messaging2"><div _ngcontent-ng-c1816347493="" class="indicator"></div><span _ngcontent-ng-c1816347493="" class="drawer-feature-item-span">Messages</span></a></li><!----><li _ngcontent-ng-c1816347493="" class="drawer-list-item ng-star-inserted"><a _ngcontent-ng-c1816347493="" class="drawer-feature-item active-child-menu-item" href="/admin/queues"><div _ngcontent-ng-c1816347493="" class="indicator"></div><span _ngcontent-ng-c1816347493="" class="drawer-feature-item-span">Queues</span></a></li><!----><!----><!----><!----><!----><li _ngcontent-ng-c1816347493="" class="drawer-list-item ng-star-inserted"><a _ngcontent-ng-c1816347493="" class="drawer-feature-item" href="/admin/statistics"><div _ngcontent-ng-c1816347493="" class="indicator"></div><span _ngcontent-ng-c1816347493="" class="drawer-feature-item-span">Customer Statistics</span></a></li><!----></div><!----></ul><ul _ngcontent-ng-c1816347493="" style="display: none;"><a _ngcontent-ng-c1816347493="" href="javascript:void(0)" class="drawer-item"> Customer Service <i _ngcontent-ng-c1816347493="" class="fa-sharp fa-solid fa-caret-down caret-style ng-star-inserted" style=""></i><!----><!----></a><!----></ul><!----><!----><!----><!----><!----><!----><!----></ul></div></mat-drawer><div class="cdk-visually-hidden cdk-focus-trap-anchor" aria-hidden="true"></div><mat-drawer-content _ngcontent-ng-c1816347493="" class="mat-drawer-content" style="margin-left: 216px;"><router-outlet _ngcontent-ng-c1816347493=""></router-outlet><lsdadmin-queues-search _nghost-ng-c1929788430="" class="ng-star-inserted"><div _ngcontent-ng-c1929788430="" class="header-main-1"><h4 _ngcontent-ng-c1929788430="">Queues</h4><div _ngcontent-ng-c1929788430="" class="header-parts-client py-2"><div _ngcontent-ng-c1929788430="" class="search-links pr-4"><!----><!----><a _ngcontent-ng-c1929788430="" class="ml-1 text-link">Clear Search</a></div></div></div><div _ngcontent-ng-c1929788430="" class="hero"><bk-form _ngcontent-ng-c1929788430=""><form novalidate="" name="form" autocomplete="off" class="ng-untouched ng-pristine ng-valid"><div _ngcontent-ng-c1929788430="" class="row container-margin"><bk-field _ngcontent-ng-c1929788430="" appearance="fill" label="Name" type="text" name="name" fieldname="name" maxlength="30" class="col-6 col-lg-4 col-xl-2 pr-lg-2"><!----><!----><!----><mat-form-field class="mat-mdc-form-field ng-tns-c508571215-54 mat-mdc-form-field-type-mat-input mat-form-field-appearance-fill mat-form-field-hide-placeholder mat-primary ng-untouched ng-pristine ng-valid ng-star-inserted" style="width: 100%;"><!----><div class="mat-mdc-text-field-wrapper mdc-text-field ng-tns-c508571215-54 mdc-text-field--filled"><div class="mat-mdc-form-field-focus-overlay ng-tns-c508571215-54 ng-star-inserted"></div><!----><div class="mat-mdc-form-field-flex ng-tns-c508571215-54"><!----><!----><!----><div class="mat-mdc-form-field-infix ng-tns-c508571215-54"><label matformfieldfloatinglabel="" class="mdc-floating-label mat-mdc-floating-label ng-tns-c508571215-54 ng-star-inserted" id="mat-mdc-form-field-label-58" for="mat-input-14"><mat-label class="ng-tns-c508571215-54">Name</mat-label><!----></label><!----><!----><!----><input matinput="" autocomplete="off" type="text" class="mat-mdc-input-element ng-tns-c508571215-54 ng-untouched ng-pristine ng-valid mat-mdc-form-field-input-control mdc-text-field__input cdk-text-field-autofill-monitored" invalid="false" maxlength="30" aria-describedby="mat-mdc-hint-18" id="mat-input-14" aria-invalid="false" aria-required="false"></div><!----><!----></div><div matformfieldlineripple="" class="mdc-line-ripple ng-tns-c508571215-54 mdc-line-ripple--deactivating ng-star-inserted"></div><!----></div><div class="mat-mdc-form-field-subscript-wrapper mat-mdc-form-field-bottom-align ng-tns-c508571215-54"><!----><div class="mat-mdc-form-field-hint-wrapper ng-tns-c508571215-54 ng-trigger ng-trigger-transitionMessages ng-star-inserted" style="opacity: 1; transform: translateY(0%);"><!----><div class="mat-mdc-form-field-hint-spacer ng-tns-c508571215-54"></div><mat-hint class="mat-mdc-form-field-hint mat-mdc-form-field-bottom-align mat-mdc-form-field-hint-end ng-tns-c508571215-54" id="mat-mdc-hint-18"></mat-hint></div><!----></div></mat-form-field><!----><!----></bk-field><bk-field _ngcontent-ng-c1929788430="" appearance="fill" label="Description" type="text" name="description" fieldname="description" maxlength="30" class="col-6 col-lg-4 col-xl-2 pr-lg-2"><!----><!----><!----><mat-form-field class="mat-mdc-form-field ng-tns-c508571215-55 mat-mdc-form-field-type-mat-input mat-form-field-appearance-fill mat-form-field-hide-placeholder mat-primary ng-untouched ng-pristine ng-valid ng-star-inserted" style="width: 100%;"><!----><div class="mat-mdc-text-field-wrapper mdc-text-field ng-tns-c508571215-55 mdc-text-field--filled"><div class="mat-mdc-form-field-focus-overlay ng-tns-c508571215-55 ng-star-inserted"></div><!----><div class="mat-mdc-form-field-flex ng-tns-c508571215-55"><!----><!----><!----><div class="mat-mdc-form-field-infix ng-tns-c508571215-55"><label matformfieldfloatinglabel="" class="mdc-floating-label mat-mdc-floating-label ng-tns-c508571215-55 ng-star-inserted" id="mat-mdc-form-field-label-60" for="mat-input-15"><mat-label class="ng-tns-c508571215-55">Description</mat-label><!----></label><!----><!----><!----><input matinput="" autocomplete="off" type="text" class="mat-mdc-input-element ng-tns-c508571215-55 ng-untouched ng-pristine ng-valid mat-mdc-form-field-input-control mdc-text-field__input cdk-text-field-autofill-monitored" invalid="false" maxlength="30" aria-describedby="mat-mdc-hint-19" id="mat-input-15" aria-invalid="false" aria-required="false"></div><!----><!----></div><div matformfieldlineripple="" class="mdc-line-ripple ng-tns-c508571215-55 mdc-line-ripple--deactivating ng-star-inserted"></div><!----></div><div class="mat-mdc-form-field-subscript-wrapper mat-mdc-form-field-bottom-align ng-tns-c508571215-55"><!----><div class="mat-mdc-form-field-hint-wrapper ng-tns-c508571215-55 ng-trigger ng-trigger-transitionMessages ng-star-inserted" style="opacity: 1; transform: translateY(0%);"><!----><div class="mat-mdc-form-field-hint-spacer ng-tns-c508571215-55"></div><mat-hint class="mat-mdc-form-field-hint mat-mdc-form-field-bottom-align mat-mdc-form-field-hint-end ng-tns-c508571215-55" id="mat-mdc-hint-19"></mat-hint></div><!----></div></mat-form-field><!----><!----></bk-field></div><div _ngcontent-ng-c1929788430="" class="row container-margin"><div _ngcontent-ng-c1929788430="" class="col-12 col-lg-8 col-xl-4 text-right"><button _ngcontent-ng-c1929788430="" mat-raised-button="" color="primary" class="mdc-button mdc-button--raised mat-mdc-raised-button mat-primary mat-mdc-button-base" mat-ripple-loader-class-name="mat-mdc-button-ripple"><span class="mat-mdc-button-persistent-ripple mdc-button__ripple"></span><span class="mdc-button__label"> Search </span><span class="mat-mdc-focus-indicator"></span><span class="mat-mdc-button-touch-target"></span><span class="mat-ripple mat-mdc-button-ripple"></span></button></div></div></form></bk-form></div><div _ngcontent-ng-c1929788430="" class="hero"><mat-card class="mat-mdc-card mdc-card"><div _ngcontent-ng-c1929788430="" class="mat-mdc-card-content"><lsdadmin-queues-grid _ngcontent-ng-c1929788430="" _nghost-ng-c1929788431=""><ag-grid-angular _ngcontent-ng-c1929788431="" class="ag-theme-alpine" style="width: 100%; height: 500px;"><div role="presentation" class="ag-root-wrapper ag-layout-normal ag-ltr"><!--AG-GRID-COMP--><div class="ag-root-wrapper-body ag-layout-normal ag-focus-managed" ref="rootWrapperBody"><div class="ag-tab-guard ag-tab-guard-top" role="presentation" tabindex="0"></div><!--AG-HEADER-ROOT--><div class="ag-header ag-pivot-off" role="presentation" style="height: 49px; min-height: 49px;"><div class="ag-pinned-left-header ag-hidden" style="width: 0px; max-width: 0px; min-width: 0px;" role="presentation"></div><div class="ag-header-viewport" role="presentation"><div class="ag-header-container" role="rowgroup" style="width: 1209.36px; transform: translateX(0px);"><div class="ag-header-row ag-header-row-column" role="row" aria-rowindex="1" style="top: 0px; height: 48px; width: 1209.36px;"><div class="ag-header-cell ag-focus-managed ag-header-cell-sortable" role="columnheader" unselectable="on" tabindex="-1" aria-colindex="1" col-id="name" style="width: 200px; left: 0px;"><div ref="eResize" class="ag-header-cell-resize" role="presentation"></div><div class="ag-header-select-all ag-labeled ag-label-align-right ag-checkbox ag-input-field" role="presentation"><div ref="eWrapper" class="ag-wrapper ag-input-wrapper ag-checkbox-input-wrapper" role="presentation"><input ref="eInput" class="ag-input-field-input ag-checkbox-input" type="checkbox" id="ag-275-input" tabindex="-1" aria-label="Press Space to toggle all rows selection (unchecked)"><div class="ag-checkbox-icon" role="presentation"><span class="ag-icon ag-icon-checkbox-unchecked" unselectable="on" role="presentation"></span></div></div></div><div class="ag-cell-label-container" role="presentation"><div ref="eLabel" class="ag-header-cell-label" role="presentation" unselectable="on"><span ref="eText" class="ag-header-cell-text" unselectable="on" style="margin-left: 4px;">Name</span><span ref="eFilter" class="ag-header-icon ag-header-label-icon ag-filter-icon ag-hidden" aria-hidden="true"><span class="ag-icon ag-icon-filter" unselectable="on" role="presentation"></span></span><span ref="eSortOrder" class="ag-header-icon ag-header-label-icon ag-sort-order ag-hidden" aria-hidden="true"></span><span ref="eSortAsc" class="ag-header-icon ag-header-label-icon ag-sort-ascending-icon ag-hidden" aria-hidden="true"><span class="ag-icon ag-icon-asc" unselectable="on" role="presentation"></span></span><span ref="eSortDesc" class="ag-header-icon ag-header-label-icon ag-sort-descending-icon ag-hidden" aria-hidden="true"><span class="ag-icon ag-icon-desc" unselectable="on" role="presentation"></span></span><span ref="eSortNone" class="ag-header-icon ag-header-label-icon ag-sort-none-icon ag-hidden" aria-hidden="true"><span class="ag-icon ag-icon-none" unselectable="on" role="presentation"></span></span></div></div></div><div class="ag-header-cell ag-focus-managed ag-header-cell-sortable" role="columnheader" unselectable="on" tabindex="-1" aria-colindex="2" col-id="description" style="width: 200px; left: 200px;"><div ref="eResize" class="ag-header-cell-resize" role="presentation"></div><div class="ag-header-cell-comp-wrapper"><div class="ag-cell-label-container" role="presentation"><div ref="eLabel" class="ag-header-cell-label" role="presentation" unselectable="on"><span ref="eText" class="ag-header-cell-text" unselectable="on">Description</span><span ref="eFilter" class="ag-header-icon ag-header-label-icon ag-filter-icon ag-hidden" aria-hidden="true"><span class="ag-icon ag-icon-filter" unselectable="on" role="presentation"></span></span><span ref="eSortOrder" class="ag-header-icon ag-header-label-icon ag-sort-order ag-hidden" aria-hidden="true"></span><span ref="eSortAsc" class="ag-header-icon ag-header-label-icon ag-sort-ascending-icon ag-hidden" aria-hidden="true"><span class="ag-icon ag-icon-asc" unselectable="on" role="presentation"></span></span><span ref="eSortDesc" class="ag-header-icon ag-header-label-icon ag-sort-descending-icon ag-hidden" aria-hidden="true"><span class="ag-icon ag-icon-desc" unselectable="on" role="presentation"></span></span><span ref="eSortNone" class="ag-header-icon ag-header-label-icon ag-sort-none-icon ag-hidden" aria-hidden="true"><span class="ag-icon ag-icon-none" unselectable="on" role="presentation"></span></span></div></div></div></div><div class="ag-header-cell ag-focus-managed ag-header-cell-sortable" role="columnheader" unselectable="on" tabindex="-1" aria-colindex="3" col-id="category" style="width: 200px; left: 400px;"><div ref="eResize" class="ag-header-cell-resize" role="presentation"></div><div class="ag-header-cell-comp-wrapper"><div class="ag-cell-label-container" role="presentation"><div ref="eLabel" class="ag-header-cell-label" role="presentation" unselectable="on"><span ref="eText" class="ag-header-cell-text" unselectable="on">Category</span><span ref="eFilter" class="ag-header-icon ag-header-label-icon ag-filter-icon ag-hidden" aria-hidden="true"><span class="ag-icon ag-icon-filter" unselectable="on" role="presentation"></span></span><span ref="eSortOrder" class="ag-header-icon ag-header-label-icon ag-sort-order ag-hidden" aria-hidden="true"></span><span ref="eSortAsc" class="ag-header-icon ag-header-label-icon ag-sort-ascending-icon ag-hidden" aria-hidden="true"><span class="ag-icon ag-icon-asc" unselectable="on" role="presentation"></span></span><span ref="eSortDesc" class="ag-header-icon ag-header-label-icon ag-sort-descending-icon ag-hidden" aria-hidden="true"><span class="ag-icon ag-icon-desc" unselectable="on" role="presentation"></span></span><span ref="eSortNone" class="ag-header-icon ag-header-label-icon ag-sort-none-icon ag-hidden" aria-hidden="true"><span class="ag-icon ag-icon-none" unselectable="on" role="presentation"></span></span></div></div></div></div><div class="ag-header-cell ag-focus-managed ag-header-cell-sortable" role="columnheader" unselectable="on" tabindex="-1" aria-colindex="4" col-id="messageCount" style="width: 200px; left: 600px;"><div ref="eResize" class="ag-header-cell-resize" role="presentation"></div><div class="ag-header-cell-comp-wrapper"><div class="ag-cell-label-container" role="presentation"><div ref="eLabel" class="ag-header-cell-label" role="presentation" unselectable="on"><span ref="eText" class="ag-header-cell-text" unselectable="on">Message Count</span><span ref="eFilter" class="ag-header-icon ag-header-label-icon ag-filter-icon ag-hidden" aria-hidden="true"><span class="ag-icon ag-icon-filter" unselectable="on" role="presentation"></span></span><span ref="eSortOrder" class="ag-header-icon ag-header-label-icon ag-sort-order ag-hidden" aria-hidden="true"></span><span ref="eSortAsc" class="ag-header-icon ag-header-label-icon ag-sort-ascending-icon ag-hidden" aria-hidden="true"><span class="ag-icon ag-icon-asc" unselectable="on" role="presentation"></span></span><span ref="eSortDesc" class="ag-header-icon ag-header-label-icon ag-sort-descending-icon ag-hidden" aria-hidden="true"><span class="ag-icon ag-icon-desc" unselectable="on" role="presentation"></span></span><span ref="eSortNone" class="ag-header-icon ag-header-label-icon ag-sort-none-icon ag-hidden" aria-hidden="true"><span class="ag-icon ag-icon-none" unselectable="on" role="presentation"></span></span></div></div></div></div><div class="ag-header-cell ag-focus-managed ag-header-cell-sortable" role="columnheader" unselectable="on" tabindex="-1" aria-colindex="5" col-id="actions" style="width: 409.36px; left: 800px;"><div ref="eResize" class="ag-header-cell-resize" role="presentation"></div><div class="ag-header-cell-comp-wrapper"><div class="ag-cell-label-container" role="presentation"><div ref="eLabel" class="ag-header-cell-label" role="presentation" unselectable="on"><span ref="eText" class="ag-header-cell-text" unselectable="on">Actions</span><span ref="eFilter" class="ag-header-icon ag-header-label-icon ag-filter-icon ag-hidden" aria-hidden="true"><span class="ag-icon ag-icon-filter" unselectable="on" role="presentation"></span></span><span ref="eSortOrder" class="ag-header-icon ag-header-label-icon ag-sort-order ag-hidden" aria-hidden="true"></span><span ref="eSortAsc" class="ag-header-icon ag-header-label-icon ag-sort-ascending-icon ag-hidden" aria-hidden="true"><span class="ag-icon ag-icon-asc" unselectable="on" role="presentation"></span></span><span ref="eSortDesc" class="ag-header-icon ag-header-label-icon ag-sort-descending-icon ag-hidden" aria-hidden="true"><span class="ag-icon ag-icon-desc" unselectable="on" role="presentation"></span></span><span ref="eSortNone" class="ag-header-icon ag-header-label-icon ag-sort-none-icon ag-hidden" aria-hidden="true"><span class="ag-icon ag-icon-none" unselectable="on" role="presentation"></span></span></div></div></div></div></div></div></div><div class="ag-pinned-right-header ag-hidden" style="width: 0px; max-width: 0px; min-width: 0px;" role="presentation"></div></div><!--AG-BODY--><div class="ag-center-cols-clipper" role="presentation" unselectable="on" style="height: 0px;"><div class="ag-center-cols-viewport" ref="eViewport" role="presentation" style="height: 100%;"><!--AG-ROW-CONTAINER--><div class="ag-center-cols-container" ref="eContainer" role="rowgroup" unselectable="on" style="width: 1209.36px; height: 0px; transform: translateX(0px);"></div></div></div><div class="ag-pinned-left-cols-container ag-hidden" ref="eLeftContainer" role="rowgroup" unselectable="on" style="height: 0px; width: 0px; max-width: 0px; min-width: 0px;"></div><div class="ag-pinned-right-cols-container ag-hidden" ref="eRightContainer" role="rowgroup" unselectable="on" style="height: 0px; width: 0px; max-width: 0px; min-width: 0px;"></div><div class="ag-full-width-container" ref="eFullWidthContainer" role="rowgroup" style="height: 0px;"></div><!--AG-STICKY-TOP--><div class="ag-sticky-top" ref="eStickyTop" style="height: 0px; width: 1209.36px; top: 49px; display: none;"><!--AG-ROW-CONTAINER--><div class="ag-pinned-left-sticky-top ag-hidden" ref="stickyTopLeftContainer" name="stickyTopLeft" role="rowgroup" aria-hidden="true" style="width: 0px; max-width: 0px; min-width: 0px;"></div><!--AG-ROW-CONTAINER--><div class="ag-sticky-top-viewport" ref="stickyTopCenterContainer" role="presentation" name="stickyTopCenter">
+                <div class="ag-sticky-top-container" ref="eContainer" role="rowgroup" style="width: 1209.36px; transform: translateX(0px);"></div>
+            </div>
+            <!--AG-ROW-CONTAINER--><div class="ag-pinned-right-sticky-top ag-hidden" ref="stickyTopRightContainer" name="stickyTopRight" role="rowgroup" aria-hidden="true" style="width: 0px; max-width: 0px; min-width: 0px;"></div>
+            <!--AG-ROW-CONTAINER--><div class="ag-sticky-top-full-width-container" ref="stickyTopFullWidthContainer" name="stickyTopFullWidth" role="rowgroup"></div>
+        </div><!--AG-STICKY-BOTTOM--><div class="ag-sticky-bottom" ref="eStickyBottom" style="height: 0px; width: 1209.36px; bottom: 0px; display: none;"><!--AG-ROW-CONTAINER--><div class="ag-pinned-left-sticky-bottom ag-hidden" ref="stickyBottomLeftContainer" name="stickyBottomLeft" role="rowgroup" aria-hidden="true" style="width: 0px; max-width: 0px; min-width: 0px;"></div><!--AG-ROW-CONTAINER--><div class="ag-sticky-bottom-viewport" ref="stickyBottomCenterContainer" role="presentation" name="stickyBottomCenter">
+                <div class="ag-sticky-bottom-container" ref="eContainer" role="rowgroup" style="width: 1209.36px; transform: translateX(0px);"></div>
+            </div>
+            <!--AG-ROW-CONTAINER--><div class="ag-pinned-right-sticky-bottom ag-hidden" ref="stickyBottomRightContainer" name="stickyBottomRight" role="rowgroup" aria-hidden="true" style="width: 0px; max-width: 0px; min-width: 0px;"></div>
+            <!--AG-ROW-CONTAINER--><div class="ag-sticky-bottom-full-width-container" ref="stickyBottomFullWidthContainer" name="stickyBottomFullWidth" role="rowgroup"></div>
+        </div>
+        <div class="ag-floating-bottom ag-selectable" ref="eBottom" role="presentation" style="min-height: 0px; height: 0px; display: none; overflow-y: hidden;">
+            <!--AG-ROW-CONTAINER--><div class="ag-pinned-left-floating-bottom ag-hidden" ref="bottomLeftContainer" name="bottomLeft" role="rowgroup" aria-hidden="true" style="width: 0px; max-width: 0px; min-width: 0px;"></div>
+            <!--AG-ROW-CONTAINER--><div class="ag-floating-bottom-viewport" ref="bottomCenterContainer" role="presentation" name="bottomCenter">
+                <div class="ag-floating-bottom-container" ref="eContainer" role="rowgroup" style="width: 1209.36px; transform: translateX(0px);"></div>
+            </div>
+            <!--AG-ROW-CONTAINER--><div class="ag-pinned-right-floating-bottom ag-hidden" ref="bottomRightContainer" name="bottomRight" role="rowgroup" aria-hidden="true" style="width: 0px; max-width: 0px; min-width: 0px;"></div>
+            <!--AG-ROW-CONTAINER--><div class="ag-floating-bottom-full-width-container" ref="bottomFullWidthContainer" name="bottomFullWidth" role="rowgroup"></div>
+        </div>
+        <!--AG-FAKE-HORIZONTAL-SCROLL--><div class="ag-body-horizontal-scroll ag-hidden" aria-hidden="true" style="height: 0px; max-height: 0px; min-height: 0px;">
+            <div class="ag-horizontal-left-spacer ag-scroller-corner" ref="eLeftSpacer" style="width: 0px; max-width: 0px; min-width: 0px;"></div>
+            <div class="ag-body-horizontal-scroll-viewport" ref="eViewport" style="height: 0px; max-height: 0px; min-height: 0px;">
+                <div class="ag-body-horizontal-scroll-container" ref="eContainer" style="width: 1209.36px; height: 0px; max-height: 0px; min-height: 0px;"></div>
+            </div>
+            <div class="ag-horizontal-right-spacer ag-scroller-corner" ref="eRightSpacer" style="width: 0px; max-width: 0px; min-width: 0px;"></div>
+        </div>
+        <!--AG-OVERLAY-WRAPPER--><div class="ag-overlay ag-hidden" role="presentation">
+            <div class="ag-overlay-panel" role="presentation">
+                <div class="ag-overlay-wrapper ag-layout-normal ag-overlay-no-rows-wrapper" ref="eOverlayWrapper" role="presentation"></div>
+            </div>
+        </div>
+    </div>
+                    
+                <div class="ag-tab-guard ag-tab-guard-bottom" role="presentation" tabindex="0"></div></div>
+                
+                <!--AG-PAGINATION--><div class="ag-paging-panel ag-unselectable ag-hidden" id="ag-275" aria-hidden="true">
+                <!--AG-PAGE-SIZE-SELECTOR--><span class="ag-paging-page-size" ref="pageSizeComp"></span>
+                <span class="ag-paging-row-summary-panel" role="status">
+                    <span id="ag-275-first-row" ref="lbFirstRowOnPage" class="ag-paging-row-summary-panel-number"></span>
+                    <span id="ag-275-to">to</span>
+                    <span id="ag-275-last-row" ref="lbLastRowOnPage" class="ag-paging-row-summary-panel-number"></span>
+                    <span id="ag-275-of">of</span>
+                    <span id="ag-275-row-count" ref="lbRecordCount" class="ag-paging-row-summary-panel-number"></span>
+                </span>
+                <span class="ag-paging-page-summary-panel" role="presentation">
+                    <div ref="btFirst" class="ag-button ag-paging-button" role="button" aria-label="First Page" tabindex="0"><span class="ag-icon ag-icon-first" unselectable="on" role="presentation"></span></div>
+                    <div ref="btPrevious" class="ag-button ag-paging-button" role="button" aria-label="Previous Page" tabindex="0"><span class="ag-icon ag-icon-previous" unselectable="on" role="presentation"></span></div>
+                    <span class="ag-paging-description" role="status">
+                        <span id="ag-275-start-page">Page</span>
+                        <span id="ag-275-start-page-number" ref="lbCurrent" class="ag-paging-number"></span>
+                        <span id="ag-275-of-page">of</span>
+                        <span id="ag-275-of-page-number" ref="lbTotal" class="ag-paging-number"></span>
+                    </span>
+                    <div ref="btNext" class="ag-button ag-paging-button" role="button" aria-label="Next Page" tabindex="0"><span class="ag-icon ag-icon-next" unselectable="on" role="presentation"></span></div>
+                    <div ref="btLast" class="ag-button ag-paging-button" role="button" aria-label="Last Page" tabindex="0"><span class="ag-icon ag-icon-last" unselectable="on" role="presentation"></span></div>
+                </span>
+            </div>
+                
+            </div></ag-grid-angular><!----></lsdadmin-queues-grid></div></mat-card></div><!----></div></lsdadmin-queues-search><!----></mat-drawer-content><!----></mat-drawer-container></lsdadmin-home><!----></main></div></app-root>
+<link rel="modulepreload" href="chunk-S735BLLZ.js"><link rel="modulepreload" href="chunk-X6OGZ2XM.js"><link rel="modulepreload" href="chunk-UFDSLR2R.js"><link rel="modulepreload" href="chunk-SB5BZARG.js"><link rel="modulepreload" href="chunk-6E4CRX44.js"><link rel="modulepreload" href="chunk-MPYADVNX.js"><link rel="modulepreload" href="chunk-GRV5ZUSL.js"><link rel="modulepreload" href="chunk-AQPD4LOG.js"><link rel="modulepreload" href="chunk-2T5GH5PT.js"><link rel="modulepreload" href="chunk-PBQTADCT.js"><script src="polyfills-CRUMOBOH.js" type="module"></script><script src="scripts-K3V24XRE.js" defer=""></script><script src="main-IFZO33RI.js" type="module"></script>
+
+<div class="cdk-live-announcer-element cdk-visually-hidden" aria-atomic="true" aria-live="polite" id="cdk-live-announcer-0"></div><div class="cdk-overlay-container"></div><div class="cdk-describedby-message-container cdk-visually-hidden" style="visibility: hidden;"><div id="cdk-describedby-message-ng-1-10" role="tooltip">Show Message Threads in selected Queue(s)</div><div id="cdk-describedby-message-ng-1-11" role="tooltip">Show Message Threads in selected Category</div><div id="cdk-describedby-message-ng-1-12" role="tooltip">Show Message Threads from Borrower(s) with specified First Name</div><div id="cdk-describedby-message-ng-1-13" role="tooltip">Show Message Threads from Borrower(s) with specified Last Name</div><div id="cdk-describedby-message-ng-1-14" role="tooltip">Show Message Threads from Borrower(s) with specified Loan Number</div><div id="cdk-describedby-message-ng-1-15" role="tooltip">Show Message Threads with selected Status</div><div id="cdk-describedby-message-ng-1-16" role="tooltip">Show Message Threads that Borrowers have Deleted</div><div id="cdk-describedby-message-ng-1-17" role="tooltip">Show Message Threads with Borrower Message Date on or after selected date</div><div id="cdk-describedby-message-ng-1-18" role="tooltip">Show Message Threads with Borrower Message Date on or before selected date</div><div id="cdk-describedby-message-ng-1-19" role="tooltip">Filtering applies to all message threads and search results are sorted by Borrower Message Date.</div><div id="cdk-describedby-message-ng-1-20" role="tooltip">Sorting/filtering applies only to the current search results page.</div><div id="cdk-describedby-message-ng-1-21" role="tooltip">Help Center</div><div id="cdk-describedby-message-ng-1-22" role="tooltip">User Profile Menu</div></div>
+
+<!-- JavaScript for basic functionality -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Toggle sidebar menu items
+    const menuItems = document.querySelectorAll('.drawer-item');
+    menuItems.forEach(item => {
+      item.addEventListener('click', function(e) {
+        if (this.nextElementSibling && this.nextElementSibling.tagName === 'DIV') {
+          e.preventDefault();
+          const submenu = this.nextElementSibling;
+          const caretIcon = this.querySelector('.fa-caret-down, .fa-caret-up');
+          
+          if (submenu.style.display === 'none' || !submenu.style.display) {
+            submenu.style.display = 'block';
+            if (caretIcon) {
+              caretIcon.classList.remove('fa-caret-down');
+              caretIcon.classList.add('fa-caret-up');
+            }
+          } else {
+            submenu.style.display = 'none';
+            if (caretIcon) {
+              caretIcon.classList.remove('fa-caret-up');
+              caretIcon.classList.add('fa-caret-down');
+            }
+          }
+        }
+      });
+    });
+
+    // Clear search functionality
+    const clearSearchBtn = document.querySelector('.text-link');
+    if (clearSearchBtn) {
+      clearSearchBtn.addEventListener('click', function() {
+        const inputs = document.querySelectorAll('input[type="text"]');
+        inputs.forEach(input => {
+          input.value = '';
+        });
+      });
+    }
+
+    // Search button functionality
+    const searchBtn = document.querySelector('button[color="primary"]');
+    if (searchBtn) {
+      searchBtn.addEventListener('click', function() {
+        // Show loading indicator
+        const loadingIndicator = document.getElementById('loading-indicator');
+        if (loadingIndicator) {
+          loadingIndicator.style.display = 'block';
+          
+          // Simulate search delay
+          setTimeout(() => {
+            loadingIndicator.style.display = 'none';
+            // Here you would typically update the grid with search results
+          }, 1000);
+        }
+      });
+    }
+
+    // Toggle hamburger menu
+    const hamburgerMenu = document.querySelector('.hamburger-menu');
+    const appDrawer = document.querySelector('.app-drawer');
+    const drawerContent = document.querySelector('.mat-drawer-content');
+    
+    if (hamburgerMenu && appDrawer && drawerContent) {
+      hamburgerMenu.addEventListener('click', function() {
+        if (appDrawer.classList.contains('mat-drawer-opened')) {
+          appDrawer.classList.remove('mat-drawer-opened');
+          appDrawer.style.visibility = 'hidden';
+          appDrawer.style.transform = 'translateX(-100%)';
+          drawerContent.style.marginLeft = '0';
+        } else {
+          appDrawer.classList.add('mat-drawer-opened');
+          appDrawer.style.visibility = 'visible';
+          appDrawer.style.transform = 'none';
+          drawerContent.style.marginLeft = '216px';
+        }
+      });
+    }
+  });
+</script>
+</body>
+</html>

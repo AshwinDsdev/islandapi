@@ -3,15 +3,14 @@
  * @description This file contains the implementation of a filtering system for Loansphere queues.
  * It restricts access to loan information based on user permissions, hiding queues and loans
  * that the user is not authorized to view.
- * 
+ *
  * @author Loansphere Team
  * @version 1.0.0
  * @copyright 2023 Loansphere Inc.
  */
 
 (function () {
-  const pageUtils =
-  {
+  const pageUtils = {
     /**
      * @function togglePageOpacity
      * @description Sets the page opacity. It can be used to show and hide the page conent.
@@ -20,8 +19,7 @@
      * // Example usage of the function
      * togglePageOpacity(0.5);
      */
-    togglePageOpacity: function (val)
-    {
+    togglePageOpacity: function (val) {
       document.body.style.opacity = val;
     },
 
@@ -33,8 +31,7 @@
      * // Example usage of the function
      * showPage(false);
      */
-    showPage: function (val)
-    {
+    showPage: function (val) {
       document.body.style.opacity = val ? 1 : 0;
     },
 
@@ -46,8 +43,7 @@
      * // Example usage of the function
      * togglePageDisplay('none');
      */
-    togglePageDisplay: function (val)
-    {
+    togglePageDisplay: function (val) {
       document.body.style.display = val;
     },
 
@@ -61,8 +57,7 @@
      * // Example usage of the function
      * const element = getElementByXPath('//div[@class="example"]');
      */
-    getElementByXPath: function (xpath, context = document)
-    {
+    getElementByXPath: function (xpath, context = document) {
       const result = document.evaluate(
         xpath,
         context,
@@ -77,36 +72,35 @@
   // Hide the page immediately to prevent unauthorized loan numbers from being visible
   pageUtils.showPage(false);
 
-  const config =
-  {
+  const config = {
     /**
      * @property debug
      * @description Controls whether debug logging is enabled.
      * @type {boolean}
      */
     debug: true,
-    
+
     /**
      * @property filterDelay
      * @description Delay in milliseconds between filter operations to prevent UI freezing.
      * @type {number}
      */
     filterDelay: 300,
-    
+
     /**
      * @property observerDelay
      * @description Delay in milliseconds before processing DOM mutations.
      * @type {number}
      */
     observerDelay: 500,
-    
+
     /**
      * @property reprocessInterval
      * @description Interval in milliseconds for reprocessing the page to catch any missed elements.
      * @type {number}
      */
     reprocessInterval: 2000,
-    
+
     /**
      * @property isOffshoreUser
      * @description Flag indicating if the current user is an offshore user with restricted access.
@@ -122,43 +116,42 @@
    */
   const EXTENSION_ID = "afkpnpkodeiolpnfnbdokgkclljpgmcm";
 
-  const state =
-  {
+  const state = {
     /**
      * @property processedElements
      * @description Tracks DOM elements that have already been processed.
      * @type {Set}
      */
     processedElements: new Set(),
-    
+
     /**
      * @property processedBrands
      * @description Tracks brand elements that have already been processed.
      * @type {Set}
      */
     processedBrands: new Set(),
-    
+
     /**
      * @property processedQueues
      * @description Tracks queue elements that have already been processed.
      * @type {Set}
      */
     processedQueues: new Set(),
-    
+
     /**
      * @property queueLoanMap
      * @description Maps queue names to arrays of loan numbers in those queues.
      * @type {Map}
      */
     queueLoanMap: new Map(),
-    
+
     /**
      * @property queueVisibility
      * @description Maps queue names to their visibility status.
      * @type {Map}
      */
     queueVisibility: new Map(),
-    
+
     /**
      * @property observerState
      * @description State for the MutationObserver to control processing behavior.
@@ -171,14 +164,14 @@
        * @type {boolean}
        */
       ignoreNextMutations: false,
-      
+
       /**
        * @property processingDebounce
        * @description Timeout ID for debouncing mutation processing.
        * @type {number|null}
        */
       processingDebounce: null,
-      
+
       /**
        * @property lastProcessed
        * @description Timestamp of the last mutation processing.
@@ -186,35 +179,35 @@
        */
       lastProcessed: 0,
     },
-    
+
     /**
      * @property processingInterval
      * @description Interval ID for periodic reprocessing.
      * @type {number|null}
      */
     processingInterval: null,
-    
+
     /**
      * @property lastFilterTime
      * @description Timestamp of the last filter operation.
      * @type {number}
      */
     lastFilterTime: 0,
-    
+
     /**
      * @property originalQueueCount
      * @description Original count of queues before filtering.
      * @type {number}
      */
     originalQueueCount: 0,
-    
+
     /**
      * @property visibleQueueCount
      * @description Count of visible queues after filtering.
      * @type {number}
      */
     visibleQueueCount: 0,
-    
+
     /**
      * @property brandProcessing
      * @description Flag indicating if brand processing is currently in progress.
@@ -223,8 +216,7 @@
     brandProcessing: false,
   };
 
-  const logThrottle =
-  {
+  const logThrottle = {
     /**
      * @property lastLogs
      * @description Tracks the timestamp of the last log for each key.
@@ -232,7 +224,7 @@
      * @private
      */
     lastLogs: {},
-    
+
     /**
      * @function log
      * @description Logs a message to the console with throttling to prevent spam.
@@ -242,15 +234,13 @@
      * // Example usage of the function
      * logThrottle.log('queueProcessing', 'Processing queue:', queueName);
      */
-    log: function (key, ...args)
-    {
+    log: function (key, ...args) {
       // Skip logging if debug mode is disabled
       if (!config.debug) return;
 
       const now = Date.now();
       // Only log if this key hasn't been logged recently (within 2 seconds)
-      if (!this.lastLogs[key] || now - this.lastLogs[key] > 2000)
-      {
+      if (!this.lastLogs[key] || now - this.lastLogs[key] > 2000) {
         console.log(`[LoanFilter] ${args[0]}`, ...args.slice(1));
         this.lastLogs[key] = now;
       }
@@ -270,17 +260,14 @@
    *   // Proceed with operations that require the extension
    * }
    */
-  async function waitForListener(maxRetries = 20, initialDelay = 100)
-  {
-    return new Promise((resolve, reject) =>
-    {
+  async function waitForListener(maxRetries = 20, initialDelay = 100) {
+    return new Promise((resolve, reject) => {
       // Check if Chrome extension API is available
       if (
         typeof chrome === "undefined" ||
         !chrome.runtime ||
         !chrome.runtime.sendMessage
-      )
-      {
+      ) {
         console.warn(
           "❌ Chrome extension API not available. Running in standalone mode."
         );
@@ -299,35 +286,29 @@
        * @description Sends a ping message to the extension and handles the response.
        * @private
        */
-      function sendPing()
-      {
+      function sendPing() {
         // Check if maximum retries reached
-        if (attempts >= maxRetries)
-        {
+        if (attempts >= maxRetries) {
           console.warn("❌ No listener detected after maximum retries.");
           clearTimeout(timeoutId);
           reject(new Error("Listener not found"));
           return;
         }
 
-        try
-        {
+        try {
           // Send ping message to extension
           chrome.runtime.sendMessage(
             EXTENSION_ID,
             { type: "ping" },
-            (response) =>
-            {
+            (response) => {
               // Handle runtime errors
-              if (chrome.runtime.lastError)
-              {
+              if (chrome.runtime.lastError) {
                 console.warn(
                   "Chrome extension error:",
                   chrome.runtime.lastError
                 );
                 attempts++;
-                if (attempts >= maxRetries)
-                {
+                if (attempts >= maxRetries) {
                   reject(new Error("Chrome extension error"));
                   return;
                 }
@@ -336,16 +317,12 @@
               }
 
               // Check for successful response
-              if (response?.result === "pong")
-              {
+              if (response?.result === "pong") {
                 clearTimeout(timeoutId);
                 resolve(true);
-              }
-              else
-              {
+              } else {
                 // Retry with exponential backoff
-                timeoutId = setTimeout(() =>
-                {
+                timeoutId = setTimeout(() => {
                   attempts++;
                   delay *= 2; // Exponential backoff
                   sendPing();
@@ -353,9 +330,7 @@
               }
             }
           );
-        }
-        catch (error)
-        {
+        } catch (error) {
           console.error("Error sending message to extension:", error);
           resolve(false);
         }
@@ -421,8 +396,7 @@
    * const allowedLoans = await checkNumbersBatch(['0000000612', '9999999999']);
    * // Returns: ['0000000612']
    */
-  const checkNumbersBatch = async (numbers) =>
-  {
+  const checkNumbersBatch = async (numbers) => {
     // Filter the input numbers to only include those in the allowed list
     const available = numbers.filter((num) => LoanNums.includes(num));
     return available;
@@ -479,17 +453,13 @@
    *   // Show access denied message
    * }
    */
-  async function isLoanNumberAllowed(loanNumber)
-  {
-    try
-    {
+  async function isLoanNumberAllowed(loanNumber) {
+    try {
       // Query the batch checking function with a single loan number
       const allowedNumbers = await checkNumbersBatch([loanNumber]);
       // Return true if the loan number is in the allowed list
       return allowedNumbers.includes(loanNumber);
-    }
-    catch (error)
-    {
+    } catch (error) {
       // Log the error and default to not allowed for security
       console.warn("Failed to check loan access, assuming not allowed");
       return false;
@@ -738,8 +708,7 @@
    *   // Text contains a potential loan number
    * }
    */
-  function containsLoanNumber(text)
-  {
+  function containsLoanNumber(text) {
     // Check for numeric loan numbers (5 or more digits)
     // or alphanumeric loan numbers (5 or more characters, uppercase)
     return /\b\d{5,}\b/.test(text) || /\b[A-Z0-9]{5,}\b/.test(text);
@@ -756,13 +725,12 @@
    * const loanNumbers = extractLoanNumbers(text);
    * // Returns: ['12345', 'ABC123']
    */
-  function extractLoanNumbers(text)
-  {
+  function extractLoanNumbers(text) {
     const matches = [];
-    
+
     // Find numeric loan numbers (5 or more digits)
     const digitMatches = text.match(/\b\d{5,}\b/g);
-    
+
     // Find alphanumeric loan numbers (5 or more characters, uppercase)
     const alphaNumMatches = text.match(/\b[A-Z0-9]{5,}\b/g);
 
@@ -789,8 +757,7 @@
    *   element.style.display = 'none';
    * }
    */
-  async function shouldHideElement(element)
-  {
+  async function shouldHideElement(element) {
     // If we don't have queue data yet, don't hide anything
     if (!state.queueLoanMap.size) return false;
 
@@ -800,20 +767,19 @@
       element.tagName === "STYLE" ||
       element.tagName === "META" ||
       element.tagName === "LINK"
-    )
-    {
+    ) {
       return false;
     }
 
     // Get the text content of the element
     const text = element.innerText || element.textContent || "";
-    
+
     // Quick check if the text might contain a loan number
     if (!containsLoanNumber(text)) return false;
 
     // Extract potential loan numbers from the text
     const potentialLoanNumbers = extractLoanNumbers(text);
-    
+
     // If no loan numbers found, don't hide
     if (potentialLoanNumbers.length === 0) return false;
 
@@ -821,13 +787,11 @@
     let hasAllowedLoan = false;
 
     // Check each potential loan number
-    for (const loanNumber of potentialLoanNumbers)
-    {
+    for (const loanNumber of potentialLoanNumbers) {
       const isAllowed = await isLoanNumberAllowed(loanNumber);
 
       // If at least one loan is allowed, don't hide the element
-      if (isAllowed)
-      {
+      if (isAllowed) {
         hasAllowedLoan = true;
         logThrottle.log("allowedLoan", `Found allowed loan: ${loanNumber}`);
         break;
@@ -835,8 +799,7 @@
     }
 
     // If no allowed loans were found and there are potential loan numbers, hide the element
-    if (!hasAllowedLoan && potentialLoanNumbers.length > 0)
-    {
+    if (!hasAllowedLoan && potentialLoanNumbers.length > 0) {
       logThrottle.log(
         "filteredLoans",
         `Filtering out loans: ${potentialLoanNumbers.join(", ")}`
@@ -856,11 +819,9 @@
    * // Example usage of the function
    * await processTableRows();
    */
-  async function processTableRows()
-  {
+  async function processTableRows() {
     // Check if we have queue data available
-    if (!state.queueLoanMap.size)
-    {
+    if (!state.queueLoanMap.size) {
       console.warn("queueLoanMap is not available yet. Waiting...");
       return;
     }
@@ -874,8 +835,7 @@
     let selectedBrand = null;
 
     // If a brand is selected, get its name for filtering
-    if (brandSelect && brandSelect.selectedIndex > 0)
-    {
+    if (brandSelect && brandSelect.selectedIndex > 0) {
       const selectedOption = brandSelect.options[brandSelect.selectedIndex];
       selectedBrand = selectedOption.textContent.trim();
       logThrottle.log(
