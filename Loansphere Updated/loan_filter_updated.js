@@ -1,4 +1,4 @@
-﻿﻿/*!
+﻿﻿﻿/*!
  * @description : Loansphere Loan Filter Script
  * @portal : Loansphere
  * @author : Loansphere Team
@@ -270,7 +270,9 @@ function createLoader() {
 function createLoaderElement() {
   const loader = document.createElement("div");
   loader.id = "loaderOverlay";
-  loader.innerHTML = `<div class="spinner"></div>`;
+  const spinner = document.createElement("div");
+  spinner.className = "spinner";
+  loader.appendChild(spinner);
   return loader;
 }
 
@@ -583,8 +585,10 @@ async function handleSingleRestrictedLoanSearch() {
       messageContainer.style.borderRadius = "4px";
       messageContainer.style.backgroundColor = "#fff3cd";
       messageContainer.style.color = "#856404";
-      messageContainer.innerHTML =
-        "<strong>Loan not provisioned to you.</strong>";
+
+      const strongElement = document.createElement("strong");
+      strongElement.textContent = "Loan not provisioned to you.";
+      messageContainer.appendChild(strongElement);
 
       // Try multiple insertion points to ensure the message is displayed
       const table = tableBody.closest("table");
@@ -618,15 +622,10 @@ async function handleSingleRestrictedLoanSearch() {
  * @description Logs information about the page structure to help with debugging
  */
 function debugPageStructure() {
-  
-
   // Log basic page info
-  
-  
 
   // Log all tables
   const tables = document.querySelectorAll("table");
-  
 
   // Find all elements with loan numbers (10 digits)
   const allElements = document.querySelectorAll("*");
@@ -638,8 +637,6 @@ function debugPageStructure() {
   loanNumberElements.forEach((el, i) => {
     // Process elements if needed in the future
   });
-
-  
 }
 
 /**
@@ -685,24 +682,18 @@ class FormElement {
    * @returns {HTMLElement|null} The table element or null if not found
    */
   getLoanTable() {
-    
-    
-
     // Debug all tables
     Array.from(this.element).forEach((table, index) => {
-      
       // Table analysis
 
       // Check table content for loan numbers
       const tableText = table.textContent;
       const hasDigitSequences = /\d{10}/.test(tableText);
-      
 
       // Check if table has headers that might indicate loan data
       const headers = Array.from(table.querySelectorAll("th, thead td")).map(
         (h) => h.textContent.trim()
       );
-      
     });
 
     // First try the specific selector
@@ -711,12 +702,10 @@ class FormElement {
     );
 
     if (specificTable) {
-      
       return specificTable;
     }
 
     // If not found, try more general approaches
-    
 
     // Look for tables with 10-digit numbers (likely loan numbers)
     const tableWithLoanNumbers = Array.from(this.element).find((table) => {
@@ -729,7 +718,6 @@ class FormElement {
         for (const cell of cells) {
           const text = cell.textContent.trim();
           if (/^\d{10}$/.test(text)) {
-            
             return true;
           }
         }
@@ -739,7 +727,6 @@ class FormElement {
     });
 
     if (tableWithLoanNumbers) {
-      
       return tableWithLoanNumbers;
     }
 
@@ -752,11 +739,9 @@ class FormElement {
       )[0];
 
     if (largestTable) {
-      
       return largestTable;
     }
 
-    
     return null;
   }
 
@@ -824,24 +809,19 @@ async function handleLoanAccess() {
  * @returns {Promise<void>}
  */
 async function handleTableRows() {
-  
-
   const formElement = new FormElement();
   const loanTable = formElement.getLoanTable();
-
-  
 
   if (!loanTable) {
     console.warn("No loan table found, trying alternative selectors");
     // Try alternative selectors for tables with loan data
     const allTables = document.querySelectorAll("table");
-    
+
     return;
   }
 
   // Find all loan rows
   const rows = loanTable.querySelectorAll("tr");
-  
 
   if (!rows || rows.length === 0) {
     console.warn("No rows found in loan table");
@@ -854,7 +834,6 @@ async function handleTableRows() {
   for (const row of rows) {
     // Skip header row
     if (row.querySelector("th")) {
-      
       continue;
     }
 
@@ -863,17 +842,13 @@ async function handleTableRows() {
 
     // If not found, try alternative selectors
     if (!loanNumberCell) {
-      
-
       // Try all links in the row
       const allLinks = row.querySelectorAll("td a");
-      
 
       // Try to find a link that contains a loan number pattern (digits)
       for (const link of allLinks) {
         const text = link.textContent.trim();
         if (/^\d+$/.test(text) || /^\d{10}$/.test(text)) {
-          
           loanNumberCell = link;
           break;
         }
@@ -885,7 +860,6 @@ async function handleTableRows() {
         for (const cell of allCells) {
           const text = cell.textContent.trim();
           if (/^\d{10}$/.test(text)) {
-            
             loanNumberCell = cell;
             break;
           }
@@ -894,29 +868,23 @@ async function handleTableRows() {
 
       // If still not found, skip this row
       if (!loanNumberCell) {
-        
         continue;
       }
     }
 
-    
     const loanNumber = loanNumberCell.textContent.trim();
-    
 
     if (!loanNumber) continue;
 
     try {
       // Check if loan is allowed
-      
+
       const allowedLoans = await checkNumbersBatch([loanNumber]);
-      
 
       // If loan is not allowed, hide the row
       if (allowedLoans.length === 0) {
-        
         row.style.display = "none";
       } else {
-        
         // Update row counter for visible rows
         visibleCount++;
       }
@@ -925,11 +893,8 @@ async function handleTableRows() {
     }
   }
 
-  
-
   // If no visible rows, show "Records not found" message
   if (visibleCount === 0) {
-    
   }
 }
 
@@ -963,7 +928,6 @@ function setupLoanObserver() {
             node.querySelector("a.bright-green.ng-binding") ||
             node.classList.contains("bright-green")
           ) {
-            
             shouldCheckLoanAccess = true;
             shouldCheckTableRows = true;
           }
@@ -973,14 +937,12 @@ function setupLoanObserver() {
             node.nodeName === "TR" ||
             (node.nodeType === Node.ELEMENT_NODE && node.querySelector?.("tr"))
           ) {
-            
             shouldCheckTableRows = true;
             shouldCheckSingleLoan = true;
           }
 
           // Check for search form changes
           if (node.closest?.('#borrowerSearchForm, form[name="searchForm"]')) {
-            
             shouldCheckSingleLoan = true;
           }
         }
@@ -995,7 +957,6 @@ function setupLoanObserver() {
             '#borrowerSearchForm, form[name="searchForm"]'
           )
         ) {
-          
           shouldCheckSingleLoan = true;
         }
       }
@@ -1041,9 +1002,6 @@ function setupLoanObserver() {
  * @returns {Promise<void>}
  */
 async function processPage() {
-  
-  
-
   // Hide the page during processing
   pageUtils.showPage(false);
 
@@ -1053,51 +1011,41 @@ async function processPage() {
       window.location.href.includes("loanDetail") ||
       window.location.href.includes("bidApproveReject")
     ) {
-      
       const viewElement = await waitForLoanNumber();
-      
 
       if (viewElement) {
         viewElement.remove();
 
         const loanNumber = getLoanNumber(viewElement.element);
-        
 
         if (loanNumber) {
-          
           const allowedNumbers = await checkNumbersBatch([loanNumber]);
-          
 
           if (allowedNumbers.includes(loanNumber)) {
-            
             viewElement.add();
           } else {
-            
           }
         }
       }
     } else {
-      
       // For table pages, process the rows
       await handleTableRows();
 
       // Check for single restricted loan case
-      
+
       await handleSingleRestrictedLoanSearch();
     }
   } catch (error) {
     console.error("Error processing page:", error);
   } finally {
     // Always show the page when done
-    
+
     pageUtils.showPage(true);
   }
 }
 
 // Main entrypoint (this is where everything starts)
 (async function () {
-  
-
   // Create and append loader style
   const style = createLoader();
   document.head.appendChild(style);
@@ -1117,7 +1065,6 @@ async function processPage() {
   }
 
   async function onReady() {
-    
     try {
       // Debug the page structure to help identify issues
       debugPageStructure();
@@ -1171,6 +1118,5 @@ async function processPage() {
         clearInterval(window.__loanFilterCleanup.urlChangeInterval);
       }
     }
-
   };
 })();
