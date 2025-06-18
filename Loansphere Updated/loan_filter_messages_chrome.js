@@ -464,7 +464,9 @@
   function createLoaderElement() {
     const loader = document.createElement("div");
     loader.id = "loaderOverlay";
-    loader.innerHTML = `<div class="spinner"></div>`;
+    const spinner = document.createElement("div");
+    spinner.className = "spinner";
+    loader.appendChild(spinner);
     return loader;
   }
 
